@@ -1,0 +1,56 @@
+inherited FrameCombobox: TFrameCombobox
+  Width = 216
+  Height = 42
+  ExplicitWidth = 216
+  ExplicitHeight = 42
+  object PanelIntegerInput: TUniPanel
+    Left = 0
+    Top = 0
+    Width = 216
+    Height = 42
+    Hint = ''
+    ParentRTL = False
+    Align = alClient
+    TabOrder = 0
+    BorderStyle = ubsNone
+    Caption = ''
+    ScrollDirection = sdNone
+    Draggable.Enabled = True
+    ExplicitWidth = 263
+    ExplicitHeight = 37
+    object PanelText: TUniPanel
+      Left = 0
+      Top = 0
+      Width = 104
+      Height = 42
+      Hint = ''
+      Align = alLeft
+      TabOrder = 1
+      BorderStyle = ubsNone
+      Caption = 'combo'
+      ScrollDirection = sdNone
+      ExplicitHeight = 37
+    end
+    object ComboBox: TUniComboBox
+      AlignWithMargins = True
+      Left = 114
+      Top = 6
+      Width = 92
+      Height = 30
+      Hint = ''
+      Margins.Left = 10
+      Margins.Top = 6
+      Margins.Right = 10
+      Margins.Bottom = 6
+      Style = csOwnerDrawFixed
+      Text = ''
+      Align = alClient
+      TabOrder = 2
+      IconItems = <>
+      ExplicitLeft = 110
+      ExplicitTop = 0
+      ExplicitWidth = 112
+      ExplicitHeight = 42
+    end
+  end
+end

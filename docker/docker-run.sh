@@ -1,0 +1,1 @@
+docker run -d --name frontdcc -p 8077:8077 --restart unless-stopped frontdcc:latest

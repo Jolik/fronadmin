@@ -1,0 +1,13 @@
+﻿[btnLinkInfo]
+Coordinates=10,56,78,36
+
+[btnLinkListTest]
+Coordinates=188,10,101,36
+
+[ShowMemo]
+Coordinates=100,20,82,36
+Visible=True
+
+[]
+Coordinates=10,10,76,36
+
