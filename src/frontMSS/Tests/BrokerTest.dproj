@@ -132,6 +132,8 @@
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\StripTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\SummaryTaskUnit.pas"/>
+        <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="..\Parsers\EntityParsersUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

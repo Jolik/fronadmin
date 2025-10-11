@@ -9,7 +9,8 @@ uses
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniButton, uniGUIBaseClasses,
   uniMemo,
   LinksBrokerUnit, EntityUnit, LinkUnit,
-  StripTasksBrokerUnit, StripTaskUnit;
+  StripTasksBrokerUnit, StripTaskUnit,
+  SummaryTasksBrokerUnit, SummaryTaskUnit;
 
 type
   TMainForm = class(TUniForm)
@@ -21,6 +22,12 @@ type
     btnStripTaskNew: TUniButton;
     btnStripTaskRemove: TUniButton;
     btnStripTaskUpdate: TUniButton;
+    btnSummaryTaskList: TUniButton;
+    btnSummaryTaskInfo: TUniButton;
+    btnSummaryTaskNew: TUniButton;
+    btnSummaryTaskUpdate: TUniButton;
+    btnSummaryTaskRemove: TUniButton;
+    btnSummaryTaskTypes: TUniButton;
     procedure btnLinkListTestClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnTaskListClick(Sender: TObject);
@@ -28,6 +35,12 @@ type
     procedure btnStripTaskNewClick(Sender: TObject);
     procedure btnStripTaskRemoveClick(Sender: TObject);
     procedure btnStripTaskUpdateClick(Sender: TObject);
+    procedure btnSummaryTaskListClick(Sender: TObject);
+    procedure btnSummaryTaskInfoClick(Sender: TObject);
+    procedure btnSummaryTaskNewClick(Sender: TObject);
+    procedure btnSummaryTaskUpdateClick(Sender: TObject);
+    procedure btnSummaryTaskRemoveClick(Sender: TObject);
+    procedure btnSummaryTaskTypesClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -57,9 +70,9 @@ var
 begin
   try
     LinksBroker := TLinksBroker.Create();
-    // Выводим информацию о линке в TMemo
-    ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
-    //  получаем инфу о линке
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® Г«ГЁГ­ГЄГҐ Гў TMemo
+    ShowMemo.Lines.Add(Format('Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г«ГЁГ­ГЄГҐ %s:', [lid]));
+    //  ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ­ГґГі Г® Г«ГЁГ­ГЄГҐ
     Link := LinksBroker.Info(lid);
     if Link = nil then
     begin
@@ -95,13 +108,13 @@ begin
 
     LinksList := LinksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГЄГ Г¦Г¤Г®Г¬ Г®ГЎГєГҐГЄГІГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Содержимое списка:');
+    ShowMemo.Lines.Add('Г‘Г®Г¤ГҐГ°Г¦ГЁГ¬Г®ГҐ Г±ГЇГЁГ±ГЄГ :');
     for Link in LinksList do
     begin
       var l := (Link as TLink);
-      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [Link.ClassName, Pointer(Link)]));
+      ShowMemo.Lines.Add(Format('ГЉГ«Г Г±Г±: %s  |  ГЂГ¤Г°ГҐГ±: %p', [Link.ClassName, Pointer(Link)]));
       ShowMemo.Lines.Add('Id '+ l.Id);
       ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
       ShowMemo.Lines.Add('Name '+ l.Name);
@@ -123,7 +136,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // ГЋГ±ГўГ®ГЎГ®Г¦Г¤Г ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ (ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ» Г®Г±ГўГ®ГЎГ®Г¤ГїГІГ±Гї Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ)
     LinksList.Free;
 
     LinksBroker.Free;
@@ -150,11 +163,11 @@ begin
       Enabled := false;
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГІГ Г±ГЄГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  New  ----------');
-    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
+    ShowMemo.Lines.Add(Format('Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г‡Г Г¤Г Г·ГҐ %s:', [st.tid]));
 
-    //  получаем инфу о таске
+    //  ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ­ГґГі Г® ГІГ Г±ГЄГҐ
     res := StripTasksBroker.New(st);
     if not res  then
     begin
@@ -163,7 +176,7 @@ begin
     end;
 
     (*
-    ///  получаем результат и запрашиваем информацию по tid из результата
+    ///  ГЇГ®Г«ГіГ·Г ГҐГ¬ Г°ГҐГ§ГіГ«ГјГІГ ГІ ГЁ Г§Г ГЇГ°Г ГёГЁГўГ ГҐГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ ГЇГ® tid ГЁГ§ Г°ГҐГ§ГіГ«ГјГІГ ГІГ 
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -196,10 +209,10 @@ begin
   try
 
     StripTasksBroker := TStripTaskBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГІГ Г±ГЄГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  Remove  ----------');
-    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    //  удаляем таск таске
+    ShowMemo.Lines.Add(Format('Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г‡Г Г¤Г Г·ГҐ %s:', [tid]));
+    //  ГіГ¤Г Г«ГїГҐГ¬ ГІГ Г±ГЄ ГІГ Г±ГЄГҐ
     var res := StripTasksBroker.Remove(tid);
 
     if not res then
@@ -236,11 +249,11 @@ begin
       Caption := 'First test update';
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГІГ Г±ГЄГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  Update  ----------');
-    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
+    ShowMemo.Lines.Add(Format('Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г‡Г Г¤Г Г·ГҐ %s:', [st.tid]));
 
-    //  Обновлеем информацию
+    //  ГЋГЎГ­Г®ГўГ«ГҐГҐГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ
     res := StripTasksBroker.Update(st);
     if not res  then
     begin
@@ -249,7 +262,233 @@ begin
     end;
 
     (*
-    ///  получаем результат и запрашиваем информацию по tid из результата
+
+procedure TMainForm.btnSummaryTaskListClick(Sender: TObject);
+var
+  SummaryTask : TEntity;
+  SummaryTasksBroker : TSummaryTasksBroker;
+  SummaryTaskList : TEntityList;
+  Pages : integer;
+begin
+  SummaryTasksBroker := nil;
+  SummaryTaskList := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTaskList := SummaryTasksBroker.List(Pages);
+
+    ShowMemo.Lines.Add('----------  Summary.List  ----------');
+    ShowMemo.Lines.Add(' :');
+
+    for SummaryTask in SummaryTaskList do
+    begin
+      var st := SummaryTask as TSummaryTask;
+      ShowMemo.Lines.Add(Format(': %s  |  : %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
+      ShowMemo.Lines.Add('Tid ' + st.Tid);
+      ShowMemo.Lines.Add('Name ' + st.Name);
+      ShowMemo.Lines.Add('Module ' + st.Module);
+
+      var json := st.Serialize();
+      try
+        if json <> nil then
+          ShowMemo.Lines.Add(json.Format());
+      finally
+        json.Free;
+      end;
+
+      ShowMemo.Lines.Add('----------');
+    end;
+  finally
+    SummaryTaskList.Free;
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnSummaryTaskInfoClick(Sender: TObject);
+const
+  tid = '48332ad5-55c1-4e64-b2ea-e99d0c78f900';
+var
+  SummaryTask : TEntity;
+  SummaryTasksBroker : TSummaryTasksBroker;
+begin
+  SummaryTask := nil;
+  SummaryTasksBroker := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+
+    ShowMemo.Lines.Add('----------  Summary.Info  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [tid]));
+
+    SummaryTask := SummaryTasksBroker.Info(tid);
+    if SummaryTask = nil then
+    begin
+      ShowMemo.Lines.Add('nil');
+      Exit;
+    end;
+
+    var st := SummaryTask as TSummaryTask;
+    ShowMemo.Lines.Add('Tid: ' + st.Tid);
+    ShowMemo.Lines.Add('Name: ' + st.Name);
+    ShowMemo.Lines.Add('Module: ' + st.Module);
+    if st.Enabled then
+      ShowMemo.Lines.Add('Enabled: true')
+    else
+      ShowMemo.Lines.Add('Enabled: false');
+    ShowMemo.Lines.Add('Settings:');
+    ShowMemo.Lines.Add(st.SettingsObject.ToJSON);
+  finally
+    SummaryTask.Free;
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnSummaryTaskNewClick(Sender: TObject);
+var
+  SummaryTask : TSummaryTask;
+  SummaryTasksBroker : TSummaryTasksBroker;
+  Settings : TJSONObject;
+  Custom : TJSONObject;
+  ExcludeWeek : TJSONArray;
+  res : boolean;
+begin
+  Settings := nil;
+  SummaryTask := nil;
+  SummaryTasksBroker := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTask := TSummaryTask.Create();
+
+    SummaryTask.Tid := TGUID.NewGuid.ToString;
+    SummaryTask.Name := 'Summary test task';
+    SummaryTask.Def := 'Summary task demo description';
+    SummaryTask.Module := 'SummarySynop';
+    SummaryTask.Enabled := true;
+    SummaryTask.CompId := '85697f9f-b80d-4668-8ed2-2f70ed825eee';
+    SummaryTask.DepId := '4cf0dbf0-820b-4e05-a819-d6d1ec5652f0';
+
+    Settings := TJSONObject.Create;
+    Settings.AddPair('Header', 'TTAA01 CCCC');
+    Settings.AddPair('Time', '00:00/+15 03:00/* 06:00/* 09:00/* 12:00/* 15:00/* 18:00/* 21:00/*');
+    Settings.AddPair('Local', TJSONBool.Create(false));
+    Settings.AddPair('MonthDays', '1-32');
+    Settings.AddPair('CheckLate', TJSONBool.Create(true));
+    Settings.AddPair('LatePeriod', TJSONNumber.Create(120));
+    Settings.AddPair('LateEvery', TJSONNumber.Create(60));
+
+    Custom := TJSONObject.Create;
+    Custom.AddPair('DaysAgo', TJSONNumber.Create(5));
+    Settings.AddPair('Custom', Custom);
+
+    ExcludeWeek := TJSONArray.Create;
+    for var i := 0 to 6 do
+      ExcludeWeek.Add(0);
+    Settings.AddPair('ExcludeWeek', ExcludeWeek);
+
+    SummaryTask.SettingsObject := Settings;
+
+    ShowMemo.Lines.Add('----------  Summary.New  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [SummaryTask.Tid]));
+
+    res := SummaryTasksBroker.New(SummaryTask);
+    if not res then
+      ShowMemo.Lines.Add('Error to new summary task!')
+    else
+      ShowMemo.Lines.Add('Created Tid: ' + SummaryTask.Tid);
+  finally
+    Settings.Free;
+    SummaryTask.Free;
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnSummaryTaskUpdateClick(Sender: TObject);
+var
+  SummaryTask : TSummaryTask;
+  SummaryTasksBroker : TSummaryTasksBroker;
+  Settings : TJSONObject;
+  res : boolean;
+const
+  tid = '48332ad5-55c1-4e64-b2ea-e99d0c78f900';
+begin
+  Settings := nil;
+  SummaryTask := nil;
+  SummaryTasksBroker := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTask := TSummaryTask.Create();
+
+    SummaryTask.Tid := tid;
+    SummaryTask.Name := 'Summary task updated';
+    SummaryTask.Def := 'Summary task demo update';
+    SummaryTask.Enabled := false;
+
+    Settings := TJSONObject.Create;
+    Settings.AddPair('Header', 'TTAA01 CCCC');
+    Settings.AddPair('Time', '08:00/+30 20:00/*');
+    SummaryTask.SettingsObject := Settings;
+
+    ShowMemo.Lines.Add('----------  Summary.Update  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [SummaryTask.Tid]));
+
+    res := SummaryTasksBroker.Update(SummaryTask);
+    if not res then
+      ShowMemo.Lines.Add('Error to update summary task!')
+    else
+      ShowMemo.Lines.Add('Summary task updated');
+  finally
+    Settings.Free;
+    SummaryTask.Free;
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
+const
+  tid = '1631cd00-d431-4152-8b0e-2887e1200747';
+var
+  SummaryTasksBroker : TSummaryTasksBroker;
+  res : boolean;
+begin
+  SummaryTasksBroker := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+
+    ShowMemo.Lines.Add('----------  Summary.Remove  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [tid]));
+
+    res := SummaryTasksBroker.Remove(tid);
+    if not res then
+      ShowMemo.Lines.Add('Error to remove summary task!')
+    else
+      ShowMemo.Lines.Add('Summary task removed');
+  finally
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnSummaryTaskTypesClick(Sender: TObject);
+var
+  SummaryTasksBroker : TSummaryTasksBroker;
+  TypesArray : TJSONArray;
+begin
+  TypesArray := nil;
+  SummaryTasksBroker := nil;
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create();
+
+    ShowMemo.Lines.Add('----------  Summary.Types  ----------');
+
+    TypesArray := SummaryTasksBroker.GetTypes();
+    if TypesArray = nil then
+      ShowMemo.Lines.Add('nil')
+    else
+      ShowMemo.Lines.Add(TypesArray.Format());
+  finally
+    TypesArray.Free;
+    SummaryTasksBroker.Free;
+  end;
+end;
+
+    ///  ГЇГ®Г«ГіГ·Г ГҐГ¬ Г°ГҐГ§ГіГ«ГјГІГ ГІ ГЁ Г§Г ГЇГ°Г ГёГЁГўГ ГҐГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ ГЇГ® tid ГЁГ§ Г°ГҐГ§ГіГ«ГјГІГ ГІГ 
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -282,10 +521,10 @@ begin
   try
 
     StripTasksBroker := TStripTaskBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГІГ Г±ГЄГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  Info  ----------');
-    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    //  получаем инфу о таске
+    ShowMemo.Lines.Add(Format('Г€Г­ГґГ®Г°Г¬Г Г¶ГЁГї Г® Г‡Г Г¤Г Г·ГҐ %s:', [tid]));
+    //  ГЇГ®Г«ГіГ·Г ГҐГ¬ ГЁГ­ГґГі Г® ГІГ Г±ГЄГҐ
     StripTask := StripTasksBroker.Info(tid);
     if StripTask = nil then
     begin
@@ -325,14 +564,14 @@ begin
 
     StripTaskList := StripTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Г‚Г»ГўГ®Г¤ГЁГ¬ ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГѕ Г® ГЄГ Г¦Г¤Г®Г¬ Г®ГЎГєГҐГЄГІГҐ Гў TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Содержимое списка:');
+    ShowMemo.Lines.Add('Г‘Г®Г¤ГҐГ°Г¦ГЁГ¬Г®ГҐ Г±ГЇГЁГ±ГЄГ :');
 
     for StripTask in StripTaskList do
     begin
       var st := (StripTask as TStripTask);
-      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [StripTask.ClassName, Pointer(StripTask)]));
+      ShowMemo.Lines.Add(Format('ГЉГ«Г Г±Г±: %s  |  ГЂГ¤Г°ГҐГ±: %p', [StripTask.ClassName, Pointer(StripTask)]));
       ShowMemo.Lines.Add('Id '+ st.Id);
       ShowMemo.Lines.Add('Name '+ st.Name);
       ShowMemo.Lines.Add('Compid '+ (st.Compid));
@@ -349,7 +588,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // ГЋГ±ГўГ®ГЎГ®Г¦Г¤Г ГҐГ¬ Г±ГЇГЁГ±Г®ГЄ (ГўГ±ГҐ Г®ГЎГєГҐГЄГІГ» Г®Г±ГўГ®ГЎГ®Г¤ГїГІГ±Гї Г ГўГІГ®Г¬Г ГІГЁГ·ГҐГ±ГЄГЁ)
     StripTaskList.Free;
 
     StripTasksBroker.Free;
