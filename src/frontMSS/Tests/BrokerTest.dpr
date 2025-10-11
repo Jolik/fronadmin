@@ -24,6 +24,8 @@ uses
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   StripTaskUnit in '..\EntityClasses\StripTaskUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
+  SummaryTaskUnit in '..\EntityClasses\SummaryTaskUnit.pas',
+  SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   EntityParsersUnit in '..\Parsers\EntityParsersUnit.pas';
 
 {$R *.res}
