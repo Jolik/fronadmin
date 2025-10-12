@@ -52,9 +52,6 @@ type
 
 implementation
 
-
-
-
 uses
   System.SysUtils, System.Classes,
   FuncUnit;
@@ -68,52 +65,7 @@ const
 
 { TTasksBroker }
 
-//function TTasksBroker.TaskGetList(
-//  const APage, APageSize: Integer;
-//  out APageCount: Integer;
-//  const ASearchStr, ASearchBy, AOrder,
-//  AOrderDir: String): TDataset;
-
-//  function CreateJSONRequest: TJSONObject;
-//  begin
-//    Result := TJSONObject.Create;
-//    Result.AddPair('page', APage);
-//    Result.AddPair('pagesize', APageSize);
-//    Result.AddPair('searchStr', ASearchStr);
-//    Result.AddPair('searchBy', ASearchBy);
-//    Result.AddPair('order', AOrder);
-//    Result.AddPair('orderDir', AOrderDir);
-//  end;
-//
-//var
-//  URL: String;
-//  JSONRequest: TJSONObject;
-//  JSONResult: TJSONObject;
-//  ResStr: String;
-
-//begin
-//  Result := TFDDataSet.Create(nil);
-//  URL := BaseUrlPath + constURLTaskGetList;
-//  JSONRequest := CreateJSONRequest;
-//  JSONResult := TJSONObject.Create;
-//  try
-//    Result.FieldDefs.Add('abid', ftGuid);
-//    Result.FieldDefs.Add('name', ftString, 256);
-//    Result.FieldDefs.Add('caption', ftString, 256);
-//    Result.FieldDefs.Add('created', ftDateTime);
-//    Result.FieldDefs.Add('updated', ftDateTime);
-//
-//    ResStr := MainModule.POST(BaseUrlPath + constURLTaskGetList, JSONRequest.ToJSON);
-//
-//    JSONResult.ParseJSONValue(ResStr);
-//
-//  finally
-//    JSONRequest.Free;
-//    JSONResult.Free;
-//  end;
-//end;
-
-/// возвращает список Абонентов
+/// возвращает список задач
 ///  в случае ошибки возвращается nil
 function TTasksBroker.List(
   out APageCount: Integer;

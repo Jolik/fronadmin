@@ -11,7 +11,18 @@ uses
 type
   ///  брокер для API Queues
   TQueuesBroker = class (TParentBroker)
-    /// возвращает список Абонентов
+  protected
+    ///  возвращает базовый путь до API
+    function BaseUrlPath: string; override;
+    ///  метод возвращает конкретный тип сущности с которым работает брокер
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ClassType: TEntityClass; override;
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; override;
+
+  public
+    /// возвращает список Задач
     ///  в случае ошибки возвращается nil
     function List(
       out APageCount: Integer;
@@ -31,18 +42,12 @@ type
     ///  выдает информацию о сущности с сервера по идентификатору
     ///  в случае ошибки возвращается nil
     function Info(AId: String): TEntity; overload; override;
-    ///  выдает информацию о сущности с сервера
-    ///  в случае ошибки возвращается nil
-    function Info(AEntity: TEntity): TEntity; overload; override;
     ///  обновить параметры сущности на сервере
     ///  в случае ошибки возвращается false
     function Update(AEntity: TEntity): Boolean; override;
     ///  удалить сущность на сервере по идентификатору
     ///  в случае ошибки возвращается false
     function Remove(AId: String): Boolean; overload; override;
-    ///  удалить сущность на сервере
-    ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; override;
 
   end;
 
@@ -50,63 +55,34 @@ implementation
 
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
+  FuncUnit,
+  APIConst;
 
 const
-  constURLQueueGetList = '/router/api/v2/Queues/list';
-  constURLQueueGetOneInfo = '/router/api/v2/Queues/%s';
-  constURLQueueInsert = '/router/api/v2/Queues/new';
-  constURLQueueUpdate = '/router/api/v2/Queues/%s/update';
-  constURLQueueDelete = '/router/api/v2/rou/%s/remove';
+  constURLQueuesList = '/queues/list';
+  constURLQueuesInfo = '/queues/%s';
+  constURLQueuesNew = '/queues/new';
+  constURLQueuesUpdate = '/queues/%s/update';
+  constURLQueuesRemove = '/queues/%s/remove';
 
 { TQueuesBroker }
 
-//function TQueuesBroker.QueueGetList(
-//  const APage, APageSize: Integer;
-//  out APageCount: Integer;
-//  const ASearchStr, ASearchBy, AOrder,
-//  AOrderDir: String): TDataset;
+function TQueuesBroker.BaseUrlPath: string;
+begin
+  Result := constURLRouterBasePath;
+end;
 
-//  function CreateJSONRequest: TJSONObject;
-//  begin
-//    Result := TJSONObject.Create;
-//    Result.AddPair('page', APage);
-//    Result.AddPair('pagesize', APageSize);
-//    Result.AddPair('searchStr', ASearchStr);
-//    Result.AddPair('searchBy', ASearchBy);
-//    Result.AddPair('order', AOrder);
-//    Result.AddPair('orderDir', AOrderDir);
-//  end;
-//
-//var
-//  URL: String;
-//  JSONRequest: TJSONObject;
-//  JSONResult: TJSONObject;
-//  ResStr: String;
+class function TQueuesBroker.ClassType: TEntityClass;
+begin
+  Result := TQueue;
+end;
 
-//begin
-//  Result := TFDDataSet.Create(nil);
-//  URL := constURLQueueGetList;
-//  JSONRequest := CreateJSONRequest;
-//  JSONResult := TJSONObject.Create;
-//  try
-//    Result.FieldDefs.Add('abid', ftGuid);
-//    Result.FieldDefs.Add('name', ftString, 256);
-//    Result.FieldDefs.Add('caption', ftString, 256);
-//    Result.FieldDefs.Add('created', ftDateTime);
-//    Result.FieldDefs.Add('updated', ftDateTime);
-//
-//    ResStr := MainModule.POST(constURLQueueGetList, JSONRequest.ToJSON);
-//
-//    JSONResult.ParseJSONValue(ResStr);
-//
-//  finally
-//    JSONRequest.Free;
-//    JSONResult.Free;
-//  end;
-//end;
+class function TQueuesBroker.ListClassType: TListClass;
+begin
+  Result := TQueueList;
+end;
 
-/// возвращает список Абонентов
+/// возвращает список задач
 ///  в случае ошибки возвращается nil
 function TQueuesBroker.List(
   out APageCount: Integer;
@@ -129,54 +105,45 @@ function TQueuesBroker.List(
   end;
 
 var
-  URL: String;
-  JSONRequest: TJSONObject;
-  JSONRequestStream: TStringStream;
   JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
-  InfoObject: TJSONObject;
   ResStr: String;
 
 begin
-  Result := TQueueList.Create();
 
-  URL := constURLQueueGetList;
-  JSONRequest := CreateJSONRequest;
-//  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
-  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
-  JSONResult := TJSONObject.Create;
+  Result := nil;
+
   try
-    ResStr := MainModule.POST(constURLQueueGetList, JSONRequestStream);
-    JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-    InfoObject := ResponseObject.GetValue('info') as TJSONObject;
-    APageCount := InfoObject.GetValue<Integer>('pagecount');
 
-//    JSONResult.GetValue
-  finally
-    JSONRequest.Free;
-    JSONRequestStream.Free;
-    if Assigned(JSONResult) then
+    JSONResult := TJSONObject.Create;
+    try
+      ///  делаем запрос - тело пустое
+      ResStr := MainModule.POST(BaseUrlPath + constURLQueuesList, TStringStream.Create('{}', TEncoding.UTF8));
+      ///  парсим результат
+      JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+      ///  объект - ответ
+      var ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      ///  список очередей
+      var QueueObject := ResponseObject.GetValue('queues') as TJSONObject;
+      ///  список очередей
+      var ItemsArray := QueueObject.GetValue('items') as TJSONArray;
+
+      Result := ListClassType.Create(ItemsArray);
+
+    finally
       JSONResult.Free;
-//    if Assigned(ResponseObject) then
-//      ResponseObject.Free;
-//    if Assigned(InfoObject) then
-//      InfoObject.Free;
-//    if Assigned(QueuesObjectArray) then
-//      QueuesObjectArray.Free;
+    end;
+
+  except on e:exception do
+    begin
+      Log('TQueuesBroker.List '+ e.Message, lrtError);
+      FreeAndNil(Result);
+    end;
   end;
 end;
 
 function TQueuesBroker.CreateNew: TEntity;
 begin
-  Result := TQueue.Create();
-end;
-
-///  выдает информацию о сущности с сервера
-///  в случае ошибки возвращается nil
-function TQueuesBroker.Info(AEntity: TEntity): TEntity;
-begin
-
+  Result := ClassType.Create();
 end;
 
 ///  выдает информацию о сущности с сервера по идентификатору
@@ -186,25 +153,43 @@ var
   URL: String;
   ResStr: String;
   JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
-  QueueObject: TJSONObject;
 
 begin
-  Result := TQueue.Create;
-  URL := Format(constURLQueueGetOneInfo, [AId]);
-  ResStr := MainModule.GET(URL);
-  JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+
+  Result := nil;
+
+  if AId = '' then
+    exit;
+
   try
-    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-    QueueObject := ResponseObject.GetValue('Queue') as TJSONObject;
-///    Result.DataToEntity(QueueObject);
-  finally
-    JSONResult.Free;
-//    if Assigned(ResponseObject) then
-//      ResponseObject.Free;
-//    if Assigned(QueueObject) then
-//      QueueObject.Free;
+    URL := Format(BaseUrlPath + constURLQueuesInfo, [AId]);
+
+    ResStr := MainModule.GET(URL);
+
+    JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+
+    try
+      ///  находим JSON класс response
+      var ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+
+      ///  находим JSON класс response
+      var QueueObject := ResponseObject.GetValue('queue') as TJSONObject;
+
+      ///  парсим JSON класс Queue
+      Result := ClassType.Create(QueueObject);
+
+    finally
+      JSONResult.Free;
+
+    end;
+
+  except on e:exception do
+    begin
+      Log('TQueuesBroker.Info '+ e.Message, lrtError);
+      FreeAndNil(Result);
+    end;
   end;
+
 end;
 
 ///  создает на сервере новый класс сущности
@@ -213,21 +198,31 @@ function TQueuesBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
   JSONQueue: TJSONObject;
-  JSONRequest: TJSONObject;
   JSONRequestStream: TStringStream;
   ResStr: String;
+
 begin
-  URL := constURLQueueInsert;
-///  AEntity.DataFromEntity(JSONQueue);
-  JSONRequest := FuncUnit.ExtractJSONProperties(JSONQueue, ['name', 'caption','Queues','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  строим запрос
+  URL := BaseUrlPath + constURLQueuesNew;
+  ///  получаем из сущности JSON
+  JSONQueue := AEntity.Serialize();
+
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONQueue, ['name', 'caption','Queues','attr']);
+
+  JSONRequestStream := TStringStream.Create(JSONQueue.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
+
+    ////  !!! обрабатываем ответ
+    ///  пока возвращаем всегда true
+    Result := true;
+
   finally
     JSONQueue.Free;
-    JSONRequest.Free;
     JSONRequestStream.Free;
+
   end;
+
 end;
 
 ///  обновить параметры сущности на сервере
@@ -235,30 +230,36 @@ end;
 function TQueuesBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
-  ResStr: String;
   JSONQueue: TJSONObject;
-  JSONRequest: TJSONObject;
   JSONRequestStream: TStringStream;
+  ResStr: String;
 
 begin
-(*!!!  Result := False;
-  URL := Format(constURLQueueUpdate, [AId]);
-  JSONQueue := AQueue.ToJSON;
-  JSONRequest := Common_Func.ExtractJSONProperties(JSONQueue, ['caption','Queues','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  если пытаются передать не наш класс то не делаем ничего!
+  if not (AEntity is TQueue) then
+    exit;
+
+  ///  строим запрос
+  URL := Format(BaseUrlPath + constURLQueuesUpdate, [(AEntity as TQueue).QId]);
+
+  ///  получаем из сущности JSON
+  JSONQueue := AEntity.Serialize();
+
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONQueue, ['name', 'caption','Queues','attr']);
+
+  JSONRequestStream := TStringStream.Create(JSONQueue.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
+
+    ////  !!! обрабатываем ответ
+    ///  пока возвращаем всегда true
+    Result := true;
+
   finally
     JSONQueue.Free;
-    JSONRequest.Free;
     JSONRequestStream.Free;
-  end; *)
-end;
 
-///  удалить сущность на сервере
-///  в случае ошибки возвращается false
-function TQueuesBroker.Remove(AEntity: TEntity): Boolean;
-begin
+  end;
 
 end;
 
@@ -268,9 +269,15 @@ function TQueuesBroker.Remove(AId: String): Boolean;
 var
   URL: String;
   ResStr: String;
+  JSONRequestStream: TStringStream;
+
 begin
-  URL := Format(constURLQueueDelete, [AId]);
-  ResStr := MainModule.GET(URL)
+  URL := Format(BaseUrlPath + constURLQueuesRemove, [AId]);
+
+  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
+
+  ResStr := MainModule.POST(URL, JSONRequestStream)
+
 end;
 
 end.

@@ -8,7 +8,7 @@ interface
 uses
   System.SysUtils, System.Generics.Collections, System.JSON, System.DateUtils,
   LoggingUnit, FuncUnit,
-  EntityUnit, EntityParsersUnit, LinkSocketSpecialUnit,
+  EntityUnit, EntityParsersUnit,
   ConnectionUnit, LinkUnit, QueueUnit, ScheduleUnit;
 
 type
@@ -281,7 +281,7 @@ begin
 
   var d := (dst as TLink);
 
-  d.TypeStr := GetValueStrDef(src, 'type', '');
+//  d.TypeStr := GetValueStrDef(src, 'type', '');
   d.Dir := GetValueStrDef(src, 'dir', '');
   d.Status := GetValueStrDef(src, 'status', '');
   d.Comsts := GetValueStrDef(src, 'comsts', '');
@@ -311,7 +311,7 @@ begin
   var d := (dst as TJSONObject);
   var s := (src as TLink);
 
-  d.AddPair('type', s.TypeStr);
+//  d.AddPair('type', s.TypeStr);
   d.AddPair('dir', s.Dir);
   d.AddPair('status', s.Status);
   d.AddPair('comsts', s.Comsts);

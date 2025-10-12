@@ -7,7 +7,7 @@ object MainForm: TMainForm
   OldCreateOrder = False
   MonitoredKeys.Keys = <>
   TextHeight = 15
-  object btnLinkListTest: TUniButton
+  object btnLinskList: TUniButton
     Left = 8
     Top = 24
     Width = 75
@@ -15,11 +15,11 @@ object MainForm: TMainForm
     Hint = ''
     Caption = 'Links.List'
     TabOrder = 0
-    OnClick = btnLinkListTestClick
+    OnClick = btnLinskListClick
   end
   object btnLinkInfo: TUniButton
     Left = 8
-    Top = 72
+    Top = 55
     Width = 75
     Height = 25
     Hint = ''
@@ -37,8 +37,8 @@ object MainForm: TMainForm
     TabOrder = 2
   end
   object btnTaskList: TUniButton
-    Left = 8
-    Top = 128
+    Left = 112
+    Top = 24
     Width = 75
     Height = 25
     Hint = ''
@@ -47,8 +47,8 @@ object MainForm: TMainForm
     OnClick = btnTaskListClick
   end
   object btnTaskInfo: TUniButton
-    Left = 8
-    Top = 216
+    Left = 112
+    Top = 55
     Width = 75
     Height = 25
     Hint = ''
@@ -57,8 +57,8 @@ object MainForm: TMainForm
     OnClick = btnTaskInfoClick
   end
   object btnStripTaskNew: TUniButton
-    Left = 8
-    Top = 176
+    Left = 112
+    Top = 88
     Width = 75
     Height = 25
     Hint = ''
@@ -67,8 +67,8 @@ object MainForm: TMainForm
     OnClick = btnStripTaskNewClick
   end
   object btnStripTaskRemove: TUniButton
-    Left = 8
-    Top = 296
+    Left = 112
+    Top = 150
     Width = 75
     Height = 25
     Hint = ''
@@ -77,8 +77,8 @@ object MainForm: TMainForm
     OnClick = btnStripTaskRemoveClick
   end
   object btnStripTaskUpdate: TUniButton
-    Left = 8
-    Top = 257
+    Left = 112
+    Top = 119
     Width = 75
     Height = 25
     Hint = ''
@@ -87,8 +87,8 @@ object MainForm: TMainForm
     OnClick = btnStripTaskUpdateClick
   end
   object btnSummaryTaskList: TUniButton
-    Left = 8
-    Top = 344
+    Left = 208
+    Top = 26
     Width = 75
     Height = 25
     Hint = ''
@@ -97,8 +97,8 @@ object MainForm: TMainForm
     OnClick = btnSummaryTaskListClick
   end
   object btnSummaryTaskInfo: TUniButton
-    Left = 8
-    Top = 384
+    Left = 208
+    Top = 57
     Width = 75
     Height = 25
     Hint = ''
@@ -107,8 +107,8 @@ object MainForm: TMainForm
     OnClick = btnSummaryTaskInfoClick
   end
   object btnSummaryTaskNew: TUniButton
-    Left = 8
-    Top = 424
+    Left = 208
+    Top = 88
     Width = 75
     Height = 25
     Hint = ''
@@ -117,8 +117,8 @@ object MainForm: TMainForm
     OnClick = btnSummaryTaskNewClick
   end
   object btnSummaryTaskUpdate: TUniButton
-    Left = 8
-    Top = 464
+    Left = 208
+    Top = 119
     Width = 75
     Height = 25
     Hint = ''
@@ -127,8 +127,8 @@ object MainForm: TMainForm
     OnClick = btnSummaryTaskUpdateClick
   end
   object btnSummaryTaskRemove: TUniButton
-    Left = 8
-    Top = 504
+    Left = 208
+    Top = 150
     Width = 75
     Height = 25
     Hint = ''
@@ -137,8 +137,8 @@ object MainForm: TMainForm
     OnClick = btnSummaryTaskRemoveClick
   end
   object btnSummaryTaskTypes: TUniButton
-    Left = 8
-    Top = 544
+    Left = 208
+    Top = 181
     Width = 75
     Height = 25
     Hint = ''
@@ -146,14 +146,24 @@ object MainForm: TMainForm
     TabOrder = 13
     OnClick = btnSummaryTaskTypesClick
   end
-  object btnMonTaskList: TUniButton
-    Left = 120
-    Top = 344
+  object btnQueuesList: TUniButton
+    Left = 304
+    Top = 26
     Width = 75
     Height = 25
     Hint = ''
-    Caption = 'Mon.List'
+    Caption = 'Que.List'
     TabOrder = 14
-    OnClick = btnMonTaskListClick
+    OnClick = btnQueuesListClick
+  end
+  object btnQueuesInfo: TUniButton
+    Left = 304
+    Top = 57
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = 'Que.List'
+    TabOrder = 15
+    OnClick = btnQueuesInfoClick
   end
 end

@@ -56,6 +56,7 @@ type
     // эти требуют существующего правильного экземпл€ра списка. на ошибки - эксешан
     ///  в APropertyNames передаетс€ список полей которые необходимо использовать
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
+    /// дообавл€ет новые записи из JSON массива
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
@@ -256,7 +257,7 @@ begin
       Result := j.ToJSON;
     except on e:exception do
       begin
-        Log('TFieldSet.JSON '+ e.Message, lrtError);
+        Log('TFieldSet.Serialize '+ e.Message, lrtError);
       end;
     end;
   finally
@@ -483,6 +484,8 @@ procedure TEntityList.ParseList(src: TJSONArray;
 begin
   Clear();
 
+  if not Assigned(src) then exit;
+
   ///  формируем список
   for var i in src do
   begin
@@ -500,6 +503,8 @@ end;
 procedure TEntityList.AddList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
+  if not Assigned(src) then exit;
+
   ///  добавл€ем список
   for var i in src do
   begin
@@ -607,6 +612,8 @@ procedure TFieldSetList.ParseList(src: TJSONArray;
 begin
   Clear();
 
+  if not Assigned(src) then exit;
+
   ///  формируем список
   for var i in src do
   begin
@@ -624,6 +631,8 @@ end;
 procedure TFieldSetList.AddList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
+  if not Assigned(src) then exit;
+
   ///  добавл€ем список
   for var i in src do
   begin

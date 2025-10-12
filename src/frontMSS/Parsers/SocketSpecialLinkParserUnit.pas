@@ -3,7 +3,7 @@ unit SocketSpecialLinkParserUnit;
 interface
 uses
   SysUtils, EntityUnit, System.Generics.Collections,
-  LinkSocketSpecialUnit, System.JSON, FuncUnit, DateUtils, CommParsersUnit,
+  System.JSON, FuncUnit, DateUtils, CommParsersUnit,
   LoggingUnit,
   ConnectionUnit, LinkUnit, QueueUnit, ScheduleUnit, uniGUIApplication;
 

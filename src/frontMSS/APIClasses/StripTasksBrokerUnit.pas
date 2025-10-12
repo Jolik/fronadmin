@@ -32,10 +32,8 @@ implementation
 
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
-
-const
-  constURLStripBasePath = '/strip/api/v2';
+  FuncUnit,
+  APIConst;
 
 { TStripTasksBroker }
 

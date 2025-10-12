@@ -4,18 +4,19 @@ interface
 
 uses
   Windows, Messages, System.SysUtils, Variants, Classes, Graphics,
-  Generics.Collections, System.JSON, CommParsersUnit,
+  Generics.Collections, System.JSON,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniButton, uniGUIBaseClasses,
   uniMemo,
   LinksBrokerUnit, EntityUnit, LinkUnit,
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
-  MonitoringTasksBrokerUnit, MonitoringTaskUnit;
+  MonitoringTasksBrokerUnit, MonitoringTaskUnit,
+  QueuesBrokerUnit, QueueUnit;
 
 type
   TMainForm = class(TUniForm)
-    btnLinkListTest: TUniButton;
+    btnLinskList: TUniButton;
     btnLinkInfo: TUniButton;
     ShowMemo: TUniMemo;
     btnTaskList: TUniButton;
@@ -29,8 +30,9 @@ type
     btnSummaryTaskUpdate: TUniButton;
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
-    btnMonTaskList: TUniButton;
-    procedure btnLinkListTestClick(Sender: TObject);
+    btnQueuesList: TUniButton;
+    btnQueuesInfo: TUniButton;
+    procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnTaskListClick(Sender: TObject);
     procedure btnTaskInfoClick(Sender: TObject);
@@ -44,6 +46,9 @@ type
     procedure btnSummaryTaskRemoveClick(Sender: TObject);
     procedure btnSummaryTaskTypesClick(Sender: TObject);
     procedure btnMonTaskListClick(Sender: TObject);
+    procedure btnMonTaskInfoClick(Sender: TObject);
+    procedure btnQueuesListClick(Sender: TObject);
+    procedure btnQueuesInfoClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -66,10 +71,12 @@ end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
 const
-  lid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
+  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
+
 begin
   try
     LinksBroker := TLinksBroker.Create();
@@ -82,6 +89,7 @@ begin
       ShowMemo.Lines.Add('nil');
       exit;
     end;
+
     var l := Link as TLink;
     ShowMemo.Lines.Add('Id '+ l.Id);
     ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
@@ -97,44 +105,39 @@ begin
 end;
 
 
-procedure TMainForm.btnLinkListTestClick(Sender: TObject);
+procedure TMainForm.btnLinskListClick(Sender: TObject);
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
-  LinksList : TObjectList<TEntity>;
+  LinksList : TEntityList;
   Pages : integer;
 
 begin
   try
     LinksBroker := TLinksBroker.Create();
-    LinksList := TObjectList<TEntity>.Create(true);
 
     LinksList := LinksBroker.List(Pages);
 
     // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+
     for Link in LinksList do
     begin
       var l := (Link as TLink);
       ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [Link.ClassName, Pointer(Link)]));
       ShowMemo.Lines.Add('Id '+ l.Id);
-      ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
       ShowMemo.Lines.Add('Name '+ l.Name);
-      ShowMemo.Lines.Add('Dir '+ l.Dir);
-      ShowMemo.Lines.Add('Status '+ l.Status);
-      ShowMemo.Lines.Add('Comsts '+ l.Comsts);
-      ShowMemo.Lines.Add('Compid '+ l.Compid);
-      ShowMemo.Lines.Add('Depid '+ l.Depid);
+      ShowMemo.Lines.Add('Compid '+ (l.Compid));
+      ShowMemo.Lines.Add('Depid '+ (l.Depid));
 
-      var parser: TLinkParser;
-      if ParsersMap.TryGetValue(l.TypeStr, parser) then
-      begin
-        ShowMemo.Lines.Add('as json:');
-        var json := parser.Serialize(l);
-        if json <> nil then
-          ShowMemo.Lines.Add(json.Format());
-      end;
+      ShowMemo.Lines.Add('as json:');
+
+      var json := l.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
       ShowMemo.Lines.Add('----------');
     end;
 
@@ -144,6 +147,49 @@ begin
 
     LinksBroker.Free;
   end;
+end;
+
+
+procedure TMainForm.btnMonTaskInfoClick(Sender: TObject);
+const
+  tid = '088a1eb4-85b4-11f0-ab53-02420a0001c1';
+
+var
+  MonitoringTask : TEntity;
+  MonitoringTasksBroker : TMonitoringTasksBroker;
+
+begin
+  MonitoringTask := nil;
+  MonitoringTasksBroker := nil;
+  try
+    MonitoringTasksBroker := TMonitoringTasksBroker.Create();
+
+    ShowMemo.Lines.Add('----------  Monitoring.Info  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [tid]));
+
+    MonitoringTask := MonitoringTasksBroker.Info(tid);
+    if MonitoringTask = nil then
+    begin
+      ShowMemo.Lines.Add('nil');
+      Exit;
+    end;
+
+    var st := MonitoringTask as TMonitoringTask;
+    ShowMemo.Lines.Add('Tid: ' + st.Tid);
+    ShowMemo.Lines.Add('Name: ' + st.Name);
+    ShowMemo.Lines.Add('Module: ' + st.Module);
+    if st.Enabled then
+      ShowMemo.Lines.Add('Enabled: true')
+    else
+      ShowMemo.Lines.Add('Enabled: false');
+    ShowMemo.Lines.Add('Settings:');
+    ShowMemo.Lines.Add(st.settings.JSON);
+
+  finally
+    MonitoringTask.Free;
+    MonitoringTasksBroker.Free;
+  end;
+
 end;
 
 procedure TMainForm.btnMonTaskListClick(Sender: TObject);
@@ -189,6 +235,90 @@ begin
     MonitoringTasksBroker.Free;
   end;
 
+end;
+
+procedure TMainForm.btnQueuesInfoClick(Sender: TObject);
+const
+  qid = 'fbeca202-f844-11ef-bf6c-02420a000125';
+
+var
+  Queue : TEntity;
+  QueuesBroker : TQueuesBroker;
+
+begin
+  Queue := nil;
+  QueuesBroker := nil;
+  try
+    QueuesBroker := TQueuesBroker.Create();
+
+    ShowMemo.Lines.Add('----------  queue.Info  ----------');
+    ShowMemo.Lines.Add(Format('   %s:', [qid]));
+
+    Queue := QueuesBroker.Info(qid);
+    if Queue = nil then
+    begin
+      ShowMemo.Lines.Add('nil');
+      Exit;
+    end;
+
+    var q := Queue as TQueue;
+    ShowMemo.Lines.Add('Qid: ' + q.qid);
+    ShowMemo.Lines.Add('Name: ' + q.Name);
+    ShowMemo.Lines.Add('Uid: ' + q.uid);
+    if q.Enabled then
+      ShowMemo.Lines.Add('Enabled: true')
+    else
+      ShowMemo.Lines.Add('Enabled: false');
+
+  finally
+    Queue.Free;
+    QueuesBroker.Free;
+  end;
+
+end;
+
+procedure TMainForm.btnQueuesListClick(Sender: TObject);
+var
+  Queue : TEntity;
+  QueuesBroker : TQueuesBroker;
+  QueueList : TEntityList;
+  Pages : integer;
+
+begin
+  try
+    QueuesBroker := TQueuesBroker.Create();
+
+    QueueList := QueuesBroker.List(Pages);
+
+    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+
+    for Queue in QueueList do
+    begin
+      var st := (Queue as TQueue);
+      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [Queue.ClassName, Pointer(Queue)]));
+      ShowMemo.Lines.Add('Id '+ st.Id);
+      ShowMemo.Lines.Add('Name '+ st.Name);
+      ShowMemo.Lines.Add('Compid '+ (st.Compid));
+      ShowMemo.Lines.Add('Depid '+ (st.Depid));
+
+      ShowMemo.Lines.Add('as json:');
+
+      var json := st.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
+      ShowMemo.Lines.Add('----------');
+    end;
+
+  finally
+    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
+    QueueList.Free;
+
+    QueuesBroker.Free;
+  end;
 end;
 
 procedure TMainForm.btnStripTaskNewClick(Sender: TObject);

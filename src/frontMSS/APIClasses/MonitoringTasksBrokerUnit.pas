@@ -32,10 +32,8 @@ implementation
 
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
-
-const
-  constURLStripBasePath = '/dsmonitoring/api/v1';
+  FuncUnit,
+  APIConst;
 
 { TMonitoringTasksBroker }
 

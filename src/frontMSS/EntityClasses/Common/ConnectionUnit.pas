@@ -32,7 +32,7 @@ type
 
 
   ///  класс одно соединие
-  TConnection = class(TEntity)
+  TConnection = class(TFieldSet)
   private
     FAddr: string;
     FTimeout: integer;
@@ -56,16 +56,15 @@ type
 
 
   ///  класс список соединений
-  TConnectionList = class(TEntityList)
+  TConnectionList = class(TFieldSetList)
   private
     function GetConnection(Index: integer): TConnection;
     procedure SetConnection(Index: integer; const Value: TConnection);
 
   public
-    function Assign(ASource: TEntityList): boolean; override;
-
     ///  список соединений (переопределяет доступ к Items[])
     property Connections[Index : integer] : TConnection read GetConnection write SetConnection;
+
   end;
 
 
@@ -106,36 +105,11 @@ procedure TConnection.Serialize(dst: TJSONObject; const APropertyNames: TArray<s
 begin
   with dst do
   begin
-    AddPair(AddrKey, Id);
+    AddPair(AddrKey, Addr);
   end;
 end;
 
 { TConnectionList }
-
-function TConnectionList.Assign(ASource: TEntityList): boolean;
-begin
-  Result := false;
-
-  if not (ASource is TConnectionList) then
-    exit;
-
-  for var i := 0 to ASource.Count-1 do
-  begin
-    var c := TConnection.Create;
-
-    ///  если не удалось скопировать данные то пишем в лог
-    if not c.Assign(Items[i]) then
-    begin
-      Log('TConnectionList.Assign: Error то assign', lrtError);
-      exit;
-    end;
-
-    Add(c);
-  end;
-
-  Result := true;
-
-end;
 
 function TConnectionList.GetConnection(Index: integer): TConnection;
 begin

@@ -239,3 +239,97 @@ BrokerTest.exe: 00000704: 19:32:42 [TUniGUISessionManager]:Cache erase job creat
 BrokerTest.exe: 00000704: 19:32:42 [TUniServerModule]:Starting HTTP Server on Port: 8077...
 BrokerTest.exe: 00000704: 19:32:42 [TUniServerModule]:HTTP Server Started on Port: 8077
 BrokerTest.exe: 000054E8: 19:32:49 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: h9rOtY2dV3111D72AA8 ) : Addr: $008815D2
+BrokerTest.exe: 00001A88: 21:29:00 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00001A88: 21:29:00 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00001A88: 21:29:01 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00001A88: 21:29:01 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00001A88: 21:29:01 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00001A88: 21:29:01 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00001A88: 21:29:01 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00006A64: 21:29:06 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: UZWszxwSyA111D72BE6 ) : Addr: $00DA15D2
+BrokerTest.exe: 00002B34: 21:29:24 [127.0.0.1]:EAccessViolation : Access violation at address 00EE8D73 in module 'BrokerTest.exe' (offset 558D73). Read of address 00000008 : Addr: $00EE8D73
+BrokerTest.exe: 00005BCC: 21:31:29 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00005BCC: 21:31:29 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00003C94: 21:31:33 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: JJ5BbqCWNy111D74B71 ) : Addr: $008315D2
+BrokerTest.exe: 000058A8: 21:31:44 [127.0.0.1]:EAccessViolation : Access violation at address 00978D77 in module 'BrokerTest.exe' (offset 558D77). Read of address 00000008 : Addr: $00978D77
+BrokerTest.exe: 0000373C: 21:32:19 []:>--------------------------------------------------------------<
+BrokerTest.exe: 0000373C: 21:32:19 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 0000373C: 21:32:19 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 0000373C: 21:32:19 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 0000373C: 21:32:19 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 0000373C: 21:32:19 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 0000373C: 21:32:19 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00005D90: 21:32:20 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: WMkAl7QLXO111D74C1C ) : Addr: $008315D2
+BrokerTest.exe: 000063FC: 21:35:39 []:>--------------------------------------------------------------<
+BrokerTest.exe: 000063FC: 21:35:39 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 000063FC: 21:35:39 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 000063FC: 21:35:39 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 000063FC: 21:35:39 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 000063FC: 21:35:39 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 000063FC: 21:35:40 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00006B9C: 21:35:42 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: 5S2ChWFVCf111D74C57 ) : Addr: $00CD15D2
+BrokerTest.exe: 00003D4C: 21:37:13 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00003D4C: 21:37:13 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00006D44: 21:37:15 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: MGfckniDun111D74D40 ) : Addr: $011715D2
+BrokerTest.exe: 00003A8C: 21:38:25 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00003A8C: 21:38:25 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00003A8C: 21:38:25 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00003A8C: 21:38:25 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00003A8C: 21:38:25 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00003A8C: 21:38:25 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00003A8C: 21:38:26 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00004E10: 21:38:32 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: RRyTQSqh8J111D74DA7 ) : Addr: $00BC15D2
+BrokerTest.exe: 00004A48: 21:41:21 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00004A48: 21:41:21 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00004A48: 21:41:21 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00004A48: 21:41:21 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00004A48: 21:41:21 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00004A48: 21:41:21 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00004A48: 21:41:22 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00006CA4: 21:41:25 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: TKM4IuENtJ111D74E00 ) : Addr: $005D15D2
+BrokerTest.exe: 000050E0: 22:10:37 []:>--------------------------------------------------------------<
+BrokerTest.exe: 000050E0: 22:10:37 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 000050E0: 22:10:37 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 000050E0: 22:10:37 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 000050E0: 22:10:37 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 000050E0: 22:10:38 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 000050E0: 22:10:38 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00004C84: 22:10:46 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: n81oU7aRVq111D74EC8 ) : Addr: $009B15D2
+BrokerTest.exe: 00002464: 22:11:01 [127.0.0.1]:EAccessViolation : Access violation at address 00AFB0E3 in module 'BrokerTest.exe' (offset 55B0E3). Read of address 00000008 : Addr: $00AFB0E3
+BrokerTest.exe: 000067BC: 22:16:54 []:>--------------------------------------------------------------<
+BrokerTest.exe: 000067BC: 22:16:54 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 000067BC: 22:16:54 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 000067BC: 22:16:54 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 000067BC: 22:16:54 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 000067BC: 22:16:54 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 000067BC: 22:16:54 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00006FA0: 22:16:59 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: wQyz5oRAwQ111D756BE ) : Addr: $008915D2
+BrokerTest.exe: 00001FC8: 22:17:17 [127.0.0.1]:EAccessViolation : Access violation at address 009DB143 in module 'BrokerTest.exe' (offset 55B143). Read of address 00000008 : Addr: $009DB143
+BrokerTest.exe: 00006574: 22:18:21 [127.0.0.1]:EAccessViolation : Access violation at address 009DB143 in module 'BrokerTest.exe' (offset 55B143). Read of address 00000008 : Addr: $009DB143
+BrokerTest.exe: 00004994: 22:19:09 [127.0.0.1]:EAccessViolation : Access violation at address 009DB143 in module 'BrokerTest.exe' (offset 55B143). Read of address 00000008 : Addr: $009DB143
+BrokerTest.exe: 000020E8: 22:20:14 []:>--------------------------------------------------------------<
+BrokerTest.exe: 000020E8: 22:20:14 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 000020E8: 22:20:14 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 000020E8: 22:20:14 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 000020E8: 22:20:14 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 000020E8: 22:20:14 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 000020E8: 22:20:14 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00005878: 22:20:18 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: 5LtBgyE88V111D75871 ) : Addr: $010D15D2
+BrokerTest.exe: 00002B54: 22:22:11 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00002B54: 22:22:11 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00002B54: 22:22:11 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00002B54: 22:22:11 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00002B54: 22:22:11 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+BrokerTest.exe: 00002B54: 22:22:11 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00002B54: 22:22:11 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 0000618C: 22:22:12 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: sFGuLoZNHQ111D75957 ) : Addr: $00EC15D2

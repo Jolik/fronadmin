@@ -32,10 +32,8 @@ implementation
 
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
-
-const
-  constURLStripBasePath = '/summary/api/v2';
+  FuncUnit,
+  APIConst;
 
 { TSummaryTasksBroker }
 

@@ -12,7 +12,18 @@ uses
 type
   ///  брокер для API Links
   TLinksBroker = class (TParentBroker)
-    /// возвращает список Абонентов
+  protected
+    ///  возвращает базовый путь до API
+    function BaseUrlPath: string; override;
+    ///  метод возвращает конкретный тип сущности с которым работает брокер
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ClassType: TEntityClass; override;
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; override;
+
+  public
+    /// возвращает список Задач
     ///  в случае ошибки возвращается nil
     function List(
       out APageCount: Integer;
@@ -32,85 +43,47 @@ type
     ///  выдает информацию о сущности с сервера по идентификатору
     ///  в случае ошибки возвращается nil
     function Info(AId: String): TEntity; overload; override;
-    ///  выдает информацию о сущности с сервера
-    ///  в случае ошибки возвращается nil
-    function Info(AEntity: TEntity): TEntity; overload; override;
     ///  обновить параметры сущности на сервере
-    ///  в случае ошибки возвращается falsr
+    ///  в случае ошибки возвращается false
     function Update(AEntity: TEntity): Boolean; override;
     ///  удалить сущность на сервере по идентификатору
     ///  в случае ошибки возвращается false
     function Remove(AId: String): Boolean; overload; override;
-    ///  удалить сущность на сервере
-    ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; override;
 
   end;
 
 implementation
 
-
-
-
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
+  FuncUnit,
+  APIConst;
 
 const
-  constURLLinkGetList = '/datacomm/api/v1/links/list';
-  constURLLinkGetOneInfo = '/datacomm/api/v1/links/%s/info';
-  constURLLinkInsert = '/datacomm/api/v1/links/new';
-  constURLLinkUpdate = '/datacomm/api/v1/links/%s/update';
-  constURLLinkDelete = '/datacomm/api/v1/links/%s/remove';
+  constURLLinkGetList = '/links/list';
+  constURLLinkGetOneInfo = '/links/%s/info';
+  constURLLinkNew = '/links/new';
+  constURLLinkUpdate = '/links/%s/update';
+  constURLLinkDelete = '/links/%s/remove';
 
 { TLinksBroker }
 
-//function TLinksBroker.LinkGetList(
-//  const APage, APageSize: Integer;
-//  out APageCount: Integer;
-//  const ASearchStr, ASearchBy, AOrder,
-//  AOrderDir: String): TDataset;
+function TLinksBroker.BaseUrlPath: string;
+begin
+  Result := constURLDatacommBasePath;
+end;
 
-//  function CreateJSONRequest: TJSONObject;
-//  begin
-//    Result := TJSONObject.Create;
-//    Result.AddPair('page', APage);
-//    Result.AddPair('pagesize', APageSize);
-//    Result.AddPair('searchStr', ASearchStr);
-//    Result.AddPair('searchBy', ASearchBy);
-//    Result.AddPair('order', AOrder);
-//    Result.AddPair('orderDir', AOrderDir);
-//  end;
-//
-//var
-//  URL: String;
-//  JSONRequest: TJSONObject;
-//  JSONResult: TJSONObject;
-//  ResStr: String;
+class function TLinksBroker.ClassType: TEntityClass;
+begin
+  Result := TLink;
+end;
 
-//begin
-//  Result := TFDDataSet.Create(nil);
-//  URL := constURLLinkGetList;
-//  JSONRequest := CreateJSONRequest;
-//  JSONResult := TJSONObject.Create;
-//  try
-//    Result.FieldDefs.Add('abid', ftGuid);
-//    Result.FieldDefs.Add('name', ftString, 256);
-//    Result.FieldDefs.Add('caption', ftString, 256);
-//    Result.FieldDefs.Add('created', ftDateTime);
-//    Result.FieldDefs.Add('updated', ftDateTime);
-//
-//    ResStr := MainModule.POST(constURLLinkGetList, JSONRequest.ToJSON);
-//
-//    JSONResult.ParseJSONValue(ResStr);
-//
-//  finally
-//    JSONRequest.Free;
-//    JSONResult.Free;
-//  end;
-//end;
+class function TLinksBroker.ListClassType: TListClass;
+begin
+  Result := TLinkList;
+end;
 
-/// возвращает список Абонентов
+/// возвращает список задач
 ///  в случае ошибки возвращается nil
 function TLinksBroker.List(
   out APageCount: Integer;
@@ -135,34 +108,28 @@ function TLinksBroker.List(
 var
   JSONResult: TJSONObject;
   ResponseObject: TJSONObject;
-  LinkList: TJSONArray;
+  LinkArray: TJSONArray;
   ResStr: String;
 
 begin
-  Result := TLinkList.Create();
+
+  Result := nil;
+
   try
 
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос
-      ResStr := MainModule.GET(constURLLinkGetList);
+      ResStr := MainModule.GET(BaseUrlPath + constURLLinkGetList);
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ
       ResponseObject := JSONResult.GetValue('response') as TJSONObject;
       ///  список линков
-      LinkList := ResponseObject.GetValue('links') as TJSONArray;
+      LinkArray := ResponseObject.GetValue('links') as TJSONArray;
 
-      ///  формируем результат
-      ///  количество страниц не поддерживается
-      APageCount := 0;
-      for var l in LinkList do
-      begin
-        var link := Info(GetValueStrDef(l, 'lid', ''));
-        if link = nil then
-          continue;
-        result.Add(link);
-      end;
+      Result := ListClassType.Create(LinkArray);
+
     finally
       JSONResult.Free;
     end;
@@ -177,14 +144,7 @@ end;
 
 function TLinksBroker.CreateNew: TEntity;
 begin
-  Result := TLink.Create();
-end;
-
-///  выдает информацию о сущности с сервера
-///  в случае ошибки возвращается nil
-function TLinksBroker.Info(AEntity: TEntity): TEntity;
-begin
-  result := Info(AEntity.Id);
+  Result := ClassType.Create();
 end;
 
 ///  выдает информацию о сущности с сервера по идентификатору
@@ -194,86 +154,110 @@ var
   URL: String;
   ResStr: String;
   JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
 
 begin
+
+  Result := nil;
+
   if AId = '' then
     exit;
-  Result := TLink.Create;
+
   try
-    URL := Format(constURLLinkGetOneInfo, [AId]);
+    URL := Format(BaseUrlPath + constURLLinkGetOneInfo, [AId]);
+
     ResStr := MainModule.GET(URL);
+
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+
     try
-      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-      var TypeStr := GetValueStrDef(ResponseObject, 'type', '');
-(*!!!      var Parser: TLinkParser;
-      if not ParsersMap.TryGetValue(TypeStr, Parser) then
-        raise Exception.CreateFmt('TLinksBroker.Info parser for "%s" not found', [TypeStr]);
-      Result := Parser.Parse(ResponseObject); *)
+      ///  находим JSON класс response
+      var ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+
+      ///  парсим JSON класс Link
+      Result := ClassType.Create(ResponseObject);
+
     finally
       JSONResult.Free;
+
     end;
+
   except on e:exception do
     begin
       Log('TLinksBroker.Info '+ e.Message, lrtError);
       FreeAndNil(Result);
     end;
   end;
+
 end;
 
 ///  создает на сервере новый класс сущности
-///  в случае ошибки возвращается nil
+///  в случае ошибки возвращается false
 function TLinksBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
   JSONLink: TJSONObject;
-  JSONRequest: TJSONObject;
   JSONRequestStream: TStringStream;
   ResStr: String;
+
 begin
-(*!!!  URL := constURLLinkInsert;
-  AEntity.DataFromEntity(JSONLink);
-  JSONRequest := FuncUnit.ExtractJSONProperties(JSONLink, ['name', 'caption','Links','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  строим запрос
+  URL := BaseUrlPath + constURLLinkNew;
+  ///  получаем из сущности JSON
+  JSONLink := AEntity.Serialize();
+
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONLink, ['name', 'caption','Links','attr']);
+
+  JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
+
+    ////  !!! обрабатываем ответ
+    ///  пока возвращаем всегда true
+    Result := true;
+
   finally
     JSONLink.Free;
-    JSONRequest.Free;
     JSONRequestStream.Free;
-  end; *)
+
+  end;
+
 end;
 
 ///  обновить параметры сущности на сервере
-///  в случае ошибки возвращается nil
+///  в случае ошибки возвращается false
 function TLinksBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
-  ResStr: String;
   JSONLink: TJSONObject;
-  JSONRequest: TJSONObject;
   JSONRequestStream: TStringStream;
+  ResStr: String;
 
 begin
-(*!!!  Result := False;
-  URL := Format(constURLLinkUpdate, [AId]);
-  JSONLink := ALink.ToJSON;
-  JSONRequest := Common_Func.ExtractJSONProperties(JSONLink, ['caption','Links','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  если пытаются передать не наш класс то не делаем ничего!
+  if not (AEntity is TLink) then
+    exit;
+
+  ///  строим запрос
+  URL := Format(BaseUrlPath + constURLLinkUpdate, [(AEntity as TLink).LId]);
+
+  ///  получаем из сущности JSON
+  JSONLink := AEntity.Serialize();
+
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONLink, ['name', 'caption','Links','attr']);
+
+  JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
+
+    ////  !!! обрабатываем ответ
+    ///  пока возвращаем всегда true
+    Result := true;
+
   finally
     JSONLink.Free;
-    JSONRequest.Free;
     JSONRequestStream.Free;
-  end; *)
-end;
 
-///  удалить сущность на сервере
-///  в случае ошибки возвращается false
-function TLinksBroker.Remove(AEntity: TEntity): Boolean;
-begin
+  end;
 
 end;
 
@@ -283,9 +267,15 @@ function TLinksBroker.Remove(AId: String): Boolean;
 var
   URL: String;
   ResStr: String;
+  JSONRequestStream: TStringStream;
+
 begin
-  URL := Format(constURLLinkDelete, [AId]);
-  ResStr := MainModule.GET(URL)
+  URL := Format(BaseUrlPath + constURLLinkDelete, [AId]);
+
+  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
+
+  ResStr := MainModule.POST(URL, JSONRequestStream)
+
 end;
 
 end.
