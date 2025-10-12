@@ -10,6 +10,10 @@ type
   ///  базовый брокер для вызовов API
   TParentBroker = class(TObject)
   private
+  protected
+    ///  возвращает базовый путь до API
+    function BaseUrlPath: string; virtual; abstract;
+
   public
     ///  возвращает список сущностей
     ///  в случае ошибки возвращается nil
@@ -33,7 +37,7 @@ type
     function Info(AId: String): TEntity; overload;virtual; abstract;
     ///  выдает информацию о сущности с сервера
     ///  в случае ошибки возвращается nil
-    function Info(AEntity: TEntity): TEntity; overload; virtual; abstract;
+    function Info(AEntity: TEntity): TEntity; overload; virtual;
     ///  обновить параметры сущности на сервере
     ///  в случае ошибки возвращается false
     function Update(AEntity: TEntity): Boolean; virtual; abstract;
@@ -42,10 +46,22 @@ type
     function Remove(AId: String): Boolean; overload; virtual; abstract;
     ///  удалить сущность на сервере
     ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; virtual; abstract;
+    function Remove(AEntity: TEntity): Boolean; overload; virtual;
 
   end;
 
 implementation
+
+{ TParentBroker }
+
+function TParentBroker.Info(AEntity: TEntity): TEntity;
+begin
+  result := Info(AEntity.Id);
+end;
+
+function TParentBroker.Remove(AEntity: TEntity): Boolean;
+begin
+  result := Remove(AEntity.Id);
+end;
 
 end.

@@ -146,5 +146,4 @@ object MainForm: TMainForm
     TabOrder = 13
     OnClick = btnSummaryTaskTypesClick
   end
-
 end

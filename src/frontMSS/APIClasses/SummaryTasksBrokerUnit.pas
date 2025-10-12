@@ -43,6 +43,8 @@ type
   /// </summary>
   TSummaryTaskBroker = class(TSummaryTasksBroker);
 
+  TSummaryTaskList = class (TEntityList);
+
 implementation
 
 const
@@ -74,15 +76,19 @@ begin
     if ResStr <> '' then
     begin
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      if Assigned(JSONResult) then
-      begin
-        ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-        if Assigned(ResponseObject) then
+      try
+        if Assigned(JSONResult) then
         begin
-          TypesValue := ResponseObject.GetValue('types');
-          if (TypesValue is TJSONArray) then
-            Result := (TypesValue as TJSONArray).Clone as TJSONArray;
+          ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+          if Assigned(ResponseObject) then
+          begin
+            TypesValue := ResponseObject.GetValue('types');
+            if (TypesValue is TJSONArray) then
+              Result := (TypesValue as TJSONArray).Clone as TJSONArray;
+          end;
         end;
+      finally
+        JSONResult.Free;
       end;
     end;
   except
@@ -91,8 +97,6 @@ begin
       Log('TSummaryTasksBroker.GetTypes ' + E.Message, lrtError);
       FreeAndNil(Result);
     end;
-  finally
-    JSONResult.Free;
   end;
 end;
 
@@ -122,15 +126,19 @@ begin
     if ResStr <> '' then
     begin
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      if Assigned(JSONResult) then
-      begin
-        ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-        if Assigned(ResponseObject) then
+      try
+        if Assigned(JSONResult) then
         begin
-          TaskObject := ResponseObject.GetValue('task') as TJSONObject;
-          if Assigned(TaskObject) then
-            Result := TSummaryTask.Create(TaskObject);
+          ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+          if Assigned(ResponseObject) then
+          begin
+            TaskObject := ResponseObject.GetValue('task') as TJSONObject;
+            if Assigned(TaskObject) then
+              Result := TSummaryTask.Create(TaskObject);
+          end;
         end;
+      finally
+        JSONResult.Free;
       end;
     end;
   except
@@ -139,8 +147,6 @@ begin
       Log('TSummaryTasksBroker.Info ' + E.Message, lrtError);
       FreeAndNil(Result);
     end;
-  finally
-    JSONResult.Free;
   end;
 end;
 
@@ -191,17 +197,23 @@ begin
     if ResStr <> '' then
     begin
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      if Assigned(JSONResult) then
-      begin
-        ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-        if Assigned(ResponseObject) then
+      try
+        if Assigned(JSONResult) then
         begin
-          TasksValue := ResponseObject.GetValue('tasks');
-          if (TasksValue is TJSONArray) then
-            for TaskItem in (TasksValue as TJSONArray) do
-              if TaskItem is TJSONObject then
-                Result.Add(TSummaryTask.Create(TaskItem as TJSONObject));
+          ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+          if Assigned(ResponseObject) then
+          begin
+            TasksValue := ResponseObject.GetValue('tasks');
+            if (TasksValue is TJSONArray) then
+              for TaskItem in (TasksValue as TJSONArray) do
+                if TaskItem is TJSONObject then
+                  Result.Add(TSummaryTask.Create(TaskItem as TJSONObject));
+          end;
         end;
+      finally
+        JSONResult.Free;
+        JSONRequestStream.Free;
+        JSONRequest.Free;
       end;
     end;
   except
@@ -210,10 +222,6 @@ begin
       Log('TSummaryTasksBroker.List ' + E.Message, lrtError);
       FreeAndNil(Result);
     end;
-  finally
-    JSONResult.Free;
-    JSONRequestStream.Free;
-    JSONRequest.Free;
   end;
 end;
 
@@ -242,11 +250,17 @@ begin
     if ResStr <> '' then
     begin
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      if Assigned(JSONResult) then
-      begin
-        ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-        if Assigned(ResponseObject) and ResponseObject.TryGetValue<string>('tid', TidValue) then
-          (AEntity as TSummaryTask).Tid := TidValue;
+      try
+        if Assigned(JSONResult) then
+        begin
+          ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+          if Assigned(ResponseObject) and ResponseObject.TryGetValue<string>('tid', TidValue) then
+            (AEntity as TSummaryTask).Tid := TidValue;
+        end;
+      finally
+        JSONResult.Free;
+        JSONTask.Free;
+        JSONRequestStream.Free;
       end;
     end;
   except
@@ -255,10 +269,6 @@ begin
       Log('TSummaryTasksBroker.New ' + E.Message, lrtError);
       Result := false;
     end;
-  finally
-    JSONResult.Free;
-    JSONTask.Free;
-    JSONRequestStream.Free;
   end;
 end;
 
@@ -282,13 +292,15 @@ begin
   URL := Format(constURLSummaryTaskDelete, [AId]);
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
-    Result := ResStr <> '';
-  except
-    on E: Exception do
-    begin
-      Log('TSummaryTasksBroker.Remove ' + E.Message, lrtError);
-      Result := false;
+    try
+      ResStr := MainModule.POST(URL, JSONRequestStream);
+      Result := ResStr <> '';
+    except
+      on E: Exception do
+      begin
+        Log('TSummaryTasksBroker.Remove ' + E.Message, lrtError);
+        Result := false;
+      end;
     end;
   finally
     JSONRequestStream.Free;
@@ -316,13 +328,15 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONTask.ToJSON, TEncoding.UTF8);
   try
-    MainModule.POST(URL, JSONRequestStream);
-    Result := true;
-  except
-    on E: Exception do
-    begin
-      Log('TSummaryTasksBroker.Update ' + E.Message, lrtError);
-      Result := false;
+    try
+      MainModule.POST(URL, JSONRequestStream);
+      Result := true;
+    except
+      on E: Exception do
+      begin
+        Log('TSummaryTasksBroker.Update ' + E.Message, lrtError);
+        Result := false;
+      end;
     end;
   finally
     JSONTask.Free;

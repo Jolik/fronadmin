@@ -30,31 +30,40 @@ type
   end;
 
 type
+  // Класс-ссылка на любой потомок TSettings
+  TSettingsClass = class of TSettings;
   ///  настройки это тоже набор каких то полей
   TSettings = class (TFieldSet)
   public
     // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
     ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
+  // Класс-ссылка на любой потомок TData
+  TDataClass = class of TData;
   ///  TData это тоже настройки и тоже набор каких то полей
   TData = class (TFieldSet)
   public
     // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
     ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
+  // Класс-ссылка на любой потомок TBody
+  TBodyClass = class of TBody;
   ///  TBody это тоже настройки и это тоже набор каких то полей
   TBody = class (TFieldSet)
   public
     // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
     ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
@@ -78,6 +87,16 @@ type
     FData: TData;
 
   protected
+    ///  метод возвращает конкретный тип объекта Settings
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function SettingsClassType: TSettingsClass; virtual;
+    ///  метод возвращает конкретный тип объекта Data
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function DataClassType: TDataClass; virtual;
+    ///  метод возвращает конкретный тип объекта Body
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function BodyClassType: TBodyClass; virtual;
+
     ///  потомок должен вернуть имя поля для идентификатора
     function GetIdKey: string; virtual;
 
@@ -95,7 +114,6 @@ type
     ///  в const APropertyNames передается список полей которые необходимо использовать
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload; override;
 
     ///  идентификатор сущности
     property Id: String read FId write FId;
@@ -155,7 +173,7 @@ begin
     Serialize(result);
   except on e:exception do
     begin
-      Log('TEntityParser.Serialize '+ e.Message, lrtError);
+      Log('TFieldSet.Serialize '+ e.Message, lrtError);
       FreeAndNil(result);
     end;
   end;
@@ -168,6 +186,24 @@ end;
 
 
 { TEntity }
+
+///  метод возвращает конкретный тип объекта Settings
+class function TEntity.SettingsClassType: TSettingsClass;
+begin
+  Result := TSettings;
+end;
+
+///  метод возвращает конкретный тип объекта Data
+class function TEntity.DataClassType: TDataClass;
+begin
+  Result := TData;
+end;
+
+///  метод возвращает конкретный тип объекта Body
+class function TEntity.BodyClassType: TBodyClass;
+begin
+  Result := TBody;
+end;
 
 function TEntity.Assign(ASource: TFieldSet) : boolean;
 var
@@ -193,9 +229,9 @@ begin
     Self.Caption := LSource.Caption;
     Self.Def := LSource.Def;
     Self.Enabled := LSource.Enabled;
-    Self.Settings.Assign(LSource.Settings);
-    Self.Data.Assign(LSource.Data);
-    Self.Body.Assign(LSource.Body);
+    if not Self.Settings.Assign(LSource.Settings) then exit;
+    if not Self.Data.Assign(LSource.Data) then exit;
+    if not Self.Body.Assign(LSource.Body) then exit;
     Self.Created := LSource.Created;
     Self.Updated := LSource.Updated;
 
@@ -222,7 +258,22 @@ begin
   Def := GetValueStrDef(src, 'def', '');
   Enabled := GetValueBool(src, 'enabled');
   Created := UnixToDateTime(GetValueIntDef(src, 'created', 0));
-  Updated := UnixToDateTime(GetValueIntDef(src, 'updated', 0))
+  Updated := UnixToDateTime(GetValueIntDef(src, 'updated', 0));
+
+  ///  получаем ссылку на JSON-объект settings
+  var s := src.FindValue('settings');
+  ///  парсим только если setting существует и это действительно объект
+  if Assigned(s) and (s is TJSONObject) then Settings.Parse(s as TJSONObject);
+
+  ///  получаем ссылку на JSON-объект settings
+  var d := src.FindValue('data');
+  ///  парсим только если data существует и это действительно объект
+  if Assigned(d) and (d is TJSONObject) then Data.Parse(d as TJSONObject);
+
+  ///  получаем ссылку на JSON-объект settings
+  var b := src.FindValue('body');
+  ///  парсим только если body существует и это действительно объект
+  if Assigned(b) and (b is TJSONObject) then Body.Parse(b as TJSONObject);
 end;
 
 procedure TEntity.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
@@ -245,30 +296,20 @@ begin
   end;
 end;
 
-function TEntity.Serialize(const APropertyNames: TArray<string>): TJSONObject;
-begin
-  result := TJSONObject.Create;
-  try
-    Serialize(result);
-  except on e:exception do
-    begin
-      Log('TEntityParser.Serialize '+ e.Message, lrtError);
-      FreeAndNil(result);
-    end;
-  end;
-end;
-
 constructor TEntity.Create;
 begin
   Settings := nil; Data := nil; Body := nil;
 
   inherited Create();
 
-  Settings := TSettings.Create();
+  ///  создаем класс в зависимости от того что выдадут потомки
+  Settings := SettingsClassType.Create();
 
-  Data := TData.Create();
+  ///  создаем класс в зависимости от того что выдадут потомки
+  Data := DataClassType.Create();
 
-  Body := TBody.Create();
+  ///  создаем класс в зависимости от того что выдадут потомки
+  Body := BodyClassType.Create();
 end;
 
 constructor TEntity.Create(src: TJSONObject);
@@ -324,6 +365,12 @@ begin
   ///  у базового класса пусто
 end;
 
+procedure TSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  ///  базовый класс не делеает ничего
+end;
+
 { TData }
 
 
@@ -333,12 +380,22 @@ begin
   ///  у базового класса пусто
 end;
 
+procedure TData.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  ///  базовый класс не делеает ничего
+end;
+
 { TBody }
 
 procedure TBody.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   ///  у базового класса пусто
+end;
+
+procedure TBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  ///  базовый класс не делеает ничего
 end;
 
 end.

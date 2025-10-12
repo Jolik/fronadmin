@@ -26,7 +26,9 @@ uses
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\SummaryTaskUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
-  EntityParsersUnit in '..\Parsers\EntityParsersUnit.pas';
+  EntityParsersUnit in '..\Parsers\EntityParsersUnit.pas',
+  TaskUnit in '..\EntityClasses\TaskUnit.pas',
+  TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas';
 
 {$R *.res}
 

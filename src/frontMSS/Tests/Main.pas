@@ -1,4 +1,4 @@
-unit Main;
+﻿unit Main;
 
 interface
 
@@ -146,13 +146,13 @@ end;
 procedure TMainForm.btnStripTaskNewClick(Sender: TObject);
 var
   st : TStripTask;
-  StripTasksBroker : TStripTaskBroker;
+  StripTasksBroker : TStripTasksBroker;
   res : boolean;
 
 begin
   try
 
-    StripTasksBroker := TStripTaskBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
 
     st := TStripTask.Create();
     with st do
@@ -202,13 +202,13 @@ const
 
 var
   StripTask : TEntity;
-  StripTasksBroker : TStripTaskBroker;
+  StripTasksBroker : TStripTasksBroker;
 
 begin
 
   try
 
-    StripTasksBroker := TStripTaskBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
     // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
     ShowMemo.Lines.Add('----------  Remove  ----------');
     ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [tid]));
@@ -230,7 +230,7 @@ end;
 procedure TMainForm.btnStripTaskUpdateClick(Sender: TObject);
 var
   st : TStripTask;
-  StripTasksBroker : TStripTaskBroker;
+  StripTasksBroker : TStripTasksBroker;
   res : boolean;
 
 const
@@ -239,7 +239,7 @@ const
 begin
   try
 
-    StripTasksBroker := TStripTaskBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
 
     st := TStripTask.Create();
     with st do
@@ -261,7 +261,26 @@ begin
       exit;
     end;
 
-    (*
+    ///  ïîëó÷àåì ðåçóëüòàò è çàïðàøèâàåì èíôîðìàöèþ ïî tid èç ðåçóëüòàòà
+
+    ShowMemo.Lines.Add('Tid: '+ st.Tid);
+    ShowMemo.Lines.Add('Name: '+ st.Name);
+    ShowMemo.Lines.Add('Caption: '+ st.Caption);
+    ShowMemo.Lines.Add('CompId: '+ st.CompId);
+    ShowMemo.Lines.Add('DepId: '+ st.DepId);
+    ShowMemo.Lines.Add('Def: '+ st.Def);
+//    ShowMemo.Lines.Add('Enabled: '+ BoolToString(st.Enabled));
+    ShowMemo.Lines.Add('Module: '+ st.Module);
+//    ShowMemo.Lines.Add('Created: '+ DateTimeToString(st.Created));
+ //   ShowMemo.Lines.Add('Updated: '+ DateTimeToString(st.Updated));
+
+  finally
+    StripTasksBroker.Free;
+  end;
+
+end;
+
+
 
 procedure TMainForm.btnSummaryTaskListClick(Sender: TObject);
 var
@@ -334,7 +353,8 @@ begin
     else
       ShowMemo.Lines.Add('Enabled: false');
     ShowMemo.Lines.Add('Settings:');
-    ShowMemo.Lines.Add(st.SettingsObject.ToJSON);
+///!!!    ShowMemo.Lines.Add(st.SettingsObject.ToJSON);
+///
   finally
     SummaryTask.Free;
     SummaryTasksBroker.Free;
@@ -383,7 +403,7 @@ begin
       ExcludeWeek.Add(0);
     Settings.AddPair('ExcludeWeek', ExcludeWeek);
 
-    SummaryTask.SettingsObject := Settings;
+///!!!    SummaryTask.SettingsObject := Settings;
 
     ShowMemo.Lines.Add('----------  Summary.New  ----------');
     ShowMemo.Lines.Add(Format('   %s:', [SummaryTask.Tid]));
@@ -424,7 +444,7 @@ begin
     Settings := TJSONObject.Create;
     Settings.AddPair('Header', 'TTAA01 CCCC');
     Settings.AddPair('Time', '08:00/+30 20:00/*');
-    SummaryTask.SettingsObject := Settings;
+///!!!    SummaryTask.SettingsObject := Settings;
 
     ShowMemo.Lines.Add('----------  Summary.Update  ----------');
     ShowMemo.Lines.Add(Format('   %s:', [SummaryTask.Tid]));
@@ -488,39 +508,19 @@ begin
   end;
 end;
 
-    ///  ïîëó÷àåì ðåçóëüòàò è çàïðàøèâàåì èíôîðìàöèþ ïî tid èç ðåçóëüòàòà
-
-    ShowMemo.Lines.Add('Tid: '+ st.Tid);
-    ShowMemo.Lines.Add('Name: '+ st.Name);
-    ShowMemo.Lines.Add('Caption: '+ st.Caption);
-    ShowMemo.Lines.Add('CompId: '+ st.CompId);
-    ShowMemo.Lines.Add('DepId: '+ st.DepId);
-    ShowMemo.Lines.Add('Def: '+ st.Def);
-//    ShowMemo.Lines.Add('Enabled: '+ BoolToString(st.Enabled));
-    ShowMemo.Lines.Add('Module: '+ st.Module);
-//    ShowMemo.Lines.Add('Created: '+ DateTimeToString(st.Created));
- //   ShowMemo.Lines.Add('Updated: '+ DateTimeToString(st.Updated));
- *)
-
-  finally
-    StripTasksBroker.Free;
-  end;
-
-end;
-
 procedure TMainForm.btnTaskInfoClick(Sender: TObject);
 const
   tid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
 
 var
   StripTask : TEntity;
-  StripTasksBroker : TStripTaskBroker;
+  StripTasksBroker : TStripTasksBroker;
 
 begin
 
   try
 
-    StripTasksBroker := TStripTaskBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
     // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
     ShowMemo.Lines.Add('----------  Info  ----------');
     ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [tid]));
@@ -554,13 +554,13 @@ end;
 procedure TMainForm.btnTaskListClick(Sender: TObject);
 var
   StripTask : TEntity;
-  StripTasksBroker : TStripTaskBroker;
+  StripTasksBroker : TStripTasksBroker;
   StripTaskList : TEntityList;
   Pages : integer;
 
 begin
   try
-    StripTasksBroker := TStripTaskBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
 
     StripTaskList := StripTasksBroker.List(Pages);
 
