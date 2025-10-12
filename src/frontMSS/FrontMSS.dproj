@@ -174,8 +174,6 @@
         <DCCReference Include="EntityClasses\ScheduleUnit.pas"/>
         <DCCReference Include="Logging\LoggingUnit.pas"/>
         <DCCReference Include="Logging\TextFileLoggerUnit.pas"/>
-        <DCCReference Include="EntityClasses\StripTaskUnit.pas"/>
-        <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="Forms\StripTasksFormUnit.pas">
             <Form>StripTasksForm</Form>
             <FormType>dfm</FormType>
@@ -186,6 +184,14 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="EntityClasses\TaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\MonitoringTaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\StripTaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\SummaryTaskUnit.pas"/>
+        <DCCReference Include="APIClasses\MonitoringTasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -25,7 +25,8 @@ type
     ///  в массиве const APropertyNames передаютс€ пол€, которые необходимо использовать
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
-    function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload; virtual;
+    function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
+    function JSON(const APropertyNames: TArray<string> = nil): string; overload;
 
   end;
 
@@ -70,6 +71,12 @@ type
 
 
 type
+  //  ласс-ссылка на любой список сущностей TEntity
+  TListClass = class of TEntityList;
+
+  //  ласс-ссылка на любой список сущностей TEntity
+  TEntityClass = class of TEntity;
+
   ///   ласс —ущность - потомок всех сущностей проекта
   TEntity = class (TFieldSet)
   private
@@ -97,13 +104,17 @@ type
     ///  потомки должны переопределить его, потому что он у всех разный
     class function BodyClassType: TBodyClass; virtual;
 
+    ///  метод возвращает конкретный тип объекта TEntityList
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; virtual;
+
     ///  потомок должен вернуть им€ пол€ дл€ идентификатора
     function GetIdKey: string; virtual;
 
   public
     constructor Create(); overload;
     ///  конструктор сразу из JSON
-    constructor Create(src: TJSONObject); overload;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
 
     destructor Destroy; override;
 
@@ -145,21 +156,47 @@ type
   TEntityList = class (TObjectList<TEntity>)
   private
   protected
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ItemClassType: TEntityClass; virtual;
+
   public
+    ///  конструктор сразу из JSON
+    constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload;
+
     ///  устанавливаем пол€ с другого объекта
     function Assign(ASource: TEntityList): boolean; virtual;
 
     // эти требуют существующего правильного экземпл€ра списка. на ошибки - эксешан
     ///  в APropertyNames передаетс€ список полей которые необходимо использовать
-    procedure ParseList(src: TJSONObject; const APropertyNames: TArray<string>); overload; virtual; abstract;
-    procedure SerializeList(dst: TJSONObject; const APropertyNames: TArray<string>); overload; virtual; abstract;
-    function SerializeList(const APropertyNames: TArray<string>): TJSONObject; overload; virtual; abstract;
+    procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
+    function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
 
   end;
 
 implementation
 
 { TFieldSet }
+
+function TFieldSet.JSON(const APropertyNames: TArray<string>): string;
+begin
+  Result := '{}';
+  var j := TJSONObject.Create;
+  try
+    try
+      Serialize(j);
+      Result := j.ToJSON;
+    except on e:exception do
+      begin
+        Log('TFieldSet.JSON '+ e.Message, lrtError);
+      end;
+    end;
+  finally
+    j.Free();
+  end;
+end;
 
 procedure TFieldSet.RaiseInvalidObjects(o1, o2: TObject);
 begin
@@ -248,6 +285,11 @@ begin
   Result := 'id';
 end;
 
+class function TEntity.ListClassType: TListClass;
+begin
+  Result := TEntityList;
+end;
+
 procedure TEntity.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Id := GetValueStrDef(src, GetIdKey, '');
@@ -312,11 +354,11 @@ begin
   Body := BodyClassType.Create();
 end;
 
-constructor TEntity.Create(src: TJSONObject);
+constructor TEntity.Create(src: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
   Create();
 
-  Parse(src);
+  Parse(src, APropertyNames);
 end;
 
 destructor TEntity.Destroy;
@@ -357,6 +399,76 @@ begin
   end;
 end;
 
+constructor TEntityList.Create(src: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  inherited Create();
+
+  ParseList(src, APropertyNames);
+end;
+
+class function TEntityList.ItemClassType: TEntityClass;
+begin
+  Result := TEntity;
+end;
+
+procedure TEntityList.ParseList(src: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  Clear();
+
+  ///  формируем список
+  for var i in src do
+  begin
+    if i is TJSONObject then
+    begin
+      ///  создаем объект сразу из JSON
+      var e:= ItemClassType.Create(i as TJSONObject);
+      ///  толкаем его в список
+      Add(e);
+    end;
+  end;
+
+end;
+
+procedure TEntityList.AddList(src: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  ///  добавл€ем список
+  for var i in src do
+  begin
+    if i is TJSONObject then
+    begin
+      ///  создаем объект сразу из JSON
+      var e:= ItemClassType.Create(i as TJSONObject);
+      ///  толкаем его в список
+      Add(e);
+    end;
+  end;
+end;
+
+procedure TEntityList.SerializeList(dst: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  ///  пока этот метод и не нужен нам - ничего не делаем
+end;
+
+function TEntityList.SerializeList(
+  const APropertyNames: TArray<string>): TJSONArray;
+begin
+  result := TJSONArray.Create;
+
+  try
+    SerializeList(result);
+
+  except on e:exception do
+    begin
+      Log('TEntityList.Serialize '+ e.Message, lrtError);
+      FreeAndNil(result);
+    end;
+  end;
+end;
+
 { TSettings }
 
 procedure TSettings.Serialize(dst: TJSONObject;
@@ -372,7 +484,6 @@ begin
 end;
 
 { TData }
-
 
 procedure TData.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);

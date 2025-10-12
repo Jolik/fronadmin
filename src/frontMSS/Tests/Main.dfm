@@ -28,7 +28,7 @@ object MainForm: TMainForm
     OnClick = btnLinkInfoClick
   end
   object ShowMemo: TUniMemo
-    Left = 89
+    Left = 729
     Top = 24
     Width = 561
     Height = 545
@@ -145,5 +145,15 @@ object MainForm: TMainForm
     Caption = 'Summ.Types'
     TabOrder = 13
     OnClick = btnSummaryTaskTypesClick
+  end
+  object btnMonTaskList: TUniButton
+    Left = 120
+    Top = 344
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = 'Mon.List'
+    TabOrder = 14
+    OnClick = btnMonTaskListClick
   end
 end

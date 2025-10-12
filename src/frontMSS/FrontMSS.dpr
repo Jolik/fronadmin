@@ -25,10 +25,16 @@ uses
   ScheduleUnit in 'EntityClasses\ScheduleUnit.pas',
   LoggingUnit in 'Logging\LoggingUnit.pas',
   TextFileLoggerUnit in 'Logging\TextFileLoggerUnit.pas',
-  StripTaskUnit in 'EntityClasses\StripTaskUnit.pas',
-  StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
   StripTasksFormUnit in 'Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
-  StripTaskEditFormUnit in 'Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm};
+  StripTaskEditFormUnit in 'Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
+  TaskUnit in 'EntityClasses\TaskUnit.pas',
+  MonitoringTaskUnit in 'EntityClasses\MonitoringTaskUnit.pas',
+  StripTaskUnit in 'EntityClasses\StripTaskUnit.pas',
+  SummaryTaskUnit in 'EntityClasses\SummaryTaskUnit.pas',
+  MonitoringTasksBrokerUnit in 'APIClasses\MonitoringTasksBrokerUnit.pas',
+  StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
+  SummaryTasksBrokerUnit in 'APIClasses\SummaryTasksBrokerUnit.pas',
+  TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas';
 
 {$R *.res}
 

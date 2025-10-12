@@ -10,7 +10,8 @@ uses
   uniMemo,
   LinksBrokerUnit, EntityUnit, LinkUnit,
   StripTasksBrokerUnit, StripTaskUnit,
-  SummaryTasksBrokerUnit, SummaryTaskUnit;
+  SummaryTasksBrokerUnit, SummaryTaskUnit,
+  MonitoringTasksBrokerUnit, MonitoringTaskUnit;
 
 type
   TMainForm = class(TUniForm)
@@ -28,6 +29,7 @@ type
     btnSummaryTaskUpdate: TUniButton;
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
+    btnMonTaskList: TUniButton;
     procedure btnLinkListTestClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnTaskListClick(Sender: TObject);
@@ -41,6 +43,7 @@ type
     procedure btnSummaryTaskUpdateClick(Sender: TObject);
     procedure btnSummaryTaskRemoveClick(Sender: TObject);
     procedure btnSummaryTaskTypesClick(Sender: TObject);
+    procedure btnMonTaskListClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -141,6 +144,51 @@ begin
 
     LinksBroker.Free;
   end;
+end;
+
+procedure TMainForm.btnMonTaskListClick(Sender: TObject);
+var
+  MonitoringTask : TEntity;
+  MonitoringTasksBroker : TMonitoringTasksBroker;
+  MonitoringTaskList : TEntityList;
+  Pages : integer;
+
+begin
+  try
+    MonitoringTasksBroker := TMonitoringTasksBroker.Create();
+
+    MonitoringTaskList := MonitoringTasksBroker.List(Pages);
+
+    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+
+    for MonitoringTask in MonitoringTaskList do
+    begin
+      var st := (MonitoringTask as TMonitoringTask);
+      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [MonitoringTask.ClassName, Pointer(MonitoringTask)]));
+      ShowMemo.Lines.Add('Id '+ st.Id);
+      ShowMemo.Lines.Add('Name '+ st.Name);
+      ShowMemo.Lines.Add('Compid '+ (st.Compid));
+      ShowMemo.Lines.Add('Depid '+ (st.Depid));
+
+      ShowMemo.Lines.Add('as json:');
+
+      var json := st.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
+      ShowMemo.Lines.Add('----------');
+    end;
+
+  finally
+    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
+    MonitoringTaskList.Free;
+
+    MonitoringTasksBroker.Free;
+  end;
+
 end;
 
 procedure TMainForm.btnStripTaskNewClick(Sender: TObject);
@@ -288,46 +336,52 @@ var
   SummaryTasksBroker : TSummaryTasksBroker;
   SummaryTaskList : TEntityList;
   Pages : integer;
+
 begin
-  SummaryTasksBroker := nil;
-  SummaryTaskList := nil;
   try
     SummaryTasksBroker := TSummaryTasksBroker.Create();
+
     SummaryTaskList := SummaryTasksBroker.List(Pages);
 
-    ShowMemo.Lines.Add('----------  Summary.List  ----------');
-    ShowMemo.Lines.Add(' :');
+    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
 
     for SummaryTask in SummaryTaskList do
     begin
-      var st := SummaryTask as TSummaryTask;
-      ShowMemo.Lines.Add(Format(': %s  |  : %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
-      ShowMemo.Lines.Add('Tid ' + st.Tid);
-      ShowMemo.Lines.Add('Name ' + st.Name);
-      ShowMemo.Lines.Add('Module ' + st.Module);
+      var st := (SummaryTask as TSummaryTask);
+      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
+      ShowMemo.Lines.Add('Id '+ st.Id);
+      ShowMemo.Lines.Add('Name '+ st.Name);
+      ShowMemo.Lines.Add('Compid '+ (st.Compid));
+      ShowMemo.Lines.Add('Depid '+ (st.Depid));
+
+      ShowMemo.Lines.Add('as json:');
 
       var json := st.Serialize();
-      try
-        if json <> nil then
-          ShowMemo.Lines.Add(json.Format());
-      finally
-        json.Free;
-      end;
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
 
       ShowMemo.Lines.Add('----------');
     end;
+
   finally
+    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
     SummaryTaskList.Free;
+
     SummaryTasksBroker.Free;
   end;
 end;
 
 procedure TMainForm.btnSummaryTaskInfoClick(Sender: TObject);
 const
-  tid = '48332ad5-55c1-4e64-b2ea-e99d0c78f900';
+  tid = '1b3ce3a5-f3da-4d12-a20e-95481406a994';
+
 var
   SummaryTask : TEntity;
   SummaryTasksBroker : TSummaryTasksBroker;
+
 begin
   SummaryTask := nil;
   SummaryTasksBroker := nil;
@@ -353,8 +407,8 @@ begin
     else
       ShowMemo.Lines.Add('Enabled: false');
     ShowMemo.Lines.Add('Settings:');
-///!!!    ShowMemo.Lines.Add(st.SettingsObject.ToJSON);
-///
+    ShowMemo.Lines.Add(st.settings.JSON);
+
   finally
     SummaryTask.Free;
     SummaryTasksBroker.Free;
@@ -490,7 +544,7 @@ var
   SummaryTasksBroker : TSummaryTasksBroker;
   TypesArray : TJSONArray;
 begin
-  TypesArray := nil;
+(*!!!  TypesArray := nil;
   SummaryTasksBroker := nil;
   try
     SummaryTasksBroker := TSummaryTasksBroker.Create();
@@ -505,7 +559,7 @@ begin
   finally
     TypesArray.Free;
     SummaryTasksBroker.Free;
-  end;
+  end; *)
 end;
 
 procedure TMainForm.btnTaskInfoClick(Sender: TObject);

@@ -11,6 +11,13 @@ type
   TParentBroker = class(TObject)
   private
   protected
+    ///  метод возвращает конкретный тип сущности с которым работает брокер
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ClassType: TEntityClass; virtual;
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; virtual;
+
     ///  возвращает базовый путь до API
     function BaseUrlPath: string; virtual; abstract;
 
@@ -53,6 +60,16 @@ type
 implementation
 
 { TParentBroker }
+
+class function TParentBroker.ClassType: TEntityClass;
+begin
+  Result := TEntity;
+end;
+
+class function TParentBroker.ListClassType: TListClass;
+begin
+  Result := TEntityList;
+end;
 
 function TParentBroker.Info(AEntity: TEntity): TEntity;
 begin

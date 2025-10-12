@@ -137,6 +137,8 @@
         <DCCReference Include="..\Parsers\EntityParsersUnit.pas"/>
         <DCCReference Include="..\EntityClasses\TaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\MonitoringTaskUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -38,6 +38,15 @@ type
   end;
 
 type
+  ///  список задач
+  TTaskList = class (TEntityList)
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ItemClassType: TEntityClass; override;
+
+  end;
+
+type
   ///  базовый класс настроек дл€ «адач
   TTaskSettings = class(TSettings)
   public
@@ -131,6 +140,13 @@ procedure TTaskSettings.Serialize(dst: TJSONObject;
 begin
   inherited;
   ///  в базовом классе не делаем ничего
+end;
+
+{ TTaskList }
+
+class function TTaskList.ItemClassType: TEntityClass;
+begin
+  Result := TTask;
 end;
 
 end.

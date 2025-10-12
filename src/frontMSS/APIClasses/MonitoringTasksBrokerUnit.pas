@@ -1,4 +1,4 @@
-unit SummaryTasksBrokerUnit;
+unit MonitoringTasksBrokerUnit;
 
 interface
 
@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   MainModule,
   LoggingUnit,
-  EntityUnit, SummaryTaskUnit, TasksBrokerUnit;
+  EntityUnit, MonitoringTaskUnit, TasksBrokerUnit;
 
 type
   ///  брокер для API tasks
-  TSummaryTasksBroker = class (TTasksBroker)
+  TMonitoringTasksBroker = class (TTasksBroker)
   private
   protected
     ///  метод возвращает конкретный тип сущности с которым работает брокер
@@ -35,24 +35,23 @@ uses
   FuncUnit;
 
 const
-  constURLStripBasePath = '/summary/api/v2';
+  constURLStripBasePath = '/dsmonitoring/api/v1';
 
-{ TSummaryTasksBroker }
+{ TMonitoringTasksBroker }
 
-function TSummaryTasksBroker.BaseUrlPath: string;
+function TMonitoringTasksBroker.BaseUrlPath: string;
 begin
   Result := constURLStripBasePath;
 end;
 
-class function TSummaryTasksBroker.ClassType: TEntityClass;
+class function TMonitoringTasksBroker.ClassType: TEntityClass;
 begin
-  Result := TSummaryTask;
+  Result := TMonitoringTask;
 end;
 
-class function TSummaryTasksBroker.ListClassType: TListClass;
+class function TMonitoringTasksBroker.ListClassType: TListClass;
 begin
-  Result := TSummaryTaskList;
+  Result := TMonitoringTaskList;
 end;
 
 end.
-

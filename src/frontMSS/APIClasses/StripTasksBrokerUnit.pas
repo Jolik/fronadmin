@@ -11,13 +11,18 @@ uses
 type
   ///  брокер для API tasks
   TStripTasksBroker = class (TTasksBroker)
+  private
+  protected
+    ///  метод возвращает конкретный тип сущности с которым работает брокер
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ClassType: TEntityClass; override;
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; override;
+
   protected
     ///  возвращает базовый путь до API
     function BaseUrlPath: string; override;
-
-    ///  создает нужный класс сущности
-    ///  в случае ошибки возвращается nil
-    function CreateNew(): TEntity; override;
 
   public
 
@@ -39,9 +44,14 @@ begin
   Result := constURLStripBasePath;
 end;
 
-function TStripTasksBroker.CreateNew: TEntity;
+class function TStripTasksBroker.ClassType: TEntityClass;
 begin
-  Result := TStripTask.Create();
+  Result := TStripTask;
+end;
+
+class function TStripTasksBroker.ListClassType: TListClass;
+begin
+  Result := TStripTaskList;
 end;
 
 end.

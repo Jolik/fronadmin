@@ -6,11 +6,21 @@ uses
   System.Generics.Collections, System.JSON,
   MainModule,
   LoggingUnit,
-  EntityUnit, StripTaskUnit, ParentBrokerUnit;
+  EntityUnit, TaskUnit, ParentBrokerUnit;
 
 type
   ///  брокер для API tasks
   TTasksBroker = class (TParentBroker)
+  private
+  protected
+    ///  метод возвращает конкретный тип сущности с которым работает брокер
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ClassType: TEntityClass; override;
+    ///  метод возвращает конкретный тип объекта элемента списка
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ListClassType: TListClass; override;
+
+  public
     /// возвращает список Задач
     ///  в случае ошибки возвращается nil
     function List(
@@ -58,7 +68,7 @@ const
 
 { TTasksBroker }
 
-//function TTasksBroker.StripTaskGetList(
+//function TTasksBroker.TaskGetList(
 //  const APage, APageSize: Integer;
 //  out APageCount: Integer;
 //  const ASearchStr, ASearchBy, AOrder,
@@ -128,11 +138,12 @@ function TTasksBroker.List(
 var
   JSONResult: TJSONObject;
   ResponseObject: TJSONObject;
-  StripTaskArray: TJSONArray;
+  TaskArray: TJSONArray;
   ResStr: String;
 
 begin
-  Result := TStripTaskList.Create();
+
+  Result := nil;
 
   try
 
@@ -145,23 +156,9 @@ begin
       ///  объект - ответ
       ResponseObject := JSONResult.GetValue('response') as TJSONObject;
       ///  список линков
-      StripTaskArray := ResponseObject.GetValue('tasks') as TJSONArray;
+      TaskArray := ResponseObject.GetValue('tasks') as TJSONArray;
 
-      ///  формируем результат
-      ///  количество страниц в запросе /strip/tasks/list не поддерживается
-      APageCount := 0;
-      for var st in StripTaskArray do
-      begin
-        ///  обызательно проверяем что st это TJSONObject
-        ///  так как конструктор ждет именно JSON объекта
-        if st is TJSONObject then
-        begin
-          ///  создаем объект сразу из JSON
-          var StripTask := TStripTask.Create(st as TJSONObject);
-          ///  толкаем его в список
-          result.Add(StripTask);
-        end;
-      end;
+      Result := ListClassType.Create(TaskArray);
 
     finally
       JSONResult.Free;
@@ -175,9 +172,19 @@ begin
   end;
 end;
 
+class function TTasksBroker.ClassType: TEntityClass;
+begin
+  Result := TTask;
+end;
+
+class function TTasksBroker.ListClassType: TListClass;
+begin
+  Result := TTaskList;
+end;
+
 function TTasksBroker.CreateNew: TEntity;
 begin
-  Result := TStripTask.Create();
+  Result := ClassType.Create();
 end;
 
 ///  выдает информацию о сущности с сервера по идентификатору
@@ -190,10 +197,11 @@ var
 
 begin
 
+  Result := nil;
+
   if AId = '' then
     exit;
 
-  Result := TStripTask.Create;
   try
     URL := Format(BaseUrlPath + constURLTaskGetOneInfo, [AId]);
 
@@ -209,7 +217,7 @@ begin
         "task": {
             "tid": "352890ab-bd9c-404c-9626-3a0c314ed7ac",
             "def": "",
-            "module": "StripXML",
+            "module": "XML",
             "compid": "85697f9f-b80d-4668-8ed2-2f70ed825eee",
             "depid": "4cf0dbf0-820b-4e05-a819-d6d1ec5652f0",
             "name": "XML",
@@ -224,7 +232,7 @@ begin
     }
 }
 
-см. тут http://dev.modext.ru:8929/dcc7/main/-/blob/main/API/strip/tasks.md?ref_type=heads#22-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%83%D0%BA%D0%B0%D0%B7%D0%B0%D0%BD%D0%BD%D0%BE%D0%BC%D1%83-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8E
+см. тут http://dev.modext.ru:8929/dcc7/main/-/blob/main/API//tasks.md?ref_type=heads#22-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%83%D0%BA%D0%B0%D0%B7%D0%B0%D0%BD%D0%BD%D0%BE%D0%BC%D1%83-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8E
 
 *)
 
@@ -236,7 +244,7 @@ begin
       var TaskObject := ResponseObject.GetValue('task') as TJSONObject;
 
       ///  парсим JSON класс task
-      Result := TStripTask.Create(TaskObject);
+      Result := ClassType.Create(TaskObject);
 
     finally
       JSONResult.Free;
@@ -257,7 +265,7 @@ end;
 function TTasksBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
-  JSONStripTask: TJSONObject;
+  JSONTask: TJSONObject;
   JSONRequestStream: TStringStream;
   ResStr: String;
 
@@ -265,11 +273,11 @@ begin
   ///  строим запрос
   URL := BaseUrlPath + constURLTaskNew;
   ///  получаем из сущности JSON
-  JSONStripTask := AEntity.Serialize();
+  JSONTask := AEntity.Serialize();
 
-//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONStripTask, ['name', 'caption','tasks','attr']);
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONTask, ['name', 'caption','tasks','attr']);
 
-  JSONRequestStream := TStringStream.Create(JSONStripTask.ToJSON, TEncoding.UTF8);
+  JSONRequestStream := TStringStream.Create(JSONTask.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
 
@@ -278,7 +286,7 @@ begin
     Result := true;
 
   finally
-    JSONStripTask.Free;
+    JSONTask.Free;
     JSONRequestStream.Free;
 
   end;
@@ -290,24 +298,24 @@ end;
 function TTasksBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
-  JSONStripTask: TJSONObject;
+  JSONTask: TJSONObject;
   JSONRequestStream: TStringStream;
   ResStr: String;
 
 begin
   ///  если пытаются передать не наш класс то не делаем ничего!
-  if not (AEntity is TStripTask) then
+  if not (AEntity is TTask) then
     exit;
 
   ///  строим запрос
-  URL := Format(BaseUrlPath + constURLTaskUpdate, [(AEntity as TStripTask).TId]);
+  URL := Format(BaseUrlPath + constURLTaskUpdate, [(AEntity as TTask).TId]);
 
   ///  получаем из сущности JSON
-  JSONStripTask := AEntity.Serialize();
+  JSONTask := AEntity.Serialize();
 
-//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONStripTask, ['name', 'caption','tasks','attr']);
+//  JSONRequest := FuncUnit.ExtractJSONProperties(JSONTask, ['name', 'caption','tasks','attr']);
 
-  JSONRequestStream := TStringStream.Create(JSONStripTask.ToJSON, TEncoding.UTF8);
+  JSONRequestStream := TStringStream.Create(JSONTask.ToJSON, TEncoding.UTF8);
   try
     ResStr := MainModule.POST(URL, JSONRequestStream);
 
@@ -316,7 +324,7 @@ begin
     Result := true;
 
   finally
-    JSONStripTask.Free;
+    JSONTask.Free;
     JSONRequestStream.Free;
 
   end;
