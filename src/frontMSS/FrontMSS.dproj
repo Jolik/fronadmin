@@ -134,14 +134,17 @@
             <Form>MainForm</Form>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="EntityClasses\ChannelUnit.pas"/>
-        <DCCReference Include="APIClasses\ChannelsBrokerUnit.pas"/>
         <DCCReference Include="Common\FuncUnit.pas"/>
         <DCCReference Include="Common\ConstsUnit.pas"/>
-        <DCCReference Include="APIClasses\ParentBrokerUnit.pas"/>
-        <DCCReference Include="EntityClasses\EntityUnit.pas"/>
-        <DCCReference Include="Forms\ParentFormUnit.pas">
-            <Form>ParentForm</Form>
+        <DCCReference Include="Logging\LoggingUnit.pas"/>
+        <DCCReference Include="Logging\TextFileLoggerUnit.pas"/>
+        <DCCReference Include="Forms\ChannelEditFormUnit.pas">
+            <Form>ChannelEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\ChannelsFormUnit.pas">
+            <Form>ChannelsForm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
@@ -155,27 +158,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms\ChannelsFormUnit.pas">
-            <Form>ChannelsForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="Forms\ChannelEditFormUnit.pas">
-            <Form>ChannelEditForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="APIClasses\LinksBrokerUnit.pas"/>
-        <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
-        <DCCReference Include="EntityClasses\LinkUnit.pas"/>
-        <DCCReference Include="EntityClasses\QueueUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\LinkSocketSpecialUnit.pas"/>
-        <DCCReference Include="EntityClasses\ConnectionUnit.pas"/>
-        <DCCReference Include="EntityClasses\ScheduleUnit.pas"/>
-        <DCCReference Include="Logging\LoggingUnit.pas"/>
-        <DCCReference Include="Logging\TextFileLoggerUnit.pas"/>
-        <DCCReference Include="Forms\StripTasksFormUnit.pas">
-            <Form>StripTasksForm</Form>
+        <DCCReference Include="Forms\ParentFormUnit.pas">
+            <Form>ParentForm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
@@ -184,14 +168,33 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="EntityClasses\TaskUnit.pas"/>
-        <DCCReference Include="EntityClasses\MonitoringTaskUnit.pas"/>
-        <DCCReference Include="EntityClasses\StripTaskUnit.pas"/>
-        <DCCReference Include="EntityClasses\SummaryTaskUnit.pas"/>
+        <DCCReference Include="Forms\StripTasksFormUnit.pas">
+            <Form>StripTasksForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="APIClasses\APIConst.pas"/>
+        <DCCReference Include="APIClasses\ChannelsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\LinksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\MonitoringTasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\ParentBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\ConnectionUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\EntityUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\ScheduleUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\TaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\strips\StripTaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\QueueUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
