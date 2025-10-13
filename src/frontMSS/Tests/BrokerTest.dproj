@@ -137,6 +137,9 @@
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
+        <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

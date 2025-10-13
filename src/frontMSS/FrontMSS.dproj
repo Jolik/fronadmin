@@ -195,6 +195,7 @@
         <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
+        <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

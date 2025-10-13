@@ -37,7 +37,8 @@ uses
   QueueUnit in 'EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in 'EntityClasses\router\RouterSourceUnit.pas',
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
-  LinkUnit in 'EntityClasses\links\LinkUnit.pas';
+  LinkUnit in 'EntityClasses\links\LinkUnit.pas',
+  MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas';
 
 {$R *.res}
 

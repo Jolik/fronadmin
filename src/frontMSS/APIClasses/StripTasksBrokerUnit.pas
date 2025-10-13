@@ -4,7 +4,6 @@ interface
 
 uses
   System.Generics.Collections, System.JSON,
-  MainModule,
   LoggingUnit,
   EntityUnit, StripTaskUnit, TasksBrokerUnit;
 
