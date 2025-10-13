@@ -16,7 +16,7 @@ type
     class function ClassType: TEntityClass; virtual;
     ///  метод возвращает конкретный тип объекта элемента списка
     ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TListClass; virtual;
+    class function ListClassType: TEntityListClass; virtual;
 
     ///  возвращает базовый путь до API
     function BaseUrlPath: string; virtual; abstract;
@@ -66,7 +66,7 @@ begin
   Result := TEntity;
 end;
 
-class function TParentBroker.ListClassType: TListClass;
+class function TParentBroker.ListClassType: TEntityListClass;
 begin
   Result := TEntityList;
 end;

@@ -18,7 +18,7 @@ type
     class function ClassType: TEntityClass; override;
     ///  метод возвращает конкретный тип объекта элемента списка
     ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TListClass; override;
+    class function ListClassType: TEntityListClass; override;
 
   protected
     ///  возвращает базовый путь до API
@@ -47,7 +47,7 @@ begin
   Result := TStripTask;
 end;
 
-class function TStripTasksBroker.ListClassType: TListClass;
+class function TStripTasksBroker.ListClassType: TEntityListClass;
 begin
   Result := TStripTaskList;
 end;

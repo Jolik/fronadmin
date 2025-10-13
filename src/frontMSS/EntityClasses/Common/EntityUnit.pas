@@ -105,7 +105,7 @@ type
 
 type
   // Класс-ссылка на любой список сущностей TEntity
-  TListClass = class of TEntityList;
+  TEntityListClass = class of TEntityList;
 
   // Класс-ссылка на любой список сущностей TEntity
   TEntityClass = class of TEntity;
@@ -139,7 +139,7 @@ type
 
     ///  метод возвращает конкретный тип объекта TEntityList
     ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TListClass; virtual;
+    class function ListClassType: TEntityListClass; virtual;
 
     ///  потомок должен вернуть имя поля для идентификатора
     function GetIdKey: string; virtual;
@@ -352,7 +352,7 @@ begin
   Result := 'id';
 end;
 
-class function TEntity.ListClassType: TListClass;
+class function TEntity.ListClassType: TEntityListClass;
 begin
   Result := TEntityList;
 end;

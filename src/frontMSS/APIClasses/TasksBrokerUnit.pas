@@ -18,7 +18,7 @@ type
     class function ClassType: TEntityClass; override;
     ///  метод возвращает конкретный тип объекта элемента списка
     ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TListClass; override;
+    class function ListClassType: TEntityListClass; override;
 
   public
     /// возвращает список Задач
@@ -129,7 +129,7 @@ begin
   Result := TTask;
 end;
 
-class function TTasksBroker.ListClassType: TListClass;
+class function TTasksBroker.ListClassType: TEntityListClass;
 begin
   Result := TTaskList;
 end;
