@@ -184,7 +184,7 @@ begin
       ResponseObject := JSONResult.GetValue('response') as TJSONObject;
 
       ///   JSON  response
-      CredsValue := ResponseObject.GetValue('credentials');
+      CredsValue := ResponseObject.GetValue('credential');
 
       if CredsValue is TJSONObject then
         Result := ClassType.Create(CredsValue as TJSONObject);

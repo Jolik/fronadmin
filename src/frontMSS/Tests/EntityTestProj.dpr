@@ -38,7 +38,6 @@ uses
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
 
 
-procedure ListSourceCreds();
 procedure ListRouterSource();
 var
   RouterSourceBroker: TRouterSourceBroker;
@@ -225,7 +224,7 @@ begin
   try
     try
       ListSourceCreds();
-      ListRouterSource();
+//      ListRouterSource();
 
       // оставить консоль незакрытой до нажатия Enter
       Writeln('press enter to finish...');
