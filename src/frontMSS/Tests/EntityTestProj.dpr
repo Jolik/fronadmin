@@ -58,6 +58,11 @@ begin
 
         if Assigned(RouterSourceList) then
         begin
+          var FirstSource: TRouterSource := nil;
+
+          if RouterSourceList.Count > 0 then
+            FirstSource := RouterSourceList.Items[0] as TRouterSource;
+
           for RouterSourceEntity in RouterSourceList do
           begin
             var Source := RouterSourceEntity as TRouterSource;
@@ -75,6 +80,35 @@ begin
               Json.Free;
             end;
 
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Router Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Who);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := RouterSourceBroker.Info(FirstSource.Who);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TRouterSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
             Writeln('----------');
           end;
         end
