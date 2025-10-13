@@ -4,8 +4,8 @@ interface
 
 uses
   System.Generics.Collections, System.JSON,
-  MainModule,
   LoggingUnit,
+  MainHttpModuleUnit,
   EntityUnit, ChannelUnit, ParentBrokerUnit;
 
 
@@ -97,7 +97,7 @@ const
 //    Result.FieldDefs.Add('created', ftDateTime);
 //    Result.FieldDefs.Add('updated', ftDateTime);
 //
-//    ResStr := MainModule.POST(constURLChannelGetList, JSONRequest.ToJSON);
+//    ResStr := MainHttpModule.POST(constURLChannelGetList, JSONRequest.ToJSON);
 //
 //    JSONResult.ParseJSONValue(ResStr);
 //
@@ -147,7 +147,7 @@ begin
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   JSONResult := TJSONObject.Create;
   try
-    ResStr := MainModule.POST(constURLChannelGetList, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(constURLChannelGetList, JSONRequestStream);
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
     ResponseObject := JSONResult.GetValue('response') as TJSONObject;
     InfoObject := ResponseObject.GetValue('info') as TJSONObject;
@@ -192,7 +192,7 @@ var
 begin
   Result := TChannel.Create;
   URL := Format(constURLChannelGetOneInfo, [AId]);
-  ResStr := MainModule.GET(URL);
+  ResStr := MainHttpModuleUnit.GET(URL);
   JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
   try
     ResponseObject := JSONResult.GetValue('response') as TJSONObject;
@@ -221,7 +221,7 @@ begin
   JSONRequest := FuncUnit.ExtractJSONProperties(JSONChannel, ['name', 'caption','channels','attr']);
   JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModule.POST(URL, JSONRequestStream);
   finally
     JSONChannel.Free;
     JSONRequest.Free;
@@ -244,7 +244,7 @@ begin
   JSONRequest := Common_Func.ExtractJSONProperties(JSONChannel, ['caption','channels','attr']);
   JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModule.POST(URL, JSONRequestStream);
   finally
     JSONRequest.Free;
     JSONRequestStream.Free;
@@ -266,7 +266,7 @@ var
   ResStr: String;
 begin
   URL := Format(constURLChannelDelete, [AId]);
-  ResStr := MainModule.GET(URL)
+  ResStr := MainHttpModuleUnit.GET(URL)
 end;
 
 end.

@@ -28,7 +28,10 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   APIConst in '..\APIClasses\APIConst.pas',
-  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas';
+  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
+  RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
+  RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
+  MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas';
 
 {$R *.res}
 

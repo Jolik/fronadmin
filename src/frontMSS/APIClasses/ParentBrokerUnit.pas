@@ -7,6 +7,9 @@ uses
   EntityUnit;
 
 type
+  // Класс-ссылка на брокер TParentBroker
+  TParentBrokerClass = class of TParentBroker;
+
   ///  базовый брокер для вызовов API
   TParentBroker = class(TObject)
   private

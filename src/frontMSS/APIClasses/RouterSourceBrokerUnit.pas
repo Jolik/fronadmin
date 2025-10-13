@@ -4,8 +4,8 @@ interface
 
 uses
   System.Generics.Collections, System.JSON,
-  MainModule,
   LoggingUnit,
+  MainHttpModuleUnit,
   EntityUnit, RouterSourceUnit, ParentBrokerUnit;
 
 type
@@ -108,7 +108,7 @@ begin
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
       ///    -
-      ResStr := MainModule.POST(BaseUrlPath + constURLSourcesList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLSourcesList, RequestStream);
       ///
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
@@ -167,7 +167,7 @@ begin
   try
     URL := Format(BaseUrlPath + constURLSourcesInfo, [AId]);
 
-    ResStr := MainModule.GET(URL);
+    ResStr := MainHttpModuleUnit.GET(URL);
 
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
 
@@ -213,7 +213,7 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONSource.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     ////  !!!
     ///     true
@@ -250,7 +250,7 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONSource.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     ////  !!!
     ///     true
@@ -278,7 +278,7 @@ begin
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     Result := true;
   finally

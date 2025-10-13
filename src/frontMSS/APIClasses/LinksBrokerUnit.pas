@@ -4,8 +4,8 @@ interface
 
 uses
   System.Generics.Collections, System.JSON,
-  MainModule,
   LoggingUnit,
+  MainHttpModuleUnit,
   EntityUnit, LinkUnit, ParentBrokerUnit;
 
 
@@ -120,7 +120,7 @@ begin
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос
-      ResStr := MainModule.GET(BaseUrlPath + constURLLinkGetList);
+      ResStr := MainHttpModuleUnit.GET(BaseUrlPath + constURLLinkGetList);
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ
@@ -165,7 +165,7 @@ begin
   try
     URL := Format(BaseUrlPath + constURLLinkGetOneInfo, [AId]);
 
-    ResStr := MainModule.GET(URL);
+    ResStr := MainHttpModuleUnit.GET(URL);
 
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
 
@@ -209,7 +209,7 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     ////  !!! обрабатываем ответ
     ///  пока возвращаем всегда true
@@ -247,7 +247,7 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     ////  !!! обрабатываем ответ
     ///  пока возвращаем всегда true
@@ -274,7 +274,7 @@ begin
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
 
-  ResStr := MainModule.POST(URL, JSONRequestStream)
+  ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream)
 
 end;
 
