@@ -14,6 +14,7 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
+  UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
@@ -27,12 +28,14 @@ uses
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   ScheduleUnit in '..\EntityClasses\Common\ScheduleUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
+  UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
@@ -40,6 +43,7 @@ uses
 
 procedure ListSourceCreds();
 procedure ListRouterSource();
+procedure ListUsers();
 var
   RouterSourceBroker: TRouterSourceBroker;
   RouterSourceList: TEntityList;
@@ -222,12 +226,103 @@ begin
   end;
 end;
 
+procedure ListUsers();
+var
+  UsersBroker: TUsersBroker;
+  UsersList: TEntityList;
+  UsersEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    UsersBroker := TUsersBroker.Create;
+    try
+      UsersList := nil;
+      try
+        UsersList := UsersBroker.List(PageCount);
+
+        Writeln('---------- Users List ----------');
+
+        if Assigned(UsersList) then
+        begin
+          var FirstUser: TUser := nil;
+
+          if UsersList.Count > 0 then
+            FirstUser := UsersList.Items[0] as TUser;
+
+          for UsersEntity in UsersList do
+          begin
+            var User := UsersEntity as TUser;
+            Writeln(Format('Class: %s | Address: %p', [User.ClassName, Pointer(User)]));
+            Writeln('Usid: ' + User.Usid);
+            Writeln('Name: ' + User.Name);
+            Writeln('Email: ' + User.Email);
+            Writeln('AllowComp count: ' + IntToStr(User.AllowComp.Count));
+            Writeln('Body Roles count: ' + IntToStr(User.UserBody.Roles.Count));
+            Writeln('Group Body Levels count: ' + IntToStr(User.GroupBody.Levels.Count));
+
+            Writeln('As JSON:');
+            var Json := User.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstUser) then
+          begin
+            Writeln('---------- User Info ----------');
+            Writeln('Requesting info for: ' + FirstUser.Usid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := UsersBroker.Info(FirstUser.Usid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoUser := InfoEntity as TUser;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoUser.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Users list is empty.');
+
+      finally
+        UsersList.Free;
+      end;
+    finally
+      UsersBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 
 begin
   try
     try
 //      ListSourceCreds();
 //      ListRouterSource();
+      ListUsers();
 
       // оставить консоль незакрытой до нажатия Enter
       Writeln('press enter to finish...');

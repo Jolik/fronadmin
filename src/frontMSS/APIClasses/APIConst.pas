@@ -20,6 +20,9 @@ const
 const
   constURLDataserverBasePath = '/dataserver/api/v2';
 
+const
+  constURLAclBasePath = '/api/v1';
+
 implementation
 
 end.
