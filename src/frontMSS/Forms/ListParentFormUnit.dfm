@@ -10,7 +10,6 @@ inherited ListParentForm: TListParentForm
     TabOrder = 0
     ParentColor = False
     Color = clBtnFace
-    ExplicitWidth = 1152
     object btnNew: TUniToolButton
       AlignWithMargins = True
       Left = 3
@@ -20,7 +19,6 @@ inherited ListParentForm: TListParentForm
       TabOrder = 1
       IconCls = 'add'
       OnClick = btnNewClick
-      ExplicitTop = 1
     end
     object btnUpdate: TUniToolButton
       AlignWithMargins = True
@@ -31,7 +29,6 @@ inherited ListParentForm: TListParentForm
       TabOrder = 3
       IconCls = 'settings'
       OnClick = btnUpdateClick
-      ExplicitTop = 1
     end
     object btnRemove: TUniToolButton
       AlignWithMargins = True
@@ -51,6 +48,7 @@ inherited ListParentForm: TListParentForm
       TabOrder = 4
       IconCls = 'refresh'
       OnClick = btnRefreshClick
+      ExplicitTop = 1
     end
   end
   object dbgEntity: TUniDBGrid
@@ -95,8 +93,6 @@ inherited ListParentForm: TListParentForm
     Align = alRight
     ParentColor = False
     Color = clBtnFace
-    ExplicitLeft = 768
-    ExplicitHeight = 513
   end
   object pcEntityInfo: TUniPageControl
     Left = 782
@@ -106,8 +102,6 @@ inherited ListParentForm: TListParentForm
     Hint = ''
     Align = alRight
     TabOrder = 3
-    ExplicitLeft = 774
-    ExplicitHeight = 513
   end
   object DatasourceEntity: TDataSource
     DataSet = FDMemTableEntity
