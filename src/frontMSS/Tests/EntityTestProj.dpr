@@ -38,6 +38,7 @@ uses
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
 
 
+procedure ListSourceCreds();
 procedure ListRouterSource();
 var
   RouterSourceBroker: TRouterSourceBroker;
@@ -162,6 +163,7 @@ begin
             Writeln('Lid: ' + Creds.Lid);
             Writeln('Login: ' + Creds.Login);
             Writeln('Pass: ' + Creds.Pass);
+            Writeln('Data.Def: ' + Creds.SourceData.Def);
 
             Writeln('As JSON:');
             var Json := Creds.Serialize();
@@ -188,6 +190,7 @@ begin
               begin
                 var InfoCreds := InfoEntity as TSourceCreds;
                 Writeln('Info result as JSON:');
+                Writeln('Info Data.Def: ' + InfoCreds.SourceData.Def);
                 var InfoJson := InfoCreds.Serialize();
                 try
                   if InfoJson <> nil then
