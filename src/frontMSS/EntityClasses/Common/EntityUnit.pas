@@ -125,6 +125,8 @@ type
     FSettings: TSettings;
     FBody: TBody;
     FData: TData;
+    FArchived: TDateTime;
+    FCommited: TDateTime;
 
   protected
     ///  метод возвращает конкретный тип объекта Settings
@@ -183,6 +185,10 @@ type
     property Created: TDateTime read FCreated write FCreated;
     ///  время обновления сущности
     property Updated: TDateTime read FUpdated write FUpdated;
+    ///  время коммита сущности
+    property Commited: TDateTime read FCommited write FCommited;
+    ///  время архивации сущности
+    property Archived: TDateTime read FArchived write FArchived;
   end;
 
   ///  класс - список сущностей
@@ -224,6 +230,8 @@ const
   EnabledKey = 'enabled';
   CreatedKey = 'created';
   UpdatedKey = 'updated';
+  CommitedKey = 'commited';
+  ArchivedKey = 'archived';
 
 { TFieldSet }
 
@@ -368,6 +376,8 @@ begin
   Enabled := GetValueBool(src, EnabledKey);
   Created := UnixToDateTime(GetValueIntDef(src, CreatedKey, 0));
   Updated := UnixToDateTime(GetValueIntDef(src, UpdatedKey, 0));
+  Commited := UnixToDateTime(GetValueIntDef(src, CommitedKey, 0));
+  Archived := UnixToDateTime(GetValueIntDef(src, ArchivedKey, 0));
 
   ///  получаем ссылку на JSON-объект settings
   var s := src.FindValue(SettingsKey);
@@ -398,6 +408,8 @@ begin
     AddPair(EnabledKey, Enabled);
     AddPair(CreatedKey, DateTimeToUnix(Created));
     AddPair(UpdatedKey, DateTimeToUnix(Updated));
+    AddPair(CommitedKey, DateTimeToUnix(Commited));
+    AddPair(ArchivedKey, DateTimeToUnix(Archived));
     ///  добавляем настройки, тело и данные
     dst.AddPair(SettingsKey, Settings.Serialize());
     dst.AddPair(DataKey, Data.Serialize());

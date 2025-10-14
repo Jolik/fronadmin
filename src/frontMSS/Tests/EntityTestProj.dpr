@@ -226,7 +226,7 @@ end;
 begin
   try
     try
-      ListSourceCreds();
+//      ListSourceCreds();
 //      ListRouterSource();
 
       // оставить консоль незакрытой до нажатия Enter
@@ -240,4 +240,6 @@ begin
 
   finally
   end;
+end;
+
 end.
