@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, System.JSON, System.Generics.Collections,
   LoggingUnit,
-  EntityUnit,
+  EntityUnit,  
   LinkSettingsUnit;
 
 type
@@ -71,10 +71,11 @@ type
     FAutostart: boolean;
     FDataSettings: TDataSettings;
     FLinkType: TLinkType;
+    FSnapshot: string;
     procedure SetLinkType(const Value: TLinkType);
 
   public
-    constructor Create();
+    constructor Create(); override;
     destructor Destroy(); override;
 
     // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
@@ -87,6 +88,8 @@ type
 
     // для поля autostart
     property Autostart: boolean read FAutostart write FAutostart;
+    // Snapshot рабочие данные линка хранящиеся в ядре. для фронта readonly
+    property Snapshot: string read FSnapshot write FSnapshot;    
     ///  для поля Settings
     property DataSettings: TDataSettings read FDataSettings write FDataSettings;
     // TypeStr тип линка например SOCKET_SPECIAL
@@ -98,19 +101,20 @@ type
 implementation
 
 uses
-  System.SysUtils,
+  System.SysUtils, 
   FuncUnit;
 
 const
-  LidKey = 'Lid';
+  LidKey = 'lid';
   TypeStrKey = 'type';
   DirKey = 'dir';
-  QidKey = 'Qid';
+  QidKey = 'qid';
   StatusKey = 'status';
   ComstsKey = 'comsts';
   LastActivityTimeKey= 'last_activity_time';
 
   AutostartKey = 'autostart';
+  SnapshotKey = 'snapshot';
   SettingsKey = 'settings';
 
 const
@@ -123,25 +127,19 @@ const
 function TLink.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
-
   if not inherited Assign(ASource) then
     exit;
-
   if not (ASource is TLink) then
     exit;
-
   var src := ASource as TLink;
-
   Dir := src.Dir;
   Compid := src.Compid;
   Depid := src.Depid;
   Status := src.Status;
   Comsts := src.Comsts;
   LastActivityTime := src.LastActivityTime;
-
   ///  присваиваем Data
   Data.Assign(src.Data);
-
   result := true;
 end;
 
@@ -200,15 +198,13 @@ begin
   ///  читаем поле Comsts
   Comsts := GetValueStrDef(src, ComstsKey, '');
   ///  читаем поле LastActivityTime
-///  LastActivityTime := GetValueStrDef(src, LastActivityTimeKey, '');
-///
+  LastActivityTime := GetValueIntDef(src, LastActivityTimeKey, 0);
+
 end;
 
 procedure TLink.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
-
 begin
   inherited Serialize(dst);
-
   ///  запсиываем поле Dir
   dst.AddPair(TypeStrKey, (Data as TLinkData).LinkTypeStr);
   ///  запсиываем поле Dir
@@ -221,7 +217,6 @@ begin
   dst.AddPair(ComstsKey, Comsts);
   ///  запсиываем поле Dir
   dst.AddPair(LastActivityTimeKey, LastActivityTime);
-
 end;
 
 { TLinkData }
@@ -229,21 +224,13 @@ end;
 constructor TLinkData.Create;
 begin
   inherited Create();
-
   ///  создаем секцию Settings
   FDataSettings := TDataSettings.Create();
-
 end;
 
 destructor TLinkData.Destroy;
 begin
-
-  try
-    DataSettings.Free;
-  except
-    DataSettings := nil;
-  end;
-
+  FreeAndNil(DataSettings);
   inherited;
 end;
 
@@ -251,8 +238,8 @@ function TLinkData.LinkTypeStr: string;
 begin
   case LinkType of
     ltUnknown: Result := 'UNKNOWN';
-    ltOpenMCEP: Result := 'OPENMCEP';
-    ltSocketSpecial: Result := 'SOCKET_SPECIAL';
+    ltOpenMCEP: Result := OPENMCEP_type;
+    ltSocketSpecial: Result := SOCKETSPECIAL_type;
   end;
 end;
 
@@ -260,64 +247,40 @@ procedure TLinkData.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-
-  ///  читаем поле LatePeriod
   Autostart := GetValueBool(src, AutostartKey);
-
+  Snapshot := GetValueStrDef(src, SnapshotKey, '');
+  var s := src.GetValue(SettingsKey);
+  if not (s is TJSONObject) then
+    exit;
   ///  добавляем поля Settings
-  var dso := src.GetValue(SettingsKey) as TJSONObject;
-
+  var dso := s as TJSONObject;
   ///  передаем в DataSettings
-  DataSettings.Parse(dso);
-
+  if DataSettings <> nil then
+    DataSettings.Parse(dso);
 end;
 
 procedure TLinkData.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-
-  with dst do
-  begin
-    AddPair(AutostartKey, Autostart);
-
-    ///  добавляем настройки settings в объект data
+  dst.AddPair(AutostartKey, Autostart);
+  ///  добавляем настройки settings в объект data
+  if DataSettings <> nil then
     dst.AddPair(SettingsKey, DataSettings.Serialize());
-  end;
 end;
+
 
 procedure TLinkData.SetLinkType(const Value: TLinkType);
 begin
-  //  по умолчанию неизвестный тип
-  FLinkType :=  ltUnknown;
-
+  if Assigned(FDataSettings) then
+    FreeAndNil(FDataSettings);
+  FLinkType := Value;
   ///  в зависимости от типа устанавливаем различные настройки
-  if Assigned(DataSettings) then
-  try
-    FreeAndNil(DataSettings);
-
-  except on e:exception do
-    begin
-      Log('TLinkData.SetLinkType '+ e.Message, lrtError);
-    end;
+  case Value of
+    ltOpenMCEP: FDataSettings := TOpenMCEPDataSettings.Create();
+    ltSocketSpecial: FDataSettings := TSocketSpecialDataSettings.Create();
+    else FLinkType :=  ltUnknown;
   end;
-
-  try
-    case LinkType of
-      ltUnknown: FDataSettings := nil;  ///  нет класса для неизвсетногь типа
-      ltOpenMCEP: FDataSettings := TOpenMCEPDataSettings.Create();
-      ltSocketSpecial: FDataSettings := TSocketSpecialDataSettings.Create();
-    end;
-
-  except on e:exception do
-    begin
-      Log('TLinkData.SetLinkType '+ e.Message, lrtError);
-      exit;
-    end;
-  end;
-
-  LinkType := Value;
-
 end;
 
 { TLinkList }

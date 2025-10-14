@@ -82,7 +82,7 @@ var
   /// <summary>
   /// singleton службы ведения протокола
   /// </summary>
-  AppLogger: ILogger;
+  AppLogger: ILogger = nil;
 
 implementation
 

@@ -29,9 +29,13 @@ uses
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   APIConst in '..\APIClasses\APIConst.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
+  UniLoggerUnit in '..\Logging\UniLoggerUnit.pas',
+  QueueSettingsUnit in '..\EntityClasses\Common\QueueSettingsUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas';
+
+
 
 {$R *.res}
 

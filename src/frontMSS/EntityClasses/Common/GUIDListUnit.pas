@@ -3,8 +3,7 @@ unit GUIDListUnit;
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, System.JSON,
-  LoggingUnit;
+  System.SysUtils, System.Generics.Collections, System.JSON;
 
 type
   ///  GUID
@@ -112,15 +111,8 @@ begin
     else
       GuidString := JSONValue.Value;
 
-    try
-      GuidValue := StringToGUID(GuidString);
+    if TryStringToGUID(GuidString, GuidValue) then
       FItems.Add(GuidValue);
-    except on e:exception do
-      begin
-        Log('TGUIDList.Parse '+ e.Message, lrtError);
-      end;
-    end;
-
   end;
 end;
 
@@ -145,3 +137,4 @@ begin
 end;
 
 end.
+

@@ -4,166 +4,223 @@ object MainForm: TMainForm
   ClientHeight = 801
   ClientWidth = 1406
   Caption = 'MainForm'
+  OnShow = UniFormShow
+  WindowState = wsMaximized
   OldCreateOrder = False
   MonitoredKeys.Keys = <>
   TextHeight = 15
-  object btnLinskList: TUniButton
-    Left = 8
-    Top = 24
-    Width = 75
-    Height = 25
+  object UniPanel1: TUniPanel
+    Left = 0
+    Top = 0
+    Width = 1406
+    Height = 608
     Hint = ''
-    Caption = 'Links.List'
+    Constraints.MinHeight = 217
+    Align = alClient
     TabOrder = 0
-    OnClick = btnLinskListClick
+    ShowCaption = False
+    Caption = 'UniPanel1'
+    ExplicitWidth = 1404
+    ExplicitHeight = 600
+    object btnLinskList: TUniButton
+      Left = 8
+      Top = 24
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Links.List'
+      TabOrder = 1
+      OnClick = btnLinskListClick
+    end
+    object btnLinkInfo: TUniButton
+      Left = 8
+      Top = 55
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Link.Info'
+      TabOrder = 2
+      OnClick = btnLinkInfoClick
+    end
+    object btnTaskList: TUniButton
+      Left = 112
+      Top = 24
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Task.List'
+      TabOrder = 3
+      OnClick = btnTaskListClick
+    end
+    object btnTaskInfo: TUniButton
+      Left = 112
+      Top = 55
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Task.Info'
+      TabOrder = 4
+      OnClick = btnTaskInfoClick
+    end
+    object btnStripTaskNew: TUniButton
+      Left = 112
+      Top = 88
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Task.New'
+      TabOrder = 5
+      OnClick = btnStripTaskNewClick
+    end
+    object btnStripTaskRemove: TUniButton
+      Left = 112
+      Top = 150
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Task.Rem'
+      TabOrder = 6
+      OnClick = btnStripTaskRemoveClick
+    end
+    object btnStripTaskUpdate: TUniButton
+      Left = 112
+      Top = 119
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Task.Update'
+      TabOrder = 7
+      OnClick = btnStripTaskUpdateClick
+    end
+    object btnSummaryTaskList: TUniButton
+      Left = 208
+      Top = 26
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.List'
+      TabOrder = 8
+      OnClick = btnSummaryTaskListClick
+    end
+    object btnSummaryTaskInfo: TUniButton
+      Left = 208
+      Top = 57
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.Info'
+      TabOrder = 9
+      OnClick = btnSummaryTaskInfoClick
+    end
+    object btnSummaryTaskNew: TUniButton
+      Left = 208
+      Top = 88
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.New'
+      TabOrder = 10
+      OnClick = btnSummaryTaskNewClick
+    end
+    object btnSummaryTaskUpdate: TUniButton
+      Left = 208
+      Top = 119
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.Update'
+      TabOrder = 11
+      OnClick = btnSummaryTaskUpdateClick
+    end
+    object btnSummaryTaskRemove: TUniButton
+      Left = 208
+      Top = 150
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.Rem'
+      TabOrder = 12
+      OnClick = btnSummaryTaskRemoveClick
+    end
+    object btnSummaryTaskTypes: TUniButton
+      Left = 208
+      Top = 181
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Summ.Types'
+      TabOrder = 13
+      OnClick = btnSummaryTaskTypesClick
+    end
+    object btnQueuesList: TUniButton
+      Left = 304
+      Top = 26
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Que.List'
+      TabOrder = 14
+      OnClick = btnQueuesListClick
+    end
+    object btnQueuesInfo: TUniButton
+      Left = 304
+      Top = 57
+      Width = 75
+      Height = 25
+      Hint = ''
+      Caption = 'Que.List'
+      TabOrder = 15
+      OnClick = btnQueuesInfoClick
+    end
+    object ShowMemo: TUniMemo
+      Left = 385
+      Top = 26
+      Width = 502
+      Height = 368
+      Hint = ''
+      ScrollBars = ssBoth
+      ParentFont = False
+      Font.Charset = RUSSIAN_CHARSET
+      TabOrder = 16
+    end
   end
-  object btnLinkInfo: TUniButton
-    Left = 8
-    Top = 55
-    Width = 75
-    Height = 25
+  object UniPanel2: TUniPanel
+    Left = 0
+    Top = 608
+    Width = 1406
+    Height = 193
     Hint = ''
-    Caption = 'Link.Info'
+    Constraints.MinHeight = 100
+    Align = alBottom
     TabOrder = 1
-    OnClick = btnLinkInfoClick
-  end
-  object ShowMemo: TUniMemo
-    Left = 729
-    Top = 24
-    Width = 561
-    Height = 545
-    Hint = ''
-    ScrollBars = ssBoth
-    TabOrder = 2
-  end
-  object btnTaskList: TUniButton
-    Left = 112
-    Top = 24
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Task.List'
-    TabOrder = 3
-    OnClick = btnTaskListClick
-  end
-  object btnTaskInfo: TUniButton
-    Left = 112
-    Top = 55
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Task.Info'
-    TabOrder = 4
-    OnClick = btnTaskInfoClick
-  end
-  object btnStripTaskNew: TUniButton
-    Left = 112
-    Top = 88
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Task.New'
-    TabOrder = 5
-    OnClick = btnStripTaskNewClick
-  end
-  object btnStripTaskRemove: TUniButton
-    Left = 112
-    Top = 150
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Task.Rem'
-    TabOrder = 6
-    OnClick = btnStripTaskRemoveClick
-  end
-  object btnStripTaskUpdate: TUniButton
-    Left = 112
-    Top = 119
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Task.Update'
-    TabOrder = 7
-    OnClick = btnStripTaskUpdateClick
-  end
-  object btnSummaryTaskList: TUniButton
-    Left = 208
-    Top = 26
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.List'
-    TabOrder = 8
-    OnClick = btnSummaryTaskListClick
-  end
-  object btnSummaryTaskInfo: TUniButton
-    Left = 208
-    Top = 57
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.Info'
-    TabOrder = 9
-    OnClick = btnSummaryTaskInfoClick
-  end
-  object btnSummaryTaskNew: TUniButton
-    Left = 208
-    Top = 88
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.New'
-    TabOrder = 10
-    OnClick = btnSummaryTaskNewClick
-  end
-  object btnSummaryTaskUpdate: TUniButton
-    Left = 208
-    Top = 119
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.Update'
-    TabOrder = 11
-    OnClick = btnSummaryTaskUpdateClick
-  end
-  object btnSummaryTaskRemove: TUniButton
-    Left = 208
-    Top = 150
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.Rem'
-    TabOrder = 12
-    OnClick = btnSummaryTaskRemoveClick
-  end
-  object btnSummaryTaskTypes: TUniButton
-    Left = 208
-    Top = 181
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Summ.Types'
-    TabOrder = 13
-    OnClick = btnSummaryTaskTypesClick
-  end
-  object btnQueuesList: TUniButton
-    Left = 304
-    Top = 26
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Que.List'
-    TabOrder = 14
-    OnClick = btnQueuesListClick
-  end
-  object btnQueuesInfo: TUniButton
-    Left = 304
-    Top = 57
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = 'Que.List'
-    TabOrder = 15
-    OnClick = btnQueuesInfoClick
+    Caption = 'UniPanel2'
+    ExplicitTop = 600
+    ExplicitWidth = 1404
+    object UniSplitter1: TUniSplitter
+      Left = 1
+      Top = 1
+      Width = 1404
+      Height = 6
+      Cursor = crVSplit
+      Hint = ''
+      Align = alTop
+      ParentColor = False
+      Color = clBtnFace
+      ExplicitWidth = 1402
+    end
+    object LogMemo: TUniMemo
+      Left = 1
+      Top = 7
+      Width = 1404
+      Height = 185
+      Hint = ''
+      ScrollBars = ssBoth
+      ParentFont = False
+      Font.Charset = RUSSIAN_CHARSET
+      Align = alClient
+      ReadOnly = True
+      TabOrder = 2
+      ExplicitWidth = 1402
+    end
   end
 end
