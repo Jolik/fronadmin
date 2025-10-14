@@ -41,9 +41,7 @@ uses
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
 
 
-procedure ListSourceCreds();
 procedure ListRouterSource();
-procedure ListUsers();
 var
   RouterSourceBroker: TRouterSourceBroker;
   RouterSourceList: TEntityList;
@@ -256,9 +254,9 @@ begin
             Writeln('Usid: ' + User.Usid);
             Writeln('Name: ' + User.Name);
             Writeln('Email: ' + User.Email);
-            Writeln('AllowComp count: ' + IntToStr(User.AllowComp.Count));
+(*            Writeln('AllowComp count: ' + IntToStr(User.AllowComp.Count));
             Writeln('Body Roles count: ' + IntToStr(User.UserBody.Roles.Count));
-            Writeln('Group Body Levels count: ' + IntToStr(User.GroupBody.Levels.Count));
+            Writeln('Group Body Levels count: ' + IntToStr(User.GroupBody.Levels.Count)); *)
 
             Writeln('As JSON:');
             var Json := User.Serialize();
@@ -335,6 +333,4 @@ begin
 
   finally
   end;
-end;
-
 end.

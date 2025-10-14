@@ -20,9 +20,9 @@ type
     procedure RaiseInvalidObjects(o1, o2: TObject); overload;
 
   public
-    constructor Create(); overload;
+    constructor Create(); overload; virtual;
     ///  конструктор сразу из JSON
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
     destructor Destroy; override;
 
@@ -147,9 +147,9 @@ type
     function GetIdKey: string; virtual;
 
   public
-    constructor Create(); overload;
+    constructor Create(); overload; override;
     ///  конструктор сразу из JSON
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     destructor Destroy; override;
 
