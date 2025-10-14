@@ -7,18 +7,18 @@ uses
   Generics.Collections, System.JSON,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniButton, uniGUIBaseClasses,
-  uniMemo,
+  uniMemo, UniLoggerUnit,
   LinksBrokerUnit, EntityUnit, LinkUnit,
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
   MonitoringTasksBrokerUnit, MonitoringTaskUnit,
-  QueuesBrokerUnit, QueueUnit;
+  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter;
 
 type
   TMainForm = class(TUniForm)
+    UniPanel1: TUniPanel;
     btnLinskList: TUniButton;
     btnLinkInfo: TUniButton;
-    ShowMemo: TUniMemo;
     btnTaskList: TUniButton;
     btnTaskInfo: TUniButton;
     btnStripTaskNew: TUniButton;
@@ -32,6 +32,10 @@ type
     btnSummaryTaskTypes: TUniButton;
     btnQueuesList: TUniButton;
     btnQueuesInfo: TUniButton;
+    ShowMemo: TUniMemo;
+    UniPanel2: TUniPanel;
+    UniSplitter1: TUniSplitter;
+    LogMemo: TUniMemo;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnTaskListClick(Sender: TObject);
@@ -49,10 +53,12 @@ type
     procedure btnMonTaskInfoClick(Sender: TObject);
     procedure btnQueuesListClick(Sender: TObject);
     procedure btnQueuesInfoClick(Sender: TObject);
+    procedure UniFormShow(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+
   end;
 
 function MainForm: TMainForm;
@@ -62,7 +68,8 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication;
+  uniGUIVars, MainModule, uniGUIApplication, FuncUnit,
+  LoggingUnit, TextFileLoggerUnit;
 
 function MainForm: TMainForm;
 begin
@@ -71,22 +78,21 @@ end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
 const
-  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+  lid = '83789614-a334-4953-afaf-34093c8b43e4';
 
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
 
 begin
+  LinksBroker := TLinksBroker.Create();
   try
-    LinksBroker := TLinksBroker.Create();
-    // Âûâîäèì èíôîðìàöèþ î ëèíêå â TMemo
-    ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î ëèíêå %s:', [lid]));
-    //  ïîëó÷àåì èíôó î ëèíêå
+    ShowMemo.Clear;
+    ShowMemo.Lines.Add(Format('request lid: %s', [lid]));
     Link := LinksBroker.Info(lid);
-    if Link = nil then
+    if not (Link is TLink) then
     begin
-      ShowMemo.Lines.Add('nil');
+      ShowMemo.Lines.Add(ClassNameSafe(Link));
       exit;
     end;
 
@@ -99,6 +105,15 @@ begin
     ShowMemo.Lines.Add('Comsts '+ l.Comsts);
     ShowMemo.Lines.Add('Compid '+ l.Compid);
     ShowMemo.Lines.Add('Depid '+ l.Depid);
+
+    ShowMemo.Lines.Add('as JSON:');
+    var json := l.Serialize();
+    if json <> nil then
+    begin
+      ShowMemo.Lines.Add(json.Format());
+      json.Free
+    end;
+
   finally
     LinksBroker.Free;
   end;
@@ -113,38 +128,37 @@ var
   Pages : integer;
 
 begin
+  LinksBroker := TLinksBroker.Create();
+  LinksList := LinksBroker.List(Pages);
   try
-    LinksBroker := TLinksBroker.Create();
-
-    LinksList := LinksBroker.List(Pages);
-
-    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    ShowMemo.Clear;
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
 
     for Link in LinksList do
     begin
       var l := (Link as TLink);
-      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [Link.ClassName, Pointer(Link)]));
+      ShowMemo.Lines.Add(Format('class: %s  |  pointer: %p', [Link.ClassName, Pointer(Link)]));
       ShowMemo.Lines.Add('Id '+ l.Id);
+      ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
       ShowMemo.Lines.Add('Name '+ l.Name);
-      ShowMemo.Lines.Add('Compid '+ (l.Compid));
-      ShowMemo.Lines.Add('Depid '+ (l.Depid));
+      ShowMemo.Lines.Add('Dir '+ l.Dir);
+      ShowMemo.Lines.Add('Status '+ l.Status);
+      ShowMemo.Lines.Add('Comsts '+ l.Comsts);
+      ShowMemo.Lines.Add('Compid '+ l.Compid);
+      ShowMemo.Lines.Add('Depid '+ l.Depid);
 
-      ShowMemo.Lines.Add('as json:');
-
+      ShowMemo.Lines.Add('as JSON:');
       var json := l.Serialize();
-
       if json <> nil then
+      begin
         ShowMemo.Lines.Add(json.Format());
-
+        json.Free
+      end;
       ShowMemo.Lines.Add('----------');
     end;
 
   finally
-    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
     LinksList.Free;
-
     LinksBroker.Free;
   end;
 end;
@@ -779,7 +793,21 @@ begin
   end;
 end;
 
+
+
+procedure TMainForm.UniFormShow(Sender: TObject);
+begin
+  if AppLogger = nil then
+  begin
+    AppLogger := TUniLogger.Create(MainForm.LogMemo);
+    Log('app started');
+  end;
+end;
+
 initialization
   RegisterAppFormClass(TMainForm);
+  //AppLogger := TTextFileLogger.Create();  // C:\Users\user\AppData\Roaming\AppLogs\
+
+
 
 end.

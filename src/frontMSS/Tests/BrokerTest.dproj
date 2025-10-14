@@ -137,6 +137,8 @@
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="..\Logging\UniLoggerUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\QueueSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
@@ -161,7 +163,7 @@
                     <Source Name="MainSource">BrokerTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>BrokerTest.exe</RemoteName>
@@ -178,6 +180,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

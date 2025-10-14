@@ -26,7 +26,7 @@ type
     FDatasets: TGUIDList;
     FLevels: TGUIDList;
   public
-    constructor Create; overload; override;
+    constructor Create; overload;
     destructor Destroy; override;
     function Assign(ASource: TFieldSet): boolean; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -56,7 +56,8 @@ type
     class function DataClassType: TDataClass; override;
     class function BodyClassType: TBodyClass; override;
   public
-    constructor Create; override;
+    constructor Create; overload;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
     destructor Destroy; override;
 
     function Assign(ASource: TFieldSet): boolean; override;
@@ -69,6 +70,8 @@ type
     property Email: string read FEmail write FEmail;
     property Country: string read FCountry write FCountry;
     property Org: string read FOrg write FOrg;
+    property UserData: TUserData read GetUserData;
+    property UserBody: TUserBody read GetUserBody;
     property GroupBody: TUserBody read FGroupBody;
   end;
 
@@ -185,11 +188,11 @@ begin
   FRoles.Clear;
   FDatasets.Clear;
   FLevels.Clear;
-//
+
   if not Assigned(src) then
     Exit;
 
-   Value := src.FindValue(RolesKey);
+  Value := src.FindValue(RolesKey);
   if Assigned(Value) and (Value is TJSONArray) then
     FRoles.Parse(Value as TJSONArray);
 
@@ -251,6 +254,13 @@ begin
 
   FAllowComp := TGUIDList.Create;
   FGroupBody := TUserBody.Create;
+end;
+
+constructor TUser.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  Create;
+
+  Parse(src, APropertyNames);
 end;
 
 destructor TUser.Destroy;

@@ -22,12 +22,10 @@ type
   public
     constructor Create(); overload; virtual;
     ///  конструктор сразу из JSON
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
-
-    destructor Destroy; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
 
     ///  устанавливаем пол€ с другого объекта
-    function Assign(ASource: TFieldSet): boolean; virtual; abstract;
+    function Assign(ASource: TFieldSet): boolean; virtual;
 
     // эти требуют существующего правильного экземпл€ра объекта. на ошибки - эксешан
     ///  в массиве const APropertyNames передаютс€ пол€, которые необходимо использовать
@@ -147,9 +145,9 @@ type
     function GetIdKey: string; virtual;
 
   public
-    constructor Create(); overload; override;
+    constructor Create(); overload;
     ///  конструктор сразу из JSON
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
 
     destructor Destroy; override;
 
@@ -235,24 +233,20 @@ const
 
 { TFieldSet }
 
+function TFieldSet.Assign(ASource: TFieldSet): boolean;
+begin
+  result := true;
+end;
+
 constructor TFieldSet.Create(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  Create();
-
   Parse(src, APropertyNames);
 end;
 
+
 constructor TFieldSet.Create;
 begin
-  inherited Create();
-
-end;
-
-destructor TFieldSet.Destroy;
-begin
-
-  inherited;
 end;
 
 function TFieldSet.JSON(const APropertyNames: TArray<string>): string;
@@ -381,18 +375,22 @@ begin
 
   ///  получаем ссылку на JSON-объект settings
   var s := src.FindValue(SettingsKey);
-  ///  парсим только если setting существует и это действительно объект
-  if Assigned(s) and (s is TJSONObject) then Settings.Parse(s as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект settings
+  ///  парсим только если setting существует и это действительно объект
+  if Assigned(s) and (s is TJSONObject) then
+    Settings.Parse(s as TJSONObject);
+
+  ///  получаем ссылку на JSON-объект data
   var d := src.FindValue(DataKey);
   ///  парсим только если data существует и это действительно объект
-  if Assigned(d) and (d is TJSONObject) then Data.Parse(d as TJSONObject);
+  if Assigned(d) and (d is TJSONObject) then
+    Data.Parse(d as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект settings
+  ///  получаем ссылку на JSON-объект body
   var b := src.FindValue(BodyKey);
   ///  парсим только если body существует и это действительно объект
-  if Assigned(b) and (b is TJSONObject) then Body.Parse(b as TJSONObject);
+  if Assigned(b) and (b is TJSONObject) then
+    Body.Parse(b as TJSONObject);
 end;
 
 procedure TEntity.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
@@ -411,9 +409,12 @@ begin
     AddPair(CommitedKey, DateTimeToUnix(Commited));
     AddPair(ArchivedKey, DateTimeToUnix(Archived));
     ///  добавл€ем настройки, тело и данные
-    dst.AddPair(SettingsKey, Settings.Serialize());
-    dst.AddPair(DataKey, Data.Serialize());
-    dst.AddPair(BodyKey, Body.Serialize());
+    if Settings <> nil then
+      AddPair(SettingsKey, Settings.Serialize());
+    if Data <> nil then
+      AddPair(DataKey, Data.Serialize());
+    if Body <> nil then
+      AddPair(BodyKey, Body.Serialize());
   end;
 end;
 
@@ -442,25 +443,9 @@ end;
 
 destructor TEntity.Destroy;
 begin
-
-  try
-    Settings.Free;
-  except
-    Settings := nil;
-  end;
-
-  try
-    Data.Free;
-  except
-    Data := nil;
-  end;
-
-  try
-    Body.Free;
-  except
-    Body := nil;
-  end;
-
+  FreeAndNil(Settings);
+  FreeAndNil(Data);
+  FreeAndNil(Body);
   inherited;
 end;
 
@@ -624,7 +609,8 @@ procedure TFieldSetList.ParseList(src: TJSONArray;
 begin
   Clear();
 
-  if not Assigned(src) then exit;
+  if not Assigned(src) then
+    exit;
 
   ///  формируем список
   for var i in src do
@@ -661,17 +647,16 @@ end;
 procedure TFieldSetList.SerializeList(dst: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
-  ///  пока этот метод и не нужен нам - ничего не делаем
+  for var i := 0 to Count-1 do
+    dst.AddElement(Items[i].Serialize());
 end;
 
 function TFieldSetList.SerializeList(
   const APropertyNames: TArray<string>): TJSONArray;
 begin
   result := TJSONArray.Create;
-
   try
     SerializeList(result);
-
   except on e:exception do
     begin
       Log('TFieldSetList.Serialize '+ e.Message, lrtError);

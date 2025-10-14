@@ -2,7 +2,7 @@ unit ConnectionUnit;
 
 interface
 uses
-  System.Generics.Collections, System.JSON,
+  System.Generics.Collections, System.JSON, SysUtils,
   FuncUnit,
   LoggingUnit,
   EntityUnit;
@@ -50,8 +50,8 @@ type
 
     property Addr: string read FAddr write FAddr;
     property Timeout: integer read FTimeout write FTimeout;
+    property Disabled: boolean read FDisabled write FDisabled;
     property Secure: TSecure read FSecure write FSecure;
-
   end;
 
 
@@ -60,53 +60,72 @@ type
   private
     function GetConnection(Index: integer): TConnection;
     procedure SetConnection(Index: integer; const Value: TConnection);
-
+  protected
+    class function ItemClassType: TFieldSetClass; override;
   public
     ///  список соединений (переопределяет доступ к Items[])
     property Connections[Index : integer] : TConnection read GetConnection write SetConnection;
-
   end;
 
 
-
 implementation
-
-const
-  AddrKey = 'addr';
 
 { TConnection }
 
 function TConnection.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
-
   if not inherited Assign(ASource) then
     exit;
-
   if not (ASource is TConnection) then
     exit;
-
   var src := ASource as TConnection;
-
   Addr := src.Addr;
   Timeout := src.Timeout;
+  Disabled := src.Disabled;
   Secure := src.Secure;
-
   Result := true;
 end;
 
 procedure TConnection.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  Addr := GetValueStrDef(src, AddrKey, '');
-
+  Addr := GetValueStrDef(src, 'addr', '');
+  Timeout := GetValueIntDef(src, 'timeout', 0);
+  Disabled := GetValueBool(src, 'disabled');
+  var s: TSecure;
+  with s.tls.Certificates do
+  begin
+    CRT := GetValueStrDef(src, 'secure.tls.certificates.crt', '');
+    Key := GetValueStrDef(src, 'secure.tls.certificates.key', '');
+    CA := GetValueStrDef(src, 'secure.tls.certificates.ca', '');
+  end;
+  with s.tls do
+  Enabled := GetValueBool(src, 'secure.tls.enabled');
+  with s.Auth do
+  begin
+    Login := GetValueStrDef(src, 'secure.auth.login', '');
+    Password := GetValueStrDef(src, 'secure.auth.password', '');
+  end;
+  Secure := s;
 end;
 
 procedure TConnection.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+const
+  connectionStr = '{"secure":{"auth":{},"tls":{"certificates":{}}}}';
 begin
-  with dst do
-  begin
-    AddPair(AddrKey, Addr);
-  end;
+  dst.AddPair('addr', Addr);
+  dst.AddPair('timeout', Timeout);
+  dst.AddPair('disabled', Disabled);
+  dst.Parse(TEncoding.UTF8.GetBytes(connectionStr),0);
+  var s := dst.FindValue('secure.auth') as TJSONObject;
+  s.AddPair('login', Secure.Auth.Login);
+  s.AddPair('password', Secure.Auth.Password);
+  var tls := dst.FindValue('secure.tls') as TJSONObject;
+  tls.AddPair('enabled', Secure.TLS.Enabled);
+  var certificates := dst.FindValue('secure.tls.certificates') as TJSONObject;
+  certificates.AddPair('crt', Secure.TLS.Certificates.CRT);
+  certificates.AddPair('key', Secure.TLS.Certificates.Key);
+  certificates.AddPair('ca',  Secure.TLS.Certificates.CA);
 end;
 
 { TConnectionList }
@@ -114,32 +133,30 @@ end;
 function TConnectionList.GetConnection(Index: integer): TConnection;
 begin
   Result := nil;
-
+  if Index >= Count then
+    exit;
   ///  обязательно проверяем соотвествие классов
   if Items[Index] is TConnection then
     Result := Items[Index] as TConnection;
+end;
 
+class function TConnectionList.ItemClassType: TFieldSetClass;
+begin
+  result := TConnection;
 end;
 
 procedure TConnectionList.SetConnection(Index: integer;
   const Value: TConnection);
 begin
+  if Index >= Count then
+    exit;
   ///  обязательно проверяем соотвествие классов
   if not (Value is TConnection) then
     exit;
-
   ///  если в этой позиции есть объект - удаляем его
   if Assigned(Items[Index]) then
-  begin
-    try
-      Items[Index].Free();
-    finally
-      Items[Index] := nil;
-    end;
-  end;
-
+    Items[Index].Free();
   Items[Index] := Value;
-
 end;
 
 end.
