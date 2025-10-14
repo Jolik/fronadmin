@@ -137,11 +137,34 @@
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
-        <DCCReference Include="..\Logging\UniLoggerUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\QueueSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
+        <DCCReference Include="..\Forms\ParentFormUnit.pas">
+            <Form>ParentForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\ParentEditFormUnit.pas">
+            <Form>ParentEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\ListParentFormUnit.pas">
+            <Form>ListParentForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\StripTaskEditFormUnit.pas">
+            <Form>StripTaskEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\StripTasksFormUnit.pas">
+            <Form>StripTasksForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

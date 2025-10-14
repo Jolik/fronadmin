@@ -36,6 +36,7 @@ type
     procedure btnNewClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
+    procedure UniFormCreate(Sender: TObject);
 
   protected
     procedure Refresh(const AId: String = ''); override;
@@ -134,9 +135,17 @@ begin
   end;
 end;
 
+procedure TListParentForm.UniFormCreate(Sender: TObject);
+begin
+  inherited;
+
+  Refresh();
+end;
+
 function ListParentForm: TListParentForm;
 begin
   Result := TListParentForm(UniMainModule.GetFormInstance(TListParentForm));
+  Result.EditForm.Hide;
 end;
 
 end.

@@ -7,39 +7,41 @@ uses
   Generics.Collections, System.JSON,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniButton, uniGUIBaseClasses,
-  uniMemo, UniLoggerUnit,
+  uniMemo,
   LinksBrokerUnit, EntityUnit, LinkUnit,
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
   MonitoringTasksBrokerUnit, MonitoringTaskUnit,
-  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter;
+  QueuesBrokerUnit, QueueUnit, uniGroupBox, uniScrollBox, StripTasksFormUnit;
 
 type
   TMainForm = class(TUniForm)
-    UniPanel1: TUniPanel;
+    ShowMemo: TUniMemo;
+    sbTestButtons: TUniScrollBox;
+    gbLinks: TUniGroupBox;
     btnLinskList: TUniButton;
     btnLinkInfo: TUniButton;
-    btnTaskList: TUniButton;
-    btnTaskInfo: TUniButton;
+    gbQueues: TUniGroupBox;
+    btnQueuesList: TUniButton;
+    btnQueuesInfo: TUniButton;
+    gbStripTasks: TUniGroupBox;
+    btnStripTaskList: TUniButton;
+    btnStripTaskInfo: TUniButton;
     btnStripTaskNew: TUniButton;
-    btnStripTaskRemove: TUniButton;
     btnStripTaskUpdate: TUniButton;
+    btnStripTaskRemove: TUniButton;
+    gbSummaryTasks: TUniGroupBox;
     btnSummaryTaskList: TUniButton;
     btnSummaryTaskInfo: TUniButton;
     btnSummaryTaskNew: TUniButton;
     btnSummaryTaskUpdate: TUniButton;
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
-    btnQueuesList: TUniButton;
-    btnQueuesInfo: TUniButton;
-    ShowMemo: TUniMemo;
-    UniPanel2: TUniPanel;
-    UniSplitter1: TUniSplitter;
-    LogMemo: TUniMemo;
+    btnStripTasks: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
-    procedure btnTaskListClick(Sender: TObject);
-    procedure btnTaskInfoClick(Sender: TObject);
+    procedure btnStripTaskListClick(Sender: TObject);
+    procedure btnStripTaskInfoClick(Sender: TObject);
     procedure btnStripTaskNewClick(Sender: TObject);
     procedure btnStripTaskRemoveClick(Sender: TObject);
     procedure btnStripTaskUpdateClick(Sender: TObject);
@@ -53,12 +55,11 @@ type
     procedure btnMonTaskInfoClick(Sender: TObject);
     procedure btnQueuesListClick(Sender: TObject);
     procedure btnQueuesInfoClick(Sender: TObject);
-    procedure UniFormShow(Sender: TObject);
+    procedure btnStripTasksClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
-
   end;
 
 function MainForm: TMainForm;
@@ -68,110 +69,19 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication, FuncUnit,
-  LoggingUnit, TextFileLoggerUnit;
+  uniGUIVars, MainModule, uniGUIApplication;
 
 function MainForm: TMainForm;
 begin
   Result := TMainForm(UniMainModule.GetFormInstance(TMainForm));
 end;
 
-procedure TMainForm.btnLinkInfoClick(Sender: TObject);
-const
-  lid = '83789614-a334-4953-afaf-34093c8b43e4';
-
-var
-  Link : TEntity;
-  LinksBroker : TLinksBroker;
-
-begin
-  LinksBroker := TLinksBroker.Create();
-  try
-    ShowMemo.Clear;
-    ShowMemo.Lines.Add(Format('request lid: %s', [lid]));
-    Link := LinksBroker.Info(lid);
-    if not (Link is TLink) then
-    begin
-      ShowMemo.Lines.Add(ClassNameSafe(Link));
-      exit;
-    end;
-
-    var l := Link as TLink;
-    ShowMemo.Lines.Add('Id '+ l.Id);
-    ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
-    ShowMemo.Lines.Add('Name '+ l.Name);
-    ShowMemo.Lines.Add('Dir '+ l.Dir);
-    ShowMemo.Lines.Add('Status '+ l.Status);
-    ShowMemo.Lines.Add('Comsts '+ l.Comsts);
-    ShowMemo.Lines.Add('Compid '+ l.Compid);
-    ShowMemo.Lines.Add('Depid '+ l.Depid);
-
-    ShowMemo.Lines.Add('as JSON:');
-    var json := l.Serialize();
-    if json <> nil then
-    begin
-      ShowMemo.Lines.Add(json.Format());
-      json.Free
-    end;
-
-  finally
-    LinksBroker.Free;
-  end;
-end;
-
-
-procedure TMainForm.btnLinskListClick(Sender: TObject);
-var
-  Link : TEntity;
-  LinksBroker : TLinksBroker;
-  LinksList : TEntityList;
-  Pages : integer;
-
-begin
-  LinksBroker := TLinksBroker.Create();
-  LinksList := LinksBroker.List(Pages);
-  try
-    ShowMemo.Clear;
-    ShowMemo.Lines.Add('----------  List  ----------');
-
-    for Link in LinksList do
-    begin
-      var l := (Link as TLink);
-      ShowMemo.Lines.Add(Format('class: %s  |  pointer: %p', [Link.ClassName, Pointer(Link)]));
-      ShowMemo.Lines.Add('Id '+ l.Id);
-      ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
-      ShowMemo.Lines.Add('Name '+ l.Name);
-      ShowMemo.Lines.Add('Dir '+ l.Dir);
-      ShowMemo.Lines.Add('Status '+ l.Status);
-      ShowMemo.Lines.Add('Comsts '+ l.Comsts);
-      ShowMemo.Lines.Add('Compid '+ l.Compid);
-      ShowMemo.Lines.Add('Depid '+ l.Depid);
-
-      ShowMemo.Lines.Add('as JSON:');
-      var json := l.Serialize();
-      if json <> nil then
-      begin
-        ShowMemo.Lines.Add(json.Format());
-        json.Free
-      end;
-      ShowMemo.Lines.Add('----------');
-    end;
-
-  finally
-    LinksList.Free;
-    LinksBroker.Free;
-  end;
-end;
-
-
 procedure TMainForm.btnMonTaskInfoClick(Sender: TObject);
 const
   tid = '088a1eb4-85b4-11f0-ab53-02420a0001c1';
-
 var
   MonitoringTask : TEntity;
   MonitoringTasksBroker : TMonitoringTasksBroker;
-
 begin
   MonitoringTask := nil;
   MonitoringTasksBroker := nil;
@@ -203,7 +113,6 @@ begin
     MonitoringTask.Free;
     MonitoringTasksBroker.Free;
   end;
-
 end;
 
 procedure TMainForm.btnMonTaskListClick(Sender: TObject);
@@ -212,21 +121,20 @@ var
   MonitoringTasksBroker : TMonitoringTasksBroker;
   MonitoringTaskList : TEntityList;
   Pages : integer;
-
 begin
   try
     MonitoringTasksBroker := TMonitoringTasksBroker.Create();
 
     MonitoringTaskList := MonitoringTasksBroker.List(Pages);
 
-    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    // Выводим информацию о каждом объекте в TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+    ShowMemo.Lines.Add('Содержимое списка:');
 
     for MonitoringTask in MonitoringTaskList do
     begin
       var st := (MonitoringTask as TMonitoringTask);
-      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [MonitoringTask.ClassName, Pointer(MonitoringTask)]));
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [MonitoringTask.ClassName, Pointer(MonitoringTask)]));
       ShowMemo.Lines.Add('Id '+ st.Id);
       ShowMemo.Lines.Add('Name '+ st.Name);
       ShowMemo.Lines.Add('Compid '+ (st.Compid));
@@ -243,23 +151,165 @@ begin
     end;
 
   finally
-    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
+    // Освобождаем список (все объекты освободятся автоматически)
     MonitoringTaskList.Free;
 
     MonitoringTasksBroker.Free;
   end;
+end;
 
+{$REGION 'Links'}
+
+procedure TMainForm.btnLinskListClick(Sender: TObject);
+var
+  Link : TEntity;
+  LinksBroker : TLinksBroker;
+  LinksList : TEntityList;
+  Pages : integer;
+begin
+  ShowMemo.Clear;
+
+  try
+    LinksBroker := TLinksBroker.Create();
+
+    LinksList := LinksBroker.List(Pages);
+
+    // Выводим информацию о каждом объекте в TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Содержимое списка:');
+
+    if not Assigned(LinksList) then
+    begin
+      ShowMemo.Lines.Add('пусто');
+      Exit;
+    end;
+
+    for Link in LinksList do
+    begin
+      var l := (Link as TLink);
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [Link.ClassName, Pointer(Link)]));
+      ShowMemo.Lines.Add('Id '+ l.Id);
+      ShowMemo.Lines.Add('Name '+ l.Name);
+      ShowMemo.Lines.Add('Compid '+ (l.Compid));
+      ShowMemo.Lines.Add('Depid '+ (l.Depid));
+
+      ShowMemo.Lines.Add('as json:');
+
+      var json := l.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
+      ShowMemo.Lines.Add('----------');
+    end;
+
+  finally
+    // Освобождаем список (все объекты освободятся автоматически)
+    LinksList.Free;
+
+    LinksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnLinkInfoClick(Sender: TObject);
+const
+  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+var
+  Link : TEntity;
+  LinksBroker : TLinksBroker;
+begin
+  ShowMemo.Clear;
+
+  try
+    LinksBroker := TLinksBroker.Create();
+    // Выводим информацию о линке в TMemo
+    ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
+    // получаем инфу о линке
+    Link := LinksBroker.Info(lid);
+    if Link = nil then
+    begin
+      ShowMemo.Lines.Add('nil');
+      exit;
+    end;
+
+    var l := Link as TLink;
+    ShowMemo.Lines.Add('Id '+ l.Id);
+    ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
+    ShowMemo.Lines.Add('Name '+ l.Name);
+    ShowMemo.Lines.Add('Dir '+ l.Dir);
+    ShowMemo.Lines.Add('Status '+ l.Status);
+    ShowMemo.Lines.Add('Comsts '+ l.Comsts);
+    ShowMemo.Lines.Add('Compid '+ l.Compid);
+    ShowMemo.Lines.Add('Depid '+ l.Depid);
+  finally
+    LinksBroker.Free;
+  end;
+end;
+
+{$ENDREGION 'Links'}
+
+{$REGION 'Queues'}
+
+procedure TMainForm.btnQueuesListClick(Sender: TObject);
+var
+  Queue : TEntity;
+  QueuesBroker : TQueuesBroker;
+  QueueList : TEntityList;
+  Pages : integer;
+begin
+  ShowMemo.Clear;
+
+  try
+    QueuesBroker := TQueuesBroker.Create();
+
+    QueueList := QueuesBroker.List(Pages);
+
+    // Выводим информацию о каждом объекте в TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Содержимое списка:');
+
+    if not Assigned(QueueList) then
+    begin
+      ShowMemo.Lines.Add('пусто');
+      Exit;
+    end;
+
+    for Queue in QueueList do
+    begin
+      var st := (Queue as TQueue);
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [Queue.ClassName, Pointer(Queue)]));
+      ShowMemo.Lines.Add('Id '+ st.Id);
+      ShowMemo.Lines.Add('Name '+ st.Name);
+      ShowMemo.Lines.Add('Compid '+ (st.Compid));
+      ShowMemo.Lines.Add('Depid '+ (st.Depid));
+
+      ShowMemo.Lines.Add('as json:');
+
+      var json := st.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
+      ShowMemo.Lines.Add('----------');
+    end;
+
+  finally
+    // Освобождаем список (все объекты освободятся автоматически)
+    QueueList.Free;
+
+    QueuesBroker.Free;
+  end;
 end;
 
 procedure TMainForm.btnQueuesInfoClick(Sender: TObject);
 const
   qid = 'fbeca202-f844-11ef-bf6c-02420a000125';
-
 var
   Queue : TEntity;
   QueuesBroker : TQueuesBroker;
-
 begin
+  ShowMemo.Clear;
+
   Queue := nil;
   QueuesBroker := nil;
   try
@@ -288,30 +338,46 @@ begin
     Queue.Free;
     QueuesBroker.Free;
   end;
-
 end;
 
-procedure TMainForm.btnQueuesListClick(Sender: TObject);
+{$ENDREGION 'Queues'}
+
+{$REGION 'Strip.Tasks'}
+
+procedure TMainForm.btnStripTasksClick(Sender: TObject);
+begin
+  StripTasksForm.Show();
+end;
+
+procedure TMainForm.btnStripTaskListClick(Sender: TObject);
 var
-  Queue : TEntity;
-  QueuesBroker : TQueuesBroker;
-  QueueList : TEntityList;
+  StripTask : TEntity;
+  StripTasksBroker : TStripTasksBroker;
+  StripTaskList : TEntityList;
   Pages : integer;
 
 begin
+  ShowMemo.Clear;
+
   try
-    QueuesBroker := TQueuesBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create();
 
-    QueueList := QueuesBroker.List(Pages);
+    StripTaskList := StripTasksBroker.List(Pages);
 
-    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    // Выводим информацию о каждом объекте в TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+    ShowMemo.Lines.Add('Содержимое списка:');
 
-    for Queue in QueueList do
+    if not Assigned(StripTaskList) then
     begin
-      var st := (Queue as TQueue);
-      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [Queue.ClassName, Pointer(Queue)]));
+      ShowMemo.Lines.Add('пусто');
+      Exit;
+    end;
+
+    for StripTask in StripTaskList do
+    begin
+      var st := (StripTask as TStripTask);
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [StripTask.ClassName, Pointer(StripTask)]));
       ShowMemo.Lines.Add('Id '+ st.Id);
       ShowMemo.Lines.Add('Name '+ st.Name);
       ShowMemo.Lines.Add('Compid '+ (st.Compid));
@@ -328,10 +394,50 @@ begin
     end;
 
   finally
-    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
-    QueueList.Free;
+    // Освобождаем список (все объекты освободятся автоматически)
+    StripTaskList.Free;
 
-    QueuesBroker.Free;
+    StripTasksBroker.Free;
+  end;
+end;
+
+procedure TMainForm.btnStripTaskInfoClick(Sender: TObject);
+const
+  tid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
+var
+  StripTask : TEntity;
+  StripTasksBroker : TStripTasksBroker;
+begin
+  ShowMemo.Clear;
+
+  try
+    StripTasksBroker := TStripTasksBroker.Create();
+    // Выводим информацию о таске в TMemo
+    ShowMemo.Lines.Add('----------  Info  ----------');
+    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
+    // получаем инфу о таске
+    StripTask := StripTasksBroker.Info(tid);
+    if StripTask = nil then
+    begin
+      ShowMemo.Lines.Add('nil');
+      exit;
+    end;
+
+    var st := StripTask as TStripTask;
+
+    ShowMemo.Lines.Add('Tid: '+ st.Tid);
+    ShowMemo.Lines.Add('Name: '+ st.Name);
+    ShowMemo.Lines.Add('Caption: '+ st.Caption);
+    ShowMemo.Lines.Add('CompId: '+ st.CompId);
+    ShowMemo.Lines.Add('DepId: '+ st.DepId);
+    ShowMemo.Lines.Add('Def: '+ st.Def);
+//    ShowMemo.Lines.Add('Enabled: '+ BoolToString(st.Enabled));
+    ShowMemo.Lines.Add('Module: '+ st.Module);
+//    ShowMemo.Lines.Add('Created: '+ DateTimeToString(st.Created));
+ //   ShowMemo.Lines.Add('Updated: '+ DateTimeToString(st.Updated));
+
+  finally
+    StripTasksBroker.Free;
   end;
 end;
 
@@ -340,10 +446,10 @@ var
   st : TStripTask;
   StripTasksBroker : TStripTasksBroker;
   res : boolean;
-
 begin
-  try
+  ShowMemo.Clear;
 
+  try
     StripTasksBroker := TStripTasksBroker.Create();
 
     st := TStripTask.Create();
@@ -355,11 +461,11 @@ begin
       Enabled := false;
     end;
 
-    // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
+    // Выводим информацию о таске в TMemo
     ShowMemo.Lines.Add('----------  New  ----------');
-    ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [st.tid]));
+    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    //  ïîëó÷àåì èíôó î òàñêå
+    // получаем инфу о таске
     res := StripTasksBroker.New(st);
     if not res  then
     begin
@@ -368,7 +474,7 @@ begin
     end;
 
     (*
-    ///  ïîëó÷àåì ðåçóëüòàò è çàïðàøèâàåì èíôîðìàöèþ ïî tid èç ðåçóëüòàòà
+    ///  получаем результат и запрашиваем информацию по tid из результата
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -385,52 +491,19 @@ begin
   finally
     StripTasksBroker.Free;
   end;
-
-end;
-
-procedure TMainForm.btnStripTaskRemoveClick(Sender: TObject);
-const
-  tid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
-
-var
-  StripTask : TEntity;
-  StripTasksBroker : TStripTasksBroker;
-
-begin
-
-  try
-
-    StripTasksBroker := TStripTasksBroker.Create();
-    // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
-    ShowMemo.Lines.Add('----------  Remove  ----------');
-    ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [tid]));
-    //  óäàëÿåì òàñê òàñêå
-    var res := StripTasksBroker.Remove(tid);
-
-    if not res then
-    begin
-      ShowMemo.Lines.Add('nil');
-      exit;
-    end;
-
-  finally
-    StripTasksBroker.Free;
-  end;
-
 end;
 
 procedure TMainForm.btnStripTaskUpdateClick(Sender: TObject);
+const
+  uuid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
 var
   st : TStripTask;
   StripTasksBroker : TStripTasksBroker;
   res : boolean;
-
-const
-  uuid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
-
 begin
-  try
+  ShowMemo.Clear;
 
+  try
     StripTasksBroker := TStripTasksBroker.Create();
 
     st := TStripTask.Create();
@@ -441,11 +514,11 @@ begin
       Caption := 'First test update';
     end;
 
-    // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
+    // Выводим информацию о таске в TMemo
     ShowMemo.Lines.Add('----------  Update  ----------');
-    ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [st.tid]));
+    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    //  Îáíîâëååì èíôîðìàöèþ
+    // Обновлеем информацию
     res := StripTasksBroker.Update(st);
     if not res  then
     begin
@@ -453,7 +526,7 @@ begin
       exit;
     end;
 
-    ///  ïîëó÷àåì ðåçóëüòàò è çàïðàøèâàåì èíôîðìàöèþ ïî tid èç ðåçóëüòàòà
+    ///  получаем результат и запрашиваем информацию по tid из результата
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -469,10 +542,39 @@ begin
   finally
     StripTasksBroker.Free;
   end;
-
 end;
 
+procedure TMainForm.btnStripTaskRemoveClick(Sender: TObject);
+const
+  tid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
+var
+  StripTask : TEntity;
+  StripTasksBroker : TStripTasksBroker;
+begin
+  ShowMemo.Clear;
 
+  try
+    StripTasksBroker := TStripTasksBroker.Create();
+    // Выводим информацию о таске в TMemo
+    ShowMemo.Lines.Add('----------  Remove  ----------');
+    ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
+    // удаляем таск таске
+    var res := StripTasksBroker.Remove(tid);
+
+    if not res then
+    begin
+      ShowMemo.Lines.Add('nil');
+      exit;
+    end;
+
+  finally
+    StripTasksBroker.Free;
+  end;
+end;
+
+{$ENDREGION 'Strip.Tasks'}
+
+{$REGION 'Summary.Tasks'}
 
 procedure TMainForm.btnSummaryTaskListClick(Sender: TObject);
 var
@@ -482,19 +584,27 @@ var
   Pages : integer;
 
 begin
+  ShowMemo.Clear;
+
   try
     SummaryTasksBroker := TSummaryTasksBroker.Create();
 
     SummaryTaskList := SummaryTasksBroker.List(Pages);
 
-    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
+    // Выводим информацию о каждом объекте в TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
+    ShowMemo.Lines.Add('Содержимое списка:');
+
+    if not Assigned(SummaryTaskList) then
+    begin
+      ShowMemo.Lines.Add('пусто');
+      Exit;
+    end;
 
     for SummaryTask in SummaryTaskList do
     begin
       var st := (SummaryTask as TSummaryTask);
-      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
       ShowMemo.Lines.Add('Id '+ st.Id);
       ShowMemo.Lines.Add('Name '+ st.Name);
       ShowMemo.Lines.Add('Compid '+ (st.Compid));
@@ -511,7 +621,7 @@ begin
     end;
 
   finally
-    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
+    // Освобождаем список (все объекты освободятся автоматически)
     SummaryTaskList.Free;
 
     SummaryTasksBroker.Free;
@@ -520,13 +630,13 @@ end;
 
 procedure TMainForm.btnSummaryTaskInfoClick(Sender: TObject);
 const
-  tid = '1b3ce3a5-f3da-4d12-a20e-95481406a994';
-
+  tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
 var
   SummaryTask : TEntity;
   SummaryTasksBroker : TSummaryTasksBroker;
-
 begin
+  ShowMemo.Clear;
+
   SummaryTask := nil;
   SummaryTasksBroker := nil;
   try
@@ -568,6 +678,8 @@ var
   ExcludeWeek : TJSONArray;
   res : boolean;
 begin
+  ShowMemo.Clear;
+
   Settings := nil;
   SummaryTask := nil;
   SummaryTasksBroker := nil;
@@ -619,14 +731,16 @@ begin
 end;
 
 procedure TMainForm.btnSummaryTaskUpdateClick(Sender: TObject);
+const
+  tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
 var
   SummaryTask : TSummaryTask;
   SummaryTasksBroker : TSummaryTasksBroker;
   Settings : TJSONObject;
   res : boolean;
-const
-  tid = '48332ad5-55c1-4e64-b2ea-e99d0c78f900';
 begin
+  ShowMemo.Clear;
+
   Settings := nil;
   SummaryTask := nil;
   SummaryTasksBroker := nil;
@@ -661,11 +775,13 @@ end;
 
 procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
 const
-  tid = '1631cd00-d431-4152-8b0e-2887e1200747';
+  tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
 var
   SummaryTasksBroker : TSummaryTasksBroker;
   res : boolean;
 begin
+  ShowMemo.Clear;
+
   SummaryTasksBroker := nil;
   try
     SummaryTasksBroker := TSummaryTasksBroker.Create();
@@ -686,128 +802,37 @@ end;
 procedure TMainForm.btnSummaryTaskTypesClick(Sender: TObject);
 var
   SummaryTasksBroker : TSummaryTasksBroker;
-  TypesArray : TJSONArray;
+  Types              : TJSONArray;
 begin
-(*!!!  TypesArray := nil;
-  SummaryTasksBroker := nil;
+  ShowMemo.Clear;
+
   try
     SummaryTasksBroker := TSummaryTasksBroker.Create();
-
-    ShowMemo.Lines.Add('----------  Summary.Types  ----------');
-
-    TypesArray := SummaryTasksBroker.GetTypes();
-    if TypesArray = nil then
-      ShowMemo.Lines.Add('nil')
-    else
-      ShowMemo.Lines.Add(TypesArray.Format());
-  finally
-    TypesArray.Free;
-    SummaryTasksBroker.Free;
-  end; *)
-end;
-
-procedure TMainForm.btnTaskInfoClick(Sender: TObject);
-const
-  tid = 'aec62ec1-8869-4c78-8009-63fad7525c78';
-
-var
-  StripTask : TEntity;
-  StripTasksBroker : TStripTasksBroker;
-
-begin
-
-  try
-
-    StripTasksBroker := TStripTasksBroker.Create();
-    // Âûâîäèì èíôîðìàöèþ î òàñêå â TMemo
-    ShowMemo.Lines.Add('----------  Info  ----------');
-    ShowMemo.Lines.Add(Format('Èíôîðìàöèÿ î Çàäà÷å %s:', [tid]));
-    //  ïîëó÷àåì èíôó î òàñêå
-    StripTask := StripTasksBroker.Info(tid);
-    if StripTask = nil then
+    // Выводим список типов
+    ShowMemo.Lines.Add('----------  Types  ----------');
+    //  получаем список
+    Types := SummaryTasksBroker.Types;
+    if not Assigned(Types) then
     begin
       ShowMemo.Lines.Add('nil');
-      exit;
+      Exit;
     end;
 
-    var st := StripTask as TStripTask;
-
-    ShowMemo.Lines.Add('Tid: '+ st.Tid);
-    ShowMemo.Lines.Add('Name: '+ st.Name);
-    ShowMemo.Lines.Add('Caption: '+ st.Caption);
-    ShowMemo.Lines.Add('CompId: '+ st.CompId);
-    ShowMemo.Lines.Add('DepId: '+ st.DepId);
-    ShowMemo.Lines.Add('Def: '+ st.Def);
-//    ShowMemo.Lines.Add('Enabled: '+ BoolToString(st.Enabled));
-    ShowMemo.Lines.Add('Module: '+ st.Module);
-//    ShowMemo.Lines.Add('Created: '+ DateTimeToString(st.Created));
- //   ShowMemo.Lines.Add('Updated: '+ DateTimeToString(st.Updated));
-
-  finally
-    StripTasksBroker.Free;
-  end;
-
-end;
-
-procedure TMainForm.btnTaskListClick(Sender: TObject);
-var
-  StripTask : TEntity;
-  StripTasksBroker : TStripTasksBroker;
-  StripTaskList : TEntityList;
-  Pages : integer;
-
-begin
-  try
-    StripTasksBroker := TStripTasksBroker.Create();
-
-    StripTaskList := StripTasksBroker.List(Pages);
-
-    // Âûâîäèì èíôîðìàöèþ î êàæäîì îáúåêòå â TMemo
-    ShowMemo.Lines.Add('----------  List  ----------');
-    ShowMemo.Lines.Add('Ñîäåðæèìîå ñïèñêà:');
-
-    for StripTask in StripTaskList do
+    for var t in Types do
     begin
-      var st := (StripTask as TStripTask);
-      ShowMemo.Lines.Add(Format('Êëàññ: %s  |  Àäðåñ: %p', [StripTask.ClassName, Pointer(StripTask)]));
-      ShowMemo.Lines.Add('Id '+ st.Id);
-      ShowMemo.Lines.Add('Name '+ st.Name);
-      ShowMemo.Lines.Add('Compid '+ (st.Compid));
-      ShowMemo.Lines.Add('Depid '+ (st.Depid));
-
-      ShowMemo.Lines.Add('as json:');
-
-      var json := st.Serialize();
-
-      if json <> nil then
-        ShowMemo.Lines.Add(json.Format());
-
-      ShowMemo.Lines.Add('----------');
+      ShowMemo.Lines.Add('');
+      ShowMemo.Lines.Add('name: ' + (t as TJSONObject).GetValue('name').AsType<string>);
+      ShowMemo.Lines.Add('caption: ' + (t as TJSONObject).GetValue('caption').AsType<string>);
     end;
-
   finally
-    // Îñâîáîæäàåì ñïèñîê (âñå îáúåêòû îñâîáîäÿòñÿ àâòîìàòè÷åñêè)
-    StripTaskList.Free;
-
-    StripTasksBroker.Free;
+    if Assigned(Types) then FreeAndNil(Types);
+    SummaryTasksBroker.Free;
   end;
 end;
 
-
-
-procedure TMainForm.UniFormShow(Sender: TObject);
-begin
-  if AppLogger = nil then
-  begin
-    AppLogger := TUniLogger.Create(MainForm.LogMemo);
-    Log('app started');
-  end;
-end;
+{$ENDREGION 'Summary.Tasks'}
 
 initialization
   RegisterAppFormClass(TMainForm);
-  //AppLogger := TTextFileLogger.Create();  // C:\Users\user\AppData\Roaming\AppLogs\
-
-
 
 end.
