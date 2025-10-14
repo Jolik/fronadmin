@@ -14,6 +14,7 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
+  SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
@@ -32,10 +33,12 @@ uses
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
+  SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
 
 
+procedure ListSourceCreds();
 procedure ListRouterSource();
 var
   RouterSourceBroker: TRouterSourceBroker;
@@ -127,10 +130,103 @@ begin
   end;
 end;
 
+procedure ListSourceCreds();
+var
+  SourceCredsBroker: TSourceCredsBroker;
+  SourceCredsList: TEntityList;
+  SourceCredsEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    SourceCredsBroker := TSourceCredsBroker.Create;
+    try
+      SourceCredsList := nil;
+      try
+        SourceCredsList := SourceCredsBroker.List(PageCount);
+
+        Writeln('---------- Source Creds List ----------');
+
+        if Assigned(SourceCredsList) then
+        begin
+          var FirstCreds: TSourceCreds := nil;
+
+          if SourceCredsList.Count > 0 then
+            FirstCreds := SourceCredsList.Items[0] as TSourceCreds;
+
+          for SourceCredsEntity in SourceCredsList do
+          begin
+            var Creds := SourceCredsEntity as TSourceCreds;
+            Writeln(Format('Class: %s | Address: %p', [Creds.ClassName, Pointer(Creds)]));
+            Writeln('Crid: ' + Creds.Crid);
+            Writeln('Name: ' + Creds.Name);
+            Writeln('CtxId: ' + Creds.CtxId);
+            Writeln('Lid: ' + Creds.Lid);
+            Writeln('Login: ' + Creds.Login);
+            Writeln('Pass: ' + Creds.Pass);
+            Writeln('Data.Def: ' + Creds.SourceData.Def);
+
+            Writeln('As JSON:');
+            var Json := Creds.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstCreds) then
+          begin
+            Writeln('---------- Source Creds Info ----------');
+            Writeln('Requesting info for: ' + FirstCreds.Crid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := SourceCredsBroker.Info(FirstCreds.Crid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoCreds := InfoEntity as TSourceCreds;
+                Writeln('Info result as JSON:');
+                Writeln('Info Data.Def: ' + InfoCreds.SourceData.Def);
+                var InfoJson := InfoCreds.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Source creds list is empty.');
+
+      finally
+        SourceCredsList.Free;
+      end;
+    finally
+      SourceCredsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 
 begin
   try
     try
+      ListSourceCreds();
       ListRouterSource();
 
       // оставить консоль незакрытой до нажатия Enter

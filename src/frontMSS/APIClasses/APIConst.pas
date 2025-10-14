@@ -17,6 +17,9 @@ const
 const
   constURLDatacommBasePath = '/datacomm/api/v1';
 
+const
+  constURLDataserverBasePath = '/dataserver/api/v2';
+
 implementation
 
 end.
