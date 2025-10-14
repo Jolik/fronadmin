@@ -142,7 +142,7 @@
 {
   "meta": {},
     "response": {
-        "credentials": {
+        "credential": {
             "body": {},
             "compid": "85697f9f-b80d-4668-8ed2-2f70ed825eee",
             "created": 1755344705,
