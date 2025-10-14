@@ -105,7 +105,9 @@
         <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\ParentBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\QueuesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\DsGroupsBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
@@ -118,15 +120,20 @@
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\ScheduleUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\ChannelUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\acl\UserUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\dataserver\TDsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\QueueSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

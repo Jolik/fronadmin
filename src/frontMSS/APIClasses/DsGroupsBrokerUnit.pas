@@ -40,7 +40,7 @@ uses
   APIConst;
 
 const
-  constURLDsGroupsList = '/dsgroups/list';
+  constURLDsGroupsList = '/dsgroups/list?flag=dataseries';
   constURLDsGroupsInfo = '/dsgroups/%s';
   constURLDsGroupsNew = '/dsgroups/new';
   constURLDsGroupsUpdate = '/dsgroups/%s/update';

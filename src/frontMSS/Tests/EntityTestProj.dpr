@@ -40,12 +40,11 @@ uses
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
-  SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
+  SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
+  QueueSettingsUnit in '..\EntityClasses\Common\QueueSettingsUnit.pas',
+  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas';
 
-
-procedure ListSourceCreds();
 procedure ListRouterSource();
-procedure ListUsers();
 var
   RouterSourceBroker: TRouterSourceBroker;
   RouterSourceList: TEntityList;
@@ -416,7 +415,7 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
       ListDsGroups();
-      ListUsers();
+//      ListUsers();
 
       // оставить консоль незакрытой до нажатия Enter
       Writeln('press enter to finish...');
@@ -429,6 +428,4 @@ begin
 
   finally
   end;
-end;
-
 end.
