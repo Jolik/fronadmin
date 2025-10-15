@@ -26,7 +26,7 @@ type
     FDatasets: TGUIDList;
     FLevels: TGUIDList;
   public
-    constructor Create; overload;
+    constructor Create; overload; override;
     destructor Destroy; override;
     function Assign(ASource: TFieldSet): boolean; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -56,8 +56,8 @@ type
     class function DataClassType: TDataClass; override;
     class function BodyClassType: TBodyClass; override;
   public
-    constructor Create; overload;
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
+    constructor Create; overload; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
     destructor Destroy; override;
 
     function Assign(ASource: TFieldSet): boolean; override;

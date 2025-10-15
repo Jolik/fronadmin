@@ -10,8 +10,8 @@ uses
 
 type
 
-  // TQueue настройка очереди
-  TQueue = class(TFieldSet)
+  // TQueue настройка очереди специфичная для линка
+  TQueueSettings = class(TFieldSet)
   private
     FID: string;
     FDisabled: boolean;
@@ -36,26 +36,26 @@ implementation
 
 { TQueue }
 
-function TQueue.Assign(ASource: TFieldSet): boolean;
+function TQueueSettings.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
   if not inherited Assign(ASource) then
     exit;
-  if not (ASource is TQueue) then
+  if not (ASource is TQueueSettings) then
     exit;
-  var src := ASource as TQueue;
+  var src := ASource as TQueueSettings;
   ID := src.ID;
   Disabled := src.Disabled;
   Result := true;
 end;
 
-procedure TQueue.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TQueueSettings.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   ID := GetValueStrDef(src, 'qid', '');
   Disabled := GetValueBool(src, 'disabled');
 end;
 
-procedure TQueue.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TQueueSettings.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
   dst.AddPair('qid', ID);
   dst.AddPair('disabled', Disabled);

@@ -34,7 +34,12 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
-  DirSettingsUnit in '..\EntityClasses\Common\DirSettingsUnit.pas';
+  ParentFormUnit in '..\Forms\ParentFormUnit.pas' {ParentForm: TUniForm},
+  ParentEditFormUnit in '..\Forms\ParentEditFormUnit.pas' {ParentEditForm: TUniForm},
+  ListParentFormUnit in '..\Forms\ListParentFormUnit.pas' {ListParentForm: TUniForm},
+  StripTaskEditFormUnit in '..\Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
+  StripTasksFormUnit in '..\Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas';
 
 {$R *.res}
 

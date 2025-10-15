@@ -16,6 +16,7 @@ uses
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
+  DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
@@ -37,13 +38,13 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
-  SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas';
+  SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
+  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas';
 
-
-procedure ListSourceCreds();
 procedure ListRouterSource();
-procedure ListUsers();
 var
   RouterSourceBroker: TRouterSourceBroker;
   RouterSourceList: TEntityList;
@@ -316,13 +317,105 @@ begin
   end;
 end;
 
+procedure ListDsGroups();
+var
+  DsGroupBroker: TDsGroupBroker;
+  DsGroupList: TEntityList;
+  DsGroupEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    DsGroupBroker := TDsGroupBroker.Create;
+    try
+      DsGroupList := nil;
+      try
+        DsGroupList := DsGroupBroker.List(PageCount);
+
+        Writeln('---------- DS Groups List ----------');
+
+        if Assigned(DsGroupList) then
+        begin
+          var FirstGroup: TDsGroup := nil;
+
+          if DsGroupList.Count > 0 then
+            FirstGroup := DsGroupList.Items[0] as TDsGroup;
+
+          for DsGroupEntity in DsGroupList do
+          begin
+            var Group := DsGroupEntity as TDsGroup;
+            Writeln(Format('Class: %s | Address: %p', [Group.ClassName, Pointer(Group)]));
+            Writeln('Dsgid: ' + Group.Dsgid);
+            Writeln('Name: ' + Group.Name);
+            Writeln('Pdsgid: ' + Group.Pdsgid);
+            Writeln('Ctxid: ' + Group.Ctxid);
+            Writeln('Sid: ' + Group.Sid);
+            Writeln('Dataseries reported count: ' + IntToStr(Group.DataseriesCount));
+            Writeln('Dataseries parsed count: ' + IntToStr(Group.Dataseries.Count));
+
+            Writeln('As JSON:');
+            var Json := Group.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstGroup) then
+          begin
+            Writeln('---------- DS Group Info ----------');
+            Writeln('Requesting info for: ' + FirstGroup.Dsgid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := DsGroupBroker.Info(FirstGroup.Dsgid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoGroup := InfoEntity as TDsGroup;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoGroup.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('DS groups list is empty.');
+
+      finally
+        DsGroupList.Free;
+      end;
+    finally
+      DsGroupBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 
 begin
   try
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListUsers();
+      ListDsGroups();
+//      ListUsers();
 
       // оставить консоль незакрытой до нажатия Enter
       Writeln('press enter to finish...');
@@ -335,6 +428,4 @@ begin
 
   finally
   end;
-end;
-
 end.
