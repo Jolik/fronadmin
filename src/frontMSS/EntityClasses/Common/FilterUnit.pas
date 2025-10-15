@@ -38,6 +38,11 @@ type
     property Filters[Index: Integer]: TFilter read GetFilter write SetFilter;
   end;
 
+  /// <summary>
+  ///   Совместимый тип-синоним для списков фильтров.
+  /// </summary>
+  TFilerLists = class(TFilterList);
+
 implementation
 
 { TFilter }
