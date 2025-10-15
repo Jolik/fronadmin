@@ -1,7 +1,7 @@
 object MainForm: TMainForm
   Left = 0
   Top = 0
-  ClientHeight = 500
+  ClientHeight = 696
   ClientWidth = 700
   Caption = 'MainForm'
   OldCreateOrder = False
@@ -12,28 +12,31 @@ object MainForm: TMainForm
     Left = 159
     Top = 3
     Width = 538
-    Height = 494
+    Height = 690
     Hint = ''
     ScrollBars = ssBoth
     Align = alClient
     TabOrder = 0
+    ExplicitWidth = 530
+    ExplicitHeight = 469
   end
   object sbTestButtons: TUniScrollBox
     AlignWithMargins = True
     Left = 3
     Top = 3
     Width = 150
-    Height = 494
+    Height = 690
     Hint = ''
     Align = alLeft
     TabOrder = 1
     ScrollDirection = sdVertical
+    ExplicitHeight = 469
     ScrollHeight = 615
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 5
-      Width = 121
+      Width = 138
       Height = 85
       Hint = ''
       Margins.Left = 5
@@ -43,11 +46,12 @@ object MainForm: TMainForm
       Caption = ' Links '
       Align = alTop
       TabOrder = 0
+      ExplicitWidth = 108
       object btnLinskList: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -58,12 +62,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 1
         OnClick = btnLinskListClick
+        ExplicitWidth = 84
       end
       object btnLinkInfo: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -74,13 +79,14 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnClick = btnLinkInfoClick
+        ExplicitWidth = 84
       end
     end
     object gbQueues: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 100
-      Width = 121
+      Width = 138
       Height = 85
       Hint = ''
       Margins.Left = 5
@@ -90,11 +96,12 @@ object MainForm: TMainForm
       Caption = ' Queues '
       Align = alTop
       TabOrder = 1
+      ExplicitWidth = 108
       object btnQueuesList: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -105,12 +112,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 1
         OnClick = btnQueuesListClick
+        ExplicitWidth = 84
       end
       object btnQueuesInfo: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -121,13 +129,14 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnClick = btnQueuesInfoClick
+        ExplicitWidth = 84
       end
     end
     object gbStripTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 195
-      Width = 121
+      Width = 138
       Height = 205
       Hint = ''
       Margins.Left = 5
@@ -137,11 +146,12 @@ object MainForm: TMainForm
       Caption = ' Strip.Tasks '
       Align = alTop
       TabOrder = 2
+      ExplicitWidth = 108
       object btnStripTaskList: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -152,13 +162,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 1
         OnClick = btnStripTaskListClick
-        ExplicitTop = 20
+        ExplicitWidth = 84
       end
       object btnStripTaskInfo: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 80
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -169,13 +179,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnClick = btnStripTaskInfoClick
-        ExplicitTop = 50
+        ExplicitWidth = 84
       end
       object btnStripTaskNew: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 110
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -186,13 +196,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 3
         OnClick = btnStripTaskNewClick
-        ExplicitTop = 80
+        ExplicitWidth = 84
       end
       object btnStripTaskUpdate: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 140
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -203,13 +213,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 4
         OnClick = btnStripTaskUpdateClick
-        ExplicitTop = 110
+        ExplicitWidth = 84
       end
       object btnStripTaskRemove: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 170
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -220,13 +230,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 5
         OnClick = btnStripTaskRemoveClick
-        ExplicitTop = 140
+        ExplicitWidth = 84
       end
       object btnStripTasks: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -237,15 +247,14 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 6
         OnClick = btnStripTasksClick
-        ExplicitLeft = 14
-        ExplicitTop = 22
+        ExplicitWidth = 84
       end
     end
     object gbSummaryTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 410
-      Width = 121
+      Width = 138
       Height = 205
       Hint = ''
       Margins.Left = 5
@@ -255,12 +264,12 @@ object MainForm: TMainForm
       Caption = ' Summary.Tasks '
       Align = alTop
       TabOrder = 3
-      ExplicitTop = 380
+      ExplicitWidth = 108
       object btnSummaryTaskList: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -271,12 +280,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 1
         OnClick = btnSummaryTaskListClick
+        ExplicitWidth = 84
       end
       object btnSummaryTaskInfo: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -287,12 +297,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnClick = btnSummaryTaskInfoClick
+        ExplicitWidth = 84
       end
       object btnSummaryTaskNew: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 80
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -303,12 +314,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 3
         OnClick = btnSummaryTaskNewClick
+        ExplicitWidth = 84
       end
       object btnSummaryTaskUpdate: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 110
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -319,12 +331,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 4
         OnClick = btnSummaryTaskUpdateClick
+        ExplicitWidth = 84
       end
       object btnSummaryTaskRemove: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 140
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -335,12 +348,13 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 5
         OnClick = btnSummaryTaskRemoveClick
+        ExplicitWidth = 84
       end
       object btnSummaryTaskTypes: TUniButton
         AlignWithMargins = True
         Left = 12
         Top = 170
-        Width = 97
+        Width = 114
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -351,6 +365,7 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 6
         OnClick = btnSummaryTaskTypesClick
+        ExplicitWidth = 84
       end
     end
   end

@@ -1,4 +1,4 @@
-unit ParentChannelSettingEditFrameUnit;
+unit ParentLinkSettingEditFrameUnit;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   LinkSettingsUnit;
 
 type
-  TParentChannelSettingEditFrame = class(TUniFrame)
+  TParentLinkSettingEditFrame = class(TUniFrame)
   private
     FDataSettings: TDataSettings;
 
@@ -29,7 +29,7 @@ implementation
 
 { TParentChannelSettingEditFrame }
 
-procedure TParentChannelSettingEditFrame.SetDataSettings(
+procedure TParentLinkSettingEditFrame.SetDataSettings(
   const Value: TDataSettings);
 begin
   FDataSettings := Value;

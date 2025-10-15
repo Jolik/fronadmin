@@ -39,8 +39,10 @@ uses
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in 'EntityClasses\links\LinkUnit.pas',
   MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas',
-  ParentChannelSettingEditFrameUnit in 'Forms\ChannelFrames\ParentChannelSettingEditFrameUnit.pas' {ParentChannelSettingEditFrame: TUniFrame},
-  QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas';
+  QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
+  LinksFormUnit in 'Forms\LinksFormUnit.pas' {LinksForm: TUniForm},
+  LinkEditFormUnit in 'Forms\LinkEditFormUnit.pas' {LinkEditForm: TUniForm},
+  ParentLinkSettingEditFrameUnit in 'Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame};
 
 {$R *.res}
 

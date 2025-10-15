@@ -1,4 +1,4 @@
-unit ChannelsFormUnit;
+unit LinksFormUnit;
 
 interface
 
@@ -8,15 +8,14 @@ uses
   uniGUIClasses, uniGUIForm, ListParentFormUnit, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
-  uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  ParentBrokerUnit, ChannelsBrokerUnit,
-  ParentEditFormUnit;
+  FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
+  uniToolBar, uniGUIBaseClasses,
+  ParentBrokerUnit, ParentEditFormUnit, LinksBrokerUnit;
 
 type
-  TChannelsForm = class(TListParentForm)
+  TLinksForm = class(TListParentForm)
   private
-  protected
+  public
     ///  функция обновления компоннет на форме
     procedure Refresh(const AId: String = ''); override;
 
@@ -26,39 +25,37 @@ type
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
 
-  public
-
   end;
 
-function ChannelsForm: TChannelsForm;
+function LinksForm: TLinksForm;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, ChannelEditFormUnit;
+  MainModule, uniGUIApplication, ChannelEditFormUnit, LinkEditFormUnit;
 
-function ChannelsForm: TChannelsForm;
+function LinksForm: TLinksForm;
 begin
-  Result := TChannelsForm(UniMainModule.GetFormInstance(TChannelsForm));
+  Result := TLinksForm(UniMainModule.GetFormInstance(TLinksForm));
 end;
 
 { TChannelsForm }
 
-function TChannelsForm.CreateBroker: TParentBroker;
+function TLinksForm.CreateBroker: TParentBroker;
 begin
   ///  создаем "наш" брокер для Абонентов
-  Result := TChannelsBroker.Create();
+  Result := TLinksBroker.Create();
 end;
 
-function TChannelsForm.CreateEditForm: TParentEditForm;
+function TLinksForm.CreateEditForm: TParentEditForm;
 begin
   ///  создаем "нашу" форму редактирования для Абонентов
-  Result := ChannelEditForm();
+  Result := LinkEditForm();
 end;
 
-procedure TChannelsForm.Refresh(const AId: String = '');
+procedure TLinksForm.Refresh(const AId: String = '');
 begin
   inherited Refresh(AId)
 end;

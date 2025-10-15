@@ -40,4 +40,14 @@ object MainForm: TMainForm
     TabOrder = 2
     OnClick = btnStripTasksClick
   end
+  object btnLinks: TUniButton
+    Left = 40
+    Top = 208
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1051#1080#1085#1082#1080
+    TabOrder = 3
+    OnClick = btnLinksClick
+  end
 end

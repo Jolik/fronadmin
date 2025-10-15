@@ -8,8 +8,5 @@ inherited ChannelsForm: TChannelsForm
     inherited btnUpdate: TUniToolButton
       OnClick = nil
     end
-    inherited btnRefresh: TUniToolButton
-      ExplicitTop = 1
-    end
   end
 end
