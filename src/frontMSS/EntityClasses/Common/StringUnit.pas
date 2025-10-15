@@ -10,7 +10,7 @@ type
   /// <summary>
   ///   Представляет набор строк, ассоциированных с именем свойства JSON.
   /// </summary>
-  TStringList = class(TFieldSet)
+  TFieldSetStringList = class(TFieldSet)
   private
     FName: string;
     FValues: TList<string>;
@@ -29,13 +29,13 @@ type
   end;
 
   /// <summary>
-  ///   Коллекция объектов TStringList для работы с JSON-объектом вида
+  ///   Коллекция объектов TFieldSetStringList для работы с JSON-объектом вида
   ///   "ключ" : [ "строки" ].
   /// </summary>
-  TStringListsObject = class(TFieldSetList)
+  TFieldSetStringListsObject = class(TFieldSetList)
   private
-    function GetStringList(Index: Integer): TStringList;
-    procedure SetStringList(Index: Integer; const Value: TStringList);
+    function GetFieldSetStringList(Index: Integer): TFieldSetStringList;
+    procedure SetFieldSetStringList(Index: Integer; const Value: TFieldSetStringList);
     class function ShouldIncludeProperty(const APropertyName: string;
       const APropertyNames: TArray<string>): Boolean; static;
   protected
@@ -45,26 +45,26 @@ type
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
-    property Items[Index: Integer]: TStringList read GetStringList write SetStringList; default;
+    property Items[Index: Integer]: TFieldSetStringList read GetFieldSetStringList write SetFieldSetStringList; default;
   end;
 
 implementation
 
-{ TStringList }
+{ TFieldSetStringList }
 
-function TStringList.Assign(ASource: TFieldSet): boolean;
+function TFieldSetStringList.Assign(ASource: TFieldSet): boolean;
 var
-  Source: TStringList;
+  Source: TFieldSetStringList;
 begin
   Result := false;
 
   if not Assigned(ASource) then
     Exit;
 
-  if not (ASource is TStringList) then
+  if not (ASource is TFieldSetStringList) then
     Exit;
 
-  Source := TStringList(ASource);
+  Source := TFieldSetStringList(ASource);
 
   FName := Source.Name;
   FValues.Clear;
@@ -74,28 +74,28 @@ begin
   Result := true;
 end;
 
-constructor TStringList.Create;
+constructor TFieldSetStringList.Create;
 begin
   inherited Create;
 
   FValues := TList<string>.Create;
 end;
 
-constructor TStringList.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TFieldSetStringList.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Create;
 
   Parse(src, APropertyNames);
 end;
 
-destructor TStringList.Destroy;
+destructor TFieldSetStringList.Destroy;
 begin
   FValues.Free;
 
   inherited;
 end;
 
-procedure TStringList.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TFieldSetStringList.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   FName := '';
   FValues.Clear;
@@ -110,7 +110,7 @@ begin
   end;
 end;
 
-procedure TStringList.ParsePair(APair: TJSONPair);
+procedure TFieldSetStringList.ParsePair(APair: TJSONPair);
 var
   ValuesArray: TJSONArray;
   Value: TJSONValue;
@@ -147,7 +147,7 @@ begin
     FValues.Add(APair.JsonValue.ToString);
 end;
 
-procedure TStringList.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TFieldSetStringList.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 var
   ValuesArray: TJSONArray;
 begin
@@ -169,20 +169,20 @@ begin
   dst.AddPair(FName, ValuesArray);
 end;
 
-{ TStringListsObject }
+{ TFieldSetStringListsObject }
 
-function TStringListsObject.GetStringList(Index: Integer): TStringList;
+function TFieldSetStringListsObject.GetFieldSetStringList(Index: Integer): TFieldSetStringList;
 begin
   Result := nil;
 
   if (Index < 0) or (Index >= Count) then
     Exit;
 
-  if Items[Index] is TStringList then
-    Result := TStringList(Items[Index]);
+  if Items[Index] is TFieldSetStringList then
+    Result := TFieldSetStringList(Items[Index]);
 end;
 
-class function TStringListsObject.ShouldIncludeProperty(
+class function TFieldSetStringListsObject.ShouldIncludeProperty(
   const APropertyName: string; const APropertyNames: TArray<string>): Boolean;
 begin
   Result := Length(APropertyNames) = 0;
@@ -197,12 +197,12 @@ begin
   Result := False;
 end;
 
-class function TStringListsObject.ItemClassType: TFieldSetClass;
+class function TFieldSetStringListsObject.ItemClassType: TFieldSetClass;
 begin
-  Result := TStringList;
+  Result := TFieldSetStringList;
 end;
 
-procedure TStringListsObject.ParseList(src: TJSONArray;
+procedure TFieldSetStringListsObject.ParseList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
   Clear;
@@ -228,9 +228,9 @@ begin
       if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
         Continue;
 
-      var List := TStringList(ItemClassType.Create);
+      var List := TFieldSetStringList(ItemClassType.Create);
       if not Assigned(List) then
-        raise EInvalidOpException.Create('Unable to create TStringList item instance');
+        raise EInvalidOpException.Create('Unable to create TFieldSetStringList item instance');
       try
         List.ParsePair(Pair);
         Add(List);
@@ -242,7 +242,7 @@ begin
   end;
 end;
 
-procedure TStringListsObject.AddList(src: TJSONArray;
+procedure TFieldSetStringListsObject.AddList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
   if not Assigned(src) then
@@ -266,9 +266,9 @@ begin
       if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
         Continue;
 
-      var List := TStringList(ItemClassType.Create);
+      var List := TFieldSetStringList(ItemClassType.Create);
       if not Assigned(List) then
-        raise EInvalidOpException.Create('Unable to create TStringList item instance');
+        raise EInvalidOpException.Create('Unable to create TFieldSetStringList item instance');
       try
         List.ParsePair(Pair);
         Add(List);
@@ -280,10 +280,10 @@ begin
   end;
 end;
 
-procedure TStringListsObject.SerializeList(dst: TJSONArray;
+procedure TFieldSetStringListsObject.SerializeList(dst: TJSONArray;
   const APropertyNames: TArray<string>);
 var
-  List: TStringList;
+  List: TFieldSetStringList;
   JSONObject: TJSONObject;
 begin
   if not Assigned(dst) then
@@ -291,7 +291,7 @@ begin
 
   for var Index := 0 to Count - 1 do
   begin
-    List := GetStringList(Index);
+    List := GetFieldSetStringList(Index);
     if not Assigned(List) then
       Continue;
 
@@ -316,7 +316,7 @@ begin
   end;
 end;
 
-procedure TStringListsObject.SetStringList(Index: Integer; const Value: TStringList);
+procedure TFieldSetStringListsObject.SetFieldSetStringList(Index: Integer; const Value: TFieldSetStringList);
 begin
   if (Index < 0) or (Index >= Count) then
     Exit;
@@ -324,7 +324,7 @@ begin
   if not Assigned(Value) then
     Exit;
 
-  if not (Value is TStringList) then
+  if not (Value is TFieldSetStringList) then
     Exit;
 
   if Assigned(Items[Index]) then

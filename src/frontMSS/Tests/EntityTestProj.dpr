@@ -174,7 +174,7 @@ begin
             Writeln('Rule position: ' + IntToStr(Rule.Rule.Position));
             Writeln('Rule doubles: ' + BoolToStr(Rule.Rule.Doubles, True));
             Writeln('Rule break: ' + BoolToStr(Rule.Rule.BreakRule, True));
-            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Count));
+            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Values.Count));
             Writeln('Channels count: ' + IntToStr(Rule.Rule.Channels.Count));
             Writeln('Inc filters count: ' + IntToStr(Rule.Rule.IncFilters.Count));
             Writeln('Exc filters count: ' + IntToStr(Rule.Rule.ExcFilters.Count));

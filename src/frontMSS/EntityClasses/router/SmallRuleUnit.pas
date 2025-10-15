@@ -18,9 +18,9 @@ type
     FDoubles: Boolean;
     FPosition: Integer;
     FPriority: Integer;
-    FHandlers: TStringList;
+    FHandlers: TFieldSetStringList;
     FBreakRule: Boolean;
-    FChannels: TStringListsObject;
+    FChannels: TFieldSetStringListsObject;
     FIncFilters: TFilterList;
     FExcFilters: TFilterList;
     procedure ResetCollections;
@@ -36,9 +36,9 @@ type
     property Doubles: Boolean read FDoubles write FDoubles;
     property Position: Integer read FPosition write FPosition;
     property Priority: Integer read FPriority write FPriority;
-    property Handlers: TStringList read FHandlers;
+    property Handlers: TFieldSetStringList read FHandlers;
     property BreakRule: Boolean read FBreakRule write FBreakRule;
-    property Channels: TStringListsObject read FChannels;
+    property Channels: TFieldSetStringListsObject read FChannels;
     property IncFilters: TFilterList read FIncFilters;
     property ExcFilters: TFilterList read FExcFilters;
   end;
@@ -85,7 +85,7 @@ begin
   FChannels.Clear;
   for var Index := 0 to SourceRule.Channels.Count - 1 do
   begin
-    var Channel := TStringList.Create;
+    var Channel := TFieldSetStringList.Create;
     try
       if not Channel.Assign(SourceRule.Channels[Index]) then
       begin
@@ -140,9 +140,9 @@ constructor TSmallRule.Create;
 begin
   inherited Create;
 
-  FHandlers := TStringList.Create;
+  FHandlers := TFieldSetStringList.Create;
   FHandlers.Name := HandlersKey;
-  FChannels := TStringListsObject.Create;
+  FChannels := TFieldSetStringListsObject.Create;
   FIncFilters := TFilterList.Create;
   FExcFilters := TFilterList.Create;
 
@@ -205,7 +205,7 @@ begin
     FChannels.Clear;
     for var Pair in TJSONObject(Value) do
     begin
-      var Channel := TStringList.Create;
+      var Channel := TFieldSetStringList.Create;
       try
         Channel.ParsePair(Pair);
         FChannels.Add(Channel);
@@ -253,7 +253,7 @@ var
   ChannelsObject: TJSONObject;
   ValuesArray: TJSONArray;
   FilterArray: TJSONArray;
-  ChannelList: TStringList;
+  ChannelList: TFieldSetStringList;
 begin
   if not Assigned(dst) then
     Exit;
