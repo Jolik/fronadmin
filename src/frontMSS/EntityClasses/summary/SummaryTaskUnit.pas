@@ -4,18 +4,19 @@ interface
 
 uses
   System.Classes, System.JSON, System.Generics.Collections,
+  System.SysUtils,
   LoggingUnit,
   FuncUnit,
   EntityUnit, TaskUnit;
 
 type
-  /// Класс задачи парсера (сервис summary)
+  /// ГЉГ«Г Г±Г± Г§Г Г¤Г Г·ГЁ ГЇГ Г°Г±ГҐГ°Г  (Г±ГҐГ°ГўГЁГ± summary)
   TSummaryTask = class (TTask)
   private
 
   protected
-    ///  метод возвращает конкретный тип объекта Settings
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Settings
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function SettingsClassType: TSettingsClass; override;
 
   public
@@ -23,27 +24,27 @@ type
   end;
 
 type
-  ///  список задач для сервиса саммари
+  ///  Г±ГЇГЁГ±Г®ГЄ Г§Г Г¤Г Г· Г¤Г«Гї Г±ГҐГ°ГўГЁГ±Г  Г±Г Г¬Г¬Г Г°ГЁ
   TSummaryTaskList = class (TTaskList)
   protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  ГЅГ«ГҐГ¬ГҐГ­ГІГ  Г±ГЇГЁГ±ГЄГ 
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function ItemClassType: TEntityClass; override;
 
   end;
 
 type
-  ///  информация Custom из Settings
+  ///  ГЁГ­ГґГ®Г°Г¬Г Г¶ГЁГї Custom ГЁГ§ Settings
   TCustom = record
     Meteo: boolean;
     AnyTime: integer;
     Separate: boolean;
   end;
 
-  ///  массив значений ExcludeWeek из Settings
+  ///  Г¬Г Г±Г±ГЁГў Г§Г­Г Г·ГҐГ­ГЁГ© ExcludeWeek ГЁГ§ Settings
   TExcludeWeek = array of integer;
 
-  ///  настройки сущности SummaryTask
+  ///  Г­Г Г±ГІГ°Г®Г©ГЄГЁ Г±ГіГ№Г­Г®Г±ГІГЁ SummaryTask
   TSummaryTaskSettings = class (TSettings)
   private
     FLatePeriod: integer;
@@ -51,16 +52,43 @@ type
     FExcludeWeek: TExcludeWeek;
 
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+  ExcludeWeekKey = 'ExcludeWeek';
+  if Assigned(CustomObject) then
+  begin
+    FCustom.Meteo := GetValueBool(CustomObject, MeteoKey);
+    FCustom.AnyTime := GetValueIntDef(CustomObject, AnyTimeKey, 0);
+    FCustom.Separate := GetValueBool(CustomObject, SeparateKey);
+  end
+  else
+  begin
+    FCustom.Meteo := False;
+    FCustom.AnyTime := 0;
+    FCustom.Separate := False;
+  end;
+  var ExcludeWeekArray := src.GetValue(ExcludeWeekKey) as TJSONArray;
+  if Assigned(ExcludeWeekArray) then
+  begin
+    SetLength(FExcludeWeek, ExcludeWeekArray.Count);
+    for var I := 0 to ExcludeWeekArray.Count - 1 do
+      FExcludeWeek[I] := StrToIntDef(ExcludeWeekArray.Items[I].Value, 0);
+  end
+  else
+    SetLength(FExcludeWeek, 0);
 
-    // для поля module - типа Задачи
-    property LatePeriod: integer read FLatePeriod write FLatePeriod;
-  ///  информация Custom из Settings
-    property Custom: TCustom read FCustom write FCustom;
-    ///  массив значений ExcludeWeek из Settings
+    CustomObject.AddPair(MeteoKey, FCustom.Meteo);
+    CustomObject.AddPair(SeparateKey, FCustom.Separate);
+
+    AddPair(CustomKey, CustomObject);
+
+    var ExcludeWeekArray := TJSONArray.Create();
+    try
+      for var Value in FExcludeWeek do
+        ExcludeWeekArray.AddElement(TJSONNumber.Create(Value));
+      AddPair(ExcludeWeekKey, ExcludeWeekArray);
+    except
+      ExcludeWeekArray.Free();
+      raise;
+    end;
     property ExcludeWeek: TExcludeWeek read FExcludeWeek write FExcludeWeek;
 
   end;
@@ -86,7 +114,7 @@ end;
 
 { TSummaryTaskSettings }
 
-///   формат Settings
+///   ГґГ®Г°Г¬Г ГІ Settings
 ///
 ///  "settings": {
 ///      "LatePeriod": 120,
@@ -111,18 +139,18 @@ procedure TSummaryTaskSettings.Parse(src: TJSONObject;
 begin
   inherited;
 
-  ///  читаем поле LatePeriod
+  ///  Г·ГЁГІГ ГҐГ¬ ГЇГ®Г«ГҐ LatePeriod
   LatePeriod := GetValueIntDef(src, LatePeriodKey, 0);
 
-  ///  добавляем поля TCustom
+  ///  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЇГ®Г«Гї TCustom
   var CustomObject := src.GetValue(CustomKey) as TJSONObject;
 
-  ///  Custom зависит от поля module
+  ///  Custom Г§Г ГўГЁГ±ГЁГІ Г®ГІ ГЇГ®Г«Гї module
 (*  FCustom.Meteo := GetValueBool(CustomObject, MeteoKey);
   FCustom.AnyTime := GetValueIntDef(CustomObject, AnyTimeKey, 0);
   FCustom.Separate := GetValueBool(CustomObject, SeparateKey); *)
 
-  /// добавляем масиив TExcludeWeek
+  /// Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Г¬Г Г±ГЁГЁГў TExcludeWeek
   /// !!!
 end;
 
@@ -135,7 +163,7 @@ begin
   begin
     AddPair(LatePeriodKey, LatePeriod);
 
-    ///  добавляем поля TCustom
+    ///  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЇГ®Г«Гї TCustom
     var CustomObject := TJSONObject.Create();
 
 (*    CustomObject.AddPair(MeteoKey, FCustom.Meteo);
