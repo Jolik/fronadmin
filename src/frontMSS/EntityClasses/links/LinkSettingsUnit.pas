@@ -4,9 +4,10 @@ interface
 
 uses
   System.JSON,
-  ConnectionUnit,
+  ConnectionSettingsUnit,
   QueueSettingsUnit,
   DirSettingsUnit,
+  ScheduleSettingsUnit,
   EntityUnit;
 
 type
@@ -32,7 +33,7 @@ type
   // TSocketSpecialDataSettings םאסענמךיט SOCKET_SPECIAL
   TSocketSpecialDataSettings = class (TDataSettings)
   private
-    FConnections: TConnectionList;
+    FConnectionsSettingsList: TConnectionSettingsList;
     FQueueSettings: TQueueSettings;
     FType: string; // 'client'|'server'
     FAckTimeout: integer;
@@ -51,7 +52,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    property Connections: TConnectionList read FConnections write FConnections;
+    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
     property QueueSettings: TQueueSettings read FQueueSettings write FQueueSettings;
     property Atype: string read FType write FType;
     property ProtocolVer: string read FProtocolVer write FProtocolVer;
@@ -70,9 +71,9 @@ type
   // TSocketSpecialDataSettings םאסענמךיט OPENMCEP
   TOpenMCEPDataSettings = class (TDataSettings)
   private
-    FConnections: TConnectionList;
-    FQueue: TQueue;
-    FDir: TDir;
+    FConnectionsSettingsList: TConnectionSettingsList;
+    FQueueSettings: TQueueSettings;
+    FDirSettings: TDirSettings;
     FType: string;  // 'client'|'server'
     FPostponeTimeout: integer;
     FMaxPostponeMessages: integer;
@@ -84,9 +85,9 @@ type
     destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    property Connections: TConnectionList read FConnections write FConnections;
-    property Queue: TQueue read FQueue write FQueue;
-    property Dir: TDir read FDir write FDir;
+    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+    property Dir: TDirSettings read FDirSettings write FDirSettings;
     property AType: string read FType write FType;
     property PostponeTimeout: integer read FPostponeTimeout write FPostponeTimeout;
     property MaxPostponeMessages: integer read FMaxPostponeMessages write FMaxPostponeMessages;
@@ -122,13 +123,13 @@ end;
 constructor TSocketSpecialDataSettings.Create;
 begin
   inherited;
-  FConnections := TConnectionList.Create;
+  FConnectionsSettingsList := TConnectionSettingsList.Create;
   FQueueSettings := TQueueSettings.Create;
 end;
 
 destructor TSocketSpecialDataSettings.Destroy;
 begin
-  FConnections.Free;
+  FConnectionsSettingsList.Free;
   FQueueSettings.Free;
   inherited;
 end;
@@ -138,14 +139,14 @@ procedure TSocketSpecialDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  FConnections.Clear;
+  FConnectionsSettingsList.Clear;
   var cs := src.FindValue('connections');
   var qs := src.FindValue('QueueSettings');
   var custom := src.FindValue('custom');
   var protocol := src.FindValue('custom.protocol');
 
   if cs is TJSONArray then
-    FConnections.ParseList(cs as TJSONArray);
+    FConnectionsSettingsList.ParseList(cs as TJSONArray);
 
   if qs is TJSONObject then
     FQueueSettings.Parse(qs as TJSONObject);
@@ -173,7 +174,7 @@ procedure TSocketSpecialDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
   dst.AddPair('QueueSettings', FQueueSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
@@ -197,16 +198,16 @@ end;
 constructor TOpenMCEPDataSettings.Create;
 begin
   inherited;
-  FConnections := TConnectionList.Create;
-  FQueue := TQueue.Create;
-  FDir := TDir.Create;
+  FConnectionsSettingsList := TConnectionSettingsList.Create;
+  FQueueSettings := TQueueSettings.Create;
+  FDirSettings := TDirSettings.Create;
 end;
 
 destructor TOpenMCEPDataSettings.Destroy;
 begin
-  FConnections.Free;
-  FQueue.Free;
-  FDir.Free;
+  FConnectionsSettingsList.Free;
+  FQueueSettings.Free;
+  FDirSettings.Free;
   inherited;
 end;
 
@@ -214,7 +215,7 @@ procedure TOpenMCEPDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  FConnections.Clear;
+  FConnectionsSettingsList.Clear;
   var cs := src.FindValue('connections');
   var qs := src.FindValue('queue');
   var custom := src.FindValue('custom');
@@ -222,13 +223,13 @@ begin
   var ds := src.FindValue('custom.dir');
 
   if cs is TJSONArray then
-    FConnections.ParseList(cs as TJSONArray);
+    FConnectionsSettingsList.ParseList(cs as TJSONArray);
 
   if qs is TJSONObject then
-    FQueue.Parse(qs as TJSONObject);
+    FQueueSettings.Parse(qs as TJSONObject);
 
   if ds is TJSONObject then
-    FDir.Parse(ds as TJSONObject);
+    FDirSettings.Parse(ds as TJSONObject);
 
   if (custom is TJSONObject) then
     Atype := GetValueStrDef(custom, 'type', '');
@@ -247,9 +248,9 @@ procedure TOpenMCEPDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  dst.AddPair('connections', FConnections.SerializeList());
-  dst.AddPair('queue', FQueue.Serialize());
-  dst.AddPair('dir', FDir.Serialize());
+  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
+  dst.AddPair('queue', FQueueSettings.Serialize());
+  dst.AddPair('dir', FDirSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
   custom.AddPair('type', AType);

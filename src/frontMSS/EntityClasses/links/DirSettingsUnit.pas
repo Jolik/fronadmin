@@ -10,8 +10,8 @@ uses
 
 type
 
-  // TDir настройка папки на диске
-  TDir = class(TFieldSet)
+  // TDirSettings настройка папки на диске
+  TDirSettings = class(TFieldSet)
   private
     FPath: string;
     FDepth: integer;
@@ -35,28 +35,28 @@ type
 
 implementation
 
-{ TDir }
+{ TDirSettings }
 
-function TDir.Assign(ASource: TFieldSet): boolean;
+function TDirSettings.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
   if not inherited Assign(ASource) then
     exit;
-  if not (ASource is TDir) then
+  if not (ASource is TDirSettings) then
     exit;
-  var src := ASource as TDir;
+  var src := ASource as TDirSettings;
   Path := src.Path;
   Depth := src.Depth;
   Result := true;
 end;
 
-procedure TDir.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TDirSettings.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Path := GetValueStrDef(src, 'path', '');
   Depth := GetValueIntDef(src, 'depth', 0);
 end;
 
-procedure TDir.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TDirSettings.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
   dst.AddPair('path', Path);
   dst.AddPair('depth', Depth);
