@@ -1,11 +1,11 @@
-unit SmallRuleUnit;
+﻿unit SmallRuleUnit;
 
 interface
 
 uses
   System.SysUtils, System.JSON, System.Generics.Collections,
   FuncUnit,
-  FieldDefUnit,
+  EntityUnit,
   StringUnit,
   FilterUnit;
 
@@ -13,7 +13,7 @@ type
   /// <summary>
   ///   Представляет правило маршрутизации небольшого формата.
   /// </summary>
-  TSmallRule = class(TFieldDef)
+  TSmallRule = class(TFieldSet)
   private
     FDoubles: Boolean;
     FPosition: Integer;
@@ -21,8 +21,8 @@ type
     FHandlers: TStringList;
     FBreakRule: Boolean;
     FChannels: TStringListsObject;
-    FIncFilters: TFilerLists;
-    FExcFilters: TFilerLists;
+    FIncFilters: TFilterList;
+    FExcFilters: TFilterList;
     procedure ResetCollections;
   public
     constructor Create; overload; override;
@@ -39,8 +39,8 @@ type
     property Handlers: TStringList read FHandlers;
     property BreakRule: Boolean read FBreakRule write FBreakRule;
     property Channels: TStringListsObject read FChannels;
-    property IncFilters: TFilerLists read FIncFilters;
-    property ExcFilters: TFilerLists read FExcFilters;
+    property IncFilters: TFilterList read FIncFilters;
+    property ExcFilters: TFilterList read FExcFilters;
   end;
 
 implementation
@@ -143,8 +143,8 @@ begin
   FHandlers := TStringList.Create;
   FHandlers.Name := HandlersKey;
   FChannels := TStringListsObject.Create;
-  FIncFilters := TFilerLists.Create;
-  FExcFilters := TFilerLists.Create;
+  FIncFilters := TFilterList.Create;
+  FExcFilters := TFilterList.Create;
 
   ResetCollections;
 end;
