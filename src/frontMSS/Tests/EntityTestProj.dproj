@@ -134,6 +134,8 @@
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
