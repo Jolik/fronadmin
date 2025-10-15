@@ -1,10 +1,9 @@
-unit SummaryTaskUnit;
+﻿unit SummaryTaskUnit;
 
 interface
 
 uses
   System.Classes, System.JSON, System.Generics.Collections,
-  System.SysUtils,
   LoggingUnit,
   FuncUnit,
   EntityUnit, TaskUnit;
@@ -52,43 +51,16 @@ type
     FExcludeWeek: TExcludeWeek;
 
   public
-  ExcludeWeekKey = 'ExcludeWeek';
-  if Assigned(CustomObject) then
-  begin
-    FCustom.Meteo := GetValueBool(CustomObject, MeteoKey);
-    FCustom.AnyTime := GetValueIntDef(CustomObject, AnyTimeKey, 0);
-    FCustom.Separate := GetValueBool(CustomObject, SeparateKey);
-  end
-  else
-  begin
-    FCustom.Meteo := False;
-    FCustom.AnyTime := 0;
-    FCustom.Separate := False;
-  end;
-  var ExcludeWeekArray := src.GetValue(ExcludeWeekKey) as TJSONArray;
-  if Assigned(ExcludeWeekArray) then
-  begin
-    SetLength(FExcludeWeek, ExcludeWeekArray.Count);
-    for var I := 0 to ExcludeWeekArray.Count - 1 do
-      FExcludeWeek[I] := StrToIntDef(ExcludeWeekArray.Items[I].Value, 0);
-  end
-  else
-    SetLength(FExcludeWeek, 0);
+    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
+    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    CustomObject.AddPair(MeteoKey, FCustom.Meteo);
-    CustomObject.AddPair(SeparateKey, FCustom.Separate);
-
-    AddPair(CustomKey, CustomObject);
-
-    var ExcludeWeekArray := TJSONArray.Create();
-    try
-      for var Value in FExcludeWeek do
-        ExcludeWeekArray.AddElement(TJSONNumber.Create(Value));
-      AddPair(ExcludeWeekKey, ExcludeWeekArray);
-    except
-      ExcludeWeekArray.Free();
-      raise;
-    end;
+    // äëÿ ïîëÿ module - òèïà Çàäà÷è
+    property LatePeriod: integer read FLatePeriod write FLatePeriod;
+  ///  èíôîðìàöèÿ Custom èç Settings
+    property Custom: TCustom read FCustom write FCustom;
+    ///  ìàññèâ çíà÷åíèé ExcludeWeek èç Settings
     property ExcludeWeek: TExcludeWeek read FExcludeWeek write FExcludeWeek;
 
   end;

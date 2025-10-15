@@ -102,3 +102,25 @@ FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Debug Mode = ON
 FrontMSS.exe: 000056B0: 23:17:22 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
 FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Starting HTTP Server on Port: 8077...
 FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:HTTP Server Started on Port: 8077
+FrontMSS.exe: 000035E0: 23:39:19 []:>--------------------------------------------------------------<
+FrontMSS.exe: 000035E0: 23:39:19 [TUniServerModule]:Server First Init.
+FrontMSS.exe: 000035E0: 23:39:19 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Win64\Debug\
+FrontMSS.exe: 000035E0: 23:39:19 [TUniServerModule]:Debug Mode = ON
+FrontMSS.exe: 000035E0: 23:39:19 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+FrontMSS.exe: 000035E0: 23:39:20 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+FrontMSS.exe: 000035E0: 23:39:20 [TUniServerModule]:HTTP Server Started on Port: 8077
+FrontMSS.exe: 00006674: 23:39:32 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: OEL8aJyEzk111DBFCB7 ) : Addr: $0000000000C53277
+FrontMSS.exe: 000035E0: 23:40:17 [TUniServerModule]:Terminate started...
+FrontMSS.exe: 000035E0: 23:40:17 [TUniServerModule]:Shutting Down Server.
+FrontMSS.exe: 000035E0: 23:40:17 [TUniServerModule]:Stopping HTTP Server.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniServerModule]:HTTP Server Stopped.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUISessionManager]:Terminating Session manager.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUISessionManager]:Stopping Cache Eraser...
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUISessionManager]:Cache Eraser Stopped.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUISessionManager]:Destroying Worker Threads.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUISessionManager]:Session manager terminated.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniWebSocketStack]:Terminating...
+FrontMSS.exe: 000035E0: 23:40:19 [TUniGUIMessageQ]:Terminated.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniWebSocketStack]:Terminated.
+FrontMSS.exe: 000035E0: 23:40:19 [TUniServerModule]:Server Shutdown Completed.
+FrontMSS.exe: 000035E0: 23:40:19 []:<-------------------------------------------------------------->
