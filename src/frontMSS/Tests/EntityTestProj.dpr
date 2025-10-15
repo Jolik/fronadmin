@@ -14,6 +14,7 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
+  RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
@@ -35,6 +36,7 @@ uses
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
+  RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
@@ -131,6 +133,100 @@ begin
       end;
     finally
       RouterSourceBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListRules();
+var
+  RulesBroker: TRulesBroker;
+  RulesList: TEntityList;
+  RulesEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    RulesBroker := TRulesBroker.Create;
+    try
+      RulesList := nil;
+      try
+        RulesList := RulesBroker.List(PageCount);
+
+        Writeln('---------- Rules List ----------');
+
+        if Assigned(RulesList) then
+        begin
+          var FirstRule: TRule := nil;
+
+          if RulesList.Count > 0 then
+            FirstRule := RulesList.Items[0] as TRule;
+
+          for RulesEntity in RulesList do
+          begin
+            var Rule := RulesEntity as TRule;
+            Writeln(Format('Class: %s | Address: %p', [Rule.ClassName, Pointer(Rule)]));
+            Writeln('Ruid: ' + Rule.Ruid);
+            Writeln('Caption: ' + Rule.Caption);
+            Writeln('Rule priority: ' + IntToStr(Rule.Rule.Priority));
+            Writeln('Rule position: ' + IntToStr(Rule.Rule.Position));
+            Writeln('Rule doubles: ' + BoolToStr(Rule.Rule.Doubles, True));
+            Writeln('Rule break: ' + BoolToStr(Rule.Rule.BreakRule, True));
+            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Count));
+            Writeln('Channels count: ' + IntToStr(Rule.Rule.Channels.Count));
+            Writeln('Inc filters count: ' + IntToStr(Rule.Rule.IncFilters.Count));
+            Writeln('Exc filters count: ' + IntToStr(Rule.Rule.ExcFilters.Count));
+
+            Writeln('As JSON:');
+            var Json := Rule.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstRule) then
+          begin
+            Writeln('---------- Rule Info ----------');
+            Writeln('Requesting info for: ' + FirstRule.Ruid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := RulesBroker.Info(FirstRule.Ruid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoRule := InfoEntity as TRule;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoRule.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Rules list is empty.');
+
+      finally
+        RulesList.Free;
+      end;
+    finally
+      RulesBroker.Free;
     end;
   except
     on E: Exception do
@@ -417,7 +513,8 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListDsGroups();
+      ListRules();
+//      ListDsGroups();
 //      ListUsers();
 
       // оставить консоль незакрытой до нажатия Enter
