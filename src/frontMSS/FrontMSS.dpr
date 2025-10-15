@@ -38,7 +38,9 @@ uses
   RouterSourceUnit in 'EntityClasses\router\RouterSourceUnit.pas',
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in 'EntityClasses\links\LinkUnit.pas',
-  MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas';
+  MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas',
+  ParentChannelSettingEditFrameUnit in 'Forms\ChannelFrames\ParentChannelSettingEditFrameUnit.pas' {ParentChannelSettingEditFrame: TUniFrame},
+  QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas';
 
 {$R *.res}
 

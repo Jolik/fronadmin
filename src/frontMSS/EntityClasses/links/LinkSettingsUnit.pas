@@ -32,7 +32,7 @@ type
   TSocketSpecialDataSettings = class (TDataSettings)
   private
     FConnections: TConnectionList;
-    FQueue: TQueue;
+    FQueueSettings: TQueueSettings;
     FType: string; // 'client'|'server'
     FAckTimeout: integer;
     FProtocolVer: string;
@@ -51,7 +51,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     property Connections: TConnectionList read FConnections write FConnections;
-    property Queue: TQueue read FQueue write FQueue;
+    property QueueSettings: TQueueSettings read FQueueSettings write FQueueSettings;
     property Atype: string read FType write FType;
     property ProtocolVer: string read FProtocolVer write FProtocolVer;
     property AckCount: integer read FAckCount write FAckCount;
@@ -104,13 +104,13 @@ constructor TSocketSpecialDataSettings.Create;
 begin
   inherited;
   FConnections := TConnectionList.Create;
-  FQueue := TQueue.Create;
+  FQueueSettings := TQueueSettings.Create;
 end;
 
 destructor TSocketSpecialDataSettings.Destroy;
 begin
   FConnections.Free;
-  FQueue.Free;
+  FQueueSettings.Free;
   inherited;
 end;
 
@@ -121,7 +121,7 @@ begin
   inherited;
   FConnections.Clear;
   var cs := src.FindValue('connections');
-  var qs := src.FindValue('queue');
+  var qs := src.FindValue('QueueSettings');
   var custom := src.FindValue('custom');
   var protocol := src.FindValue('custom.protocol');
 
@@ -129,7 +129,7 @@ begin
     FConnections.ParseList(cs as TJSONArray);
 
   if qs is TJSONObject then
-    FQueue.Parse(qs as TJSONObject);
+    FQueueSettings.Parse(qs as TJSONObject);
 
   if (custom is TJSONObject) then
     Atype := GetValueStrDef(custom, 'type', '');
@@ -153,11 +153,11 @@ end;
 procedure TSocketSpecialDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 const
-  linkSettingsStr = '{"connections":[], "queue":{}, "custom":{"protocol":{}}}';
+  linkSettingsStr = '{"connections":[], "QueueSettings":{}, "custom":{"protocol":{}}}';
 begin
   inherited;
   dst.AddPair('connections', FConnections.SerializeList());
-  dst.AddPair('queue', FQueue.Serialize());
+  dst.AddPair('QueueSettings', FQueueSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
   custom.AddPair('type', AType);

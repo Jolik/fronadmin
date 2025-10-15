@@ -132,8 +132,8 @@
         <DCCReference Include="..\EntityClasses\dataserver\TDsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\QueueSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

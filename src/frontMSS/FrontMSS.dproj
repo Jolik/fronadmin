@@ -196,6 +196,12 @@
         <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
+        <DCCReference Include="Forms\ChannelFrames\ParentChannelSettingEditFrameUnit.pas">
+            <Form>ParentChannelSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

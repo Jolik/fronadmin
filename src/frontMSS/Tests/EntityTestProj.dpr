@@ -41,8 +41,8 @@ uses
   TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
-  QueueSettingsUnit in '..\EntityClasses\Common\QueueSettingsUnit.pas',
-  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas';
+  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas';
 
 procedure ListRouterSource();
 var

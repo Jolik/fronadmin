@@ -36,7 +36,8 @@ uses
   ParentEditFormUnit in '..\Forms\ParentEditFormUnit.pas' {ParentEditForm: TUniForm},
   ListParentFormUnit in '..\Forms\ListParentFormUnit.pas' {ListParentForm: TUniForm},
   StripTaskEditFormUnit in '..\Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
-  StripTasksFormUnit in '..\Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm};
+  StripTasksFormUnit in '..\Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas';
 
 {$R *.res}
 
