@@ -88,7 +88,7 @@ begin
     JSONResult := nil;
     RequestObject := TJSONObject.Create;
     try
-      RequestObject.AddPair('page', TJSONNumber.Create(APage));
+(*!!!      RequestObject.AddPair('page', TJSONNumber.Create(APage));
       RequestObject.AddPair('pagesize', TJSONNumber.Create(APageSize));
       if ASearchStr <> '' then
         RequestObject.AddPair('searchStr', ASearchStr);
@@ -97,7 +97,7 @@ begin
       if AOrder <> '' then
         RequestObject.AddPair('order', AOrder);
       if AOrderDir <> '' then
-        RequestObject.AddPair('orderDir', AOrderDir);
+        RequestObject.AddPair('orderDir', AOrderDir);*)
 
       RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
       try
