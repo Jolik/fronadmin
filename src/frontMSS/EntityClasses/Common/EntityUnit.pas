@@ -247,6 +247,8 @@ end;
 
 constructor TFieldSet.Create;
 begin
+  inherited Create;
+  //не удалять! так надо!
 end;
 
 function TFieldSet.JSON(const APropertyNames: TArray<string>): string;

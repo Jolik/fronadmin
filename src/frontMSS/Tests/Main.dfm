@@ -34,7 +34,7 @@ object MainForm: TMainForm
     end
     object btnLinkInfo: TUniButton
       Left = 8
-      Top = 55
+      Top = 88
       Width = 75
       Height = 25
       Hint = ''
@@ -182,6 +182,14 @@ object MainForm: TMainForm
       ParentFont = False
       Font.Charset = RUSSIAN_CHARSET
       TabOrder = 16
+    end
+    object lidEdit: TUniEdit
+      Left = 8
+      Top = 60
+      Width = 75
+      Hint = ''
+      Text = '3ce7c0ba-f81c-4f16-8a04-8cf52c4fc088'
+      TabOrder = 17
     end
   end
   object UniPanel2: TUniPanel

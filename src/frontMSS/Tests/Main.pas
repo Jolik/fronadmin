@@ -12,7 +12,7 @@ uses
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
   MonitoringTasksBrokerUnit, MonitoringTaskUnit,
-  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter;
+  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter, uniEdit;
 
 type
   TMainForm = class(TUniForm)
@@ -36,6 +36,7 @@ type
     UniPanel2: TUniPanel;
     UniSplitter1: TUniSplitter;
     LogMemo: TUniMemo;
+    lidEdit: TUniEdit;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnTaskListClick(Sender: TObject);
@@ -77,14 +78,13 @@ begin
 end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
-const
-  lid = '83789614-a334-4953-afaf-34093c8b43e4';
-
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
 
 begin
+  var lid := MainForm.lidEdit.Text;
+
   LinksBroker := TLinksBroker.Create();
   try
     ShowMemo.Clear;

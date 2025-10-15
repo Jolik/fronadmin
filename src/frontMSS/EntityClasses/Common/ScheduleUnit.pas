@@ -14,6 +14,7 @@ type
     FCronString: string;
     FPeriod: integer;
     FRetryCount: integer;
+    FDisabled: boolean;
     FDelay: integer;
 
   public
@@ -21,6 +22,7 @@ type
 
     property CronString: string read FCronString write FCronString;
     property Period: integer read FPeriod write FPeriod;
+    property Disabled: boolean read FDisabled write FDisabled;
     property RetryCount: integer read FRetryCount write FRetryCount;
     property Delay: integer read FDelay write FDelay;
 

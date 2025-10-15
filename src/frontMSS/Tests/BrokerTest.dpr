@@ -33,9 +33,8 @@ uses
   QueueSettingsUnit in '..\EntityClasses\Common\QueueSettingsUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
-  MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas';
-
-
+  MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
+  DirSettingsUnit in '..\EntityClasses\Common\DirSettingsUnit.pas';
 
 {$R *.res}
 

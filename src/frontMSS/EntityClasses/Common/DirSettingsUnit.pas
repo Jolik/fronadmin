@@ -1,4 +1,4 @@
-unit QueueSettingsUnit;
+unit DirSettingsUnit;
 
 
 interface
@@ -10,11 +10,12 @@ uses
 
 type
 
-  // TQueue настройка очереди
-  TQueue = class(TFieldSet)
+  // TDir настройка папки на диске
+  TDir = class(TFieldSet)
   private
-    FID: string;
-    FDisabled: boolean;
+    FPath: string;
+    FDepth: integer;
+
 
   public
     ///  устанавливаем поля с другого объекта
@@ -25,8 +26,8 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    property ID: string read FID write FID;
-    property Disabled: boolean read FDisabled write FDisabled;
+    property Path: string read FPath write FPath;
+    property Depth: integer read FDepth write FDepth;
    end;
 
 
@@ -34,31 +35,31 @@ type
 
 implementation
 
-{ TQueue }
+{ TDir }
 
-function TQueue.Assign(ASource: TFieldSet): boolean;
+function TDir.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
   if not inherited Assign(ASource) then
     exit;
-  if not (ASource is TQueue) then
+  if not (ASource is TDir) then
     exit;
-  var src := ASource as TQueue;
-  ID := src.ID;
-  Disabled := src.Disabled;
+  var src := ASource as TDir;
+  Path := src.Path;
+  Depth := src.Depth;
   Result := true;
 end;
 
-procedure TQueue.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TDir.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ID := GetValueStrDef(src, 'qid', '');
-  Disabled := GetValueBool(src, 'disabled');
+  Path := GetValueStrDef(src, 'path', '');
+  Depth := GetValueIntDef(src, 'depth', 0);
 end;
 
-procedure TQueue.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TDir.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
-  dst.AddPair('qid', ID);
-  dst.AddPair('disabled', Disabled);
+  dst.AddPair('path', Path);
+  dst.AddPair('depth', Depth);
 end;
 
 
