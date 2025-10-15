@@ -1,4 +1,4 @@
-unit ScheduleUnit;
+unit ScheduleSettingsUnit;
 
 interface
 
@@ -8,12 +8,13 @@ uses
   EntityUnit;
 
 type
-  // TShedule настройки расписания работы линка
-  TShedule = class (TFieldSet)
+  // TSheduleSettings настройки расписания работы линка
+  TSheduleSettings = class (TFieldSet)
   private
     FCronString: string;
     FPeriod: integer;
     FRetryCount: integer;
+    FDisabled: boolean;
     FDelay: integer;
 
   public
@@ -21,41 +22,42 @@ type
 
     property CronString: string read FCronString write FCronString;
     property Period: integer read FPeriod write FPeriod;
+    property Disabled: boolean read FDisabled write FDisabled;
     property RetryCount: integer read FRetryCount write FRetryCount;
     property Delay: integer read FDelay write FDelay;
 
   end;
 
 
-  TSheduleList = class(TFieldSetList)
+  TSheduleSettingsList = class(TFieldSetList)
   private
     FDisabled: boolean;
-    function GetShedule(Index: integer): TShedule;
-    procedure SetShedule(Index: integer; const Value: TShedule);
+    function GeTSheduleSettings(Index: integer): TSheduleSettings;
+    procedure SeTSheduleSettings(Index: integer; const Value: TSheduleSettings);
 
   public
     property Disabled: boolean read FDisabled write FDisabled;
     ///  список расписаний
-    property Shedules[Index : integer] : TShedule read GetShedule write SetShedule;
+    property Shedules[Index : integer] : TSheduleSettings read GeTSheduleSettings write SeTSheduleSettings;
   end;
 
 
 
 implementation
 
-{ TShedule }
+{ TSheduleSettings }
 
-function TShedule.Assign(ASource: TFieldSet): boolean;
+function TSheduleSettings.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
 
   if not inherited Assign(ASource) then
     exit;
 
-  if not (ASource is TShedule) then
+  if not (ASource is TSheduleSettings) then
     exit;
 
-  var src := ASource as TShedule;
+  var src := ASource as TSheduleSettings;
 
   CronString := src.CronString;
   Period := src.Period;
@@ -65,23 +67,23 @@ begin
   Result := true;
 end;
 
-{ TSheduleList }
+{ TSheduleSettingsList }
 
-function TSheduleList.GetShedule(Index: integer): TShedule;
+function TSheduleSettingsList.GeTSheduleSettings(Index: integer): TSheduleSettings;
 begin
   Result := nil;
 
   ///  обязательно проверяем соотвествие классов
-  if Items[Index] is TShedule then
-    Result := Items[Index] as TShedule;
+  if Items[Index] is TSheduleSettings then
+    Result := Items[Index] as TSheduleSettings;
 
 end;
 
-procedure TSheduleList.SetShedule(Index: integer;
-  const Value: TShedule);
+procedure TSheduleSettingsList.SeTSheduleSettings(Index: integer;
+  const Value: TSheduleSettings);
 begin
   ///  обязательно проверяем соотвествие классов
-  if not (Value is TShedule) then
+  if not (Value is TSheduleSettings) then
     exit;
 
   ///  если в этой позиции есть объект - удаляем его

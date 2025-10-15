@@ -4,8 +4,10 @@ interface
 
 uses
   System.JSON,
-  ConnectionUnit,
+  ConnectionSettingsUnit,
   QueueSettingsUnit,
+  DirSettingsUnit,
+  ScheduleSettingsUnit,
   EntityUnit;
 
 type
@@ -28,10 +30,10 @@ type
   end;
 
 type
-  /// TSocketSpecialDataSettings настрокйи SOCKET_SPECIAL
+  // TSocketSpecialDataSettings настрокйи SOCKET_SPECIAL
   TSocketSpecialDataSettings = class (TDataSettings)
   private
-    FConnections: TConnectionList;
+    FConnectionsSettingsList: TConnectionSettingsList;
     FQueueSettings: TQueueSettings;
     FType: string; // 'client'|'server'
     FAckTimeout: integer;
@@ -45,12 +47,12 @@ type
     FCompatibility: string;
     FKeepAlive: boolean;
   public
-    constructor Create;
+    constructor Create;  override;
     destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    property Connections: TConnectionList read FConnections write FConnections;
+    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
     property QueueSettings: TQueueSettings read FQueueSettings write FQueueSettings;
     property Atype: string read FType write FType;
     property ProtocolVer: string read FProtocolVer write FProtocolVer;
@@ -65,15 +67,33 @@ type
     property KeepAlive: boolean read FKeepAlive write FKeepAlive;
   end;
 
-type
-  ///  базовые настройки settings которые наход€тс€ в поле Data
+
+  // TSocketSpecialDataSettings настрокйи OPENMCEP
   TOpenMCEPDataSettings = class (TDataSettings)
+  private
+    FConnectionsSettingsList: TConnectionSettingsList;
+    FQueueSettings: TQueueSettings;
+    FDirSettings: TDirSettings;
+    FType: string;  // 'client'|'server'
+    FPostponeTimeout: integer;
+    FMaxPostponeMessages: integer;
+    FResendTimeoutSec: integer;
+    FHeartbeatDelay: integer;
+    FMaxFileSize: integer;
   public
-    // эти требуют существующего правильного экземпл€ра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаютс€ пол€, которые необходимо использовать
+    constructor Create; override;
+    destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
+    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+    property Dir: TDirSettings read FDirSettings write FDirSettings;
+    property AType: string read FType write FType;
+    property PostponeTimeout: integer read FPostponeTimeout write FPostponeTimeout;
+    property MaxPostponeMessages: integer read FMaxPostponeMessages write FMaxPostponeMessages;
+    property ResendTimeoutSec: integer read FResendTimeoutSec write FResendTimeoutSec;
+    property HeartbeatDelay: integer read FHeartbeatDelay write FHeartbeatDelay;
+    property MaxFileSize: integer read FMaxFileSize write FMaxFileSize;
   end;
 
 implementation
@@ -103,13 +123,13 @@ end;
 constructor TSocketSpecialDataSettings.Create;
 begin
   inherited;
-  FConnections := TConnectionList.Create;
+  FConnectionsSettingsList := TConnectionSettingsList.Create;
   FQueueSettings := TQueueSettings.Create;
 end;
 
 destructor TSocketSpecialDataSettings.Destroy;
 begin
-  FConnections.Free;
+  FConnectionsSettingsList.Free;
   FQueueSettings.Free;
   inherited;
 end;
@@ -119,14 +139,14 @@ procedure TSocketSpecialDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  FConnections.Clear;
+  FConnectionsSettingsList.Clear;
   var cs := src.FindValue('connections');
   var qs := src.FindValue('QueueSettings');
   var custom := src.FindValue('custom');
   var protocol := src.FindValue('custom.protocol');
 
   if cs is TJSONArray then
-    FConnections.ParseList(cs as TJSONArray);
+    FConnectionsSettingsList.ParseList(cs as TJSONArray);
 
   if qs is TJSONObject then
     FQueueSettings.Parse(qs as TJSONObject);
@@ -152,11 +172,9 @@ end;
 
 procedure TSocketSpecialDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
-const
-  linkSettingsStr = '{"connections":[], "QueueSettings":{}, "custom":{"protocol":{}}}';
 begin
   inherited;
-  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
   dst.AddPair('QueueSettings', FQueueSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
@@ -177,18 +195,72 @@ end;
 
 { TOpenMCEPDataSettings }
 
+constructor TOpenMCEPDataSettings.Create;
+begin
+  inherited;
+  FConnectionsSettingsList := TConnectionSettingsList.Create;
+  FQueueSettings := TQueueSettings.Create;
+  FDirSettings := TDirSettings.Create;
+end;
+
+destructor TOpenMCEPDataSettings.Destroy;
+begin
+  FConnectionsSettingsList.Free;
+  FQueueSettings.Free;
+  FDirSettings.Free;
+  inherited;
+end;
+
 procedure TOpenMCEPDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
+  FConnectionsSettingsList.Clear;
+  var cs := src.FindValue('connections');
+  var qs := src.FindValue('queue');
+  var custom := src.FindValue('custom');
+  var protocol := src.FindValue('custom.protocol');
+  var ds := src.FindValue('custom.dir');
 
+  if cs is TJSONArray then
+    FConnectionsSettingsList.ParseList(cs as TJSONArray);
+
+  if qs is TJSONObject then
+    FQueueSettings.Parse(qs as TJSONObject);
+
+  if ds is TJSONObject then
+    FDirSettings.Parse(ds as TJSONObject);
+
+  if (custom is TJSONObject) then
+    Atype := GetValueStrDef(custom, 'type', '');
+
+  if (protocol is TJSONObject) then
+  begin
+    PostponeTimeout := GetValueIntDef(protocol, 'postpone_timeout', 0);
+    MaxPostponeMessages := GetValueIntDef(protocol, 'max_postpone_messages', 0);
+    ResendTimeoutSec := GetValueIntDef(protocol, 'resend_timeout_sec', 0);
+    HeartbeatDelay := GetValueIntDef(protocol, 'heartbeat_delay', 0);
+    MaxFileSize := GetValueIntDef(protocol, 'max_file_size', 0);
+  end;
 end;
 
 procedure TOpenMCEPDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-
+  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
+  dst.AddPair('queue', FQueueSettings.Serialize());
+  dst.AddPair('dir', FDirSettings.Serialize());
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('type', AType);
+  var protocol := TJSONObject.Create;
+  custom.AddPair('protocol', protocol);
+  protocol.AddPair('postpone_timeout', PostponeTimeout);
+  protocol.AddPair('max_postpone_messages', MaxPostponeMessages);
+  protocol.AddPair('resend_timeout_sec', ResendTimeoutSec);
+  protocol.AddPair('heartbeat_delay', HeartbeatDelay);
+  protocol.AddPair('max_file_size', MaxFileSize);
 end;
 
 end.

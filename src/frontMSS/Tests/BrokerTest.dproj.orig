@@ -123,6 +123,8 @@
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\ConnectionUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\ScheduleUnit.pas"/>
         <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
@@ -135,10 +137,12 @@
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
-        <DCCReference Include="..\Logging\UniLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
+<<<<<<< HEAD
+        <DCCReference Include="..\EntityClasses\Common\DirSettingsUnit.pas"/>
+=======
         <DCCReference Include="..\Forms\ParentFormUnit.pas">
             <Form>ParentForm</Form>
             <FormType>dfm</FormType>
@@ -165,9 +169,7 @@
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
+>>>>>>> 7161680f745b3d91f59f3d75daedee6d2fae228a
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -189,7 +191,7 @@
                     <Source Name="MainSource">BrokerTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
-            <Deployment Version="4">
+            <Deployment Version="5">
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>BrokerTest.exe</RemoteName>
@@ -206,16 +208,6 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidClasses">
-                    <Platform Name="Android">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
-                    </Platform>
-                    <Platform Name="Android64">
-                        <RemoteDir>classes</RemoteDir>
-                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

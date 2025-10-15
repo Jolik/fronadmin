@@ -1,4 +1,4 @@
-unit ConnectionUnit;
+unit ConnectionSettingsUnit;
 
 interface
 uses
@@ -32,7 +32,7 @@ type
 
 
   ///  класс одно соединие
-  TConnection = class(TFieldSet)
+  TConnectionSettings = class(TFieldSet)
   private
     FAddr: string;
     FTimeout: integer;
@@ -56,30 +56,30 @@ type
 
 
   ///  класс список соединений
-  TConnectionList = class(TFieldSetList)
+  TConnectionSettingsList = class(TFieldSetList)
   private
-    function GetConnection(Index: integer): TConnection;
-    procedure SetConnection(Index: integer; const Value: TConnection);
+    function GeTConnectionSettings(Index: integer): TConnectionSettings;
+    procedure SeTConnectionSettings(Index: integer; const Value: TConnectionSettings);
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
     ///  список соединений (переопределяет доступ к Items[])
-    property Connections[Index : integer] : TConnection read GetConnection write SetConnection;
+    property Connections[Index : integer] : TConnectionSettings read GeTConnectionSettings write SeTConnectionSettings;
   end;
 
 
 implementation
 
-{ TConnection }
+{ TConnectionSettings }
 
-function TConnection.Assign(ASource: TFieldSet): boolean;
+function TConnectionSettings.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
   if not inherited Assign(ASource) then
     exit;
-  if not (ASource is TConnection) then
+  if not (ASource is TConnectionSettings) then
     exit;
-  var src := ASource as TConnection;
+  var src := ASource as TConnectionSettings;
   Addr := src.Addr;
   Timeout := src.Timeout;
   Disabled := src.Disabled;
@@ -87,7 +87,7 @@ begin
   Result := true;
 end;
 
-procedure TConnection.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TConnectionSettings.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Addr := GetValueStrDef(src, 'addr', '');
   Timeout := GetValueIntDef(src, 'timeout', 0);
@@ -109,7 +109,7 @@ begin
   Secure := s;
 end;
 
-procedure TConnection.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TConnectionSettings.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 const
   connectionStr = '{"secure":{"auth":{},"tls":{"certificates":{}}}}';
 begin
@@ -128,30 +128,30 @@ begin
   certificates.AddPair('ca',  Secure.TLS.Certificates.CA);
 end;
 
-{ TConnectionList }
+{ TConnectionSettingsList }
 
-function TConnectionList.GetConnection(Index: integer): TConnection;
+function TConnectionSettingsList.GeTConnectionSettings(Index: integer): TConnectionSettings;
 begin
   Result := nil;
   if Index >= Count then
     exit;
   ///  обязательно проверяем соотвествие классов
-  if Items[Index] is TConnection then
-    Result := Items[Index] as TConnection;
+  if Items[Index] is TConnectionSettings then
+    Result := Items[Index] as TConnectionSettings;
 end;
 
-class function TConnectionList.ItemClassType: TFieldSetClass;
+class function TConnectionSettingsList.ItemClassType: TFieldSetClass;
 begin
-  result := TConnection;
+  result := TConnectionSettings;
 end;
 
-procedure TConnectionList.SetConnection(Index: integer;
-  const Value: TConnection);
+procedure TConnectionSettingsList.SeTConnectionSettings(Index: integer;
+  const Value: TConnectionSettings);
 begin
   if Index >= Count then
     exit;
   ///  обязательно проверяем соотвествие классов
-  if not (Value is TConnection) then
+  if not (Value is TConnectionSettings) then
     exit;
   ///  если в этой позиции есть объект - удаляем его
   if Assigned(Items[Index]) then

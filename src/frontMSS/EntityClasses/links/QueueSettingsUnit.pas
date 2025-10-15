@@ -57,10 +57,8 @@ end;
 
 procedure TQueueSettings.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
-  var q := TJSONObject.Create();
-  dst.AddPair('queue', q);
-  q.AddPair('qid', ID);
-  q.AddPair('disabled', Disabled);
+  dst.AddPair('qid', ID);
+  dst.AddPair('disabled', Disabled);
 end;
 
 
