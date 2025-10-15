@@ -26,9 +26,7 @@ uses
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
-  ConnectionUnit in '..\EntityClasses\Common\ConnectionUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
-  ScheduleUnit in '..\EntityClasses\Common\ScheduleUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
@@ -48,7 +46,10 @@ uses
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
-  SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas';
+  SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
+  ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
+  DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
 
 procedure ListRouterSource();
 var
