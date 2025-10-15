@@ -95,3 +95,10 @@ FrontMSS.exe: 000052F0: 21:43:52 [TUniGUIMessageQ]:Terminated.
 FrontMSS.exe: 000052F0: 21:43:52 [TUniWebSocketStack]:Terminated.
 FrontMSS.exe: 000052F0: 21:43:52 [TUniServerModule]:Server Shutdown Completed.
 FrontMSS.exe: 000052F0: 21:43:52 []:<-------------------------------------------------------------->
+FrontMSS.exe: 000056B0: 23:17:22 []:>--------------------------------------------------------------<
+FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Server First Init.
+FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Win64\Debug\
+FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Debug Mode = ON
+FrontMSS.exe: 000056B0: 23:17:22 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+FrontMSS.exe: 000056B0: 23:17:22 [TUniServerModule]:HTTP Server Started on Port: 8077
