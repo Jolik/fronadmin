@@ -145,3 +145,25 @@ BrokerTest.exe: 000014D0: 20:33:02 [TUniServerModule]:Start Path = C:\projects\f
 BrokerTest.exe: 000014D0: 20:33:02 [TUniServerModule]:Debug Mode = ON
 BrokerTest.exe: 000014D0: 20:33:03 [TUniServerModule]:Starting HTTP Server on Port: 8077...
 BrokerTest.exe: 000014D0: 20:33:03 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00005550: 22:27:02 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00005550: 22:27:02 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00005550: 22:27:02 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00005550: 22:27:02 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00005550: 22:27:02 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00005550: 22:27:02 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 000022A0: 22:27:07 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: XGZ9AUMM7q111DBE33B ) : Addr: $00D1804E
+BrokerTest.exe: 00006CCC: 22:27:07 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: XGZ9AUMM7q111DBE33B ) : Addr: $00D1804E
+BrokerTest.exe: 00005550: 22:27:22 [TUniServerModule]:Terminate started...
+BrokerTest.exe: 00005550: 22:27:23 [TUniServerModule]:Shutting Down Server.
+BrokerTest.exe: 00005550: 22:27:23 [TUniServerModule]:Stopping HTTP Server.
+BrokerTest.exe: 00005550: 22:27:24 [TUniServerModule]:HTTP Server Stopped.
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUISessionManager]:Terminating Session manager.
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUISessionManager]:Stopping Cache Eraser...
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUISessionManager]:Cache Eraser Stopped.
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUISessionManager]:Destroying Worker Threads.
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUISessionManager]:Session manager terminated.
+BrokerTest.exe: 00005550: 22:27:24 [TUniWebSocketStack]:Terminating...
+BrokerTest.exe: 00005550: 22:27:24 [TUniGUIMessageQ]:Terminated.
+BrokerTest.exe: 00005550: 22:27:24 [TUniWebSocketStack]:Terminated.
+BrokerTest.exe: 00005550: 22:27:24 [TUniServerModule]:Server Shutdown Completed.
+BrokerTest.exe: 00005550: 22:27:24 []:<-------------------------------------------------------------->
