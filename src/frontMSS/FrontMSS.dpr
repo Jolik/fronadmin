@@ -43,7 +43,9 @@ uses
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in 'EntityClasses\links\LinkUnit.pas',
   QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
-  ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas',
+  SummaryTaskEditFormUnit in 'Forms\SummaryTaskEditFormUnit.pas',
+  SummaryTasksFormUnit in 'Forms\SummaryTasksFormUnit.pas';
 
 {$R *.res}
 
