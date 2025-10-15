@@ -44,7 +44,8 @@ uses
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
-  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas';
+  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
+  StringUnit in '..\EntityClasses\Common\StringUnit.pas';
 
 procedure ListRouterSource();
 var

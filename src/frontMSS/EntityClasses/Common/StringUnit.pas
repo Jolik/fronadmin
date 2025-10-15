@@ -1,9 +1,9 @@
-unit StringUnit;
+﻿unit StringUnit;
 
 interface
 
 uses
-  System.JSON, System.Generics.Collections,
+  System.JSON, System.Generics.Collections, System.SysUtils,
   EntityUnit;
 
 type
@@ -41,10 +41,6 @@ type
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
-    procedure ParseObject(src: TJSONObject; const APropertyNames: TArray<string> = nil);
-    procedure SerializeObject(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
-    function SerializeObject(const APropertyNames: TArray<string> = nil): TJSONObject;
-
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
@@ -204,80 +200,6 @@ end;
 class function TStringListsObject.ItemClassType: TFieldSetClass;
 begin
   Result := TStringList;
-end;
-
-procedure TStringListsObject.ParseObject(src: TJSONObject; const APropertyNames: TArray<string>);
-begin
-  Clear;
-
-  if not Assigned(src) then
-    Exit;
-
-  for var I := 0 to src.Count - 1 do
-  begin
-    var Pair := src.Pairs[I];
-    if not Assigned(Pair) then
-      Continue;
-
-    if not Assigned(Pair.JsonString) then
-      Continue;
-
-    if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
-      Continue;
-
-    var List := TStringList(ItemClassType.Create);
-    try
-      List.ParsePair(Pair);
-      Add(List);
-    except
-      List.Free;
-      raise;
-    end;
-  end;
-end;
-
-procedure TStringListsObject.SerializeObject(dst: TJSONObject; const APropertyNames: TArray<string>);
-var
-  ValuesArray: TJSONArray;
-  List: TStringList;
-begin
-  if not Assigned(dst) then
-    Exit;
-
-  for var I := 0 to Count - 1 do
-  begin
-    List := GetStringList(I);
-    if not Assigned(List) then
-      Continue;
-
-    if List.Name = '' then
-      Continue;
-
-    if not ShouldIncludeProperty(List.Name, APropertyNames) then
-      Continue;
-
-    ValuesArray := TJSONArray.Create;
-    try
-      for var Value in List.Values do
-        ValuesArray.Add(Value);
-    except
-      ValuesArray.Free;
-      raise;
-    end;
-
-    dst.AddPair(List.Name, ValuesArray);
-  end;
-end;
-
-function TStringListsObject.SerializeObject(const APropertyNames: TArray<string>): TJSONObject;
-begin
-  Result := TJSONObject.Create;
-  try
-    SerializeObject(Result, APropertyNames);
-  except
-    Result.Free;
-    raise;
-  end;
 end;
 
 procedure TStringListsObject.ParseList(src: TJSONArray;
