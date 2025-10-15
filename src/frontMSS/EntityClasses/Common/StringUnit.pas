@@ -36,12 +36,18 @@ type
   private
     function GetStringList(Index: Integer): TStringList;
     procedure SetStringList(Index: Integer; const Value: TStringList);
+    class function ShouldIncludeProperty(const APropertyName: string;
+      const APropertyNames: TArray<string>): Boolean; static;
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
     procedure ParseObject(src: TJSONObject; const APropertyNames: TArray<string> = nil);
     procedure SerializeObject(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
     function SerializeObject(const APropertyNames: TArray<string> = nil): TJSONObject;
+
+    procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
+    procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
+    procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
     property Items[Index: Integer]: TStringList read GetStringList write SetStringList; default;
   end;
@@ -180,6 +186,21 @@ begin
     Result := TStringList(Items[Index]);
 end;
 
+class function TStringListsObject.ShouldIncludeProperty(
+  const APropertyName: string; const APropertyNames: TArray<string>): Boolean;
+begin
+  Result := Length(APropertyNames) = 0;
+
+  if Result then
+    Exit;
+
+  for var PropertyName in APropertyNames do
+    if SameText(PropertyName, APropertyName) then
+      Exit(True);
+
+  Result := False;
+end;
+
 class function TStringListsObject.ItemClassType: TFieldSetClass;
 begin
   Result := TStringList;
@@ -196,6 +217,12 @@ begin
   begin
     var Pair := src.Pairs[I];
     if not Assigned(Pair) then
+      Continue;
+
+    if not Assigned(Pair.JsonString) then
+      Continue;
+
+    if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
       Continue;
 
     var List := TStringList(ItemClassType.Create);
@@ -226,6 +253,9 @@ begin
     if List.Name = '' then
       Continue;
 
+    if not ShouldIncludeProperty(List.Name, APropertyNames) then
+      Continue;
+
     ValuesArray := TJSONArray.Create;
     try
       for var Value in List.Values do
@@ -247,6 +277,120 @@ begin
   except
     Result.Free;
     raise;
+  end;
+end;
+
+procedure TStringListsObject.ParseList(src: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  Clear;
+
+  if not Assigned(src) then
+    Exit;
+
+  for var Value in src do
+  begin
+    if not (Value is TJSONObject) then
+      Continue;
+
+    var JSONObject := TJSONObject(Value);
+    for var Index := 0 to JSONObject.Count - 1 do
+    begin
+      var Pair := JSONObject.Pairs[Index];
+      if not Assigned(Pair) then
+        Continue;
+
+      if not Assigned(Pair.JsonString) then
+        Continue;
+
+      if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
+        Continue;
+
+      var List := TStringList(ItemClassType.Create);
+      if not Assigned(List) then
+        raise EInvalidOpException.Create('Unable to create TStringList item instance');
+      try
+        List.ParsePair(Pair);
+        Add(List);
+      except
+        List.Free;
+        raise;
+      end;
+    end;
+  end;
+end;
+
+procedure TStringListsObject.AddList(src: TJSONArray;
+  const APropertyNames: TArray<string>);
+begin
+  if not Assigned(src) then
+    Exit;
+
+  for var Value in src do
+  begin
+    if not (Value is TJSONObject) then
+      Continue;
+
+    var JSONObject := TJSONObject(Value);
+    for var Index := 0 to JSONObject.Count - 1 do
+    begin
+      var Pair := JSONObject.Pairs[Index];
+      if not Assigned(Pair) then
+        Continue;
+
+      if not Assigned(Pair.JsonString) then
+        Continue;
+
+      if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
+        Continue;
+
+      var List := TStringList(ItemClassType.Create);
+      if not Assigned(List) then
+        raise EInvalidOpException.Create('Unable to create TStringList item instance');
+      try
+        List.ParsePair(Pair);
+        Add(List);
+      except
+        List.Free;
+        raise;
+      end;
+    end;
+  end;
+end;
+
+procedure TStringListsObject.SerializeList(dst: TJSONArray;
+  const APropertyNames: TArray<string>);
+var
+  List: TStringList;
+  JSONObject: TJSONObject;
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  for var Index := 0 to Count - 1 do
+  begin
+    List := GetStringList(Index);
+    if not Assigned(List) then
+      Continue;
+
+    if List.Name = '' then
+      Continue;
+
+    if not ShouldIncludeProperty(List.Name, APropertyNames) then
+      Continue;
+
+    JSONObject := TJSONObject.Create;
+    try
+      List.Serialize(JSONObject, APropertyNames);
+
+      if JSONObject.Count > 0 then
+        dst.AddElement(JSONObject)
+      else
+        JSONObject.Free;
+    except
+      JSONObject.Free;
+      raise;
+    end;
   end;
 end;
 
