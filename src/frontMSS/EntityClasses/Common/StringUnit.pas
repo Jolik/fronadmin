@@ -3,7 +3,7 @@ unit StringUnit;
 interface
 
 uses
-  System.JSON, System.Generics.Collections, System.SysUtils,
+  System.JSON, System.Generics.Collections,
   EntityUnit;
 
 type

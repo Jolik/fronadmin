@@ -42,7 +42,9 @@ uses
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
-  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas';
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
+  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
+  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas';
 
 procedure ListRouterSource();
 var
