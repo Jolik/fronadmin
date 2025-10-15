@@ -183,9 +183,7 @@
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\ConnectionUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\ScheduleUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\TaskUnit.pas"/>
         <DCCReference Include="EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\strips\StripTaskUnit.pas"/>
@@ -193,10 +191,7 @@
         <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
         <DCCReference Include="EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
         <DCCReference Include="Forms\LinksFormUnit.pas">
             <Form>LinksForm</Form>
             <FormType>dfm</FormType>
@@ -212,6 +207,12 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="EntityClasses\links\ConnectionSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\DirSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

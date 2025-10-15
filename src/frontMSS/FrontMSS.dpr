@@ -26,9 +26,7 @@ uses
   StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in 'APIClasses\SummaryTasksBrokerUnit.pas',
   TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas',
-  ConnectionUnit in 'EntityClasses\Common\ConnectionUnit.pas',
   EntityUnit in 'EntityClasses\Common\EntityUnit.pas',
-  ScheduleUnit in 'EntityClasses\Common\ScheduleUnit.pas',
   TaskUnit in 'EntityClasses\Common\TaskUnit.pas',
   MonitoringTaskUnit in 'EntityClasses\monitoring\MonitoringTaskUnit.pas',
   StripTaskUnit in 'EntityClasses\strips\StripTaskUnit.pas',
@@ -36,13 +34,16 @@ uses
   ChannelUnit in 'EntityClasses\router\ChannelUnit.pas',
   QueueUnit in 'EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in 'EntityClasses\router\RouterSourceUnit.pas',
-  LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
-  LinkUnit in 'EntityClasses\links\LinkUnit.pas',
   MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas',
-  QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
   LinksFormUnit in 'Forms\LinksFormUnit.pas' {LinksForm: TUniForm},
   LinkEditFormUnit in 'Forms\LinkEditFormUnit.pas' {LinkEditForm: TUniForm},
-  ParentLinkSettingEditFrameUnit in 'Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame};
+  ParentLinkSettingEditFrameUnit in 'Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame},
+  ConnectionSettingsUnit in 'EntityClasses\links\ConnectionSettingsUnit.pas',
+  DirSettingsUnit in 'EntityClasses\links\DirSettingsUnit.pas',
+  LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
+  LinkUnit in 'EntityClasses\links\LinkUnit.pas',
+  QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
+  ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas';
 
 {$R *.res}
 
