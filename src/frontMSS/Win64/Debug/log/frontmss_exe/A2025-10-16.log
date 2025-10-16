@@ -41,3 +41,11 @@ FrontMSS.exe: 00003BB4: 17:19:53 [TUniGUIMessageQ]:Terminated.
 FrontMSS.exe: 00003BB4: 17:19:53 [TUniWebSocketStack]:Terminated.
 FrontMSS.exe: 00003BB4: 17:19:53 [TUniServerModule]:Server Shutdown Completed.
 FrontMSS.exe: 00003BB4: 17:19:53 []:<-------------------------------------------------------------->
+FrontMSS.exe: 00004EF4: 18:04:27 []:>--------------------------------------------------------------<
+FrontMSS.exe: 00004EF4: 18:04:27 [TUniServerModule]:Server First Init.
+FrontMSS.exe: 00004EF4: 18:04:27 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Win64\Debug\
+FrontMSS.exe: 00004EF4: 18:04:27 [TUniServerModule]:Debug Mode = ON
+FrontMSS.exe: 00004EF4: 18:04:27 [TUniGUISessionManager]:Cache erase job created, Folder count: [2]
+FrontMSS.exe: 00004EF4: 18:04:28 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+FrontMSS.exe: 00004EF4: 18:04:28 [TUniServerModule]:HTTP Server Started on Port: 8077
+FrontMSS.exe: 000010FC: 18:04:38 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: lcynCZSm3K111DD2201 ) : Addr: $0000000000883967

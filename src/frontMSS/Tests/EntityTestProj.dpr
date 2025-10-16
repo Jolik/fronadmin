@@ -605,8 +605,8 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListAliases();
-//      ListRules();
+//      ListAliases();
+      ListRules();
 //      ListDsGroups();
 //      ListUsers();
 

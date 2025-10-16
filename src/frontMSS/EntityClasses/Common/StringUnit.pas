@@ -1,4 +1,4 @@
-unit StringUnit;
+﻿unit StringUnit;
 
 interface
 
@@ -67,8 +67,8 @@ type
     /// </summary>
     function ToStringArray: TArray<string>;
 
-    property Items[Index: Integer]: TFieldSetString read GetStringItem write SetStringItem; default;
-    property Strings[Index: Integer]: string read GetItemValue write SetItemValue;
+//    property Items[Index: Integer]: TFieldSetString read GetStringItem write SetStringItem; default;
+//    property Strings[Index: Integer]: string read GetItemValue write SetItemValue;
   end;
 
   /// <summary>
@@ -115,29 +115,25 @@ type
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
-    function Assign(ASource: TFieldSetList): boolean; override;
+    function Assign(ASource: TFieldSetList): boolean; overload; override;
 
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); reintroduce; virtual;
-    function Assign(ASource: TFieldSet): boolean; reintroduce; virtual;
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    property Items[Index: Integer]: TNamedStringList read GetNamedList write SetNamedList; default;
+//    property Items[Index: Integer]: TNamedStringList read GetNamedList write SetNamedList; default;
   end;
 
   /// <summary>
   ///   JSON-объект с именованными списками строк.
   /// </summary>
-  TFieldSetStringListsObject = class(TNamedStringListList)
+  TNamedStringListsObject = class(TNamedStringListList)
   public
-    constructor Create; overload; override;
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    function Assign(ASource: TFieldSet): boolean; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
 
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -548,11 +544,6 @@ begin
   end;
 end;
 
-function TNamedStringListList.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := (ASource is TNamedStringListList) and Assign(TFieldSetList(ASource));
-end;
-
 function TNamedStringListList.Assign(ASource: TFieldSetList): boolean;
 var
   Index: Integer;
@@ -703,31 +694,21 @@ begin
   Items[Index] := AValue;
 end;
 
-{ TFieldSetStringListsObject }
+{ TNamedStringListsObject }
 
-function TFieldSetStringListsObject.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := inherited Assign(ASource);
-end;
-
-constructor TFieldSetStringListsObject.Create;
-begin
-  inherited Create;
-end;
-
-constructor TFieldSetStringListsObject.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TNamedStringListsObject.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Create;
 
   Parse(src, APropertyNames);
 end;
 
-procedure TFieldSetStringListsObject.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TNamedStringListsObject.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Parse(src, APropertyNames);
 end;
 
-procedure TFieldSetStringListsObject.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TNamedStringListsObject.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Serialize(dst, APropertyNames);
 end;
