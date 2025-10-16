@@ -14,6 +14,7 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
+  AliasesBrokerUnit in '..\APIClasses\AliasesBrokerUnit.pas',
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
@@ -34,6 +35,7 @@ uses
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
+  AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
   RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
@@ -135,6 +137,94 @@ begin
       end;
     finally
       RouterSourceBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListAliases();
+var
+  AliasesBroker: TAliasesBroker;
+  AliasList: TEntityList;
+  AliasEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    AliasesBroker := TAliasesBroker.Create;
+    try
+      AliasList := nil;
+      try
+        AliasList := AliasesBroker.List(PageCount);
+
+        Writeln('---------- Aliases List ----------');
+
+        if Assigned(AliasList) then
+        begin
+          var FirstAlias: TAlias := nil;
+
+          if AliasList.Count > 0 then
+            FirstAlias := AliasList.Items[0] as TAlias;
+
+          for AliasEntity in AliasList do
+          begin
+            var Alias := AliasEntity as TAlias;
+            Writeln(Format('Class: %s | Address: %p', [Alias.ClassName, Pointer(Alias)]));
+            Writeln('Alid: ' + Alias.Alid);
+            Writeln('Name: ' + Alias.Name);
+            Writeln('Caption: ' + Alias.Caption);
+            Writeln('Channels count: ' + IntToStr(Alias.Channels.Count));
+
+            Writeln('As JSON:');
+            var Json := Alias.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstAlias) then
+          begin
+            Writeln('---------- Alias Info ----------');
+            Writeln('Requesting info for: ' + FirstAlias.Alid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := AliasesBroker.Info(FirstAlias.Alid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoAlias := InfoEntity as TAlias;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoAlias.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Aliases list is empty.');
+
+      finally
+        AliasList.Free;
+      end;
+    finally
+      AliasesBroker.Free;
     end;
   except
     on E: Exception do
@@ -515,6 +605,7 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
+      ListAliases();
       ListRules();
 //      ListDsGroups();
 //      ListUsers();
