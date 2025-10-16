@@ -63,10 +63,6 @@ uses
   FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
   LogUnit in '..\EntityClasses\signals\LogUnit.pas';
 
-const
-  SampleLogsResponse =
-    '{"status":"success","data":{"resultType":"streams","result":[{"stream":{"container_name":"dcc7_queues.1.knrhmpywi3r2z2gbb1h3vxt45","filename":"/var/log/docker/ef0ec469c493c9af82a84ca6d232c0f158383a39b60dd8013324f3acc904474c/json.log","host":"dcc5","source":"stderr","swarm_service":"dcc7_queues","swarm_stack":"dcc7"},"values":[["1738241085769638560","{\"app_layer\":\"service\",\"app_msg\":\"operation initiated\",\"app_oper\":\"GetQueueCounters\",\"app_sessid\":\"00000000-0000-0000-0000-000000000000\",\"app_usid\":\"00000000-0000-0000-0000-000000000000\",\"level\":\"info\",\"time\":\"2025-01-30T12:44:45.769504209Z\"}"],["1738241085380167255","{\"ack\":0,\"app_layer\":\"mb\",\"app_msg\":\"stats\",\"level\":\"info\",\"notack\":0,\"recv\":0,\"sent\":0,\"stream\":\"handlers:ac2b8c56-642e-4dba-bdb8-6ae0b09d76cd\",\"time\":\"2025-01-30T12:44:45.379805363Z\"}"]]}],"stats":{"summary":{"bytesProcessedPerSecond":0,"linesProcessedPerSecond":0,"totalBytesProcessed":0,"totalLinesProcessed":2}}},"request":{"query":"{app_layer=\"service\"}","limit":200,"start":"2025-01-30T12:34:45.769504Z","end":"2025-01-30T12:44:45.769504Z","direction":"backward"}}';
-
 procedure ListSummaryTaskTypes();
 var
   TaskTypesBroker: TTaskTypesBroker;
@@ -759,6 +755,7 @@ end;
 
 
 procedure GetLogs();
+
 var
   StartTimeISO, EndTimeISO: string;
   QueryParam, Url, Response: string;
@@ -769,12 +766,14 @@ begin
     EndTimeISO := DateToISO8601(Now, False);
     StartTimeISO := DateToISO8601(IncMinute(Now, -10), False);
 
-    QueryParam := '{app_layer="service"}';
-    Url := Format('/signals/logs?query=%s&start=%s&end=%s', [
+    QueryParam := '{level="error"}';
+    Url := Format('/signals/logs/query_range?query=%s&start=%s&end=%s', [
       TIdURI.ParamsEncode(QueryParam),
       TIdURI.ParamsEncode(StartTimeISO),
       TIdURI.ParamsEncode(EndTimeISO)
     ]);
+
+    Url := '/signals/api/v1/logs/query_range?query={level="error"}&start=2025-10-15T00:40:51.781Z&end=2025-10-16T23:40:51.781Z';
 
     try
       Response := GET(Url);
@@ -782,7 +781,7 @@ begin
       on E: Exception do
       begin
         Writeln('Failed to query logs from API: ' + E.Message);
-        Response := SampleLogsResponse;
+        Response := '{}';
       end;
     end;
 

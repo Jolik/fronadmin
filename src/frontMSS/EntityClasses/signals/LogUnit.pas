@@ -1,4 +1,4 @@
-unit LogUnit;
+﻿unit LogUnit;
 
 interface
 
@@ -94,7 +94,7 @@ type
     procedure ParseStatisticsValue(AStatisticsValue: TJSONValue);
     procedure ParseRequestObject(ARequestValue: TJSONValue);
   public
-    constructor Create(); override;
+    constructor Create(); overload; override;
     destructor Destroy; override;
 
     function Assign(ASource: TFieldSet): boolean; override;
