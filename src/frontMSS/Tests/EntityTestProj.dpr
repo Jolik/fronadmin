@@ -22,6 +22,7 @@ uses
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
+  TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
@@ -43,6 +44,7 @@ uses
   TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\summary\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
@@ -53,6 +55,60 @@ uses
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
   FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas';
+
+procedure ListSummaryTaskTypes();
+var
+  TaskTypesBroker: TTaskTypesBroker;
+  TaskTypesList: TFieldSetList;
+  PageCount: Integer;
+begin
+  try
+    TaskTypesBroker := TTaskTypesBroker.Create;
+    try
+      TaskTypesList := nil;
+      try
+        TaskTypesList := TaskTypesBroker.List(PageCount);
+
+        Writeln('---------- Summary Task Types ----------');
+
+        if Assigned(TaskTypesList) and (TaskTypesList.Count > 0) then
+        begin
+          for var FieldSet: TFieldSet in TaskTypesList do
+          begin
+            if not (FieldSet is TTaskTypes) then
+              Continue;
+
+            var TaskType := TTaskTypes(FieldSet);
+            Writeln(Format('Class: %s | Address: %p', [TaskType.ClassName, Pointer(TaskType)]));
+            Writeln('Name: ' + TaskType.Name);
+            Writeln('Caption: ' + TaskType.Caption);
+
+            Writeln('As JSON:');
+            var Json := TaskType.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Summary task types list is empty.');
+
+      finally
+        TaskTypesList.Free;
+      end;
+    finally
+      TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
 
 procedure ListRouterSource();
 var
@@ -606,6 +662,7 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
+      ListSummaryTaskTypes();
 //      ListAliases();
       ListRules();
 //      ListDsGroups();
