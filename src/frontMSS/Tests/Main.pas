@@ -53,7 +53,6 @@ type
     procedure btnSummaryTaskNewClick(Sender: TObject);
     procedure btnSummaryTaskUpdateClick(Sender: TObject);
     procedure btnSummaryTaskRemoveClick(Sender: TObject);
-    procedure btnSummaryTaskTypesClick(Sender: TObject);
     procedure btnMonTaskListClick(Sender: TObject);
     procedure btnMonTaskInfoClick(Sender: TObject);
     procedure btnQueuesListClick(Sender: TObject);
@@ -261,7 +260,7 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '83789614-a334-4953-afaf-34093c8b43e4';
+  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
 var
   LinksBroker : TLinksBroker;
   SettingsFrame: TParentLinkSettingEditFrame;
@@ -870,37 +869,6 @@ begin
     else
       ShowMemo.Lines.Add('Summary task removed');
   finally
-    SummaryTasksBroker.Free;
-  end;
-end;
-
-procedure TMainForm.btnSummaryTaskTypesClick(Sender: TObject);
-var
-  SummaryTasksBroker : TSummaryTasksBroker;
-  Types              : TJSONArray;
-begin
-  ShowMemo.Clear;
-
-  try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
-    // Выводим список типов
-    ShowMemo.Lines.Add('----------  Types  ----------');
-    //  получаем список
-    Types := SummaryTasksBroker.Types;
-    if not Assigned(Types) then
-    begin
-      ShowMemo.Lines.Add('nil');
-      Exit;
-    end;
-
-    for var t in Types do
-    begin
-      ShowMemo.Lines.Add('');
-      ShowMemo.Lines.Add('name: ' + (t as TJSONObject).GetValue('name').AsType<string>);
-      ShowMemo.Lines.Add('caption: ' + (t as TJSONObject).GetValue('caption').AsType<string>);
-    end;
-  finally
-    if Assigned(Types) then FreeAndNil(Types);
     SummaryTasksBroker.Free;
   end;
 end;

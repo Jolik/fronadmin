@@ -65,29 +65,25 @@ uses
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
-  ParentLinkSettingEditFrameUnit in '..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame},
-  SharedFrameBoolInput in '..\Forms\LinksFrames\SharedFrameBoolInput.pas' {FrameBoolInput: TUniFrame},
-  SharedFrameCombobox in '..\Forms\LinksFrames\SharedFrameCombobox.pas' {FrameCombobox: TUniFrame},
-  SharedFrameConnections in '..\Forms\LinksFrames\SharedFrameConnections.pas' {FrameConnections: TUniFrame},
-  SharedFrameQueue in '..\Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
-  SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
-  SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
+  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
+  SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
-  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas';
-
-SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
-  SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
+  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  UserUnit in '..\EntityClasses\acl\UserUnit.pas',
+  ParentLinkSettingEditFrameUnit in '..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame},
   SharedFrameBoolInput in '..\Forms\LinksFrames\SharedFrameBoolInput.pas' {FrameBoolInput: TUniFrame},
   SharedFrameCombobox in '..\Forms\LinksFrames\SharedFrameCombobox.pas' {FrameCombobox: TUniFrame},
   SharedFrameConnections in '..\Forms\LinksFrames\SharedFrameConnections.pas' {FrameConnections: TUniFrame},
   SharedFrameQueue in '..\Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
-  KeyValUnit in '..\Common\KeyValUnit.pas',
-  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas';
+  SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
+  SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame};
 
 {$R *.res}
 

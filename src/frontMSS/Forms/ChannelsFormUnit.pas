@@ -10,7 +10,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  ParentBrokerUnit, ChannelsBrokerUnit,
+  EntityBrokerUnit, ChannelsBrokerUnit,
   ParentEditFormUnit;
 
 type
@@ -21,7 +21,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///  функция для создания нужного брокера потомком
-    function CreateBroker(): TParentBroker; override;
+    function CreateBroker(): TEntityBroker; override;
 
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
@@ -46,7 +46,7 @@ end;
 
 { TChannelsForm }
 
-function TChannelsForm.CreateBroker: TParentBroker;
+function TChannelsForm.CreateBroker: TEntityBroker;
 begin
   ///  создаем "наш" брокер для Абонентов
   Result := TChannelsBroker.Create();

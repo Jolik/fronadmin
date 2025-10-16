@@ -6,8 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm,
-  EntityUnit,
-  ParentBrokerUnit,
+  EntityUnit, EntityBrokerUnit,
   ParentEditFormUnit;
 
 type
@@ -17,7 +16,7 @@ type
     procedure UniFormDestroy(Sender: TObject);
   private
     ///  брокер дл€ доступа к API - потомок должен инициировать поле на функционального брокера
-    FBroker: TParentBroker;
+    FBroker: TEntityBroker;
     ///  форма дл€ редактировани€ сущности - потом должен инициировать поле на функциональный класс
     FEditForm : TParentEditForm;
 
@@ -30,7 +29,7 @@ type
 
     ///  функци€ дл€ создани€ нужного брокера потомком
     ///  поток должен переопределить функцию чтобы создавалс€ нужный брокер
-    function CreateBroker(): TParentBroker; virtual; abstract;
+    function CreateBroker(): TEntityBroker; virtual; abstract;
 
     ///  функиц€ дл€ создани€ нужной формы редактирвоани€
     ///  поток должен переопределить функцию чтобы создавалась нужна€ форма редактирвоани€
@@ -39,7 +38,7 @@ type
   public
     ///  брокер дл€ доступа к API - потомок содать и вернуть ссылку на нужный брокер
     ///  в наследуемой функции CreateBroker
-    property Broker: TParentBroker read FBroker;
+    property Broker: TEntityBroker read FBroker;
     ///  форма дл€ редактировани€ сущности - потомок должен создать и вернуть
     ///  ссылку на нужную форму в наследуемой функции CreateEditForm
     property EditForm: TParentEditForm read FEditForm;

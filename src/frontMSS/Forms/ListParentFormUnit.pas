@@ -12,7 +12,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  EntityUnit, ParentBrokerUnit,
+  EntityUnit, EntityBrokerUnit,
   ParentFormUnit, ParentEditFormUnit;
 
 type
