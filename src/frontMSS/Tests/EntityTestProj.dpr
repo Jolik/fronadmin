@@ -24,12 +24,14 @@ uses
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
+  TaskSourceBrokerUnit in '..\APIClasses\TaskSourceBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
@@ -103,6 +105,96 @@ begin
       end;
     finally
       TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListTaskSources();
+var
+  TaskSourceBroker: TTaskSourceBroker;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    TaskSourceBroker := TTaskSourceBroker.Create;
+    try
+      TaskSourceBroker.AddPath := '/5d159669-0cb0-11ec-a8d8-00ff1185687c';
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := TaskSourceBroker.List(PageCount);
+
+        Writeln('---------- Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := TaskSourceBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      TaskSourceBroker.Free;
     end;
   except
     on E: Exception do
@@ -663,6 +755,7 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
       ListSummaryTaskTypes();
+      ListTaskSources();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
