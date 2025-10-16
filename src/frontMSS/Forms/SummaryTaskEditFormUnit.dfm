@@ -6,7 +6,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Left = 84
       Width = 732
       ExplicitLeft = 84
-      ExplicitWidth = 724
+      ExplicitWidth = 732
     end
   end
   inherited pnName: TUniContainerPanel
@@ -14,19 +14,19 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Left = 84
       Width = 732
       ExplicitLeft = 84
-      ExplicitWidth = 724
+      ExplicitWidth = 732
     end
   end
   inherited pnClient: TUniContainerPanel
-    ExplicitTop = 54
+    ExplicitTop = 53
     object lTid: TUniLabel
       Left = 24
       Top = 16
-      Width = 80
+      Width = 86
       Height = 13
       Hint = ''
       Caption = #1048#1076#1077#1085#1090#1080#1092#1080#1082#1072#1090#1086#1088
-      TabOrder = 0
+      TabOrder = 11
     end
     object teTid: TUniEdit
       Left = 160
@@ -40,11 +40,11 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object lCompId: TUniLabel
       Left = 24
       Top = 48
-      Width = 66
+      Width = 40
       Height = 13
       Hint = ''
       Caption = 'CompId'
-      TabOrder = 1
+      TabOrder = 12
     end
     object teCompId: TUniEdit
       Left = 160
@@ -58,11 +58,11 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object lDepId: TUniLabel
       Left = 24
       Top = 80
-      Width = 55
+      Width = 31
       Height = 13
       Hint = ''
       Caption = 'DepId'
-      TabOrder = 2
+      TabOrder = 13
     end
     object teDepId: TUniEdit
       Left = 160
@@ -76,29 +76,20 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object lModule: TUniLabel
       Left = 24
       Top = 112
-      Width = 43
+      Width = 40
       Height = 13
       Hint = ''
       Caption = #1052#1086#1076#1091#1083#1100
-      TabOrder = 3
-    end
-    object teModule: TUniEdit
-      Left = 160
-      Top = 108
-      Width = 320
-      Height = 21
-      Hint = ''
-      Text = ''
-      TabOrder = 3
+      TabOrder = 14
     end
     object lDef: TUniLabel
       Left = 24
       Top = 144
-      Width = 55
+      Width = 54
       Height = 13
       Hint = ''
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-      TabOrder = 4
+      TabOrder = 15
     end
     object meDef: TUniMemo
       Left = 160
@@ -108,7 +99,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Hint = ''
       Lines.Strings = (
         '')
-      TabOrder = 4
+      TabOrder = 3
     end
     object cbEnabled: TUniCheckBox
       Left = 160
@@ -117,16 +108,16 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Caption = #1040#1082#1090#1080#1074#1085#1086
-      TabOrder = 5
+      TabOrder = 4
     end
     object lLatePeriod: TUniLabel
       Left = 24
       Top = 248
-      Width = 62
+      Width = 54
       Height = 13
       Hint = ''
       Caption = 'LatePeriod'
-      TabOrder = 6
+      TabOrder = 16
     end
     object teLatePeriod: TUniEdit
       Left = 160
@@ -135,16 +126,16 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Text = ''
-      TabOrder = 6
+      TabOrder = 5
     end
     object lCustomMeteo: TUniLabel
       Left = 24
       Top = 280
-      Width = 84
+      Width = 75
       Height = 13
       Hint = ''
       Caption = 'Custom.Meteo'
-      TabOrder = 7
+      TabOrder = 17
     end
     object cbCustomMeteo: TUniCheckBox
       Left = 160
@@ -153,16 +144,16 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Caption = #1044#1072
-      TabOrder = 7
+      TabOrder = 6
     end
     object lCustomAnyTime: TUniLabel
       Left = 24
       Top = 312
-      Width = 103
+      Width = 84
       Height = 13
       Hint = ''
       Caption = 'Custom.AnyTime'
-      TabOrder = 8
+      TabOrder = 18
     end
     object teCustomAnyTime: TUniEdit
       Left = 160
@@ -171,16 +162,16 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Text = ''
-      TabOrder = 8
+      TabOrder = 7
     end
     object lCustomSeparate: TUniLabel
       Left = 24
       Top = 344
-      Width = 108
+      Width = 87
       Height = 13
       Hint = ''
       Caption = 'Custom.Separate'
-      TabOrder = 9
+      TabOrder = 19
     end
     object cbCustomSeparate: TUniCheckBox
       Left = 160
@@ -189,16 +180,16 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Caption = #1044#1072
-      TabOrder = 9
+      TabOrder = 8
     end
     object lExcludeWeek: TUniLabel
       Left = 24
       Top = 376
-      Width = 78
+      Width = 68
       Height = 13
       Hint = ''
       Caption = 'ExcludeWeek'
-      TabOrder = 10
+      TabOrder = 20
     end
     object teExcludeWeek: TUniEdit
       Left = 160
@@ -207,7 +198,24 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 21
       Hint = ''
       Text = ''
-      TabOrder = 10
+      TabOrder = 9
+    end
+    object cbModule: TUniComboBox
+      Left = 160
+      Top = 108
+      Width = 320
+      Hint = ''
+      Style = csDropDownList
+      Text = 'SummaryUnknown'
+      Items.Strings = (
+        'SummarySynop'
+        'SummaryHydra'
+        'SummaryCXML'
+        'SummarySEBA'
+        'SummaryUnknown')
+      ItemIndex = 4
+      TabOrder = 21
+      IconItems = <>
     end
   end
 end
