@@ -6,14 +6,14 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, QueueUnit, ParentBrokerUnit;
+  EntityUnit, QueueUnit, EntityBrokerUnit;
 
 type
   ///  брокер для API Queues
-  TQueuesBroker = class (TParentBroker)
+  TQueuesBroker = class (TEntityBroker)
   protected
     ///  возвращает базовый путь до API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     ///  метод возвращает конкретный тип сущности с которым работает брокер
     ///  потомки должны переопределить его, потому что он у всех разный
     class function ClassType: TEntityClass; override;
@@ -67,7 +67,7 @@ const
 
 { TQueuesBroker }
 
-function TQueuesBroker.BaseUrlPath: string;
+function TQueuesBroker.GetBasePath: string;
 begin
   Result := constURLRouterBasePath;
 end;
@@ -117,7 +117,7 @@ begin
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос - тело пустое
-      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLQueuesList, TStringStream.Create('{}', TEncoding.UTF8));
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLQueuesList, TStringStream.Create('{}', TEncoding.UTF8));
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ
@@ -162,7 +162,7 @@ begin
     exit;
 
   try
-    URL := Format(BaseUrlPath + constURLQueuesInfo, [AId]);
+    URL := Format(GetBasePath + constURLQueuesInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -203,7 +203,7 @@ var
 
 begin
   ///  строим запрос
-  URL := BaseUrlPath + constURLQueuesNew;
+  URL := GetBasePath + constURLQueuesNew;
   ///  получаем из сущности JSON
   JSONQueue := AEntity.Serialize();
 
@@ -240,7 +240,7 @@ begin
     exit;
 
   ///  строим запрос
-  URL := Format(BaseUrlPath + constURLQueuesUpdate, [(AEntity as TQueue).QId]);
+  URL := Format(GetBasePath + constURLQueuesUpdate, [(AEntity as TQueue).QId]);
 
   ///  получаем из сущности JSON
   JSONQueue := AEntity.Serialize();
@@ -272,7 +272,7 @@ var
   JSONRequestStream: TStringStream;
 
 begin
-  URL := Format(BaseUrlPath + constURLQueuesRemove, [AId]);
+  URL := Format(GetBasePath + constURLQueuesRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
 

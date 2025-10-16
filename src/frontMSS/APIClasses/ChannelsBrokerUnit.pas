@@ -6,12 +6,12 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, ChannelUnit, ParentBrokerUnit;
+  EntityUnit, ChannelUnit, EntityBrokerUnit;
 
 
 type
   ///  брокер для API Channels
-  TChannelsBroker = class (TParentBroker)
+  TChannelsBroker = class (TEntityBroker)
     /// возвращает список каналов
     ///  в случае ошибки возвращается nil
     function List(

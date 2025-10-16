@@ -16,6 +16,10 @@ uses
   ParentFormUnit in 'Forms\ParentFormUnit.pas' {ParentForm: TUniForm},
   StripTaskEditFormUnit in 'Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
   StripTasksFormUnit in 'Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
+  AliasEditFormUnit in 'Forms\AliasEditFormUnit.pas' {AliasEditForm: TUniForm},
+  AliasesFormUnit in 'Forms\AliasesFormUnit.pas' {AliasesForm: TUniForm},
+  RouterSourceEditFormUnit in 'Forms\RouterSourceEditFormUnit.pas' {RouterSourceEditForm: TUniForm},
+  RouterSourcesFormUnit in 'Forms\RouterSourcesFormUnit.pas' {RouterSourcesForm: TUniForm},
   APIConst in 'APIClasses\APIConst.pas',
   ChannelsBrokerUnit in 'APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in 'APIClasses\LinksBrokerUnit.pas',
@@ -23,6 +27,7 @@ uses
   ParentBrokerUnit in 'APIClasses\ParentBrokerUnit.pas',
   QueuesBrokerUnit in 'APIClasses\QueuesBrokerUnit.pas',
   RouterSourceBrokerUnit in 'APIClasses\RouterSourceBrokerUnit.pas',
+  AliasesBrokerUnit in 'APIClasses\AliasesBrokerUnit.pas',
   StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in 'APIClasses\SummaryTasksBrokerUnit.pas',
   TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas',
@@ -32,6 +37,7 @@ uses
   StripTaskUnit in 'EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in 'EntityClasses\summary\SummaryTaskUnit.pas',
   ChannelUnit in 'EntityClasses\router\ChannelUnit.pas',
+  AliasUnit in 'EntityClasses\router\AliasUnit.pas',
   QueueUnit in 'EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in 'EntityClasses\router\RouterSourceUnit.pas',
   MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas',
@@ -43,7 +49,10 @@ uses
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in 'EntityClasses\links\LinkUnit.pas',
   QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
-  ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas',
+  SummaryTaskEditFormUnit in 'Forms\SummaryTaskEditFormUnit.pas',
+  SummaryTasksFormUnit in 'Forms\SummaryTasksFormUnit.pas',
+  StringUnit in 'EntityClasses\Common\StringUnit.pas';
 
 {$R *.res}
 

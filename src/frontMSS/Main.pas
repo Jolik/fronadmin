@@ -15,9 +15,15 @@ type
     btnChannel: TUniButton;
     btnStripTasks: TUniButton;
     btnLinks: TUniButton;
+    btnSummTask: TUniButton;
+    btnRouterSources: TUniButton;
+    btnAliases: TUniButton;
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnLinksClick(Sender: TObject);
+    procedure btnSummTaskClick(Sender: TObject);
+    procedure btnRouterSourcesClick(Sender: TObject);
+    procedure btnAliasesClick(Sender: TObject);
   private
   public
     { Public declarations }
@@ -32,7 +38,9 @@ implementation
 uses
   uniGUIVars, uniGUIApplication,
   MainModule,
-  ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, LinksFormUnit;
+  ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
+  AliasesFormUnit,
+  RouterSourcesFormUnit;
 
 function MainForm: TMainForm;
 begin
@@ -46,6 +54,16 @@ begin
   ChannelsForm.Show();
 end;
 
+procedure TMainForm.btnAliasesClick(Sender: TObject);
+begin
+  AliasesForm.Show();
+end;
+
+procedure TMainForm.btnRouterSourcesClick(Sender: TObject);
+begin
+  RouterSourcesForm.Show();
+end;
+
 procedure TMainForm.btnLinksClick(Sender: TObject);
 begin
   LinksForm.Show();
@@ -54,6 +72,11 @@ end;
 procedure TMainForm.btnStripTasksClick(Sender: TObject);
 begin
   StripTasksForm.Show();
+end;
+
+procedure TMainForm.btnSummTaskClick(Sender: TObject);
+begin
+  SummaryTasksForm.Show();
 end;
 
 initialization

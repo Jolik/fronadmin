@@ -173,6 +173,26 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\AliasEditFormUnit.pas">
+            <Form>AliasEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\AliasesFormUnit.pas">
+            <Form>AliasesForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\RouterSourceEditFormUnit.pas">
+            <Form>RouterSourceEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\RouterSourcesFormUnit.pas">
+            <Form>RouterSourcesForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="APIClasses\APIConst.pas"/>
         <DCCReference Include="APIClasses\ChannelsBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\LinksBrokerUnit.pas"/>
@@ -180,6 +200,7 @@
         <DCCReference Include="APIClasses\ParentBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\RouterSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\AliasesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
@@ -189,6 +210,7 @@
         <DCCReference Include="EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\AliasUnit.pas"/>
         <DCCReference Include="EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
@@ -213,6 +235,9 @@
         <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
+        <DCCReference Include="Forms\SummaryTaskEditFormUnit.pas"/>
+        <DCCReference Include="Forms\SummaryTasksFormUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\StringUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

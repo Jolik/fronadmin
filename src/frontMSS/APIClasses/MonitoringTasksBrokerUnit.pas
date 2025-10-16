@@ -21,7 +21,7 @@ type
 
   protected
     ///  возвращает базовый путь до API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
 
   public
 
@@ -36,7 +36,7 @@ uses
 
 { TMonitoringTasksBroker }
 
-function TMonitoringTasksBroker.BaseUrlPath: string;
+function TMonitoringTasksBroker.GetBasePath: string;
 begin
   Result := constURLStripBasePath;
 end;

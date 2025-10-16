@@ -8,7 +8,7 @@ uses
   LoggingUnit;
 
 type
-  //  ласс-ссылка на любой потомок TSettings
+  //  ласс-ссылка на любой потомок TFieldSet
   TFieldSetClass = class of TFieldSet;
   ///  абстрактрый класс - набор полей
   ///  объ€вл€ет функцию котора€ позвол€ет проиницилиазировать пол€
@@ -36,6 +36,8 @@ type
 
   end;
 
+  //  ласс-ссылка на любой потомок TFieldSetList
+  TFieldSetListClass = class of TFieldSetList;
   ///  класс - список классов-наборов полей
   TFieldSetList = class (TObjectList<TFieldSet>)
   private

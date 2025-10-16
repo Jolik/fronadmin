@@ -12,8 +12,9 @@ uses
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
-  ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
+  EntityBrokerUnit in '..\APIClasses\EntityBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
+  AliasesBrokerUnit in '..\APIClasses\AliasesBrokerUnit.pas',
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
@@ -21,26 +22,33 @@ uses
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
+  TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
+  TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
+  StripTaskSourceUnit in '..\APIClasses\StripTaskSourceUnit.pas',
+  SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
+  AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
   RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
-  TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
+  DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\summary\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
@@ -49,7 +57,153 @@ uses
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
-  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
+
+procedure ListSummaryTaskTypes();
+var
+  TaskTypesBroker: TTaskTypesBroker;
+  TaskTypesList: TFieldSetList;
+  PageCount: Integer;
+begin
+  try
+    TaskTypesBroker := TTaskTypesBroker.Create;
+    try
+      TaskTypesList := nil;
+      try
+        TaskTypesList := TaskTypesBroker.List(PageCount);
+
+        Writeln('---------- Summary Task Types ----------');
+
+        if Assigned(TaskTypesList) and (TaskTypesList.Count > 0) then
+        begin
+          for var FieldSet: TFieldSet in TaskTypesList do
+          begin
+            if not (FieldSet is TTaskTypes) then
+              Continue;
+
+            var TaskType := TTaskTypes(FieldSet);
+            Writeln(Format('Class: %s | Address: %p', [TaskType.ClassName, Pointer(TaskType)]));
+            Writeln('Name: ' + TaskType.Name);
+            Writeln('Caption: ' + TaskType.Caption);
+
+            Writeln('As JSON:');
+            var Json := TaskType.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Summary task types list is empty.');
+
+      finally
+        TaskTypesList.Free;
+      end;
+    finally
+      TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListTaskSources();
+var
+  TaskSourceBroker: TTaskSourcesBroker;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    TaskSourceBroker := TTaskSourcesBroker.Create;
+    try
+      TaskSourceBroker.AddPath := '/5d159669-0cb0-11ec-a8d8-00ff1185687c';
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := TaskSourceBroker.List(PageCount);
+
+        Writeln('---------- Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := TaskSourceBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      TaskSourceBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
 
 procedure ListRouterSource();
 var
@@ -142,6 +296,94 @@ begin
   end;
 end;
 
+procedure ListAliases();
+var
+  AliasesBroker: TAliasesBroker;
+  AliasList: TEntityList;
+  AliasEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    AliasesBroker := TAliasesBroker.Create;
+    try
+      AliasList := nil;
+      try
+        AliasList := AliasesBroker.List(PageCount);
+
+        Writeln('---------- Aliases List ----------');
+
+        if Assigned(AliasList) then
+        begin
+          var FirstAlias: TAlias := nil;
+
+          if AliasList.Count > 0 then
+            FirstAlias := AliasList.Items[0] as TAlias;
+
+          for AliasEntity in AliasList do
+          begin
+            var Alias := AliasEntity as TAlias;
+            Writeln(Format('Class: %s | Address: %p', [Alias.ClassName, Pointer(Alias)]));
+            Writeln('Alid: ' + Alias.Alid);
+            Writeln('Name: ' + Alias.Name);
+            Writeln('Caption: ' + Alias.Caption);
+//            Writeln('Channels count: ' + IntToStr(Alias.Channels.Count));
+
+            Writeln('As JSON:');
+            var Json := Alias.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstAlias) then
+          begin
+            Writeln('---------- Alias Info ----------');
+            Writeln('Requesting info for: ' + FirstAlias.Alid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := AliasesBroker.Info(FirstAlias.Alid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoAlias := InfoEntity as TAlias;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoAlias.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Aliases list is empty.');
+
+      finally
+        AliasList.Free;
+      end;
+    finally
+      AliasesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListRules();
 var
   RulesBroker: TRulesBroker;
@@ -175,7 +417,7 @@ begin
             Writeln('Rule position: ' + IntToStr(Rule.Rule.Position));
             Writeln('Rule doubles: ' + BoolToStr(Rule.Rule.Doubles, True));
             Writeln('Rule break: ' + BoolToStr(Rule.Rule.BreakRule, True));
-            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Values.Count));
+            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Count));
             Writeln('Channels count: ' + IntToStr(Rule.Rule.Channels.Count));
             Writeln('Inc filters count: ' + IntToStr(Rule.Rule.IncFilters.Count));
             Writeln('Exc filters count: ' + IntToStr(Rule.Rule.ExcFilters.Count));
@@ -515,7 +757,10 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListRules();
+      ListSummaryTaskTypes();
+      ListTaskSources();
+//      ListAliases();
+//      ListRules();
 //      ListDsGroups();
 //      ListUsers();
 

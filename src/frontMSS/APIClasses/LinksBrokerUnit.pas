@@ -6,15 +6,15 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, LinkUnit, ParentBrokerUnit;
+  EntityUnit, LinkUnit, EntityBrokerUnit;
 
 
 type
   ///  брокер для API Links
-  TLinksBroker = class (TParentBroker)
+  TLinksBroker = class (TEntityBroker)
   protected
-    ///  возвращает базовый путь до API
-    function BaseUrlPath: string; override;
+    ///  возвращает путь до API
+    function GetBasePath: string; override;
     ///  метод возвращает конкретный тип сущности с которым работает брокер
     ///  потомки должны переопределить его, потому что он у всех разный
     class function ClassType: TEntityClass; override;
@@ -68,7 +68,7 @@ const
 
 { TLinksBroker }
 
-function TLinksBroker.BaseUrlPath: string;
+function TLinksBroker.GetBasePath: string;
 begin
   Result := constURLDatacommBasePath;
 end;
@@ -120,7 +120,7 @@ begin
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос
-      ResStr := MainHttpModuleUnit.GET(BaseUrlPath + constURLLinkGetList);
+      ResStr := MainHttpModuleUnit.GET(GetBasePath + constURLLinkGetList);
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ
@@ -163,7 +163,7 @@ begin
     exit;
 
   try
-    URL := Format(BaseUrlPath + constURLLinkGetOneInfo, [AId]);
+    URL := Format(GetBasePath + constURLLinkGetOneInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -201,7 +201,7 @@ var
 
 begin
   ///  строим запрос
-  URL := BaseUrlPath + constURLLinkNew;
+  URL := GetBasePath + constURLLinkNew;
   ///  получаем из сущности JSON
   JSONLink := AEntity.Serialize();
 
@@ -238,7 +238,7 @@ begin
     exit;
 
   ///  строим запрос
-  URL := Format(BaseUrlPath + constURLLinkUpdate, [(AEntity as TLink).LId]);
+  URL := Format(GetBasePath + constURLLinkUpdate, [(AEntity as TLink).LId]);
 
   ///  получаем из сущности JSON
   JSONLink := AEntity.Serialize();
@@ -270,7 +270,7 @@ var
   JSONRequestStream: TStringStream;
 
 begin
-  URL := Format(BaseUrlPath + constURLLinkDelete, [AId]);
+  URL := Format(GetBasePath + constURLLinkDelete, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
 

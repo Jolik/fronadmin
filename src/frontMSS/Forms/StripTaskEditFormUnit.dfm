@@ -33,14 +33,6 @@ inherited StripTaskEditForm: TStripTaskEditForm
   inherited pnClient: TUniContainerPanel
     ExplicitWidth = 817
     ExplicitHeight = 406
-    object teModule: TUniEdit
-      Left = 64
-      Top = 64
-      Width = 121
-      Hint = ''
-      Text = 'teModule'
-      TabOrder = 1
-    end
     object lModule: TUniLabel
       Left = 40
       Top = 45
@@ -48,7 +40,23 @@ inherited StripTaskEditForm: TStripTaskEditForm
       Height = 13
       Hint = ''
       Caption = #1052#1086#1076#1091#1083#1100
+      TabOrder = 1
+    end
+    object cbModule: TUniComboBox
+      Left = 64
+      Top = 64
+      Width = 121
+      Hint = ''
+      Style = csDropDownList
+      Text = 'StripUnknown'
+      Items.Strings = (
+        'StripSynop'
+        'StripHydra'
+        'StripXML'
+        'StripUnknown')
+      ItemIndex = 3
       TabOrder = 2
+      IconItems = <>
     end
   end
 end

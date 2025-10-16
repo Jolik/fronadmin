@@ -40,6 +40,7 @@ type
     btnSummaryTaskTypes: TUniButton;
     btnStripTasks: TUniButton;
     btnLinkSettings: TUniButton;
+    btnSummaryTasks: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnStripTaskListClick(Sender: TObject);
@@ -59,6 +60,7 @@ type
     procedure btnQueuesInfoClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnLinkSettingsClick(Sender: TObject);
+    procedure btnSummaryTasksClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -75,6 +77,7 @@ implementation
 
 uses
   uniGUIVars, MainModule, uniGUIApplication,
+  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit;
   LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
   ParentEditFormUnit, SocketSpecialSettingEditFrameUnit,
   StripTasksFormUnit;
@@ -642,6 +645,11 @@ end;
 {$ENDREGION 'Strip.Tasks'}
 
 {$REGION 'Summary.Tasks'}
+
+procedure TMainForm.btnSummaryTasksClick(Sender: TObject);
+begin
+  SummaryTasksForm.Show();
+end;
 
 procedure TMainForm.btnSummaryTaskListClick(Sender: TObject);
 var

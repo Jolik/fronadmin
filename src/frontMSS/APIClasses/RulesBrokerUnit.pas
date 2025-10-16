@@ -6,15 +6,15 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, RuleUnit, ParentBrokerUnit;
+  EntityUnit, RuleUnit, EntityBrokerUnit;
 
 type
   /// <summary>
   ///   Broker for working with router rules API.
   /// </summary>
-  TRulesBroker = class(TParentBroker)
+  TRulesBroker = class(TEntityBroker)
   protected
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     class function ClassType: TEntityClass; override;
     class function ListClassType: TEntityListClass; override;
   public
@@ -50,7 +50,7 @@ const
 
 { TRulesBroker }
 
-function TRulesBroker.BaseUrlPath: string;
+function TRulesBroker.GetBasePath: string;
 begin
   Result := constURLRouterBasePath;
 end;
@@ -101,7 +101,7 @@ begin
 
       RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
       try
-        ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLRulesList, RequestStream);
+        ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLRulesList, RequestStream);
         JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
         if not Assigned(JSONResult) then
           Exit;
@@ -163,7 +163,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLRulesInfo, [AId]);
+    URL := Format(GetBasePath + constURLRulesInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -200,7 +200,7 @@ var
 begin
   Result := False;
 
-  URL := BaseUrlPath + constURLRulesNew;
+  URL := GetBasePath + constURLRulesNew;
 
   JSONRule := AEntity.Serialize();
 
@@ -226,7 +226,7 @@ begin
   if not (AEntity is TRule) then
     Exit;
 
-  URL := Format(BaseUrlPath + constURLRulesUpdate, [(AEntity as TRule).Ruid]);
+  URL := Format(GetBasePath + constURLRulesUpdate, [(AEntity as TRule).Ruid]);
 
   JSONRule := AEntity.Serialize();
 
@@ -248,7 +248,7 @@ var
 begin
   Result := False;
 
-  URL := Format(BaseUrlPath + constURLRulesRemove, [AId]);
+  URL := Format(GetBasePath + constURLRulesRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

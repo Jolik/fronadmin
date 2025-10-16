@@ -12,11 +12,8 @@ uses
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
   MonitoringTasksBrokerUnit, MonitoringTaskUnit,
-<<<<<<< HEAD
-  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter, uniEdit;
-=======
-  QueuesBrokerUnit, QueueUnit, uniGroupBox, uniScrollBox, StripTasksFormUnit;
->>>>>>> 7161680f745b3d91f59f3d75daedee6d2fae228a
+  QueuesBrokerUnit, QueueUnit, uniPanel, uniSplitter, uniEdit, uniGroupBox,
+  uniScrollBox;
 
 type
   TMainForm = class(TUniForm)
@@ -41,17 +38,12 @@ type
     btnSummaryTaskUpdate: TUniButton;
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
-<<<<<<< HEAD
-    btnQueuesList: TUniButton;
-    btnQueuesInfo: TUniButton;
-    ShowMemo: TUniMemo;
-    UniPanel2: TUniPanel;
-    UniSplitter1: TUniSplitter;
-    LogMemo: TUniMemo;
-    lidEdit: TUniEdit;
-=======
     btnStripTasks: TUniButton;
->>>>>>> 7161680f745b3d91f59f3d75daedee6d2fae228a
+<<<<<<< HEAD
+    btnLinkSettings: TUniButton;
+=======
+    btnSummaryTasks: TUniButton;
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnStripTaskListClick(Sender: TObject);
@@ -70,8 +62,15 @@ type
     procedure btnQueuesListClick(Sender: TObject);
     procedure btnQueuesInfoClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
+<<<<<<< HEAD
+    procedure btnLinkSettingsClick(Sender: TObject);
+=======
+    procedure btnSummaryTasksClick(Sender: TObject);
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
   private
     { Private declarations }
+  protected
+    procedure UpdateLinkSettingsCallback(ASender: TComponent; AResult: Integer);
   public
     { Public declarations }
   end;
@@ -83,103 +82,20 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication;
+<<<<<<< HEAD
+  uniGUIVars, MainModule, uniGUIApplication,
+  LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
+  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit,
+  StripTasksFormUnit;
+=======
+  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit;
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
 
 function MainForm: TMainForm;
 begin
   Result := TMainForm(UniMainModule.GetFormInstance(TMainForm));
 end;
 
-<<<<<<< HEAD
-procedure TMainForm.btnLinkInfoClick(Sender: TObject);
-var
-  Link : TEntity;
-  LinksBroker : TLinksBroker;
-
-begin
-  var lid := MainForm.lidEdit.Text;
-
-  LinksBroker := TLinksBroker.Create();
-  try
-    ShowMemo.Clear;
-    ShowMemo.Lines.Add(Format('request lid: %s', [lid]));
-    Link := LinksBroker.Info(lid);
-    if not (Link is TLink) then
-    begin
-      ShowMemo.Lines.Add(ClassNameSafe(Link));
-      exit;
-    end;
-
-    var l := Link as TLink;
-    ShowMemo.Lines.Add('Id '+ l.Id);
-    ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
-    ShowMemo.Lines.Add('Name '+ l.Name);
-    ShowMemo.Lines.Add('Dir '+ l.Dir);
-    ShowMemo.Lines.Add('Status '+ l.Status);
-    ShowMemo.Lines.Add('Comsts '+ l.Comsts);
-    ShowMemo.Lines.Add('Compid '+ l.Compid);
-    ShowMemo.Lines.Add('Depid '+ l.Depid);
-
-    ShowMemo.Lines.Add('as JSON:');
-    var json := l.Serialize();
-    if json <> nil then
-    begin
-      ShowMemo.Lines.Add(json.Format());
-      json.Free
-    end;
-
-  finally
-    LinksBroker.Free;
-  end;
-end;
-
-
-procedure TMainForm.btnLinskListClick(Sender: TObject);
-var
-  Link : TEntity;
-  LinksBroker : TLinksBroker;
-  LinksList : TEntityList;
-  Pages : integer;
-
-begin
-  LinksBroker := TLinksBroker.Create();
-  LinksList := LinksBroker.List(Pages);
-  try
-    ShowMemo.Clear;
-    ShowMemo.Lines.Add('----------  List  ----------');
-
-    for Link in LinksList do
-    begin
-      var l := (Link as TLink);
-      ShowMemo.Lines.Add(Format('class: %s  |  pointer: %p', [Link.ClassName, Pointer(Link)]));
-      ShowMemo.Lines.Add('Id '+ l.Id);
-      ShowMemo.Lines.Add('TypeStr '+ l.TypeStr);
-      ShowMemo.Lines.Add('Name '+ l.Name);
-      ShowMemo.Lines.Add('Dir '+ l.Dir);
-      ShowMemo.Lines.Add('Status '+ l.Status);
-      ShowMemo.Lines.Add('Comsts '+ l.Comsts);
-      ShowMemo.Lines.Add('Compid '+ l.Compid);
-      ShowMemo.Lines.Add('Depid '+ l.Depid);
-
-      ShowMemo.Lines.Add('as JSON:');
-      var json := l.Serialize();
-      if json <> nil then
-      begin
-        ShowMemo.Lines.Add(json.Format());
-        json.Free
-      end;
-      ShowMemo.Lines.Add('----------');
-    end;
-
-  finally
-    LinksList.Free;
-    LinksBroker.Free;
-  end;
-end;
-
-
-=======
->>>>>>> 7161680f745b3d91f59f3d75daedee6d2fae228a
 procedure TMainForm.btnMonTaskInfoClick(Sender: TObject);
 const
   tid = '088a1eb4-85b4-11f0-ab53-02420a0001c1';
@@ -264,6 +180,7 @@ end;
 
 {$REGION 'Links'}
 
+
 procedure TMainForm.btnLinskListClick(Sender: TObject);
 var
   Link : TEntity;
@@ -317,22 +234,21 @@ end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
 const
-  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+  lid = '83789614-a334-4953-afaf-34093c8b43e4';
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
 begin
   ShowMemo.Clear;
-
+  LinksBroker := TLinksBroker.Create();
   try
-    LinksBroker := TLinksBroker.Create();
     // Выводим информацию о линке в TMemo
     ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
     // получаем инфу о линке
     Link := LinksBroker.Info(lid);
     if Link = nil then
     begin
-      ShowMemo.Lines.Add('nil');
+      ShowMemo.Lines.Add('link not found');
       exit;
     end;
 
@@ -345,10 +261,69 @@ begin
     ShowMemo.Lines.Add('Comsts '+ l.Comsts);
     ShowMemo.Lines.Add('Compid '+ l.Compid);
     ShowMemo.Lines.Add('Depid '+ l.Depid);
+    ShowMemo.Lines.Add('as json:');
+    var json := l.Serialize();
+    if json <> nil then
+      ShowMemo.Lines.Add(json.Format());
   finally
     LinksBroker.Free;
   end;
 end;
+
+procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
+const
+  lid = '83789614-a334-4953-afaf-34093c8b43e4';
+var
+  LinksBroker : TLinksBroker;
+  SettingsFrame: TParentLinkSettingEditFrame;
+begin
+  LinksBroker := TLinksBroker.Create();
+  try
+    var entity := LinksBroker.Info(lid);
+    if entity = nil then
+    begin
+      ShowMemo.Lines.Add('link not found');
+      exit;
+    end;
+
+    ParentEditForm.Entity := entity;
+    var link := entity as TLink;
+    case Link.linkType of
+      ltSocketSpecial:
+        SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
+      else exit;
+    end;
+
+    SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
+    SettingsFrame.Parent := ParentEditForm.pnClient;
+    ParentEditForm.ShowModal(UpdateLinkSettingsCallback);
+
+  finally
+    LinksBroker.Free;
+  end;
+end;
+
+
+procedure TMainForm.UpdateLinkSettingsCallback(ASender: TComponent;
+  AResult: Integer);
+begin
+  ShowMemo.Clear;
+  if AResult <> mrOk then
+  begin
+    ShowMemo.Lines.Add('canceled');
+    exit;
+  end;
+  var e := (ASender as TParentEditForm).Entity;
+  if not (e is TLink) then
+    exit;
+
+  var json := (e as TLink).Serialize();
+  if json <> nil then
+    ShowMemo.Lines.Add(json.Format());
+
+end;
+
+
 
 {$ENDREGION 'Links'}
 
@@ -680,6 +655,11 @@ end;
 
 {$REGION 'Summary.Tasks'}
 
+procedure TMainForm.btnSummaryTasksClick(Sender: TObject);
+begin
+  SummaryTasksForm.Show();
+end;
+
 procedure TMainForm.btnSummaryTaskListClick(Sender: TObject);
 var
   SummaryTask : TEntity;
@@ -876,6 +856,8 @@ begin
     SummaryTasksBroker.Free;
   end;
 end;
+
+
 
 procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
 const

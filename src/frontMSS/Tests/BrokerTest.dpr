@@ -40,6 +40,8 @@ uses
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
   ParentLinkSettingEditFrameUnit in '..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame},
   StripTaskEditFormUnit in '..\Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
+  SummaryTaskEditFormUnit in '..\Forms\SummaryTaskEditFormUnit.pas' {SummaryTaskEditForm: TUniForm},
+  SummaryTasksFormUnit in '..\Forms\SummaryTasksFormUnit.pas' {SummaryTasksForm: TUniForm};
   SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
   SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
   SharedFrameBoolInput in '..\Forms\LinksFrames\SharedFrameBoolInput.pas' {FrameBoolInput: TUniFrame},

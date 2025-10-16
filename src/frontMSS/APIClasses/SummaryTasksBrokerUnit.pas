@@ -22,7 +22,7 @@ type
 
   protected
     ///  возвращает базовый путь до API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
 
   public
     /// возвращает список доступных типов
@@ -42,7 +42,7 @@ const
 
 { TSummaryTasksBroker }
 
-function TSummaryTasksBroker.BaseUrlPath: string;
+function TSummaryTasksBroker.GetBasePath: string;
 begin
   Result := constURLStripBasePath;
 end;
@@ -72,7 +72,7 @@ begin
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос
-      ResStr := MainHttpModuleUnit.GET(BaseUrlPath + constURLTaskTypes);
+      ResStr := MainHttpModuleUnit.GET(GetBasePath + constURLTaskTypes);
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ

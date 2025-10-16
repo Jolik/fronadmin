@@ -7,7 +7,7 @@ uses
   IdBaseComponent, IdComponent, IdIOHandler, IdIOHandlerSocket;
 
 const
-  API_BASE_URL = 'http://dcc5.modext.ru:58140';
+  API_BASE_URL = 'http://dcc5.modext.ru:8088';
   X_TICKET = 'ST-test';
   User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 YaBrowser/25.8.0.0 Safari/537.36';
 
