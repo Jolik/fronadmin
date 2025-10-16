@@ -237,6 +237,7 @@
         <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="Forms\SummaryTaskEditFormUnit.pas"/>
         <DCCReference Include="Forms\SummaryTasksFormUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\StringUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

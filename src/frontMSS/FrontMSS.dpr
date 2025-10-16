@@ -51,7 +51,8 @@ uses
   QueueSettingsUnit in 'EntityClasses\links\QueueSettingsUnit.pas',
   ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas',
   SummaryTaskEditFormUnit in 'Forms\SummaryTaskEditFormUnit.pas',
-  SummaryTasksFormUnit in 'Forms\SummaryTasksFormUnit.pas';
+  SummaryTasksFormUnit in 'Forms\SummaryTasksFormUnit.pas',
+  StringUnit in 'EntityClasses\Common\StringUnit.pas';
 
 {$R *.res}
 

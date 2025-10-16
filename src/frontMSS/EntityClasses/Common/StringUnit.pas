@@ -10,6 +10,14 @@ type
   /// <summary>
   ///   Представляет набор строк, ассоциированных с именем свойства JSON.
   /// </summary>
+  ///  такого формата
+  (*
+                    "foo1": [
+                        "input ftp meteorf",
+                        "output ss cli mitra5:7702"
+                    ]
+  *)
+
   TFieldSetStringList = class(TFieldSet)
   private
     FName: string;
@@ -24,6 +32,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure ParsePair(APair: TJSONPair);
 
+    ///  имя списка
     property Name: string read FName write FName;
     property Values: TList<string> read FValues;
   end;
@@ -32,6 +41,19 @@ type
   ///   Коллекция объектов TFieldSetStringList для работы с JSON-объектом вида
   ///   "ключ" : [ "строки" ].
   /// </summary>
+  ///  такого формата
+  (*               {
+                    "foo1": [
+                        "input ftp meteorf",
+                        "output ss cli mitra5:7702"
+                    ]
+                    "foo2": [
+                        "input ftp meteorf",
+                        "output ss cli mitra5:7702"
+                    ]
+                },
+  *)
+  ///  так как это не массив JSON а объект со списком TFieldSetStringList то реализованы и методы с src: TJSONObject
   TFieldSetStringListsObject = class(TFieldSetList)
   private
     function GetFieldSetStringList(Index: Integer): TFieldSetStringList;
@@ -41,6 +63,7 @@ type
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
+
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
