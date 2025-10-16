@@ -260,7 +260,7 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+  lid = '90d77ba1-85f2-4dc9-8019-d4f1a00e4476';
 var
   LinksBroker : TLinksBroker;
   SettingsFrame: TParentLinkSettingEditFrame;
