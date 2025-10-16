@@ -1,0 +1,6 @@
+BrokerTest.exe: 00000EDC: 23:11:18 [127.0.0.1]:Failed Sequence Recovery: SeqId: 4, Event: click
+BrokerTest.exe: 000006F4: 23:11:18 [127.0.0.1]:Failed Sequence Recovery: SeqId: 5, Event: resize
+BrokerTest.exe: 000006F4: 23:11:19 [127.0.0.1]:Sequence sent from cache:  SeqId: 5
+BrokerTest.exe: 000006F4: 23:11:19 [127.0.0.1]:Processed: Id: 5, Evt: resize, [AssscjfN5f111DD8172]
+BrokerTest.exe: 00000EDC: 23:11:19 [127.0.0.1]:Sequence sent from cache:  SeqId: 4
+BrokerTest.exe: 00000EDC: 23:11:19 [127.0.0.1]:Processed: Id: 4, Evt: click, [AssscjfN5f111DD8172]

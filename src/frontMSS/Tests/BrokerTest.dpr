@@ -26,7 +26,6 @@ uses
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   APIConst in '..\APIClasses\APIConst.pas',
-  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   UniLoggerUnit in '..\Logging\UniLoggerUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
@@ -34,12 +33,21 @@ uses
   ParentFormUnit in '..\Forms\ParentFormUnit.pas' {ParentForm: TUniForm},
   ParentEditFormUnit in '..\Forms\ParentEditFormUnit.pas' {ParentEditForm: TUniForm},
   ListParentFormUnit in '..\Forms\ListParentFormUnit.pas' {ListParentForm: TUniForm},
-  StripTaskEditFormUnit in '..\Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
   StripTasksFormUnit in '..\Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
-  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  ParentLinkSettingEditFrameUnit in '..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas' {ParentLinkSettingEditFrame: TUniFrame},
+  StripTaskEditFormUnit in '..\Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
+  SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
+  SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
+  SharedFrameBoolInput in '..\Forms\LinksFrames\SharedFrameBoolInput.pas' {FrameBoolInput: TUniFrame},
+  SharedFrameCombobox in '..\Forms\LinksFrames\SharedFrameCombobox.pas' {FrameCombobox: TUniFrame},
+  SharedFrameConnections in '..\Forms\LinksFrames\SharedFrameConnections.pas' {FrameConnections: TUniFrame},
+  SharedFrameQueue in '..\Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
+  KeyValUnit in '..\Common\KeyValUnit.pas',
+  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas';
 
 {$R *.res}
 

@@ -134,7 +134,6 @@
         <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
-        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\Logging\UniLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
@@ -154,11 +153,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\Forms\StripTaskEditFormUnit.pas">
-            <Form>StripTaskEditForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\Forms\StripTasksFormUnit.pas">
             <Form>StripTasksForm</Form>
             <FormType>dfm</FormType>
@@ -168,6 +162,48 @@
         <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
+        <DCCReference Include="..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas">
+            <Form>ParentLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\StripTaskEditFormUnit.pas">
+            <Form>StripTaskEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas">
+            <Form>SocketSpecialSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameTextInput.pas">
+            <Form>FrameTextInput</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameBoolInput.pas">
+            <Form>FrameBoolInput</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameCombobox.pas">
+            <Form>FrameCombobox</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameConnections.pas">
+            <Form>FrameConnections</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameQueue.pas">
+            <Form>FrameQueue</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Common\KeyValUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -189,8 +225,14 @@
                     <Source Name="MainSource">BrokerTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>BrokerTest.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
                         <Operation>1</Operation>
@@ -201,6 +243,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
