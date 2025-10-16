@@ -118,6 +118,7 @@ begin
 end;
 
 procedure ListTaskSources();
+procedure ListStripTaskSources();
 var
   TaskSourceBroker: TTaskSourcesBroker;
   TaskSourceList: TEntityList;
@@ -200,6 +201,150 @@ begin
       end;
     finally
       TaskSourceBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListStripTaskSources();
+var
+  StripTasksBroker: TStripTasksBroker;
+  StripTaskSourcesBroker: TStripTaskSourcesBroker;
+  StripTaskList: TEntityList;
+  StripTaskEntity: TEntity;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  StripTaskPageCount: Integer;
+  TaskSourcePageCount: Integer;
+  FirstStripTaskTid: string;
+begin
+  try
+    StripTasksBroker := TStripTasksBroker.Create;
+    try
+      StripTaskList := nil;
+      FirstStripTaskTid := '';
+      try
+        StripTaskList := StripTasksBroker.List(StripTaskPageCount);
+
+        Writeln('---------- Strip Tasks List ----------');
+
+        if Assigned(StripTaskList) and (StripTaskList.Count > 0) then
+        begin
+          for StripTaskEntity in StripTaskList do
+          begin
+            var StripTask := StripTaskEntity as TStripTask;
+            Writeln(Format('Class: %s | Address: %p', [StripTask.ClassName, Pointer(StripTask)]));
+            Writeln('Tid: ' + StripTask.Tid);
+            Writeln('Name: ' + StripTask.Name);
+            Writeln('Enabled: ' + BoolToStr(StripTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := StripTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          FirstStripTaskTid := (StripTaskList.Items[0] as TStripTask).Tid;
+        end
+        else
+          Writeln('Strip tasks list is empty.');
+
+      finally
+        StripTaskList.Free;
+      end;
+    finally
+      StripTasksBroker.Free;
+    end;
+
+    if FirstStripTaskTid = '' then
+    begin
+      Writeln('No strip task available to request strip task sources.');
+      Exit;
+    end;
+
+    StripTaskSourcesBroker := TStripTaskSourcesBroker.Create;
+    try
+      StripTaskSourcesBroker.AddPath := '/' + FirstStripTaskTid;
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := StripTaskSourcesBroker.List(TaskSourcePageCount);
+
+        Writeln('---------- Strip Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Strip Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := StripTaskSourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Strip task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      StripTaskSourcesBroker.Free;
     end;
   except
     on E: Exception do
@@ -830,8 +975,9 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-//      ListSummaryTaskTypes();
-      GetLogs();
+      ListSummaryTaskTypes();
+      ListTaskSources();
+      ListStripTaskSources();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
