@@ -42,7 +42,7 @@ type
     ///  форма для редактирования сущности - потомок должен создать и вернуть
     ///  ссылку на нужную форму в наследуемой функции CreateEditForm
     property EditForm: TParentEditForm read FEditForm;
-
+    procedure PrepareEditForm;
   end;
 
 function ParentForm: TParentForm;
@@ -124,13 +124,20 @@ begin
   ///   создаем брокера
   FBroker := CreateBroker();
   ///   создаем форму редактирования
-  FEditForm := CreateEditForm();
+  /// 2025-10-16 Папков Александр. Тут не нужно создавать форму редактирования
+  /// Ее нужно создавать по месту применения
+  // FEditForm := CreateEditForm();
 end;
 
 procedure TParentForm.UniFormDestroy(Sender: TObject);
 begin
   FreeAndNil(Broker);
 // надо удалять или не нужнО? FreeAndNil(EditForm);
+end;
+
+procedure TParentForm.PrepareEditForm;
+begin
+  FEditForm := CreateEditForm();
 end;
 
 function ParentForm: TParentForm;

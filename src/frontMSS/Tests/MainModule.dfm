@@ -1,6 +1,6 @@
 object UniMainModule: TUniMainModule
   MonitoredKeys.Keys = <>
-  Height = 373
-  Width = 529
-  PixelsPerInch = 168
+  EnableSynchronousOperations = True
+  Height = 213
+  Width = 302
 end
