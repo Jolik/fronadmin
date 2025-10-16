@@ -167,3 +167,10 @@ BrokerTest.exe: 00005550: 22:27:24 [TUniGUIMessageQ]:Terminated.
 BrokerTest.exe: 00005550: 22:27:24 [TUniWebSocketStack]:Terminated.
 BrokerTest.exe: 00005550: 22:27:24 [TUniServerModule]:Server Shutdown Completed.
 BrokerTest.exe: 00005550: 22:27:24 []:<-------------------------------------------------------------->
+BrokerTest.exe: 00001FB8: 22:30:20 []:>--------------------------------------------------------------<
+BrokerTest.exe: 00001FB8: 22:30:20 [TUniServerModule]:Server First Init.
+BrokerTest.exe: 00001FB8: 22:30:20 [TUniServerModule]:Start Path = C:\projects\fronadmin\src\frontMSS\Tests\Win32\Debug\
+BrokerTest.exe: 00001FB8: 22:30:20 [TUniServerModule]:Debug Mode = ON
+BrokerTest.exe: 00001FB8: 22:30:21 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+BrokerTest.exe: 00001FB8: 22:30:21 [TUniServerModule]:HTTP Server Started on Port: 8077
+BrokerTest.exe: 00001E68: 22:30:29 [127.0.0.1]:EUniSessionException : Invalid session or session Timeout. (Session not found: UK9vL3U4nv111DBCEE0 ) : Addr: $00708B29

@@ -1,0 +1,49 @@
+object FrameTextInput: TFrameTextInput
+  Left = 0
+  Top = 0
+  Width = 269
+  Height = 30
+  Constraints.MaxHeight = 30
+  Constraints.MinHeight = 30
+  TabOrder = 0
+  object PanelText: TUniPanel
+    Left = 0
+    Top = 0
+    Width = 125
+    Height = 30
+    Hint = ''
+    Constraints.MaxWidth = 125
+    Constraints.MinWidth = 125
+    Align = alLeft
+    TabOrder = 0
+    BorderStyle = ubsNone
+    Caption = 'text'
+    ScrollDirection = sdNone
+  end
+  object Edit: TUniEdit
+    AlignWithMargins = True
+    Left = 135
+    Top = 3
+    Width = 98
+    Height = 24
+    Hint = ''
+    Margins.Left = 10
+    Margins.Right = 10
+    Text = ''
+    Align = alClient
+    TabOrder = 1
+  end
+  object PanelUnits: TUniPanel
+    Left = 243
+    Top = 0
+    Width = 26
+    Height = 30
+    Hint = ''
+    Align = alRight
+    TabOrder = 2
+    BorderStyle = ubsNone
+    Alignment = taLeftJustify
+    Caption = #1089#1077#1082
+    ScrollDirection = sdNone
+  end
+end

@@ -39,6 +39,7 @@ type
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
     btnStripTasks: TUniButton;
+    btnLinkSettings: TUniButton;
     btnSummaryTasks: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
@@ -52,15 +53,17 @@ type
     procedure btnSummaryTaskNewClick(Sender: TObject);
     procedure btnSummaryTaskUpdateClick(Sender: TObject);
     procedure btnSummaryTaskRemoveClick(Sender: TObject);
-    procedure btnSummaryTaskTypesClick(Sender: TObject);
     procedure btnMonTaskListClick(Sender: TObject);
     procedure btnMonTaskInfoClick(Sender: TObject);
     procedure btnQueuesListClick(Sender: TObject);
     procedure btnQueuesInfoClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
+    procedure btnLinkSettingsClick(Sender: TObject);
     procedure btnSummaryTasksClick(Sender: TObject);
   private
     { Private declarations }
+  protected
+    procedure UpdateLinkSettingsCallback(ASender: TComponent; AResult: Integer);
   public
     { Public declarations }
   end;
@@ -72,7 +75,9 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit;
+  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
+  LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
+  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
 begin
@@ -163,6 +168,7 @@ end;
 
 {$REGION 'Links'}
 
+
 procedure TMainForm.btnLinskListClick(Sender: TObject);
 var
   Link : TEntity;
@@ -222,16 +228,15 @@ var
   LinksBroker : TLinksBroker;
 begin
   ShowMemo.Clear;
-
+  LinksBroker := TLinksBroker.Create();
   try
-    LinksBroker := TLinksBroker.Create();
     // Выводим информацию о линке в TMemo
     ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
     // получаем инфу о линке
     Link := LinksBroker.Info(lid);
     if Link = nil then
     begin
-      ShowMemo.Lines.Add('nil');
+      ShowMemo.Lines.Add('link not found');
       exit;
     end;
 
@@ -252,6 +257,61 @@ begin
     LinksBroker.Free;
   end;
 end;
+
+procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
+const
+  lid = '90d77ba1-85f2-4dc9-8019-d4f1a00e4476';
+var
+  LinksBroker : TLinksBroker;
+  SettingsFrame: TParentLinkSettingEditFrame;
+begin
+  LinksBroker := TLinksBroker.Create();
+  try
+    var entity := LinksBroker.Info(lid);
+    if entity = nil then
+    begin
+      ShowMemo.Lines.Add('link not found');
+      exit;
+    end;
+
+    ParentEditForm.Entity := entity;
+    var link := entity as TLink;
+    case Link.linkType of
+      ltSocketSpecial:
+        SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
+      else exit;
+    end;
+
+    SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
+    SettingsFrame.Parent := ParentEditForm.pnClient;
+    ParentEditForm.ShowModal(UpdateLinkSettingsCallback);
+
+  finally
+    LinksBroker.Free;
+  end;
+end;
+
+
+procedure TMainForm.UpdateLinkSettingsCallback(ASender: TComponent;
+  AResult: Integer);
+begin
+  ShowMemo.Clear;
+  if AResult <> mrOk then
+  begin
+    ShowMemo.Lines.Add('canceled');
+    exit;
+  end;
+  var e := (ASender as TParentEditForm).Entity;
+  if not (e is TLink) then
+    exit;
+
+  var json := (e as TLink).Serialize();
+  if json <> nil then
+    ShowMemo.Lines.Add(json.Format());
+
+end;
+
+
 
 {$ENDREGION 'Links'}
 
@@ -785,6 +845,8 @@ begin
   end;
 end;
 
+
+
 procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
 const
   tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
@@ -807,37 +869,6 @@ begin
     else
       ShowMemo.Lines.Add('Summary task removed');
   finally
-    SummaryTasksBroker.Free;
-  end;
-end;
-
-procedure TMainForm.btnSummaryTaskTypesClick(Sender: TObject);
-var
-  SummaryTasksBroker : TSummaryTasksBroker;
-  Types              : TJSONArray;
-begin
-  ShowMemo.Clear;
-
-  try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
-    // Выводим список типов
-    ShowMemo.Lines.Add('----------  Types  ----------');
-    //  получаем список
-    Types := SummaryTasksBroker.Types;
-    if not Assigned(Types) then
-    begin
-      ShowMemo.Lines.Add('nil');
-      Exit;
-    end;
-
-    for var t in Types do
-    begin
-      ShowMemo.Lines.Add('');
-      ShowMemo.Lines.Add('name: ' + (t as TJSONObject).GetValue('name').AsType<string>);
-      ShowMemo.Lines.Add('caption: ' + (t as TJSONObject).GetValue('caption').AsType<string>);
-    end;
-  finally
-    if Assigned(Types) then FreeAndNil(Types);
     SummaryTasksBroker.Free;
   end;
 end;

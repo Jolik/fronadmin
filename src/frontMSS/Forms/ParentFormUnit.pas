@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm,
-  EntityUnit, ParentBrokerUnit,
+  EntityUnit, EntityBrokerUnit,
   ParentEditFormUnit;
 
 type
@@ -16,7 +16,7 @@ type
     procedure UniFormDestroy(Sender: TObject);
   private
     ///  брокер для доступа к API - потомок должен инициировать поле на функционального брокера
-    FBroker: TParentBroker;
+    FBroker: TEntityBroker;
     ///  форма для редактирования сущности - потом должен инициировать поле на функциональный класс
     FEditForm : TParentEditForm;
 
@@ -29,7 +29,7 @@ type
 
     ///  функция для создания нужного брокера потомком
     ///  поток должен переопределить функцию чтобы создавался нужный брокер
-    function CreateBroker(): TParentBroker; virtual; abstract;
+    function CreateBroker(): TEntityBroker; virtual; abstract;
 
     ///  функиця для создания нужной формы редактирвоания
     ///  поток должен переопределить функцию чтобы создавалась нужная форма редактирвоания
@@ -38,11 +38,11 @@ type
   public
     ///  брокер для доступа к API - потомок содать и вернуть ссылку на нужный брокер
     ///  в наследуемой функции CreateBroker
-    property Broker: TParentBroker read FBroker;
+    property Broker: TEntityBroker read FBroker;
     ///  форма для редактирования сущности - потомок должен создать и вернуть
     ///  ссылку на нужную форму в наследуемой функции CreateEditForm
     property EditForm: TParentEditForm read FEditForm;
-
+    procedure PrepareEditForm;
   end;
 
 function ParentForm: TParentForm;
@@ -124,13 +124,20 @@ begin
   ///   создаем брокера
   FBroker := CreateBroker();
   ///   создаем форму редактирования
-  FEditForm := CreateEditForm();
+  /// 2025-10-16 Папков Александр. Тут не нужно создавать форму редактирования
+  /// Ее нужно создавать по месту применения
+  // FEditForm := CreateEditForm();
 end;
 
 procedure TParentForm.UniFormDestroy(Sender: TObject);
 begin
   FreeAndNil(Broker);
 // надо удалять или не нужнО? FreeAndNil(EditForm);
+end;
+
+procedure TParentForm.PrepareEditForm;
+begin
+  FEditForm := CreateEditForm();
 end;
 
 function ParentForm: TParentForm;
