@@ -664,7 +664,7 @@ begin
 //      ListRouterSource();
       ListSummaryTaskTypes();
 //      ListAliases();
-      ListRules();
+//      ListRules();
 //      ListDsGroups();
 //      ListUsers();
 

@@ -113,6 +113,7 @@
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
         <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
@@ -134,6 +135,7 @@
         <DCCReference Include="..\EntityClasses\dataserver\TDsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\summary\TaskTypesUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>

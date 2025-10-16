@@ -12,7 +12,7 @@ type
   ///  API broker for dataserver groups
   TDsGroupBroker = class(TEntityBroker)
   protected
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     class function ClassType: TEntityClass; override;
     class function ListClassType: TEntityListClass; override;
   public
@@ -48,7 +48,7 @@ const
 
 { TDsGroupBroker }
 
-function TDsGroupBroker.BaseUrlPath: string;
+function TDsGroupBroker.GetBasePath: string;
 begin
   Result := constURLDataserverBasePath;
 end;
@@ -82,7 +82,7 @@ begin
     JSONResult := nil;
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
-      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLDsGroupsList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLDsGroupsList, RequestStream);
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
         Exit;
@@ -138,7 +138,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLDsGroupsInfo, [AId]);
+    URL := Format(GetBasePath + constURLDsGroupsInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -171,7 +171,7 @@ var
 begin
   Result := false;
 
-  URL := BaseUrlPath + constURLDsGroupsNew;
+  URL := GetBasePath + constURLDsGroupsNew;
   JSONGroup := AEntity.Serialize();
 
   JSONRequestStream := TStringStream.Create(JSONGroup.ToJSON, TEncoding.UTF8);
@@ -194,7 +194,7 @@ begin
   if AId = '' then
     Exit;
 
-  URL := Format(BaseUrlPath + constURLDsGroupsRemove, [AId]);
+  URL := Format(GetBasePath + constURLDsGroupsRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try
@@ -219,7 +219,7 @@ begin
 
   Group := TDsGroup(AEntity);
 
-  URL := Format(BaseUrlPath + constURLDsGroupsUpdate, [Group.Dsgid]);
+  URL := Format(GetBasePath + constURLDsGroupsUpdate, [Group.Dsgid]);
 
   JSONGroup := AEntity.Serialize();
   JSONRequestStream := TStringStream.Create(JSONGroup.ToJSON, TEncoding.UTF8);

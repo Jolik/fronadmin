@@ -13,7 +13,7 @@ type
   TRouterSourceBroker = class (TEntityBroker)
   protected
     ///      API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     ///
     ///     ,
     class function ClassType: TEntityClass; override;
@@ -67,7 +67,7 @@ const
 
 { TRouterSourceBroker }
 
-function TRouterSourceBroker.BaseUrlPath: string;
+function TRouterSourceBroker.GetBasePath: string;
 begin
   Result := constURLRouterBasePath;
 end;
@@ -108,7 +108,7 @@ begin
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
       ///    -
-      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLSourcesList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLSourcesList, RequestStream);
       ///
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
@@ -165,7 +165,7 @@ begin
     exit;
 
   try
-    URL := Format(BaseUrlPath + constURLSourcesInfo, [AId]);
+    URL := Format(GetBasePath + constURLSourcesInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -207,7 +207,7 @@ begin
   Result := false;
 
   ///
-  URL := BaseUrlPath + constURLSourcesNew;
+  URL := GetBasePath + constURLSourcesNew;
   ///     JSON
   JSONSource := AEntity.Serialize();
 
@@ -243,7 +243,7 @@ begin
     exit;
 
   ///
-  URL := Format(BaseUrlPath + constURLSourcesUpdate, [(AEntity as TRouterSource).Who]);
+  URL := Format(GetBasePath + constURLSourcesUpdate, [(AEntity as TRouterSource).Who]);
 
   ///     JSON
   JSONSource := AEntity.Serialize();
@@ -274,7 +274,7 @@ var
 begin
   Result := false;
 
-  URL := Format(BaseUrlPath + constURLSourcesRemove, [AId]);
+  URL := Format(GetBasePath + constURLSourcesRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

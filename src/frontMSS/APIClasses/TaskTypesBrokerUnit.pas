@@ -1,4 +1,4 @@
-unit TaskTypesBrokerUnit;
+﻿unit TaskTypesBrokerUnit;
 
 interface
 
@@ -28,7 +28,6 @@ type
       const AOrderDir: String = 'asc'): TFieldSetList; override;
 
     function CreateNew(): TFieldSet; override;
-    function New(AFieldSet: TFieldSet): boolean; override;
   end;
 
 implementation
@@ -104,11 +103,6 @@ end;
 function TTaskTypesBroker.CreateNew: TFieldSet;
 begin
   Result := ClassType.Create();
-end;
-
-function TTaskTypesBroker.New(AFieldSet: TFieldSet): boolean;
-begin
-  Result := False;
 end;
 
 end.

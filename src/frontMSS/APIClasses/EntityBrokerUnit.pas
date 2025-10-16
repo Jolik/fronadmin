@@ -13,6 +13,7 @@ type
   ///  базовый брокер для вызовов API
   TEntityBroker = class(TObject)
   private
+    FAddPath: string;
   protected
     ///  метод возвращает конкретный тип сущности с которым работает брокер
     ///  потомки должны переопределить его, потому что он у всех разный
@@ -21,8 +22,11 @@ type
     ///  потомки должны переопределить его, потому что он у всех разный
     class function ListClassType: TEntityListClass; virtual;
 
-    ///  возвращает базовый путь до API
-    function BaseUrlPath: string; virtual; abstract;
+    ///  возвращает базовый путь до API - потомок должен переопредеоить
+    function GetBasePath: string; virtual; abstract;
+
+    ///  возвращает весь путь до API
+    function GetPath: string; virtual;
 
   public
     ///  возвращает список сущностей
@@ -58,6 +62,9 @@ type
     ///  в случае ошибки возвращается false
     function Remove(AEntity: TEntity): Boolean; overload; virtual;
 
+    ///  дополнительная часть пути (в основном для добавления идентификатора ID)
+    property AddPath: string read FAddPath write FAddPath;
+
   end;
 
 implementation
@@ -72,6 +79,11 @@ end;
 class function TEntityBroker.ListClassType: TEntityListClass;
 begin
   Result := TEntityList;
+end;
+
+function TEntityBroker.GetPath: string;
+begin
+  Result := GetBasePath + AddPath;
 end;
 
 function TEntityBroker.Info(AEntity: TEntity): TEntity;
