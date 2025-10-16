@@ -56,7 +56,8 @@ uses
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
-  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas';
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
 
 procedure ListSummaryTaskTypes();
 var

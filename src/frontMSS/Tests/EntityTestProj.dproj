@@ -148,6 +148,7 @@
         <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="..\APIClasses\FieldSetBrokerUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\signals\LogUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
