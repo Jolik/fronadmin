@@ -38,6 +38,7 @@ inherited ListParentForm: TListParentForm
       Caption = 'btnRemove'
       TabOrder = 2
       IconCls = 'delete'
+      OnClick = btnRemoveClick
     end
     object btnRefresh: TUniToolButton
       AlignWithMargins = True

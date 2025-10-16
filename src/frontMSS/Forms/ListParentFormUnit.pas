@@ -37,7 +37,7 @@ type
     procedure btnUpdateClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
     procedure UniFormCreate(Sender: TObject);
-
+    procedure btnRemoveClick(Sender: TObject);
   protected
     procedure Refresh(const AId: String = ''); override;
 
@@ -60,6 +60,8 @@ var
   LId : string;
 
 begin
+  PrepareEditForm;
+
   ///  получаем информацию о выбранном элементе в гриде
   ///  !!!  LId :=
   ///  пока берем первый элемент
@@ -82,6 +84,8 @@ var
   LEntity: TEntity;
 
 begin
+  PrepareEditForm;
+
   ///  создаем класс сущности от брокера
   LEntity := Broker.CreateNew();
   ///  устанавлаием сущность в окно редактирования
@@ -104,6 +108,24 @@ begin
   ///  !!!  LId :=
 ///  Refresh(LId);
    Refresh();
+end;
+
+procedure TListParentForm.btnRemoveClick(Sender: TObject);
+var
+  LId : string;
+
+begin
+  ///  получаем информацию о выбранном элементе в гриде
+  ///  !!!  LId :=
+  ///  пока берем первый элемент
+  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  ///  получаем полную информацию о сущности от брокера
+  if MessageDlg('Удалить задачу?', mtConfirmation, mbYesNo) = mrYes then
+  begin
+    Broker.Remove(LId);
+
+    Refresh();
+  end;
 end;
 
 procedure TListParentForm.Refresh(const AId: String = '');
