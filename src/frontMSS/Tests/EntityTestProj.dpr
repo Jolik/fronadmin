@@ -7,6 +7,8 @@
 uses
   System.SysUtils,
   System.JSON,
+  System.DateUtils,
+  IdURI,
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
@@ -48,7 +50,7 @@ uses
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
-  TaskTypesUnit in '..\EntityClasses\summary\TaskTypesUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
@@ -58,7 +60,8 @@ uses
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
-  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas';
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
 
 procedure ListSummaryTaskTypes();
 var
@@ -1040,6 +1043,77 @@ begin
   end;
 end;
 
+
+procedure GetLogs();
+
+var
+  StartTimeISO, EndTimeISO: string;
+  QueryParam, Url, Response: string;
+  JsonValue: TJSONValue;
+  Logs: TLogs;
+begin
+  try
+    EndTimeISO := DateToISO8601(Now, False);
+    StartTimeISO := DateToISO8601(IncMinute(Now, -10), False);
+
+    QueryParam := '{level="error"}';
+    Url := Format('/signals/logs/query_range?query=%s&start=%s&end=%s', [
+      TIdURI.ParamsEncode(QueryParam),
+      TIdURI.ParamsEncode(StartTimeISO),
+      TIdURI.ParamsEncode(EndTimeISO)
+    ]);
+
+    Url := '/signals/api/v1/logs/query_range?query={level="error"}&start=2025-10-15T00:40:51.781Z&end=2025-10-16T23:40:51.781Z';
+
+    try
+      Response := GET(Url);
+    except
+      on E: Exception do
+      begin
+        Writeln('Failed to query logs from API: ' + E.Message);
+        Response := '{}';
+      end;
+    end;
+
+    JsonValue := TJSONObject.ParseJSONValue(Response);
+    try
+      if JsonValue is TJSONObject then
+      begin
+        Logs := TLogs.Create(TJSONObject(JsonValue));
+        try
+          Writeln('---------- Logs ----------');
+          Writeln('Status: ' + Logs.Status);
+          Writeln('Result type: ' + Logs.ResultType);
+          Writeln('Request query: ' + Logs.RequestQuery);
+          Writeln('Request limit: ' + IntToStr(Logs.RequestLimit));
+          Writeln('Request start: ' + Logs.RequestStart);
+          Writeln('Request end: ' + Logs.RequestEnd);
+          Writeln('Streams count: ' + IntToStr(Logs.Results.Count));
+          if Logs.StatisticsJson <> '' then
+            Writeln('Statistics: ' + Logs.StatisticsJson);
+
+          if Logs.Results.Count > 0 then
+          begin
+            var FirstResult := Logs.Results[0];
+            Writeln('First stream host: ' + FirstResult.Host);
+            Writeln('First stream container: ' + FirstResult.ContainerName);
+            Writeln('First stream entries: ' + IntToStr(Length(FirstResult.Entries)));
+          end;
+          Writeln('----------');
+        finally
+          Logs.Free;
+        end;
+      end
+      else
+        Writeln('Logs response is not a JSON object.');
+    finally
+      JsonValue.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
 
 begin
   try
