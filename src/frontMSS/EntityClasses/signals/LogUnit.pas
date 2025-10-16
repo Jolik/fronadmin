@@ -3,7 +3,7 @@ unit LogUnit;
 interface
 
 uses
-  System.JSON, System.SysUtils,
+  System.JSON, System.SysUtils, System.Generics.Collections,
   EntityUnit;
 
 type
@@ -69,6 +69,90 @@ type
     ///   Список записей, возвращённых Loki.
     /// </summary>
     property Entries: TArray<TLogEntry> read FEntries write FEntries;
+  end;
+
+  /// <summary>
+  ///   Ответ сервиса логов.
+  /// </summary>
+  TLogs = class(TFieldSet)
+  private
+    FStatus: string;
+    FResultType: string;
+    FErrorType: string;
+    FError: string;
+    FResults: TObjectList<TLogResult>;
+    FStatisticsJson: string;
+    FRequestQuery: string;
+    FRequestLimit: Integer;
+    FRequestStart: string;
+    FRequestEnd: string;
+    FRequestDirection: string;
+    FRequestRegexp: string;
+    FRequestStep: string;
+  protected
+    procedure ParseResultArray(AResultValue: TJSONValue);
+    procedure ParseStatisticsValue(AStatisticsValue: TJSONValue);
+    procedure ParseRequestObject(ARequestValue: TJSONValue);
+  public
+    constructor Create(); override;
+    destructor Destroy; override;
+
+    function Assign(ASource: TFieldSet): boolean; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    /// <summary>
+    ///   Статус ответа сервиса.
+    /// </summary>
+    property Status: string read FStatus write FStatus;
+    /// <summary>
+    ///   Тип результата (streams и т.п.).
+    /// </summary>
+    property ResultType: string read FResultType write FResultType;
+    /// <summary>
+    ///   Тип ошибки (если status=error).
+    /// </summary>
+    property ErrorType: string read FErrorType write FErrorType;
+    /// <summary>
+    ///   Текст ошибки (если status=error).
+    /// </summary>
+    property Error: string read FError write FError;
+    /// <summary>
+    ///   Коллекция потоков с логами.
+    /// </summary>
+    property Results: TObjectList<TLogResult> read FResults;
+    /// <summary>
+    ///   Статистика выполнения запроса (в сыром JSON-виде).
+    /// </summary>
+    property StatisticsJson: string read FStatisticsJson write FStatisticsJson;
+    /// <summary>
+    ///   Исходный запрос (query параметр).
+    /// </summary>
+    property RequestQuery: string read FRequestQuery write FRequestQuery;
+    /// <summary>
+    ///   Ограничение количества записей.
+    /// </summary>
+    property RequestLimit: Integer read FRequestLimit write FRequestLimit;
+    /// <summary>
+    ///   Временная метка начала выборки.
+    /// </summary>
+    property RequestStart: string read FRequestStart write FRequestStart;
+    /// <summary>
+    ///   Временная метка окончания выборки.
+    /// </summary>
+    property RequestEnd: string read FRequestEnd write FRequestEnd;
+    /// <summary>
+    ///   Направление чтения (backward / forward).
+    /// </summary>
+    property RequestDirection: string read FRequestDirection write FRequestDirection;
+    /// <summary>
+    ///   Регулярное выражение фильтра.
+    /// </summary>
+    property RequestRegexp: string read FRequestRegexp write FRequestRegexp;
+    /// <summary>
+    ///   Шаг агрегации (если указан).
+    /// </summary>
+    property RequestStep: string read FRequestStep write FRequestStep;
   end;
 
 implementation
@@ -219,6 +303,252 @@ begin
     ValuesArray.AddElement(EntryArray);
   end;
   dst.AddPair('values', ValuesArray);
+end;
+
+{ TLogs }
+
+function TLogs.Assign(ASource: TFieldSet): boolean;
+var
+  Src: TLogs;
+  LogResult: TLogResult;
+  Clone: TLogResult;
+begin
+  Result := False;
+
+  if not Assigned(ASource) then
+    Exit;
+
+  if not (ASource is TLogs) then
+    Exit;
+
+  Src := TLogs(ASource);
+
+  FStatus := Src.Status;
+  FResultType := Src.ResultType;
+  FErrorType := Src.ErrorType;
+  FError := Src.Error;
+  FStatisticsJson := Src.StatisticsJson;
+  FRequestQuery := Src.RequestQuery;
+  FRequestLimit := Src.RequestLimit;
+  FRequestStart := Src.RequestStart;
+  FRequestEnd := Src.RequestEnd;
+  FRequestDirection := Src.RequestDirection;
+  FRequestRegexp := Src.RequestRegexp;
+  FRequestStep := Src.RequestStep;
+
+  FResults.Clear;
+  for LogResult in Src.Results do
+  begin
+    Clone := TLogResult.Create;
+    try
+      Clone.Assign(LogResult);
+      FResults.Add(Clone);
+    except
+      Clone.Free;
+      raise;
+    end;
+  end;
+
+  Result := True;
+end;
+
+constructor TLogs.Create;
+begin
+  inherited Create;
+  FResults := TObjectList<TLogResult>.Create(True);
+end;
+
+destructor TLogs.Destroy;
+begin
+  FResults.Free;
+  inherited;
+end;
+
+procedure TLogs.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  DataValue: TJSONValue;
+begin
+  FStatus := '';
+  FResultType := '';
+  FErrorType := '';
+  FError := '';
+  FStatisticsJson := '';
+  FRequestQuery := '';
+  FRequestLimit := 0;
+  FRequestStart := '';
+  FRequestEnd := '';
+  FRequestDirection := '';
+  FRequestRegexp := '';
+  FRequestStep := '';
+  FResults.Clear;
+
+  if not Assigned(src) then
+    Exit;
+
+  src.TryGetValue<string>('status', FStatus);
+  src.TryGetValue<string>('errorType', FErrorType);
+  src.TryGetValue<string>('error', FError);
+
+  DataValue := src.FindValue('data');
+  if Assigned(DataValue) and (DataValue is TJSONObject) then
+  begin
+    var DataObj := TJSONObject(DataValue);
+    DataObj.TryGetValue<string>('resultType', FResultType);
+    ParseResultArray(DataObj.FindValue('result'));
+    ParseStatisticsValue(DataObj.FindValue('stats'));
+  end;
+
+  ParseRequestObject(src.FindValue('request'));
+end;
+
+procedure TLogs.ParseRequestObject(ARequestValue: TJSONValue);
+var
+  RequestObj: TJSONObject;
+  LimitValue: TJSONValue;
+  LimitStr: string;
+begin
+  if not Assigned(ARequestValue) then
+    Exit;
+
+  if not (ARequestValue is TJSONObject) then
+    Exit;
+
+  RequestObj := TJSONObject(ARequestValue);
+
+  RequestObj.TryGetValue<string>('query', FRequestQuery);
+  RequestObj.TryGetValue<string>('start', FRequestStart);
+  RequestObj.TryGetValue<string>('end', FRequestEnd);
+  RequestObj.TryGetValue<string>('direction', FRequestDirection);
+  RequestObj.TryGetValue<string>('regexp', FRequestRegexp);
+  RequestObj.TryGetValue<string>('step', FRequestStep);
+
+  FRequestLimit := 0;
+  LimitValue := RequestObj.Values['limit'];
+  if Assigned(LimitValue) then
+  begin
+    if LimitValue is TJSONNumber then
+      FRequestLimit := TJSONNumber(LimitValue).AsInt
+    else if LimitValue is TJSONString then
+    begin
+      LimitStr := TJSONString(LimitValue).Value;
+      TryStrToInt(LimitStr, FRequestLimit);
+    end;
+  end;
+end;
+
+procedure TLogs.ParseResultArray(AResultValue: TJSONValue);
+var
+  ResultArray: TJSONArray;
+  I: Integer;
+  ItemValue: TJSONValue;
+  LogResult: TLogResult;
+begin
+  if not Assigned(AResultValue) then
+    Exit;
+
+  if not (AResultValue is TJSONArray) then
+    Exit;
+
+  ResultArray := TJSONArray(AResultValue);
+
+  for I := 0 to ResultArray.Count - 1 do
+  begin
+    ItemValue := ResultArray.Items[I];
+    if not (ItemValue is TJSONObject) then
+      Continue;
+
+    LogResult := TLogResult.Create;
+    try
+      LogResult.Parse(TJSONObject(ItemValue));
+      FResults.Add(LogResult);
+    except
+      LogResult.Free;
+      raise;
+    end;
+  end;
+end;
+
+procedure TLogs.ParseStatisticsValue(AStatisticsValue: TJSONValue);
+begin
+  if not Assigned(AStatisticsValue) then
+  begin
+    FStatisticsJson := '';
+    Exit;
+  end;
+
+  FStatisticsJson := AStatisticsValue.ToJSON;
+end;
+
+procedure TLogs.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  DataObj: TJSONObject;
+  ResultArray: TJSONArray;
+  LogResult: TLogResult;
+  ResultObj: TJSONObject;
+  StatisticsValue: TJSONValue;
+  RequestObj: TJSONObject;
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  dst.AddPair('status', TJSONString.Create(FStatus));
+
+  if FErrorType <> '' then
+    dst.AddPair('errorType', TJSONString.Create(FErrorType));
+
+  if FError <> '' then
+    dst.AddPair('error', TJSONString.Create(FError));
+
+  DataObj := TJSONObject.Create;
+  DataObj.AddPair('resultType', TJSONString.Create(FResultType));
+
+  ResultArray := TJSONArray.Create;
+  for LogResult in FResults do
+  begin
+    ResultObj := TJSONObject.Create;
+    LogResult.Serialize(ResultObj);
+    ResultArray.AddElement(ResultObj);
+  end;
+  DataObj.AddPair('result', ResultArray);
+
+  if FStatisticsJson <> '' then
+  begin
+    StatisticsValue := TJSONObject.ParseJSONValue(FStatisticsJson);
+    if Assigned(StatisticsValue) then
+      DataObj.AddPair('stats', StatisticsValue)
+    else
+      DataObj.AddPair('stats', TJSONString.Create(FStatisticsJson));
+  end;
+
+  dst.AddPair('data', DataObj);
+
+  RequestObj := TJSONObject.Create;
+
+  if FRequestQuery <> '' then
+    RequestObj.AddPair('query', TJSONString.Create(FRequestQuery));
+
+  if FRequestLimit <> 0 then
+    RequestObj.AddPair('limit', TJSONNumber.Create(FRequestLimit));
+
+  if FRequestStart <> '' then
+    RequestObj.AddPair('start', TJSONString.Create(FRequestStart));
+
+  if FRequestEnd <> '' then
+    RequestObj.AddPair('end', TJSONString.Create(FRequestEnd));
+
+  if FRequestDirection <> '' then
+    RequestObj.AddPair('direction', TJSONString.Create(FRequestDirection));
+
+  if FRequestRegexp <> '' then
+    RequestObj.AddPair('regexp', TJSONString.Create(FRequestRegexp));
+
+  if FRequestStep <> '' then
+    RequestObj.AddPair('step', TJSONString.Create(FRequestStep));
+
+  if RequestObj.Count > 0 then
+    dst.AddPair('request', RequestObj)
+  else
+    RequestObj.Free;
 end;
 
 end.
