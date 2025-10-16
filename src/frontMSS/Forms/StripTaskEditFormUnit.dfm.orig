@@ -15,15 +15,23 @@ inherited StripTaskEditForm: TStripTaskEditForm
   inherited pnCaption: TUniContainerPanel
     ExplicitWidth = 817
     inherited teCaption: TUniEdit
+<<<<<<< HEAD
       Left = 86
       Width = 730
       ExplicitLeft = 86
       ExplicitWidth = 728
+=======
+      Left = 84
+      Width = 732
+      ExplicitLeft = 84
+      ExplicitWidth = 732
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
     end
   end
   inherited pnName: TUniContainerPanel
     ExplicitWidth = 817
     inherited teName: TUniEdit
+<<<<<<< HEAD
       Left = 86
       Width = 730
       ExplicitLeft = 86
@@ -33,6 +41,23 @@ inherited StripTaskEditForm: TStripTaskEditForm
   inherited pnClient: TUniContainerPanel
     ExplicitWidth = 817
     ExplicitHeight = 406
+    object teModule: TUniEdit
+      Left = 64
+      Top = 64
+      Width = 121
+      Hint = ''
+      Text = 'teModule'
+      TabOrder = 1
+    end
+=======
+      Left = 84
+      Width = 732
+      ExplicitLeft = 84
+      ExplicitWidth = 732
+    end
+  end
+  inherited pnClient: TUniContainerPanel
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
     object lModule: TUniLabel
       Left = 40
       Top = 45

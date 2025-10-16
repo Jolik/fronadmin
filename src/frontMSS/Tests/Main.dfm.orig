@@ -17,7 +17,13 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 530
+<<<<<<< HEAD
+    ExplicitWidth = 536
+    ExplicitHeight = 486
+=======
+    ExplicitLeft = 159
+    ExplicitWidth = 538
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
   end
   object sbTestButtons: TUniScrollBox
     AlignWithMargins = True
@@ -30,6 +36,7 @@ object MainForm: TMainForm
     TabOrder = 1
     ScrollDirection = sdVertical
     ExplicitHeight = 486
+    ScrollHeight = 654
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
@@ -268,8 +275,13 @@ object MainForm: TMainForm
       object btnSummaryTaskList: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 50
+<<<<<<< HEAD
+        Top = 20
         Width = 93
+=======
+        Top = 50
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -285,8 +297,13 @@ object MainForm: TMainForm
       object btnSummaryTaskInfo: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 80
+<<<<<<< HEAD
+        Top = 50
         Width = 93
+=======
+        Top = 80
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -302,8 +319,13 @@ object MainForm: TMainForm
       object btnSummaryTaskNew: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 110
+<<<<<<< HEAD
+        Top = 80
         Width = 93
+=======
+        Top = 110
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -319,8 +341,13 @@ object MainForm: TMainForm
       object btnSummaryTaskUpdate: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 140
+<<<<<<< HEAD
+        Top = 110
         Width = 93
+=======
+        Top = 140
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -336,8 +363,13 @@ object MainForm: TMainForm
       object btnSummaryTaskRemove: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 170
+<<<<<<< HEAD
+        Top = 140
         Width = 93
+=======
+        Top = 170
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -353,8 +385,13 @@ object MainForm: TMainForm
       object btnSummaryTaskTypes: TUniButton
         AlignWithMargins = True
         Left = 12
-        Top = 200
+<<<<<<< HEAD
+        Top = 170
         Width = 93
+=======
+        Top = 200
+        Width = 97
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         Height = 25
         Hint = ''
         Margins.Left = 10

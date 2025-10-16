@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm,
-  EntityUnit, ParentBrokerUnit,
+  EntityUnit,
+  ParentBrokerUnit,
   ParentEditFormUnit;
 
 type

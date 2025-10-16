@@ -123,8 +123,6 @@
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\ConnectionUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\ScheduleUnit.pas"/>
         <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
@@ -136,13 +134,10 @@
         <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
-        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="..\Logging\UniLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
-<<<<<<< HEAD
-        <DCCReference Include="..\EntityClasses\Common\DirSettingsUnit.pas"/>
-=======
         <DCCReference Include="..\Forms\ParentFormUnit.pas">
             <Form>ParentForm</Form>
             <FormType>dfm</FormType>
@@ -158,18 +153,70 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\Forms\StripTaskEditFormUnit.pas">
-            <Form>StripTaskEditForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\Forms\StripTasksFormUnit.pas">
             <Form>StripTasksForm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
->>>>>>> 7161680f745b3d91f59f3d75daedee6d2fae228a
+        <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
+<<<<<<< HEAD
+        <DCCReference Include="..\Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas">
+            <Form>ParentLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\StripTaskEditFormUnit.pas">
+            <Form>StripTaskEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas">
+            <Form>SocketSpecialSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameTextInput.pas">
+            <Form>FrameTextInput</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameBoolInput.pas">
+            <Form>FrameBoolInput</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameCombobox.pas">
+            <Form>FrameCombobox</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameConnections.pas">
+            <Form>FrameConnections</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameQueue.pas">
+            <Form>FrameQueue</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Common\KeyValUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
+=======
+        <DCCReference Include="..\Forms\SummaryTaskEditFormUnit.pas">
+            <Form>SummaryTaskEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\SummaryTasksFormUnit.pas">
+            <Form>SummaryTasksForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+>>>>>>> d4c4d541ee8950a76178ba216b30ef0e0273254e
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -191,7 +238,8 @@
                     <Source Name="MainSource">BrokerTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
+                <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>BrokerTest.exe</RemoteName>
@@ -208,6 +256,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">
