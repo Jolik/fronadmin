@@ -60,4 +60,14 @@ object MainForm: TMainForm
     TabOrder = 4
     OnClick = btnSummTaskClick
   end
+  object btnRouterSources: TUniButton
+    Left = 40
+    Top = 304
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1048#1089#1090#1086#1095#1085#1080#1082#1080
+    TabOrder = 5
+    OnClick = btnRouterSourcesClick
+  end
 end

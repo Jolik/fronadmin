@@ -173,6 +173,16 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\RouterSourceEditFormUnit.pas">
+            <Form>RouterSourceEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\RouterSourcesFormUnit.pas">
+            <Form>RouterSourcesForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="APIClasses\APIConst.pas"/>
         <DCCReference Include="APIClasses\ChannelsBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\LinksBrokerUnit.pas"/>
