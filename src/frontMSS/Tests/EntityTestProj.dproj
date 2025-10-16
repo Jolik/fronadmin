@@ -115,12 +115,14 @@
         <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TaskSourceBrokerUnit.pas"/>
         <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\Common\ConstsUnit.pas"/>
         <DCCReference Include="..\Common\FuncUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskSourceUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>

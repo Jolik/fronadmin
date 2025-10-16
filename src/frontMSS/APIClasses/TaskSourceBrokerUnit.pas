@@ -21,6 +21,9 @@ type
     ///     ,
     class function ListClassType: TEntityListClass; override;
 
+    ///  функция возвращает путь до сервиса тасков
+    function GetSericePath(): string; virtual; abstract;
+
   public
     ///
     ///      nil
@@ -63,13 +66,14 @@ const
   constURLTaskSourceNew = '/sources/new';
   constURLTaskSourceUpdate = '/sources/%s/update';
   constURLTaskSourceDelete = '/sources/%s/remove';
-  constURLTaskSourceBasePath = '/api/v2/tasks';
+
+  constURLTaskBasePath = '/tasks';
 
 { TTaskSourceBroker }
 
 function TTaskSourceBroker.GetBasePath: string;
 begin
-  Result := constURLTaskSourceBasePath;
+  Result := GetSericePath + constURLTaskBasePath;
 end;
 
 class function TTaskSourceBroker.ClassType: TEntityClass;
