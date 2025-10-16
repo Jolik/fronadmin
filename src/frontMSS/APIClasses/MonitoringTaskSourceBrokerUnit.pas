@@ -1,8 +1,9 @@
-unit MonitoringTaskSourceUnit;
+unit MonitoringTaskSourceBrokerUnit;
 
 interface
 
 uses
+  APIConst,
   TaskSourcesBrokerUnit;
 
 type
@@ -15,7 +16,7 @@ implementation
 
 function TMonitoringTaskSourcesBroker.GetServicePath: string;
 begin
-  Result := '/monitoring/api/v2';
+  Result := constURLMonitoringBasePath;
 end;
 
 end.
