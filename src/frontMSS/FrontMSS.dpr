@@ -16,6 +16,8 @@ uses
   ParentFormUnit in 'Forms\ParentFormUnit.pas' {ParentForm: TUniForm},
   StripTaskEditFormUnit in 'Forms\StripTaskEditFormUnit.pas' {StripTaskEditForm: TUniForm},
   StripTasksFormUnit in 'Forms\StripTasksFormUnit.pas' {StripTasksForm: TUniForm},
+  RouterSourceEditFormUnit in 'Forms\RouterSourceEditFormUnit.pas' {RouterSourceEditForm: TUniForm},
+  RouterSourcesFormUnit in 'Forms\RouterSourcesFormUnit.pas' {RouterSourcesForm: TUniForm},
   APIConst in 'APIClasses\APIConst.pas',
   ChannelsBrokerUnit in 'APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in 'APIClasses\LinksBrokerUnit.pas',
