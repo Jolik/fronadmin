@@ -17,11 +17,13 @@ type
     btnLinks: TUniButton;
     btnSummTask: TUniButton;
     btnRouterSources: TUniButton;
+    btnAliases: TUniButton;
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnLinksClick(Sender: TObject);
     procedure btnSummTaskClick(Sender: TObject);
     procedure btnRouterSourcesClick(Sender: TObject);
+    procedure btnAliasesClick(Sender: TObject);
   private
   public
     { Public declarations }
@@ -37,6 +39,7 @@ uses
   uniGUIVars, uniGUIApplication,
   MainModule,
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
+  AliasesFormUnit,
   RouterSourcesFormUnit;
 
 function MainForm: TMainForm;
@@ -49,6 +52,11 @@ end;
 procedure TMainForm.btnChannelClick(Sender: TObject);
 begin
   ChannelsForm.Show();
+end;
+
+procedure TMainForm.btnAliasesClick(Sender: TObject);
+begin
+  AliasesForm.Show();
 end;
 
 procedure TMainForm.btnRouterSourcesClick(Sender: TObject);
