@@ -7,6 +7,8 @@
 uses
   System.SysUtils,
   System.JSON,
+  System.DateUtils,
+  IdURI,
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
@@ -54,7 +56,12 @@ uses
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
-  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas';
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
+
+const
+  SampleLogsResponse =
+    '{"status":"success","data":{"resultType":"streams","result":[{"stream":{"container_name":"dcc7_queues.1.knrhmpywi3r2z2gbb1h3vxt45","filename":"/var/log/docker/ef0ec469c493c9af82a84ca6d232c0f158383a39b60dd8013324f3acc904474c/json.log","host":"dcc5","source":"stderr","swarm_service":"dcc7_queues","swarm_stack":"dcc7"},"values":[["1738241085769638560","{\"app_layer\":\"service\",\"app_msg\":\"operation initiated\",\"app_oper\":\"GetQueueCounters\",\"app_sessid\":\"00000000-0000-0000-0000-000000000000\",\"app_usid\":\"00000000-0000-0000-0000-000000000000\",\"level\":\"info\",\"time\":\"2025-01-30T12:44:45.769504209Z\"}"],["1738241085380167255","{\"ack\":0,\"app_layer\":\"mb\",\"app_msg\":\"stats\",\"level\":\"info\",\"notack\":0,\"recv\":0,\"sent\":0,\"stream\":\"handlers:ac2b8c56-642e-4dba-bdb8-6ae0b09d76cd\",\"time\":\"2025-01-30T12:44:45.379805363Z\"}"]]}],"stats":{"summary":{"bytesProcessedPerSecond":0,"linesProcessedPerSecond":0,"totalBytesProcessed":0,"totalLinesProcessed":2}}},"request":{"query":"{app_layer=\"service\"}","limit":200,"start":"2025-01-30T12:34:45.769504Z","end":"2025-01-30T12:44:45.769504Z","direction":"backward"}}';
 
 procedure ListSummaryTaskTypes();
 var
@@ -657,12 +664,81 @@ begin
 end;
 
 
+procedure GetLogs();
+var
+  StartTimeISO, EndTimeISO: string;
+  QueryParam, Url, Response: string;
+  JsonValue: TJSONValue;
+  Logs: TLogs;
+begin
+  try
+    EndTimeISO := DateToISO8601(Now, False);
+    StartTimeISO := DateToISO8601(IncMinute(Now, -10), False);
+
+    QueryParam := '{app_layer="service"}';
+    Url := Format('/signals/logs?query=%s&start=%s&end=%s', [
+      TIdURI.ParamsEncode(QueryParam),
+      TIdURI.ParamsEncode(StartTimeISO),
+      TIdURI.ParamsEncode(EndTimeISO)
+    ]);
+
+    try
+      Response := GET(Url);
+    except
+      on E: Exception do
+      begin
+        Writeln('Failed to query logs from API: ' + E.Message);
+        Response := SampleLogsResponse;
+      end;
+    end;
+
+    JsonValue := TJSONObject.ParseJSONValue(Response);
+    try
+      if JsonValue is TJSONObject then
+      begin
+        Logs := TLogs.Create(TJSONObject(JsonValue));
+        try
+          Writeln('---------- Logs ----------');
+          Writeln('Status: ' + Logs.Status);
+          Writeln('Result type: ' + Logs.ResultType);
+          Writeln('Request query: ' + Logs.RequestQuery);
+          Writeln('Request limit: ' + IntToStr(Logs.RequestLimit));
+          Writeln('Request start: ' + Logs.RequestStart);
+          Writeln('Request end: ' + Logs.RequestEnd);
+          Writeln('Streams count: ' + IntToStr(Logs.Results.Count));
+          if Logs.StatisticsJson <> '' then
+            Writeln('Statistics: ' + Logs.StatisticsJson);
+
+          if Logs.Results.Count > 0 then
+          begin
+            var FirstResult := Logs.Results[0];
+            Writeln('First stream host: ' + FirstResult.Host);
+            Writeln('First stream container: ' + FirstResult.ContainerName);
+            Writeln('First stream entries: ' + IntToStr(Length(FirstResult.Entries)));
+          end;
+          Writeln('----------');
+        finally
+          Logs.Free;
+        end;
+      end
+      else
+        Writeln('Logs response is not a JSON object.');
+    finally
+      JsonValue.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 begin
   try
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListSummaryTaskTypes();
+//      ListSummaryTaskTypes();
+      GetLogs();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
