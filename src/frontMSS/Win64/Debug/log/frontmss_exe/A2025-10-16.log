@@ -1,0 +1,21 @@
+FrontMSS.exe: 00005B7C: 16:09:07 []:>--------------------------------------------------------------<
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniServerModule]:Server First Init.
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniServerModule]:Start Path = C:\code\fronadmin\src\frontMSS\Win64\Debug\
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniServerModule]:Debug Mode = ON
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniGUISessionManager]:Cache erase job created, Folder count: [1]
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniServerModule]:Starting HTTP Server on Port: 8077...
+FrontMSS.exe: 00005B7C: 16:09:07 [TUniServerModule]:HTTP Server Started on Port: 8077
+FrontMSS.exe: 00005B7C: 16:12:08 [TUniServerModule]:Terminate started...
+FrontMSS.exe: 00005B7C: 16:12:09 [TUniServerModule]:Shutting Down Server.
+FrontMSS.exe: 00005B7C: 16:12:09 [TUniServerModule]:Stopping HTTP Server.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniServerModule]:HTTP Server Stopped.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUISessionManager]:Terminating Session manager.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUISessionManager]:Stopping Cache Eraser...
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUISessionManager]:Cache Eraser Stopped.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUISessionManager]:Destroying Worker Threads.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUISessionManager]:Session manager terminated.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniWebSocketStack]:Terminating...
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniGUIMessageQ]:Terminated.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniWebSocketStack]:Terminated.
+FrontMSS.exe: 00005B7C: 16:12:10 [TUniServerModule]:Server Shutdown Completed.
+FrontMSS.exe: 00005B7C: 16:12:10 []:<-------------------------------------------------------------->

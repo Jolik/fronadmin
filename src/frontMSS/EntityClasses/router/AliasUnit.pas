@@ -13,7 +13,7 @@ type
   /// </summary>
   TAlias = class(TEntity)
   private
-    FChannels: TFieldSetStringListsObject;
+    FChannels: TFieldSetStringList;
     function GetAlid: string;
     procedure SetAlid(const Value: string);
   protected
@@ -29,7 +29,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     property Alid: string read GetAlid write SetAlid;
-    property Channels: TFieldSetStringListsObject read FChannels;
+    property Channels: TFieldSetStringList read FChannels;
   end;
 
   TAliasList = class(TEntityList)
@@ -64,22 +64,7 @@ begin
 
   SourceAlias := TAlias(ASource);
 
-  FChannels.Clear;
-  for var Index := 0 to SourceAlias.Channels.Count - 1 do
-  begin
-    var Channel := TFieldSetStringList.Create;
-    try
-      if not Channel.Assign(SourceAlias.Channels[Index]) then
-      begin
-        Channel.Free;
-        Continue;
-      end;
-      FChannels.Add(Channel);
-    except
-      Channel.Free;
-      raise;
-    end;
-  end;
+  FChannels.Assign(SourceAlias.Channels);
 
   Result := True;
 end;
@@ -88,7 +73,7 @@ constructor TAlias.Create;
 begin
   inherited Create;
 
-  FChannels := TFieldSetStringListsObject.Create;
+  FChannels := TFieldSetStringList.Create;
 end;
 
 constructor TAlias.Create(src: TJSONObject; const APropertyNames: TArray<string>);
@@ -121,31 +106,18 @@ var
 begin
   inherited Parse(src, APropertyNames);
 
-  FChannels.Clear;
-
   if not Assigned(src) then
     Exit;
 
   ChannelsValue := src.FindValue(ChannelsKey);
   if ChannelsValue is TJSONObject then
   begin
-    for var Pair in TJSONObject(ChannelsValue) do
-    begin
-      var Channel := TFieldSetStringList.Create;
-      try
-        Channel.ParsePair(Pair);
-        FChannels.Add(Channel);
-      except
-        Channel.Free;
-        raise;
-      end;
-    end;
+    FChannels.Parse(ChannelsValue as TJSONObject, APropertyNames);
   end;
 end;
 
 procedure TAlias.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 var
-  ChannelsObject: TJSONObject;
   ValuesArray: TJSONArray;
   ChannelList: TFieldSetStringList;
 begin
@@ -154,31 +126,8 @@ begin
 
   inherited Serialize(dst, APropertyNames);
 
-  ChannelsObject := TJSONObject.Create;
-  try
-    for var Index := 0 to FChannels.Count - 1 do
-    begin
-      ChannelList := FChannels[Index];
-      if not Assigned(ChannelList) then
-        Continue;
-      if ChannelList.Name = '' then
-        Continue;
+  dst.AddPair(ChannelsKey, FChannels.Serialize);
 
-      ValuesArray := TJSONArray.Create;
-      try
-        for var AliasValue in ChannelList.Values do
-          ValuesArray.Add(AliasValue);
-        ChannelsObject.AddPair(ChannelList.Name, ValuesArray);
-      except
-        ValuesArray.Free;
-        raise;
-      end;
-    end;
-    dst.AddPair(ChannelsKey, ChannelsObject);
-  except
-    ChannelsObject.Free;
-    raise;
-  end;
 end;
 
 procedure TAlias.SetAlid(const Value: string);

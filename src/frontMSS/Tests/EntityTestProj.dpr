@@ -174,7 +174,7 @@ begin
             Writeln('Alid: ' + Alias.Alid);
             Writeln('Name: ' + Alias.Name);
             Writeln('Caption: ' + Alias.Caption);
-            Writeln('Channels count: ' + IntToStr(Alias.Channels.Count));
+//            Writeln('Channels count: ' + IntToStr(Alias.Channels.Count));
 
             Writeln('As JSON:');
             var Json := Alias.Serialize();
@@ -606,7 +606,7 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
       ListAliases();
-      ListRules();
+//      ListRules();
 //      ListDsGroups();
 //      ListUsers();
 
