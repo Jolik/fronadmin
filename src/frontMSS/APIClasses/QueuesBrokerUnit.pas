@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, QueueUnit, ParentBrokerUnit;
+  EntityUnit, QueueUnit, EntityBrokerUnit;
 
 type
   ///  брокер для API Queues
-  TQueuesBroker = class (TParentBroker)
+  TQueuesBroker = class (TEntityBroker)
   protected
     ///  возвращает базовый путь до API
     function BaseUrlPath: string; override;

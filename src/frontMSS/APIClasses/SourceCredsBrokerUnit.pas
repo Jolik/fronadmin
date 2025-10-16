@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, SourceCredsUnit, ParentBrokerUnit;
+  EntityUnit, SourceCredsUnit, EntityBrokerUnit;
 
 type
   ///    API Source Credentials
-  TSourceCredsBroker = class (TParentBroker)
+  TSourceCredsBroker = class (TEntityBroker)
   protected
     ///      API
     function BaseUrlPath: string; override;

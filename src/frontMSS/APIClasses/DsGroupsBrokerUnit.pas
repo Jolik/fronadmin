@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, TDsGroupUnit, ParentBrokerUnit;
+  EntityUnit, TDsGroupUnit, EntityBrokerUnit;
 
 type
   ///  API broker for dataserver groups
-  TDsGroupBroker = class(TParentBroker)
+  TDsGroupBroker = class(TEntityBroker)
   protected
     function BaseUrlPath: string; override;
     class function ClassType: TEntityClass; override;

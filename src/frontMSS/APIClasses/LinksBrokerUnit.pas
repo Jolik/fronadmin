@@ -6,12 +6,12 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, LinkUnit, ParentBrokerUnit;
+  EntityUnit, LinkUnit, EntityBrokerUnit;
 
 
 type
   ///  брокер для API Links
-  TLinksBroker = class (TParentBroker)
+  TLinksBroker = class (TEntityBroker)
   protected
     ///  возвращает базовый путь до API
     function BaseUrlPath: string; override;

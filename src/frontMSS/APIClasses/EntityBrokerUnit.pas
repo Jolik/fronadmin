@@ -1,4 +1,4 @@
-unit ParentBrokerUnit;
+unit EntityBrokerUnit;
 
 interface
 
@@ -7,11 +7,11 @@ uses
   EntityUnit;
 
 type
-  // Класс-ссылка на брокер TParentBroker
-  TParentBrokerClass = class of TParentBroker;
+  // Класс-ссылка на брокер TEntityBroker
+  TEntityBrokerClass = class of TEntityBroker;
 
   ///  базовый брокер для вызовов API
-  TParentBroker = class(TObject)
+  TEntityBroker = class(TObject)
   private
   protected
     ///  метод возвращает конкретный тип сущности с которым работает брокер
@@ -62,24 +62,24 @@ type
 
 implementation
 
-{ TParentBroker }
+{ TEntityBroker }
 
-class function TParentBroker.ClassType: TEntityClass;
+class function TEntityBroker.ClassType: TEntityClass;
 begin
   Result := TEntity;
 end;
 
-class function TParentBroker.ListClassType: TEntityListClass;
+class function TEntityBroker.ListClassType: TEntityListClass;
 begin
   Result := TEntityList;
 end;
 
-function TParentBroker.Info(AEntity: TEntity): TEntity;
+function TEntityBroker.Info(AEntity: TEntity): TEntity;
 begin
   result := Info(AEntity.Id);
 end;
 
-function TParentBroker.Remove(AEntity: TEntity): Boolean;
+function TEntityBroker.Remove(AEntity: TEntity): Boolean;
 begin
   result := Remove(AEntity.Id);
 end;

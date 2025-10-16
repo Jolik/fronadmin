@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, UserUnit, ParentBrokerUnit;
+  EntityUnit, UserUnit, EntityBrokerUnit;
 
 type
   ///    API Users
-  TUsersBroker = class(TParentBroker)
+  TUsersBroker = class(TEntityBroker)
   protected
     function BaseUrlPath: string; override;
     class function ClassType: TEntityClass; override;

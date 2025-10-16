@@ -6,13 +6,13 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, AliasUnit, ParentBrokerUnit;
+  EntityUnit, AliasUnit, EntityBrokerUnit;
 
 type
   /// <summary>
   ///   Broker for working with router aliases API.
   /// </summary>
-  TAliasesBroker = class(TParentBroker)
+  TAliasesBroker = class(TEntityBroker)
   protected
     function BaseUrlPath: string; override;
     class function ClassType: TEntityClass; override;

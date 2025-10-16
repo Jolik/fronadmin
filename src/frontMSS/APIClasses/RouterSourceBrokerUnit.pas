@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, RouterSourceUnit, ParentBrokerUnit;
+  EntityUnit, RouterSourceUnit, EntityBrokerUnit;
 
 type
   ///    API Sources
-  TRouterSourceBroker = class (TParentBroker)
+  TRouterSourceBroker = class (TEntityBroker)
   protected
     ///      API
     function BaseUrlPath: string; override;

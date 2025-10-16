@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, TaskUnit, ParentBrokerUnit;
+  EntityUnit, TaskUnit, EntityBrokerUnit;
 
 type
   ///  брокер для API tasks
-  TTasksBroker = class (TParentBroker)
+  TTasksBroker = class (TEntityBroker)
   private
   protected
     ///  метод возвращает конкретный тип сущности с которым работает брокер

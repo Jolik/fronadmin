@@ -6,13 +6,13 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, RuleUnit, ParentBrokerUnit;
+  EntityUnit, RuleUnit, EntityBrokerUnit;
 
 type
   /// <summary>
   ///   Broker for working with router rules API.
   /// </summary>
-  TRulesBroker = class(TParentBroker)
+  TRulesBroker = class(TEntityBroker)
   protected
     function BaseUrlPath: string; override;
     class function ClassType: TEntityClass; override;

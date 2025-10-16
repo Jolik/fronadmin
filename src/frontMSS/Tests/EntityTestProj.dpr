@@ -12,7 +12,7 @@ uses
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
-  ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
+  EntityBrokerUnit in '..\APIClasses\EntityBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
   AliasesBrokerUnit in '..\APIClasses\AliasesBrokerUnit.pas',
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
@@ -51,7 +51,8 @@ uses
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
-  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas';
 
 procedure ListRouterSource();
 var
