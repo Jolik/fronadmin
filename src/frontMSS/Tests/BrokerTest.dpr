@@ -39,7 +39,9 @@ uses
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
-  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  SummaryTaskEditFormUnit in '..\Forms\SummaryTaskEditFormUnit.pas' {SummaryTaskEditForm: TUniForm},
+  SummaryTasksFormUnit in '..\Forms\SummaryTasksFormUnit.pas' {SummaryTasksForm: TUniForm};
 
 {$R *.res}
 

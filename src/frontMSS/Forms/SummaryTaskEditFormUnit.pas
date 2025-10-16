@@ -8,11 +8,10 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
-  EntityUnit, SummaryTaskUnit;
+  EntityUnit, SummaryTaskUnit, uniMultiItem, uniComboBox, Math;
 
 type
   TSummaryTaskEditForm = class(TParentEditForm)
-    teModule: TUniEdit;
     lModule: TUniLabel;
     teTid: TUniEdit;
     lTid: TUniLabel;
@@ -33,6 +32,7 @@ type
     lCustomSeparate: TUniLabel;
     teExcludeWeek: TUniEdit;
     lExcludeWeek: TUniLabel;
+    cbModule: TUniComboBox;
   private
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
@@ -76,7 +76,7 @@ begin
   SummaryTask.Tid := teTid.Text;
   SummaryTask.CompId := teCompId.Text;
   SummaryTask.DepId := teDepId.Text;
-  SummaryTask.Module := teModule.Text;
+  SummaryTask.Module := cbModule.Text;
   SummaryTask.Def := meDef.Lines.Text;
   SummaryTask.Enabled := cbEnabled.Checked;
 
@@ -191,12 +191,12 @@ begin
     inherited SetEntity(AEntity);
 
     ///
-    teTid.Text := SummaryTask.Tid;
-    teCompId.Text := SummaryTask.CompId;
-    teDepId.Text := SummaryTask.DepId;
-    teModule.Text := SummaryTask.Module;
-    meDef.Lines.Text := SummaryTask.Def;
-    cbEnabled.Checked := SummaryTask.Enabled;
+    teTid.Text         := SummaryTask.Tid;
+    teCompId.Text      := SummaryTask.CompId;
+    teDepId.Text       := SummaryTask.DepId;
+    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(SummaryTask.Module) <> -1, cbModule.Items.IndexOf(SummaryTask.Module), 4);
+    meDef.Lines.Text   := SummaryTask.Def;
+    cbEnabled.Checked  := SummaryTask.Enabled;
 
     var Settings := GetSummarySettings();
     if Assigned(Settings) then
