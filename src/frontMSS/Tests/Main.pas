@@ -76,11 +76,9 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication,
-  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit;
+  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
   LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
-  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit,
-  StripTasksFormUnit;
+  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
 begin

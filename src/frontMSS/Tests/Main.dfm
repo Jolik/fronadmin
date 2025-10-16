@@ -17,8 +17,7 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 536
-    ExplicitHeight = 486
+    ExplicitWidth = 530
   end
   object sbTestButtons: TUniScrollBox
     AlignWithMargins = True
@@ -31,7 +30,6 @@ object MainForm: TMainForm
     TabOrder = 1
     ScrollDirection = sdVertical
     ExplicitHeight = 486
-    ScrollHeight = 654
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
