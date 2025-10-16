@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils, System.JSON,
-  EntityUnit, GUIDListUnit;
+  EntityUnit, GUIDListUnit, StringUnit;
 
 type
   ///  data   user
@@ -22,9 +22,9 @@ type
   ///  body   user
   TUserBody = class(TBody)
   private
-    FRoles: TGUIDList;
-    FDatasets: TGUIDList;
-    FLevels: TGUIDList;
+    FRoles: TFieldSetStringList;
+    FDatasets: TFieldSetStringList;
+    FLevels: TFieldSetStringList;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -32,9 +32,9 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
-    property Roles: TGUIDList read FRoles;
-    property Datasets: TGUIDList read FDatasets;
-    property Levels: TGUIDList read FLevels;
+    property Roles: TFieldSetStringList read FRoles;
+    property Datasets: TFieldSetStringList read FDatasets;
+    property Levels: TFieldSetStringList read FLevels;
   end;
 
 type
@@ -167,9 +167,9 @@ constructor TUserBody.Create;
 begin
   inherited Create;
 
-  FRoles := TGUIDList.Create;
-  FDatasets := TGUIDList.Create;
-  FLevels := TGUIDList.Create;
+  FRoles := TFieldSetStringList.Create;
+  FDatasets := TFieldSetStringList.Create;
+  FLevels := TFieldSetStringList.Create;
 end;
 
 destructor TUserBody.Destroy;
@@ -185,24 +185,24 @@ procedure TUserBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>
 var
   Value: TJSONValue;
 begin
-  FRoles.Clear;
-  FDatasets.Clear;
-  FLevels.Clear;
+  FRoles.ClearStrings;
+  FDatasets.ClearStrings;
+  FLevels.ClearStrings;
 
   if not Assigned(src) then
     Exit;
 
   Value := src.FindValue(RolesKey);
   if Assigned(Value) and (Value is TJSONArray) then
-    FRoles.Parse(Value as TJSONArray);
+    FRoles.ParseList(Value as TJSONArray);
 
   Value := src.FindValue(DatasetsKey);
   if Assigned(Value) and (Value is TJSONArray) then
-    FDatasets.Parse(Value as TJSONArray);
+    FDatasets.ParseList(Value as TJSONArray);
 
   Value := src.FindValue(LevelsKey);
   if Assigned(Value) and (Value is TJSONArray) then
-    FLevels.Parse(Value as TJSONArray);
+    FLevels.ParseList(Value as TJSONArray);
 end;
 
 procedure TUserBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);

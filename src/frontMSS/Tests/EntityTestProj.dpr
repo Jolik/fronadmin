@@ -26,12 +26,16 @@ uses
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
+  TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
+  StripTaskSourceUnit in '..\APIClasses\StripTaskSourceUnit.pas',
+  SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
@@ -46,7 +50,7 @@ uses
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
-  TaskTypesUnit in '..\EntityClasses\summary\TaskTypesUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
@@ -110,6 +114,96 @@ begin
       end;
     finally
       TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListTaskSources();
+var
+  TaskSourceBroker: TTaskSourcesBroker;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    TaskSourceBroker := TTaskSourcesBroker.Create;
+    try
+      TaskSourceBroker.AddPath := '/5d159669-0cb0-11ec-a8d8-00ff1185687c';
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := TaskSourceBroker.List(PageCount);
+
+        Writeln('---------- Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := TaskSourceBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      TaskSourceBroker.Free;
     end;
   except
     on E: Exception do
