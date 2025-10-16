@@ -24,7 +24,9 @@ uses
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
-  TaskSourceBrokerUnit in '..\APIClasses\TaskSourceBrokerUnit.pas',
+  TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
+  StripTaskSourceUnit in '..\APIClasses\StripTaskSourceUnit.pas',
+  SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
@@ -115,13 +117,13 @@ end;
 
 procedure ListTaskSources();
 var
-  TaskSourceBroker: TTaskSourceBroker;
+  TaskSourceBroker: TTaskSourcesBroker;
   TaskSourceList: TEntityList;
   TaskSourceEntity: TEntity;
   PageCount: Integer;
 begin
   try
-    TaskSourceBroker := TTaskSourceBroker.Create;
+    TaskSourceBroker := TTaskSourcesBroker.Create;
     try
       TaskSourceBroker.AddPath := '/5d159669-0cb0-11ec-a8d8-00ff1185687c';
 
@@ -755,7 +757,7 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-//      ListSummaryTaskTypes();
+      ListSummaryTaskTypes();
       ListTaskSources();
 //      ListAliases();
 //      ListRules();
