@@ -132,7 +132,7 @@
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\EntityClasses\acl\UserUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\dataserver\TDsGroupUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\dataserver\DsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\TaskTypesUnit.pas"/>

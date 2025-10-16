@@ -41,7 +41,7 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
-  TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
+  DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
   TaskTypesUnit in '..\EntityClasses\summary\TaskTypesUnit.pas',

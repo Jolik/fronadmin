@@ -6,7 +6,7 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, TDsGroupUnit, EntityBrokerUnit;
+  EntityUnit, DsGroupUnit, EntityBrokerUnit;
 
 type
   ///  API broker for dataserver groups

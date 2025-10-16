@@ -1,4 +1,4 @@
-unit TDsGroupUnit;
+unit DsGroupUnit;
 
 interface
 
