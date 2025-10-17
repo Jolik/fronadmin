@@ -13,7 +13,7 @@ type
   /// </summary>
   TAlias = class(TEntity)
   private
-    FChannels: TFieldSetStringListsObject;
+    FChannels: TNamedStringListsObject;
     function GetAlid: string;
     procedure SetAlid(const Value: string);
   protected
@@ -29,7 +29,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     property Alid: string read GetAlid write SetAlid;
-    property Channels: TFieldSetStringListsObject read FChannels;
+    property Channels: TNamedStringListsObject read FChannels;
   end;
 
   TAliasList = class(TEntityList)
@@ -73,7 +73,7 @@ constructor TAlias.Create;
 begin
   inherited Create;
 
-  FChannels := TFieldSetStringListsObject.Create;
+  FChannels := TNamedStringListsObject.Create;
 end;
 
 constructor TAlias.Create(src: TJSONObject; const APropertyNames: TArray<string>);

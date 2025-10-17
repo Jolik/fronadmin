@@ -6,15 +6,15 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, AliasUnit, ParentBrokerUnit;
+  EntityUnit, AliasUnit, EntityBrokerUnit;
 
 type
   /// <summary>
   ///   Broker for working with router aliases API.
   /// </summary>
-  TAliasesBroker = class(TParentBroker)
+  TAliasesBroker = class(TEntityBroker)
   protected
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     class function ClassType: TEntityClass; override;
     class function ListClassType: TEntityListClass; override;
   public
@@ -50,7 +50,7 @@ const
 
 { TAliasesBroker }
 
-function TAliasesBroker.BaseUrlPath: string;
+function TAliasesBroker.GetBasePath: string;
 begin
   Result := constURLRouterBasePath;
 end;
@@ -101,7 +101,7 @@ begin
 
       RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
       try
-        ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLAliasesList, RequestStream);
+        ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLAliasesList, RequestStream);
         JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
         if not Assigned(JSONResult) then
           Exit;
@@ -163,7 +163,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLAliasesInfo, [AId]);
+    URL := Format(GetBasePath + constURLAliasesInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -200,7 +200,7 @@ var
 begin
   Result := False;
 
-  URL := BaseUrlPath + constURLAliasesNew;
+  URL := GetBasePath + constURLAliasesNew;
 
   JSONAlias := AEntity.Serialize();
 
@@ -226,7 +226,7 @@ begin
   if not (AEntity is TAlias) then
     Exit;
 
-  URL := Format(BaseUrlPath + constURLAliasesUpdate, [(AEntity as TAlias).Alid]);
+  URL := Format(GetBasePath + constURLAliasesUpdate, [(AEntity as TAlias).Alid]);
 
   JSONAlias := AEntity.Serialize();
 
@@ -248,7 +248,7 @@ var
 begin
   Result := False;
 
-  URL := Format(BaseUrlPath + constURLAliasesRemove, [AId]);
+  URL := Format(GetBasePath + constURLAliasesRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

@@ -50,7 +50,7 @@ end;
 function TAliasEditForm.Apply: Boolean;
 var
   LAlias: TAlias;
-  Channels: TFieldSetStringListsObject;
+  Channels: TNamedStringListsObject;
   ChannelList: TNamedStringList;
   Value: string;
 begin
@@ -130,7 +130,7 @@ end;
 procedure TAliasEditForm.SetEntity(AEntity: TEntity);
 var
   LAlias: TAlias;
-  Channels: TFieldSetStringListsObject;
+  Channels: TNamedStringListsObject;
   ChannelList: TNamedStringList;
 begin
   ///        -   !
@@ -149,7 +149,7 @@ begin
 
     teAlid.Text := LAlias.Alid;
 
-    Channels := LAlias.Channels;
+(*!!!!    Channels := LAlias.Channels;
     if Assigned(Channels) and (Channels.Count > 0) then
     begin
       ChannelList := Channels[0];
@@ -171,7 +171,7 @@ begin
     begin
       teChannelName.Text := '';
       meChannelValues.Lines.Clear;
-    end;
+    end; *)
 
   except
     Log('TAliasEditForm.SetEntity error', lrtError);

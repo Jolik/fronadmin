@@ -39,6 +39,7 @@ type
     btnSummaryTaskRemove: TUniButton;
     btnSummaryTaskTypes: TUniButton;
     btnStripTasks: TUniButton;
+    btnLinkSettings: TUniButton;
     btnSummaryTasks: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
@@ -52,15 +53,17 @@ type
     procedure btnSummaryTaskNewClick(Sender: TObject);
     procedure btnSummaryTaskUpdateClick(Sender: TObject);
     procedure btnSummaryTaskRemoveClick(Sender: TObject);
-    procedure btnSummaryTaskTypesClick(Sender: TObject);
     procedure btnMonTaskListClick(Sender: TObject);
     procedure btnMonTaskInfoClick(Sender: TObject);
     procedure btnQueuesListClick(Sender: TObject);
     procedure btnQueuesInfoClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
+    procedure btnLinkSettingsClick(Sender: TObject);
     procedure btnSummaryTasksClick(Sender: TObject);
   private
     { Private declarations }
+  protected
+    procedure UpdateLinkSettingsCallback(ASender: TComponent; AResult: Integer);
   public
     { Public declarations }
   end;
@@ -72,7 +75,9 @@ implementation
 {$R *.dfm}
 
 uses
-  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit;
+  uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
+  LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
+  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
 begin
@@ -130,7 +135,7 @@ begin
 
     MonitoringTaskList := MonitoringTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -154,7 +159,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     MonitoringTaskList.Free;
 
     MonitoringTasksBroker.Free;
@@ -162,6 +167,7 @@ begin
 end;
 
 {$REGION 'Links'}
+
 
 procedure TMainForm.btnLinskListClick(Sender: TObject);
 var
@@ -177,7 +183,7 @@ begin
 
     LinksList := LinksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -207,7 +213,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     LinksList.Free;
 
     LinksBroker.Free;
@@ -222,16 +228,15 @@ var
   LinksBroker : TLinksBroker;
 begin
   ShowMemo.Clear;
-
+  LinksBroker := TLinksBroker.Create();
   try
-    LinksBroker := TLinksBroker.Create();
-    // Выводим информацию о линке в TMemo
+    // Display link information in TMemo
     ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
-    // получаем инфу о линке
+    // Retrieve link info
     Link := LinksBroker.Info(lid);
     if Link = nil then
     begin
-      ShowMemo.Lines.Add('nil');
+      ShowMemo.Lines.Add('link not found');
       exit;
     end;
 
@@ -253,6 +258,63 @@ begin
   end;
 end;
 
+procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
+const
+  lid = '90d77ba1-85f2-4dc9-8019-d4f1a00e4476';
+var
+  LinksBroker : TLinksBroker;
+  SettingsFrame: TParentLinkSettingEditFrame;
+begin
+  LinksBroker := TLinksBroker.Create();
+  try
+    var entity := LinksBroker.Info(lid);
+    if not (entity is TLink) then
+    begin
+      ShowMemo.Lines.Add('link not found');
+      exit;
+    end;
+
+    ParentEditForm.Entity := entity;
+    var link := entity as TLink;
+    case Link.linkType of
+      ltSocketSpecial:
+        SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
+      else exit;
+    end;
+    showmemo.Lines.Add( (Link.Data as TLinkData).DataSettings.ClassName);
+
+
+    SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
+    SettingsFrame.Parent := ParentEditForm.pnClient;
+    ParentEditForm.ShowModal(UpdateLinkSettingsCallback);
+
+  finally
+    LinksBroker.Free;
+  end;
+end;
+
+
+procedure TMainForm.UpdateLinkSettingsCallback(ASender: TComponent;
+  AResult: Integer);
+begin
+  ShowMemo.Clear;
+  if AResult <> mrOk then
+  begin
+    ShowMemo.Lines.Add('canceled');
+    exit;
+  end;
+  var e := (ASender as TParentEditForm).Entity;
+  if not (e is TLink) then
+    exit;
+
+  var json := (e as TLink).Serialize();
+  if json <> nil then
+    ShowMemo.Lines.Add(json.Format());
+
+end;
+
+
+
 {$ENDREGION 'Links'}
 
 {$REGION 'Queues'}
@@ -271,7 +333,7 @@ begin
 
     QueueList := QueuesBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -301,7 +363,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     QueueList.Free;
 
     QueuesBroker.Free;
@@ -371,7 +433,7 @@ begin
 
     StripTaskList := StripTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -401,7 +463,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     StripTaskList.Free;
 
     StripTasksBroker.Free;
@@ -419,10 +481,10 @@ begin
 
   try
     StripTasksBroker := TStripTasksBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Info  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    // получаем инфу о таске
+    // Retrieve task info
     StripTask := StripTasksBroker.Info(tid);
     if StripTask = nil then
     begin
@@ -468,11 +530,11 @@ begin
       Enabled := false;
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  New  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    // получаем инфу о таске
+    // Retrieve task info
     res := StripTasksBroker.New(st);
     if not res  then
     begin
@@ -481,7 +543,7 @@ begin
     end;
 
     (*
-    ///  получаем результат и запрашиваем информацию по tid из результата
+    ///  Retrieve the result and request information for the tid from it
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -521,11 +583,11 @@ begin
       Caption := 'First test update';
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Update  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    // Обновлеем информацию
+    // Refresh the information
     res := StripTasksBroker.Update(st);
     if not res  then
     begin
@@ -533,7 +595,7 @@ begin
       exit;
     end;
 
-    ///  получаем результат и запрашиваем информацию по tid из результата
+    ///  Retrieve the result and request information for the tid from it
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -562,10 +624,10 @@ begin
 
   try
     StripTasksBroker := TStripTasksBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Remove  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    // удаляем таск таске
+    // Delete the task
     var res := StripTasksBroker.Remove(tid);
 
     if not res then
@@ -603,7 +665,7 @@ begin
 
     SummaryTaskList := SummaryTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -633,7 +695,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     SummaryTaskList.Free;
 
     SummaryTasksBroker.Free;
@@ -785,6 +847,8 @@ begin
   end;
 end;
 
+
+
 procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
 const
   tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
@@ -807,37 +871,6 @@ begin
     else
       ShowMemo.Lines.Add('Summary task removed');
   finally
-    SummaryTasksBroker.Free;
-  end;
-end;
-
-procedure TMainForm.btnSummaryTaskTypesClick(Sender: TObject);
-var
-  SummaryTasksBroker : TSummaryTasksBroker;
-  Types              : TJSONArray;
-begin
-  ShowMemo.Clear;
-
-  try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
-    // Выводим список типов
-    ShowMemo.Lines.Add('----------  Types  ----------');
-    //  получаем список
-    Types := SummaryTasksBroker.Types;
-    if not Assigned(Types) then
-    begin
-      ShowMemo.Lines.Add('nil');
-      Exit;
-    end;
-
-    for var t in Types do
-    begin
-      ShowMemo.Lines.Add('');
-      ShowMemo.Lines.Add('name: ' + (t as TJSONObject).GetValue('name').AsType<string>);
-      ShowMemo.Lines.Add('caption: ' + (t as TJSONObject).GetValue('caption').AsType<string>);
-    end;
-  finally
-    if Assigned(Types) then FreeAndNil(Types);
     SummaryTasksBroker.Free;
   end;
 end;

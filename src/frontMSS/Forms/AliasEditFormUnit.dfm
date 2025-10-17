@@ -6,7 +6,6 @@ inherited AliasEditForm: TAliasEditForm
       Left = 84
       Width = 732
       ExplicitLeft = 84
-      ExplicitWidth = 732
     end
   end
   inherited pnName: TUniContainerPanel
@@ -14,7 +13,6 @@ inherited AliasEditForm: TAliasEditForm
       Left = 84
       Width = 732
       ExplicitLeft = 84
-      ExplicitWidth = 732
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -22,11 +20,11 @@ inherited AliasEditForm: TAliasEditForm
     object lAlid: TUniLabel
       Left = 40
       Top = 27
-      Width = 26
+      Width = 23
       Height = 13
       Hint = ''
       Caption = 'ALID'
-      TabOrder = 3
+      TabOrder = 6
     end
     object teAlid: TUniEdit
       Left = 84
@@ -41,7 +39,7 @@ inherited AliasEditForm: TAliasEditForm
     object lChannelName: TUniLabel
       Left = 40
       Top = 67
-      Width = 31
+      Width = 22
       Height = 13
       Hint = ''
       Caption = #1048#1084#1103
@@ -60,7 +58,7 @@ inherited AliasEditForm: TAliasEditForm
     object lChannelValues: TUniLabel
       Left = 40
       Top = 107
-      Width = 78
+      Width = 39
       Height = 13
       Hint = ''
       Caption = #1050#1072#1085#1072#1083#1099

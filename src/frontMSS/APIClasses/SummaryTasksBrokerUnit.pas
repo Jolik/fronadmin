@@ -22,12 +22,9 @@ type
 
   protected
     ///  возвращает базовый путь до API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
 
   public
-    /// возвращает список доступных типов
-    ///  в случае ошибки возвращается nil
-    function Types: TJSONArray;
   end;
 
 implementation
@@ -37,14 +34,11 @@ uses
   FuncUnit,
   APIConst;
 
-const
-  constURLTaskTypes = '/tasks/types';
-
 { TSummaryTasksBroker }
 
-function TSummaryTasksBroker.BaseUrlPath: string;
+function TSummaryTasksBroker.GetBasePath: string;
 begin
-  Result := constURLStripBasePath;
+  Result := constURLSummaryBasePath;
 end;
 
 class function TSummaryTasksBroker.ClassType: TEntityClass;
@@ -55,42 +49,6 @@ end;
 class function TSummaryTasksBroker.ListClassType: TEntityListClass;
 begin
   Result := TSummaryTaskList;
-end;
-
-/// возвращает список доступных типов
-///  в случае ошибки возвращается nil
-function TSummaryTasksBroker.Types: TJSONArray;
-var
-  JSONResult     : TJSONObject;
-  ResponseObject : TJSONObject;
-  Types          : TJSONArray;
-  ResStr         : String;
-begin
-  Result := nil;
-
-  try
-    JSONResult := TJSONObject.Create;
-    try
-      ///  делаем запрос
-      ResStr := MainHttpModuleUnit.GET(BaseUrlPath + constURLTaskTypes);
-      ///  парсим результат
-      JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      ///  объект - ответ
-      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-      ///  список типов
-      Types := ResponseObject.GetValue('types') as TJSONArray;
-
-      Result := Types.Clone as TJSONArray;
-    finally
-      JSONResult.Free;
-    end;
-
-  except on e:exception do
-    begin
-      Log('TSummaryTasksBroker.Types ' + e.Message, lrtError);
-      FreeAndNil(Result);
-    end;
-  end;
 end;
 
 end.

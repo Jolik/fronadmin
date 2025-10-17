@@ -11,7 +11,7 @@ uses
 
 type
   /// <summary>
-  ///   Представляет правило маршрутизации небольшого формата.
+  ///   Represents a small-format routing rule.
   /// </summary>
   TSmallRule = class(TFieldSet)
   private
@@ -20,7 +20,7 @@ type
     FPriority: Integer;
     FHandlers: TFieldSetStringList;
     FBreakRule: Boolean;
-    FChannels: TFieldSetStringListsObject;
+    FChannels: TNamedStringListsObject;
     FIncFilters: TFilterList;
     FExcFilters: TFilterList;
     procedure ResetCollections;
@@ -38,7 +38,7 @@ type
     property Priority: Integer read FPriority write FPriority;
     property Handlers: TFieldSetStringList read FHandlers;
     property BreakRule: Boolean read FBreakRule write FBreakRule;
-    property Channels: TFieldSetStringListsObject read FChannels;
+    property Channels: TNamedStringListsObject read FChannels;
     property IncFilters: TFilterList read FIncFilters;
     property ExcFilters: TFilterList read FExcFilters;
   end;
@@ -126,7 +126,7 @@ begin
   inherited Create;
 
   FHandlers := TFieldSetStringList.Create;
-  FChannels := TFieldSetStringListsObject.Create;
+  FChannels := TNamedStringListsObject.Create;
   FIncFilters := TFilterList.Create;
   FExcFilters := TFilterList.Create;
 

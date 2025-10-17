@@ -8,7 +8,7 @@ uses
 
 type
   /// <summary>
-  ///   Элемент списка строк.
+  ///   String list item.
   /// </summary>
   TFieldSetString = class(TFieldSet)
   private
@@ -22,22 +22,22 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Разбирает значение из произвольного JSON-элемента.
+    ///   Parses a value from an arbitrary JSON element.
     /// </summary>
     procedure ParseValue(const AValue: TJSONValue);
     /// <summary>
-    ///   Создаёт JSON-представление строки.
+    ///   Creates a JSON representation of the string.
     /// </summary>
     function SerializeValue: TJSONValue;
 
     /// <summary>
-    ///   Хранимое текстовое значение.
+    ///   Stored text value.
     /// </summary>
     property Value: string read FValue write FValue;
   end;
 
   /// <summary>
-  ///   Список строковых значений.
+  ///   List of string values.
   /// </summary>
   TFieldSetStringList = class(TFieldSetList)
   private
@@ -55,24 +55,67 @@ type
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
     /// <summary>
-    ///   Добавление нового значения.
+    ///   Adds a new value.
     /// </summary>
     procedure AddString(const AValue: string);
     /// <summary>
-    ///   Очистка списка.
+    ///   Clears the list.
     /// </summary>
     procedure ClearStrings;
     /// <summary>
-    ///   Представление содержимого в виде массива строк.
+    ///   Represents the contents as an array of strings.
     /// </summary>
     function ToStringArray: TArray<string>;
 
-    property Items[Index: Integer]: TFieldSetString read GetStringItem write SetStringItem; default;
-    property Strings[Index: Integer]: string read GetItemValue write SetItemValue;
+//    property Items[Index: Integer]: TFieldSetString read GetStringItem write SetStringItem; default;
+//    property Strings[Index: Integer]: string read GetItemValue write SetItemValue;
   end;
 
   /// <summary>
-  ///   Именованный список строк вида "имя": ["значения"].
+  ///   Named string value stored inside a JSON object.
+  /// </summary>
+  TFieldSetNamedString = class(TFieldSetString)
+  private
+    FName: string;
+  public
+    function Assign(ASource: TFieldSet): boolean; override;
+
+    procedure ParsePair(APair: TJSONPair);
+    procedure SerializePair(dst: TJSONObject);
+
+    property Name: string read FName write FName;
+  end;
+
+  /// <summary>
+  ///   JSON object with string values.
+  /// </summary>
+  TFieldSetStringListObject = class(TFieldSetStringList)
+  private
+    function GetNamedItem(Index: Integer): TFieldSetNamedString;
+    procedure SetNamedItem(Index: Integer; const AItem: TFieldSetNamedString);
+  protected
+    class function ItemClassType: TFieldSetClass; override;
+    class function ShouldIncludeProperty(const APropertyName: string;
+      const APropertyNames: TArray<string>): Boolean; static;
+  public
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+
+    function Assign(ASource: TFieldSetList): boolean; override;
+
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+
+    function Find(const AName: string): TFieldSetNamedString;
+    procedure AddPair(const AName, AValue: string);
+    function GetValue(const AName: string): string;
+    procedure SetValue(const AName, AValue: string);
+
+    property Pairs[Index: Integer]: TFieldSetNamedString read GetNamedItem write SetNamedItem;
+    property Values[const AName: string]: string read GetValue write SetValue; default;
+  end;
+
+  /// <summary>
+  ///   Named list of strings in the form "name": ["values"].
   /// </summary>
   TNamedStringList = class(TFieldSet)
   private
@@ -91,22 +134,22 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Разбор пары JSON.
+    ///   Parses a JSON pair.
     /// </summary>
     procedure ParsePair(APair: TJSONPair; const APropertyNames: TArray<string> = nil);
 
     /// <summary>
-    ///   Имя набора строк.
+    ///   Name of the string set.
     /// </summary>
     property Name: string read FName write FName;
     /// <summary>
-    ///   Значения, связанные с именем.
+    ///   Values associated with the name.
     /// </summary>
     property Values: TFieldSetStringList read FValues;
   end;
 
   /// <summary>
-  ///   Коллекция именованных списков строк.
+  ///   Collection of named string lists in the form
   /// </summary>
   TNamedStringListList = class(TFieldSetList)
   private
@@ -115,29 +158,25 @@ type
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
-    function Assign(ASource: TFieldSetList): boolean; override;
+    function Assign(ASource: TFieldSetList): boolean; overload; override;
 
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); reintroduce; virtual;
-    function Assign(ASource: TFieldSet): boolean; reintroduce; virtual;
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    property Items[Index: Integer]: TNamedStringList read GetNamedList write SetNamedList; default;
+//    property Items[Index: Integer]: TNamedStringList read GetNamedList write SetNamedList; default;
   end;
 
   /// <summary>
-  ///   JSON-объект с именованными списками строк.
+  ///   JSON object with named string lists.
   /// </summary>
-  TFieldSetStringListsObject = class(TNamedStringListList)
+  TNamedStringListsObject = class(TNamedStringListList)
   public
-    constructor Create; overload; override;
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    function Assign(ASource: TFieldSet): boolean; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload;
 
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -381,6 +420,255 @@ begin
     Result[Index] := GetItemValue(Index);
 end;
 
+{ TFieldSetNamedString }
+
+function TFieldSetNamedString.Assign(ASource: TFieldSet): boolean;
+begin
+  Result := inherited Assign(ASource);
+
+  if not Result then
+    Exit;
+
+  if not (ASource is TFieldSetNamedString) then
+  begin
+    Result := False;
+    Exit;
+  end;
+
+  FName := TFieldSetNamedString(ASource).Name;
+
+  Result := True;
+end;
+
+procedure TFieldSetNamedString.ParsePair(APair: TJSONPair);
+begin
+  FName := '';
+  Value := '';
+
+  if not Assigned(APair) then
+    Exit;
+
+  if not Assigned(APair.JsonString) then
+    Exit;
+
+  FName := APair.JsonString.Value;
+
+  if Assigned(APair.JsonValue) then
+    ParseValue(APair.JsonValue)
+  else
+    Value := '';
+end;
+
+procedure TFieldSetNamedString.SerializePair(dst: TJSONObject);
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  if FName = '' then
+    Exit;
+
+  dst.AddPair(FName, SerializeValue);
+end;
+
+{ TFieldSetStringListObject }
+
+procedure TFieldSetStringListObject.AddPair(const AName, AValue: string);
+var
+  Item: TFieldSetNamedString;
+begin
+  Item := TFieldSetNamedString(ItemClassType.Create);
+  try
+    if AName = '' then
+    begin
+      Item.Free;
+      Exit;
+    end;
+    Item.Name := AName;
+    Item.Value := AValue;
+    Add(Item);
+  except
+    Item.Free;
+    raise;
+  end;
+end;
+
+function TFieldSetStringListObject.Assign(ASource: TFieldSetList): boolean;
+var
+  Source: TFieldSetStringListObject;
+  Index: Integer;
+  Item: TFieldSetNamedString;
+begin
+  Result := False;
+
+  if not Assigned(ASource) then
+    Exit;
+
+  if not (ASource is TFieldSetStringListObject) then
+    Exit;
+
+  Source := TFieldSetStringListObject(ASource);
+
+  Clear;
+  for Index := 0 to Source.Count - 1 do
+  begin
+    Item := Source.GetNamedItem(Index);
+    if not Assigned(Item) then
+      Continue;
+    AddPair(Item.Name, Item.Value);
+  end;
+
+  Result := True;
+end;
+
+constructor TFieldSetStringListObject.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Create;
+
+  Parse(src, APropertyNames);
+end;
+
+function TFieldSetStringListObject.Find(const AName: string): TFieldSetNamedString;
+var
+  Index: Integer;
+  Item: TFieldSetNamedString;
+begin
+  Result := nil;
+
+  for Index := 0 to Count - 1 do
+  begin
+    Item := GetNamedItem(Index);
+    if not Assigned(Item) then
+      Continue;
+    if SameText(Item.Name, AName) then
+      Exit(Item);
+  end;
+end;
+
+function TFieldSetStringListObject.GetNamedItem(Index: Integer): TFieldSetNamedString;
+begin
+  Result := nil;
+
+  if (Index < 0) or (Index >= Count) then
+    Exit;
+
+  if inherited Items[Index] is TFieldSetNamedString then
+    Result := TFieldSetNamedString(inherited Items[Index]);
+end;
+
+function TFieldSetStringListObject.GetValue(const AName: string): string;
+var
+  Item: TFieldSetNamedString;
+begin
+  Result := '';
+
+  Item := Find(AName);
+  if Assigned(Item) then
+    Result := Item.Value;
+end;
+
+procedure TFieldSetStringListObject.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Pair: TJSONPair;
+  Item: TFieldSetNamedString;
+begin
+  Clear;
+
+  if not Assigned(src) then
+    Exit;
+
+  for Pair in src do
+  begin
+    if not Assigned(Pair.JsonString) then
+      Continue;
+    if not ShouldIncludeProperty(Pair.JsonString.Value, APropertyNames) then
+      Continue;
+
+    Item := TFieldSetNamedString(ItemClassType.Create);
+    try
+      Item.ParsePair(Pair);
+      if Item.Name <> '' then
+        Add(Item)
+      else
+        Item.Free;
+    except
+      Item.Free;
+      raise;
+    end;
+  end;
+end;
+
+procedure TFieldSetStringListObject.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Index: Integer;
+  Item: TFieldSetNamedString;
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  for Index := 0 to Count - 1 do
+  begin
+    Item := GetNamedItem(Index);
+    if not Assigned(Item) then
+      Continue;
+    if Item.Name = '' then
+      Continue;
+    if not ShouldIncludeProperty(Item.Name, APropertyNames) then
+      Continue;
+
+    Item.SerializePair(dst);
+  end;
+end;
+
+procedure TFieldSetStringListObject.SetNamedItem(Index: Integer; const AItem: TFieldSetNamedString);
+begin
+  if (Index < 0) or (Index >= Count) then
+    Exit;
+
+  if not Assigned(AItem) then
+    Exit;
+
+  if Assigned(inherited Items[Index]) then
+    inherited Items[Index].Free;
+
+  inherited Items[Index] := AItem;
+end;
+
+procedure TFieldSetStringListObject.SetValue(const AName, AValue: string);
+var
+  Item: TFieldSetNamedString;
+begin
+  Item := Find(AName);
+  if not Assigned(Item) then
+  begin
+    AddPair(AName, AValue);
+    Exit;
+  end;
+
+  Item.Value := AValue;
+end;
+
+class function TFieldSetStringListObject.ItemClassType: TFieldSetClass;
+begin
+  Result := TFieldSetNamedString;
+end;
+
+class function TFieldSetStringListObject.ShouldIncludeProperty(
+  const APropertyName: string; const APropertyNames: TArray<string>): Boolean;
+var
+  PropertyName: string;
+begin
+  Result := Length(APropertyNames) = 0;
+
+  if Result then
+    Exit;
+
+  for PropertyName in APropertyNames do
+    if SameText(PropertyName, APropertyName) then
+      Exit(True);
+
+  Result := False;
+end;
+
 { TNamedStringList }
 
 function TNamedStringList.Assign(ASource: TFieldSet): boolean;
@@ -548,11 +836,6 @@ begin
   end;
 end;
 
-function TNamedStringListList.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := (ASource is TNamedStringListList) and Assign(TFieldSetList(ASource));
-end;
-
 function TNamedStringListList.Assign(ASource: TFieldSetList): boolean;
 var
   Index: Integer;
@@ -703,31 +986,21 @@ begin
   Items[Index] := AValue;
 end;
 
-{ TFieldSetStringListsObject }
+{ TNamedStringListsObject }
 
-function TFieldSetStringListsObject.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := inherited Assign(ASource);
-end;
-
-constructor TFieldSetStringListsObject.Create;
-begin
-  inherited Create;
-end;
-
-constructor TFieldSetStringListsObject.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TNamedStringListsObject.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Create;
 
   Parse(src, APropertyNames);
 end;
 
-procedure TFieldSetStringListsObject.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TNamedStringListsObject.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Parse(src, APropertyNames);
 end;
 
-procedure TFieldSetStringListsObject.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TNamedStringListsObject.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Serialize(dst, APropertyNames);
 end;

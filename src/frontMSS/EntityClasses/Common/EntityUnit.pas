@@ -8,11 +8,11 @@ uses
   LoggingUnit;
 
 type
-  // Класс-ссылка на любой потомок TSettings
+  // Class reference to any TFieldSet descendant
   TFieldSetClass = class of TFieldSet;
-  ///  абстрактрый класс - набор полей
-  ///  объявляет функцию которая позволяет проиницилиазировать поля
-  ///  из другого такого же объекта
+  ///  Abstract class representing a set of fields
+  ///  Declares a function that allows initializing fields
+  ///  from another instance of the same object
   TFieldSet = class (TObject)
   private
   protected
@@ -21,14 +21,14 @@ type
 
   public
     constructor Create(); overload; virtual;
-    ///  конструктор сразу из JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  устанавливаем поля с другого объекта
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSet): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
@@ -36,25 +36,27 @@ type
 
   end;
 
-  ///  класс - список классов-наборов полей
+  // Class reference to any TFieldSetList descendant
+  TFieldSetListClass = class of TFieldSetList;
+  ///  Class that represents a list of field set objects
   TFieldSetList = class (TObjectList<TFieldSet>)
   private
   protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific type of list element
+    ///  Descendants must override because they use different types
     class function ItemClassType: TFieldSetClass; virtual;
 
   public
-    ///  конструктор сразу из JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  устанавливаем поля с другого объекта
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSetList): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра списка. на ошибки - эксешан
-    ///  в APropertyNames передается список полей которые необходимо использовать
+    // These require an existing valid list instance. Errors raise exceptions
+    ///  The APropertyNames parameter lists the fields that must be used
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
-    /// дообавляет новые записи из JSON массива
+    ///  Adds new records from the JSON array
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
@@ -62,39 +64,39 @@ type
   end;
 
 type
-  // Класс-ссылка на любой потомок TSettings
+  // Class reference to any TSettings descendant
   TSettingsClass = class of TSettings;
-  ///  настройки это тоже набор каких то полей
+  ///  Settings are also a collection of fields
   TSettings = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Класс-ссылка на любой потомок TData
+  // Class reference to any TData descendant
   TDataClass = class of TData;
-  ///  TData это тоже настройки и тоже набор каких то полей
+  ///  TData is also a configuration-like collection of fields
   TData = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Класс-ссылка на любой потомок TBody
+  // Class reference to any TBody descendant
   TBodyClass = class of TBody;
-  ///  TBody это тоже настройки и это тоже набор каких то полей
+  ///  TBody is also a configuration-like collection of fields
   TBody = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
@@ -102,19 +104,20 @@ type
 
 
 type
-  // Класс-ссылка на любой список сущностей TEntity
+  // Class reference to any TEntity list descendant
   TEntityListClass = class of TEntityList;
 
-  // Класс-ссылка на любой список сущностей TEntity
+  // Class reference to any TEntity descendant
   TEntityClass = class of TEntity;
 
-  ///  Класс Сущность - потомок всех сущностей проекта
+  ///  Entity class - ancestor for every entity in the project
   TEntity = class (TFieldSet)
   private
     FId: String;
     FDepId: string;
     FName: String;
     FCompId: string;
+    FOwner: string;
     FCaption: String;
     FCreated: TDateTime;
     FUpdated: TDateTime;
@@ -127,85 +130,87 @@ type
     FCommited: TDateTime;
 
   protected
-    ///  метод возвращает конкретный тип объекта Settings
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific Settings object type
+    ///  Descendants must override because their types differ
     class function SettingsClassType: TSettingsClass; virtual;
-    ///  метод возвращает конкретный тип объекта Data
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific Data object type
+    ///  Descendants must override because their types differ
     class function DataClassType: TDataClass; virtual;
-    ///  метод возвращает конкретный тип объекта Body
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific Body object type
+    ///  Descendants must override because their types differ
     class function BodyClassType: TBodyClass; virtual;
 
-    ///  метод возвращает конкретный тип объекта TEntityList
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific TEntityList object type
+    ///  Descendants must override because their types differ
     class function ListClassType: TEntityListClass; virtual;
 
-    ///  потомок должен вернуть имя поля для идентификатора
+    ///  Descendants should return the identifier field name
     function GetIdKey: string; virtual;
 
   public
     constructor Create(); overload; override;
-    ///  конструктор сразу из JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     destructor Destroy; override;
 
-    ///  устанавливаем поля с другого объекта
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSet): boolean; override;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в const APropertyNames передается список полей которые необходимо использовать
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames parameter lists the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    ///  идентификатор сущности
+    ///  Entity identifier
     property Id: String read FId write FId;
-    ///  идентификатор компании
+    ///  Company identifier
     property CompId: string read FCompId write FCompId;
-    ///  идентификатор департамента
+    ///  Owner identifier
+    property Owner: string read FOwner write FOwner;
+    ///  Department identifier
     property DepId: string read FDepId write FDepId;
-    ///  наименование сущности
+    ///  Entity name
     property Name: String read FName write FName;
-    ///  заголовок сущности
+    ///  Entity caption
     property Caption: String read FCaption write FCaption;
-    ///  описание сущности
+    ///  Entity description
     property Def: String read FDef write FDef;
-    ///  время создания сущности
+    ///  Entity enabled flag
     property Enabled: boolean read FEnabled write FEnabled;
-    ///  настройки
+    ///  Settings
     property Settings: TSettings read FSettings write FSettings;
-    ///  данные сущности
+    ///  Entity data
     property Data: TData read FData write FData;
-    ///  тело сущности
+    ///  Entity body
     property Body: TBody read FBody write FBody;
-    ///  время создания сущности
+    ///  Entity creation time
     property Created: TDateTime read FCreated write FCreated;
-    ///  время обновления сущности
+    ///  Entity update time
     property Updated: TDateTime read FUpdated write FUpdated;
-    ///  время коммита сущности
+    ///  Entity commit time
     property Commited: TDateTime read FCommited write FCommited;
-    ///  время архивации сущности
+    ///  Entity archive time
     property Archived: TDateTime read FArchived write FArchived;
   end;
 
-  ///  класс - список сущностей
+  ///  Class representing a list of entities
   TEntityList = class (TObjectList<TEntity>)
   private
   protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Returns the specific type of list element
+    ///  Descendants must override because their types differ
     class function ItemClassType: TEntityClass; virtual;
 
   public
-    ///  конструктор сразу из JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload;
 
-    ///  устанавливаем поля с другого объекта
+    ///  Assign fields from another object
     function Assign(ASource: TEntityList): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра списка. на ошибки - эксешан
-    ///  в APropertyNames передается список полей которые необходимо использовать
+    // These require an existing valid list instance. Errors raise exceptions
+    ///  The APropertyNames parameter lists the fields that must be used
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
@@ -223,6 +228,7 @@ const
   NameKey = 'name';
   CaptionKey = 'caption';
   CompIdKey = 'compid';
+  OwnerKey = 'owner';
   DepIdKey = 'depid';
   DefKey = 'Def';
   EnabledKey = 'enabled';
@@ -241,6 +247,8 @@ end;
 constructor TFieldSet.Create(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
+  Create();
+
   Parse(src, APropertyNames);
 end;
 
@@ -248,7 +256,7 @@ end;
 constructor TFieldSet.Create;
 begin
   inherited Create;
-  //не удалять! так надо!
+  // Do not remove! Required as is!
 end;
 
 function TFieldSet.JSON(const APropertyNames: TArray<string>): string;
@@ -295,19 +303,18 @@ end;
 
 { TEntity }
 
-///  метод возвращает конкретный тип объекта Settings
+///  Returns the specific Settings object type
 class function TEntity.SettingsClassType: TSettingsClass;
 begin
   Result := TSettings;
 end;
 
-///  метод возвращает конкретный тип объекта Data
+///  Returns the specific Data object type
 class function TEntity.DataClassType: TDataClass;
 begin
   Result := TData;
 end;
-
-///  метод возвращает конкретный тип объекта Body
+///  Returns the specific Body object type
 class function TEntity.BodyClassType: TBodyClass;
 begin
   Result := TBody;
@@ -325,13 +332,14 @@ begin
   if not inherited Assign(ASource) then
     exit;
 
-  /// Проверяем на совместимость с нашим типом
+  ///  Check compatibility with our type
   if ASource is TEntity then
     LSource := ASource as TEntity;
 
   try
     Self.Id := LSource.Id;
     Self.CompId := LSource.CompId;
+    Self.Owner := LSource.Owner;
     Self.DepId := LSource.DepId;
     Self.Name := LSource.Name;
     Self.Caption := LSource.Caption;
@@ -352,7 +360,7 @@ end;
 
 function TEntity.GetIdKey: string;
 begin
-  ///  по умолчанию возвращаем id
+  ///  Return "id" by default
   Result := 'id';
 end;
 
@@ -367,6 +375,7 @@ begin
   Name := GetValueStrDef(src, NameKey, '');
   Caption := GetValueStrDef(src, CaptionKey, '');
   CompId := GetValueStrDef(src, CompIdKey, '');
+  Owner := GetValueStrDef(src, OwnerKey, '');
   DepId := GetValueStrDef(src, DepIdKey, '');
   Def := GetValueStrDef(src, DefKey, '');
   Enabled := GetValueBool(src, EnabledKey);
@@ -375,22 +384,22 @@ begin
   Commited := UnixToDateTime(GetValueIntDef(src, CommitedKey, 0));
   Archived := UnixToDateTime(GetValueIntDef(src, ArchivedKey, 0));
 
-  ///  получаем ссылку на JSON-объект settings
+  ///  Get a reference to the settings JSON object
   var s := src.FindValue(SettingsKey);
 
-  ///  парсим только если setting существует и это действительно объект
+  ///  Parse only if settings exists and is actually an object
   if Assigned(s) and (s is TJSONObject) then
     Settings.Parse(s as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект data
+  ///  Get a reference to the data JSON object
   var d := src.FindValue(DataKey);
-  ///  парсим только если data существует и это действительно объект
+  ///  Parse only if data exists and is actually an object
   if Assigned(d) and (d is TJSONObject) then
     Data.Parse(d as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект body
+  ///  Get a reference to the body JSON object
   var b := src.FindValue(BodyKey);
-  ///  парсим только если body существует и это действительно объект
+  ///  Parse only if body exists and is actually an object
   if Assigned(b) and (b is TJSONObject) then
     Body.Parse(b as TJSONObject);
 end;
@@ -404,13 +413,14 @@ begin
     AddPair(CaptionKey, Caption);
     AddPair(DefKey, Def);
     AddPair(CompIdKey, CompId);
+    AddPair(OwnerKey, Owner);
     AddPair(DepIdKey, DepId);
     AddPair(EnabledKey, Enabled);
     AddPair(CreatedKey, DateTimeToUnix(Created));
     AddPair(UpdatedKey, DateTimeToUnix(Updated));
     AddPair(CommitedKey, DateTimeToUnix(Commited));
     AddPair(ArchivedKey, DateTimeToUnix(Archived));
-    ///  добавляем настройки, тело и данные
+    ///  Append settings, body, and data
     if Settings <> nil then
       AddPair(SettingsKey, Settings.Serialize());
     if Data <> nil then
@@ -426,13 +436,13 @@ begin
 
   inherited Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Instantiate the class provided by descendants
   Settings := SettingsClassType.Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Instantiate the class provided by descendants
   Data := DataClassType.Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Instantiate the class provided by descendants
   Body := BodyClassType.Create();
 end;
 
@@ -455,8 +465,7 @@ end;
 
 function TEntityList.Assign(ASource: TEntityList): boolean;
 begin
-  /// создаем классы и вызываем функцию копирования полей
-  ///  и добавляем их в список
+  ///  Instantiate objects, copy fields, and add them to the list
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -485,14 +494,14 @@ begin
 
   if not Assigned(src) then exit;
 
-  ///  формируем список
+  ///  Build the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -504,14 +513,14 @@ procedure TEntityList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  добавляем список
+  ///  Append to the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -520,7 +529,7 @@ end;
 procedure TEntityList.SerializeList(dst: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
-  ///  пока этот метод и не нужен нам - ничего не делаем
+  ///  This method is not required yet, so do nothing
 end;
 
 function TEntityList.SerializeList(
@@ -544,13 +553,13 @@ end;
 procedure TSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Base class intentionally left blank
 end;
 
 procedure TSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  Base class does nothing
 end;
 
 { TData }
@@ -558,12 +567,12 @@ end;
 procedure TData.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Base class intentionally left blank
 end;
 
 procedure TData.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  Base class does nothing
 end;
 
 { TBody }
@@ -571,20 +580,19 @@ end;
 procedure TBody.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Base class intentionally left blank
 end;
 
 procedure TBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  Base class does nothing
 end;
 
 { TFieldSetList }
 
 function TFieldSetList.Assign(ASource: TFieldSetList): boolean;
 begin
-  /// создаем классы и вызываем функцию копирования полей
-  ///  и добавляем их в список
+  ///  Instantiate objects, copy fields, and add them to the list
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -614,14 +622,14 @@ begin
   if not Assigned(src) then
     exit;
 
-  ///  формируем список
+  ///  Build the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -633,14 +641,14 @@ procedure TFieldSetList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  добавляем список
+  ///  Append to the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  Push it into the list
       Add(e);
     end;
   end;

@@ -12,7 +12,6 @@ type
   // TLink абстрактный
   TLink = class (TEntity)
   private
-    FLinkType: TLinkType;
     FDir: string;
     FCompid: string;
     FDepid: string;
@@ -23,6 +22,7 @@ type
     function GetLid: string;
     procedure SetLid(const Value: string);
     function GetTypeStr: string;
+    function GetLinkType: TLinkType;
 
   protected
     ///  потомок должен вернуть имя поля для идентификатора
@@ -41,6 +41,8 @@ type
     // идентификатор линка
     property Lid: string read GetLid write SetLid;
     /// тип линка
+    property LinkType: TLinkType read GetLinkType;
+    /// тип линка строкой
     property TypeStr: string read GetTypeStr;
     // Dir направление upload|download|duplex
     property Dir: string read FDir write FDir;
@@ -146,6 +148,11 @@ end;
 function TLink.GetLid: string;
 begin
   Result := Id;
+end;
+
+function TLink.GetLinkType: TLinkType;
+begin
+  Result := (Data as TLinkData).LinkType;
 end;
 
 function TLink.GetTypeStr: string;
