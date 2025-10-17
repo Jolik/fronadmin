@@ -12,6 +12,7 @@ uses
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
+  ProfilesBrokerUnit in '..\APIClasses\ProfilesBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
   EntityBrokerUnit in '..\APIClasses\EntityBrokerUnit.pas',
@@ -58,6 +59,7 @@ uses
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
+  ProfileUnit in '..\EntityClasses\router\ProfileUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
@@ -543,6 +545,126 @@ begin
       end;
     finally
       MonitoringTaskSourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListProfiles();
+var
+  LinksBroker: TLinksBroker;
+  ProfilesBroker: TProfilesBroker;
+  LinksList: TEntityList;
+  ProfilesList: TEntityList;
+  LinkEntity: TEntity;
+  ProfileEntity: TEntity;
+  LinkPageCount: Integer;
+  ProfilePageCount: Integer;
+  FirstLinkLid: string;
+begin
+  try
+    LinksBroker := TLinksBroker.Create;
+    try
+      LinksList := nil;
+      FirstLinkLid := '';
+      try
+        LinksList := LinksBroker.List(LinkPageCount);
+
+        Writeln('---------- Links List ----------');
+
+        if Assigned(LinksList) and (LinksList.Count > 0) then
+        begin
+          for LinkEntity in LinksList do
+          begin
+            var Link := LinkEntity as TLink;
+            Writeln(Format('Class: %s | Address: %p', [Link.ClassName, Pointer(Link)]));
+            Writeln('Lid: ' + Link.Lid);
+            Writeln('Name: ' + Link.Name);
+            Writeln('Dir: ' + Link.Dir);
+            Writeln('Status: ' + Link.Status);
+            Writeln('Comsts: ' + Link.Comsts);
+            Writeln('Last activity time: ' + IntToStr(Link.LastActivityTime));
+            Writeln('----------');
+          end;
+
+          FirstLinkLid := (LinksList.Items[0] as TLink).Lid;
+        end
+        else
+          Writeln('Links list is empty.');
+
+      finally
+        LinksList.Free;
+      end;
+    finally
+      LinksBroker.Free;
+    end;
+
+    if FirstLinkLid = '' then
+    begin
+      Writeln('No link available to request profiles.');
+      Exit;
+    end;
+
+    ProfilesBroker := TProfilesBroker.Create;
+    try
+      ProfilesBroker.AddPath := '/' + FirstLinkLid;
+
+      ProfilesList := nil;
+      try
+        ProfilesList := ProfilesBroker.List(ProfilePageCount);
+
+        Writeln('---------- Profiles List ----------');
+
+        if Assigned(ProfilesList) and (ProfilesList.Count > 0) then
+        begin
+          for ProfileEntity in ProfilesList do
+          begin
+            var Profile := ProfileEntity as TProfile;
+            Writeln(Format('Class: %s | Address: %p', [Profile.ClassName, Pointer(Profile)]));
+            Writeln('Id: ' + Profile.Id);
+            Writeln('Name: ' + Profile.Name);
+            Writeln('Description: ' + Profile.Description);
+
+            var Body := Profile.ProfileBody;
+            if Assigned(Body) then
+            begin
+              var Rule := Body.Rule;
+              if Assigned(Rule) then
+              begin
+                Writeln('Rule priority: ' + IntToStr(Rule.Priority));
+                Writeln('Rule doubles: ' + BoolToStr(Rule.Doubles, True));
+              end;
+
+              var Play := Body.Play;
+              if Assigned(Play) and Assigned(Play.FTA) then
+              begin
+                Writeln('FTA name: ' + Play.FTA.Name);
+                Writeln('FTA values count: ' + IntToStr(Play.FTA.Values.Count));
+              end;
+            end;
+
+            Writeln('As JSON:');
+            var Json := Profile.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Profiles list is empty.');
+
+      finally
+        ProfilesList.Free;
+      end;
+    finally
+      ProfilesBroker.Free;
     end;
   except
     on E: Exception do
@@ -1177,6 +1299,7 @@ begin
     ListStripTaskSources();
       ListSummaryTaskSources();
       ListMonitoringTaskSources();
+      ListProfiles();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
