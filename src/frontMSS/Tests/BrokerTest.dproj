@@ -223,7 +223,6 @@
         <DCCReference Include="..\APIClasses\RulesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\StripTaskSourceUnit.pas"/>
         <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>

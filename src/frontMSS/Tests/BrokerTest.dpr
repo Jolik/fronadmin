@@ -51,7 +51,6 @@ uses
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
-  StripTaskSourceUnit in '..\APIClasses\StripTaskSourceUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
