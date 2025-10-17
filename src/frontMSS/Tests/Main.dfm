@@ -17,8 +17,8 @@ object MainForm: TMainForm
     ScrollBars = ssBoth
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 520
-    ExplicitHeight = 469
+    ExplicitWidth = 526
+    ExplicitHeight = 486
   end
   object sbTestButtons: TUniScrollBox
     AlignWithMargins = True
@@ -30,13 +30,13 @@ object MainForm: TMainForm
     Align = alLeft
     TabOrder = 1
     ScrollDirection = sdVertical
-    ExplicitHeight = 469
+    ExplicitHeight = 486
     ScrollHeight = 654
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 5
-      Width = 108
+      Width = 117
       Height = 124
       Hint = ''
       Margins.Left = 5
@@ -50,7 +50,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -66,7 +66,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -82,7 +82,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 80
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -99,7 +99,7 @@ object MainForm: TMainForm
       AlignWithMargins = True
       Left = 5
       Top = 139
-      Width = 108
+      Width = 117
       Height = 85
       Hint = ''
       Margins.Left = 5
@@ -113,7 +113,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -129,7 +129,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -146,7 +146,7 @@ object MainForm: TMainForm
       AlignWithMargins = True
       Left = 5
       Top = 234
-      Width = 108
+      Width = 117
       Height = 205
       Hint = ''
       Margins.Left = 5
@@ -160,7 +160,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -176,7 +176,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 80
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -192,7 +192,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 110
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -208,7 +208,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 140
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -224,7 +224,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 170
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -240,7 +240,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -257,7 +257,7 @@ object MainForm: TMainForm
       AlignWithMargins = True
       Left = 5
       Top = 449
-      Width = 108
+      Width = 117
       Height = 205
       Hint = ''
       Margins.Left = 5
@@ -271,7 +271,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 50
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -287,7 +287,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 80
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -303,7 +303,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 110
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -319,7 +319,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 140
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -335,7 +335,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 170
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -351,7 +351,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 200
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
@@ -366,7 +366,7 @@ object MainForm: TMainForm
         AlignWithMargins = True
         Left = 12
         Top = 20
-        Width = 84
+        Width = 93
         Height = 25
         Hint = ''
         Margins.Left = 10
