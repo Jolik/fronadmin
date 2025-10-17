@@ -149,7 +149,7 @@ type
   end;
 
   /// <summary>
-  ///   Collection of named string lists.
+  ///   Collection of named string lists in the form
   /// </summary>
   TNamedStringListList = class(TFieldSetList)
   private
