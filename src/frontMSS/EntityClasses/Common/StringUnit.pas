@@ -98,7 +98,7 @@ type
     class function ShouldIncludeProperty(const APropertyName: string;
       const APropertyNames: TArray<string>): Boolean; static;
   public
-    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; reintroduce;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
     function Assign(ASource: TFieldSetList): boolean; override;
 

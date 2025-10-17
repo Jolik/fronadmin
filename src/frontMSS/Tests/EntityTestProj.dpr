@@ -1392,7 +1392,7 @@ begin
 //    ListMonitoringTaskSources();
 //      ListProfiles();
       ListAbonents();
-      ListAliases();
+//      ListAliases();
 //      ListRules();
 //      ListDsGroups();
 //      ListUsers();

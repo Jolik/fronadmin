@@ -125,7 +125,8 @@ begin
 
   try
     RequestJson := CreateJSONRequest;
-    RequestStream := TStringStream.Create(RequestJson.ToJSON, TEncoding.UTF8);
+//!!!    RequestStream := TStringStream.Create(RequestJson.ToJSON, TEncoding.UTF8);
+    RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
       ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLAbonentsList, RequestStream);
     finally
