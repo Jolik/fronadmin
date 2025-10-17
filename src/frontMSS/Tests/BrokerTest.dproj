@@ -284,6 +284,11 @@
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
         <DCCReference Include="..\APIClasses\StripTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\Forms\LinksFrames\OpenMCEPSettingEditFrameUnit.pas">
+            <Form>OpenMCEPSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -305,7 +310,7 @@
                     <Source Name="MainSource">BrokerTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\BrokerTest.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
@@ -323,6 +328,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

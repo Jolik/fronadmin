@@ -77,7 +77,9 @@ implementation
 uses
   uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
   LinkSettingsUnit, ParentLinkSettingEditFrameUnit, LinkEditFormUnit,
-  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
+  ParentEditFormUnit,
+  OpenMCEPSettingEditFrameUnit,
+  SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
 begin
@@ -260,7 +262,7 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '90d77ba1-85f2-4dc9-8019-d4f1a00e4476';
+  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
 var
   LinksBroker : TLinksBroker;
   SettingsFrame: TParentLinkSettingEditFrame;
@@ -277,8 +279,8 @@ begin
     LinkEditForm.Entity := entity;
     var link := entity as TLink;
     case Link.linkType of
-      ltSocketSpecial:
-        SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
+      ltSocketSpecial: SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
+      ltOpenMCEP:  SettingsFrame := TOpenMCEPSettingEditFrame.Create(LinkEditForm);
       else exit;
     end;
 

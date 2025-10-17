@@ -83,7 +83,8 @@ uses
   SharedFrameQueue in '..\Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
   SharedFrameTextInput in '..\Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
   SocketSpecialSettingEditFrameUnit in '..\Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
-  StripTaskSourceBrokerUnit in '..\APIClasses\StripTaskSourceBrokerUnit.pas';
+  StripTaskSourceBrokerUnit in '..\APIClasses\StripTaskSourceBrokerUnit.pas',
+  OpenMCEPSettingEditFrameUnit in '..\Forms\LinksFrames\OpenMCEPSettingEditFrameUnit.pas' {OpenMCEPSettingEditFrame: TUniFrame};
 
 {$R *.res}
 

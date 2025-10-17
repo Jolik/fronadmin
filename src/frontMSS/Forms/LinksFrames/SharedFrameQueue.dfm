@@ -2,7 +2,7 @@ object FrameQueue: TFrameQueue
   Left = 0
   Top = 0
   Width = 274
-  Height = 74
+  Height = 59
   TabOrder = 0
   inline FrameQid: TFrameTextInput
     Left = 0
@@ -15,18 +15,18 @@ object FrameQueue: TFrameQueue
     Constraints.MinHeight = 30
     TabOrder = 0
     Background.Picture.Data = {00}
-    ExplicitWidth = 270
+    ExplicitWidth = 274
     inherited PanelText: TUniPanel
       Caption = 'ID '#1086#1095#1077#1088#1077#1076#1080
     end
     inherited Edit: TUniEdit
       Width = 103
-      ExplicitWidth = 99
+      ExplicitWidth = 103
     end
     inherited PanelUnits: TUniPanel
       Left = 248
       Caption = ''
-      ExplicitLeft = 244
+      ExplicitLeft = 248
     end
   end
   inline FrameQueueEnable: TFrameBoolInput
@@ -41,13 +41,13 @@ object FrameQueue: TFrameQueue
     TabOrder = 1
     Background.Picture.Data = {00}
     ExplicitTop = 30
-    ExplicitWidth = 270
+    ExplicitWidth = 274
     inherited PanelText: TUniPanel
       Caption = #1042#1082#1083#1102#1095#1080#1090#1100' '#1074#1099#1076#1072#1095#1091
     end
     inherited CheckBox: TUniCheckBox
       Width = 136
-      ExplicitWidth = 132
+      ExplicitWidth = 136
     end
   end
 end

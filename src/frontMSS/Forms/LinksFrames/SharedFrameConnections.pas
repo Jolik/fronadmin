@@ -73,6 +73,7 @@ begin
   FrameCRT.SetData('');
   FrameCertCA.SetData('');
   FrameCertKey.SetData('');
+  FrameConnectionKey.SetData('');
 
   if src.Count = 0 then
     exit;

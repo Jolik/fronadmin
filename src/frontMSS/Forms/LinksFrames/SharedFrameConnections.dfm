@@ -13,7 +13,6 @@ object FrameConnections: TFrameConnections
     Caption = ' '#1057#1086#1077#1076#1080#1085#1077#1085#1080#1077' '
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 393
     inline FrameAddr: TFrameTextInput
       Left = 2
       Top = 15
@@ -82,7 +81,6 @@ object FrameConnections: TFrameConnections
       Caption = ' '#1040#1074#1090#1086#1088#1080#1079#1072#1094#1080#1103' '
       Align = alTop
       TabOrder = 3
-      ExplicitTop = 85
       inline FrameLogin: TFrameTextInput
         Left = 2
         Top = 15
@@ -152,7 +150,6 @@ object FrameConnections: TFrameConnections
       Caption = ' TLS '
       Align = alTop
       TabOrder = 4
-      ExplicitTop = 189
       inline FrameTLSEnable: TFrameBoolInput
         Left = 2
         Top = 15
@@ -284,17 +281,19 @@ object FrameConnections: TFrameConnections
       TabOrder = 5
       Background.Picture.Data = {00}
       ExplicitLeft = 2
-      ExplicitTop = 80
+      ExplicitTop = 75
       ExplicitWidth = 361
       inherited PanelText: TUniPanel
         Caption = #1050#1083#1102#1095' '#1089#1086#1077#1076#1080#1085#1077#1085#1080#1103
       end
       inherited Edit: TUniEdit
         Width = 190
+        ExplicitWidth = 190
       end
       inherited PanelUnits: TUniPanel
         Left = 335
         Caption = ''
+        ExplicitLeft = 335
       end
     end
   end
