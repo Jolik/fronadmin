@@ -8,11 +8,11 @@ uses
   LoggingUnit;
 
 type
-  // Класс-ссылка на любой потомок TFieldSet
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© ГЇГ®ГІГ®Г¬Г®ГЄ TFieldSet
   TFieldSetClass = class of TFieldSet;
-  ///  абстрактрый класс - набор полей
-  ///  объявляет функцию которая позволяет проиницилиазировать поля
-  ///  из другого такого же объекта
+  ///  Г ГЎГ±ГІГ°Г ГЄГІГ°Г»Г© ГЄГ«Г Г±Г± - Г­Г ГЎГ®Г° ГЇГ®Г«ГҐГ©
+  ///  Г®ГЎГєГїГўГ«ГїГҐГІ ГґГіГ­ГЄГ¶ГЁГѕ ГЄГ®ГІГ®Г°Г Гї ГЇГ®Г§ГўГ®Г«ГїГҐГІ ГЇГ°Г®ГЁГ­ГЁГ¶ГЁГ«ГЁГ Г§ГЁГ°Г®ГўГ ГІГј ГЇГ®Г«Гї
+  ///  ГЁГ§ Г¤Г°ГіГЈГ®ГЈГ® ГІГ ГЄГ®ГЈГ® Г¦ГҐ Г®ГЎГєГҐГЄГІГ 
   TFieldSet = class (TObject)
   private
   protected
@@ -21,14 +21,14 @@ type
 
   public
     constructor Create(); overload; virtual;
-    ///  конструктор сразу из JSON
+    ///  ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г±Г°Г Г§Гі ГЁГ§ JSON
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  устанавливаем поля с другого объекта
+    ///  ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЇГ®Г«Гї Г± Г¤Г°ГіГЈГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
     function Assign(ASource: TFieldSet): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г®ГЎГєГҐГЄГІГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў Г¬Г Г±Г±ГЁГўГҐ const APropertyNames ГЇГҐГ°ГҐГ¤Г ГѕГІГ±Гї ГЇГ®Г«Гї, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
@@ -36,27 +36,27 @@ type
 
   end;
 
-  // Класс-ссылка на любой потомок TFieldSetList
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© ГЇГ®ГІГ®Г¬Г®ГЄ TFieldSetList
   TFieldSetListClass = class of TFieldSetList;
-  ///  класс - список классов-наборов полей
+  ///  ГЄГ«Г Г±Г± - Г±ГЇГЁГ±Г®ГЄ ГЄГ«Г Г±Г±Г®Гў-Г­Г ГЎГ®Г°Г®Гў ГЇГ®Г«ГҐГ©
   TFieldSetList = class (TObjectList<TFieldSet>)
   private
   protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  ГЅГ«ГҐГ¬ГҐГ­ГІГ  Г±ГЇГЁГ±ГЄГ 
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function ItemClassType: TFieldSetClass; virtual;
 
   public
-    ///  конструктор сразу из JSON
+    ///  ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г±Г°Г Г§Гі ГЁГ§ JSON
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  устанавливаем поля с другого объекта
+    ///  ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЇГ®Г«Гї Г± Г¤Г°ГіГЈГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
     function Assign(ASource: TFieldSetList): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра списка. на ошибки - эксешан
-    ///  в APropertyNames передается список полей которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г±ГЇГЁГ±ГЄГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў APropertyNames ГЇГҐГ°ГҐГ¤Г ГҐГІГ±Гї Г±ГЇГЁГ±Г®ГЄ ГЇГ®Г«ГҐГ© ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
-    /// дообавляет новые записи из JSON массива
+    /// Г¤Г®Г®ГЎГ ГўГ«ГїГҐГІ Г­Г®ГўГ»ГҐ Г§Г ГЇГЁГ±ГЁ ГЁГ§ JSON Г¬Г Г±Г±ГЁГўГ 
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
@@ -64,39 +64,42 @@ type
   end;
 
 type
-  // Класс-ссылка на любой потомок TSettings
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© ГЇГ®ГІГ®Г¬Г®ГЄ TSettings
   TSettingsClass = class of TSettings;
-  ///  настройки это тоже набор каких то полей
+  ///  Г­Г Г±ГІГ°Г®Г©ГЄГЁ ГЅГІГ® ГІГ®Г¦ГҐ Г­Г ГЎГ®Г° ГЄГ ГЄГЁГµ ГІГ® ГЇГ®Г«ГҐГ©
   TSettings = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г®ГЎГєГҐГЄГІГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў Г¬Г Г±Г±ГЁГўГҐ const APropertyNames ГЇГҐГ°ГҐГ¤Г ГѕГІГ±Гї ГЇГ®Г«Гї, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Класс-ссылка на любой потомок TData
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© ГЇГ®ГІГ®Г¬Г®ГЄ TData
   TDataClass = class of TData;
-  ///  TData это тоже настройки и тоже набор каких то полей
+  ///  TData ГЅГІГ® ГІГ®Г¦ГҐ Г­Г Г±ГІГ°Г®Г©ГЄГЁ ГЁ ГІГ®Г¦ГҐ Г­Г ГЎГ®Г° ГЄГ ГЄГЁГµ ГІГ® ГЇГ®Г«ГҐГ©
   TData = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г®ГЎГєГҐГЄГІГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў Г¬Г Г±Г±ГЁГўГҐ const APropertyNames ГЇГҐГ°ГҐГ¤Г ГѕГІГ±Гї ГЇГ®Г«Гї, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Класс-ссылка на любой потомок TBody
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© ГЇГ®ГІГ®Г¬Г®ГЄ TBody
   TBodyClass = class of TBody;
-  ///  TBody это тоже настройки и это тоже набор каких то полей
+    FOwner: string;
+    ///
+    property Owner: string read FOwner write FOwner;
+  ///  TBody ГЅГІГ® ГІГ®Г¦ГҐ Г­Г Г±ГІГ°Г®Г©ГЄГЁ ГЁ ГЅГІГ® ГІГ®Г¦ГҐ Г­Г ГЎГ®Г° ГЄГ ГЄГЁГµ ГІГ® ГЇГ®Г«ГҐГ©
   TBody = class (TFieldSet)
   public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г®ГЎГєГҐГЄГІГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў Г¬Г Г±Г±ГЁГўГҐ const APropertyNames ГЇГҐГ°ГҐГ¤Г ГѕГІГ±Гї ГЇГ®Г«Гї, ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
@@ -104,13 +107,13 @@ type
 
 
 type
-  // Класс-ссылка на любой список сущностей TEntity
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© Г±ГЇГЁГ±Г®ГЄ Г±ГіГ№Г­Г®Г±ГІГҐГ© TEntity
   TEntityListClass = class of TEntityList;
 
-  // Класс-ссылка на любой список сущностей TEntity
+  // ГЉГ«Г Г±Г±-Г±Г±Г»Г«ГЄГ  Г­Г  Г«ГѕГЎГ®Г© Г±ГЇГЁГ±Г®ГЄ Г±ГіГ№Г­Г®Г±ГІГҐГ© TEntity
   TEntityClass = class of TEntity;
 
-  ///  Класс Сущность - потомок всех сущностей проекта
+  ///  ГЉГ«Г Г±Г± Г‘ГіГ№Г­Г®Г±ГІГј - ГЇГ®ГІГ®Г¬Г®ГЄ ГўГ±ГҐГµ Г±ГіГ№Г­Г®Г±ГІГҐГ© ГЇГ°Г®ГҐГЄГІГ 
   TEntity = class (TFieldSet)
   private
     FId: String;
@@ -129,85 +132,86 @@ type
     FCommited: TDateTime;
 
   protected
-    ///  метод возвращает конкретный тип объекта Settings
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Settings
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function SettingsClassType: TSettingsClass; virtual;
-    ///  метод возвращает конкретный тип объекта Data
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Data
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function DataClassType: TDataClass; virtual;
-    ///  метод возвращает конкретный тип объекта Body
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Body
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function BodyClassType: TBodyClass; virtual;
 
-    ///  метод возвращает конкретный тип объекта TEntityList
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  TEntityList
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function ListClassType: TEntityListClass; virtual;
 
-    ///  потомок должен вернуть имя поля для идентификатора
+    ///  ГЇГ®ГІГ®Г¬Г®ГЄ Г¤Г®Г«Г¦ГҐГ­ ГўГҐГ°Г­ГіГІГј ГЁГ¬Гї ГЇГ®Г«Гї Г¤Г«Гї ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г°Г 
     function GetIdKey: string; virtual;
 
   public
     constructor Create(); overload; override;
-    ///  конструктор сразу из JSON
+    ///  ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г±Г°Г Г§Гі ГЁГ§ JSON
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     destructor Destroy; override;
 
-    ///  устанавливаем поля с другого объекта
+    ///  ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЇГ®Г«Гї Г± Г¤Г°ГіГЈГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
     function Assign(ASource: TFieldSet): boolean; override;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в const APropertyNames передается список полей которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г®ГЎГєГҐГЄГІГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў const APropertyNames ГЇГҐГ°ГҐГ¤Г ГҐГІГ±Гї Г±ГЇГЁГ±Г®ГЄ ГЇГ®Г«ГҐГ© ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    ///  идентификатор сущности
+    ///  ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г° Г±ГіГ№Г­Г®Г±ГІГЁ
     property Id: String read FId write FId;
-    ///  идентификатор компании
+    ///  ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г° ГЄГ®Г¬ГЇГ Г­ГЁГЁ
     property CompId: string read FCompId write FCompId;
-    ///  идентификатор департамента
+    ///  ГЁГ¤ГҐГ­ГІГЁГґГЁГЄГ ГІГ®Г° Г¤ГҐГЇГ Г°ГІГ Г¬ГҐГ­ГІГ 
     property DepId: string read FDepId write FDepId;
-    ///  наименование сущности
+    ///  Г­Г ГЁГ¬ГҐГ­Г®ГўГ Г­ГЁГҐ Г±ГіГ№Г­Г®Г±ГІГЁ
     property Name: String read FName write FName;
-    ///  заголовок сущности
+    ///  Г§Г ГЈГ®Г«Г®ГўГ®ГЄ Г±ГіГ№Г­Г®Г±ГІГЁ
     property Caption: String read FCaption write FCaption;
-    ///  описание сущности
+    ///  Г®ГЇГЁГ±Г Г­ГЁГҐ Г±ГіГ№Г­Г®Г±ГІГЁ
     property Def: String read FDef write FDef;
-    ///  время создания сущности
+    ///  ГўГ°ГҐГ¬Гї Г±Г®Г§Г¤Г Г­ГЁГї Г±ГіГ№Г­Г®Г±ГІГЁ
     property Enabled: boolean read FEnabled write FEnabled;
-    ///  настройки
+    ///  Г­Г Г±ГІГ°Г®Г©ГЄГЁ
     property Settings: TSettings read FSettings write FSettings;
-    ///  данные сущности
+    ///  Г¤Г Г­Г­Г»ГҐ Г±ГіГ№Г­Г®Г±ГІГЁ
     property Data: TData read FData write FData;
-    ///  тело сущности
+    ///  ГІГҐГ«Г® Г±ГіГ№Г­Г®Г±ГІГЁ
     property Body: TBody read FBody write FBody;
-    ///  время создания сущности
+    ///  ГўГ°ГҐГ¬Гї Г±Г®Г§Г¤Г Г­ГЁГї Г±ГіГ№Г­Г®Г±ГІГЁ
     property Created: TDateTime read FCreated write FCreated;
-    ///  время обновления сущности
+    ///  ГўГ°ГҐГ¬Гї Г®ГЎГ­Г®ГўГ«ГҐГ­ГЁГї Г±ГіГ№Г­Г®Г±ГІГЁ
     property Updated: TDateTime read FUpdated write FUpdated;
-    ///  время коммита сущности
+    ///  ГўГ°ГҐГ¬Гї ГЄГ®Г¬Г¬ГЁГІГ  Г±ГіГ№Г­Г®Г±ГІГЁ
     property Commited: TDateTime read FCommited write FCommited;
-    ///  время архивации сущности
+    ///  ГўГ°ГҐГ¬Гї Г Г°ГµГЁГўГ Г¶ГЁГЁ Г±ГіГ№Г­Г®Г±ГІГЁ
     property Archived: TDateTime read FArchived write FArchived;
   end;
 
-  ///  класс - список сущностей
+  ///  ГЄГ«Г Г±Г± - Г±ГЇГЁГ±Г®ГЄ Г±ГіГ№Г­Г®Г±ГІГҐГ©
   TEntityList = class (TObjectList<TEntity>)
   private
   protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  ГЅГ«ГҐГ¬ГҐГ­ГІГ  Г±ГЇГЁГ±ГЄГ 
+    ///  ГЇГ®ГІГ®Г¬ГЄГЁ Г¤Г®Г«Г¦Г­Г» ГЇГҐГ°ГҐГ®ГЇГ°ГҐГ¤ГҐГ«ГЁГІГј ГҐГЈГ®, ГЇГ®ГІГ®Г¬Гі Г·ГІГ® Г®Г­ Гі ГўГ±ГҐГµ Г°Г Г§Г­Г»Г©
     class function ItemClassType: TEntityClass; virtual;
 
   public
-    ///  конструктор сразу из JSON
+  OwnerKey = 'owner';
+    ///  ГЄГ®Г­Г±ГІГ°ГіГЄГІГ®Г° Г±Г°Г Г§Гі ГЁГ§ JSON
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload;
 
-    ///  устанавливаем поля с другого объекта
+    ///  ГіГ±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ ГЇГ®Г«Гї Г± Г¤Г°ГіГЈГ®ГЈГ® Г®ГЎГєГҐГЄГІГ 
     function Assign(ASource: TEntityList): boolean; virtual;
 
-    // эти требуют существующего правильного экземпляра списка. на ошибки - эксешан
-    ///  в APropertyNames передается список полей которые необходимо использовать
+    // ГЅГІГЁ ГІГ°ГҐГЎГіГѕГІ Г±ГіГ№ГҐГ±ГІГўГіГѕГ№ГҐГЈГ® ГЇГ°Г ГўГЁГ«ГјГ­Г®ГЈГ® ГЅГЄГ§ГҐГ¬ГЇГ«ГїГ°Г  Г±ГЇГЁГ±ГЄГ . Г­Г  Г®ГёГЁГЎГЄГЁ - ГЅГЄГ±ГҐГёГ Г­
+    ///  Гў APropertyNames ГЇГҐГ°ГҐГ¤Г ГҐГІГ±Гї Г±ГЇГЁГ±Г®ГЄ ГЇГ®Г«ГҐГ© ГЄГ®ГІГ®Г°Г»ГҐ Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЁГ±ГЇГ®Г«ГјГ§Г®ГўГ ГІГј
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
@@ -252,7 +256,7 @@ end;
 constructor TFieldSet.Create;
 begin
   inherited Create;
-  //не удалять! так надо!
+  //Г­ГҐ ГіГ¤Г Г«ГїГІГј! ГІГ ГЄ Г­Г Г¤Г®!
 end;
 
 function TFieldSet.JSON(const APropertyNames: TArray<string>): string;
@@ -299,19 +303,22 @@ end;
 
 { TEntity }
 
-///  метод возвращает конкретный тип объекта Settings
+///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Settings
 class function TEntity.SettingsClassType: TSettingsClass;
 begin
   Result := TSettings;
 end;
 
-///  метод возвращает конкретный тип объекта Data
+///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Data
 class function TEntity.DataClassType: TDataClass;
 begin
   Result := TData;
 end;
 
-///  метод возвращает конкретный тип объекта Body
+    Self.Owner := LSource.Owner;
+  Owner := GetValueStrDef(src, OwnerKey, '');
+    AddPair(OwnerKey, Owner);
+///  Г¬ГҐГІГ®Г¤ ГўГ®Г§ГўГ°Г Г№Г ГҐГІ ГЄГ®Г­ГЄГ°ГҐГІГ­Г»Г© ГІГЁГЇ Г®ГЎГєГҐГЄГІГ  Body
 class function TEntity.BodyClassType: TBodyClass;
 begin
   Result := TBody;
@@ -329,7 +336,7 @@ begin
   if not inherited Assign(ASource) then
     exit;
 
-  /// Проверяем на совместимость с нашим типом
+  /// ГЏГ°Г®ГўГҐГ°ГїГҐГ¬ Г­Г  Г±Г®ГўГ¬ГҐГ±ГІГЁГ¬Г®Г±ГІГј Г± Г­Г ГёГЁГ¬ ГІГЁГЇГ®Г¬
   if ASource is TEntity then
     LSource := ASource as TEntity;
 
@@ -356,7 +363,7 @@ end;
 
 function TEntity.GetIdKey: string;
 begin
-  ///  по умолчанию возвращаем id
+  ///  ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ ГўГ®Г§ГўГ°Г Г№Г ГҐГ¬ id
   Result := 'id';
 end;
 
@@ -379,22 +386,22 @@ begin
   Commited := UnixToDateTime(GetValueIntDef(src, CommitedKey, 0));
   Archived := UnixToDateTime(GetValueIntDef(src, ArchivedKey, 0));
 
-  ///  получаем ссылку на JSON-объект settings
+  ///  ГЇГ®Г«ГіГ·Г ГҐГ¬ Г±Г±Г»Г«ГЄГі Г­Г  JSON-Г®ГЎГєГҐГЄГІ settings
   var s := src.FindValue(SettingsKey);
 
-  ///  парсим только если setting существует и это действительно объект
+  ///  ГЇГ Г°Г±ГЁГ¬ ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ setting Г±ГіГ№ГҐГ±ГІГўГіГҐГІ ГЁ ГЅГІГ® Г¤ГҐГ©Г±ГІГўГЁГІГҐГ«ГјГ­Г® Г®ГЎГєГҐГЄГІ
   if Assigned(s) and (s is TJSONObject) then
     Settings.Parse(s as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект data
+  ///  ГЇГ®Г«ГіГ·Г ГҐГ¬ Г±Г±Г»Г«ГЄГі Г­Г  JSON-Г®ГЎГєГҐГЄГІ data
   var d := src.FindValue(DataKey);
-  ///  парсим только если data существует и это действительно объект
+  ///  ГЇГ Г°Г±ГЁГ¬ ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ data Г±ГіГ№ГҐГ±ГІГўГіГҐГІ ГЁ ГЅГІГ® Г¤ГҐГ©Г±ГІГўГЁГІГҐГ«ГјГ­Г® Г®ГЎГєГҐГЄГІ
   if Assigned(d) and (d is TJSONObject) then
     Data.Parse(d as TJSONObject);
 
-  ///  получаем ссылку на JSON-объект body
+  ///  ГЇГ®Г«ГіГ·Г ГҐГ¬ Г±Г±Г»Г«ГЄГі Г­Г  JSON-Г®ГЎГєГҐГЄГІ body
   var b := src.FindValue(BodyKey);
-  ///  парсим только если body существует и это действительно объект
+  ///  ГЇГ Г°Г±ГЁГ¬ ГІГ®Г«ГјГЄГ® ГҐГ±Г«ГЁ body Г±ГіГ№ГҐГ±ГІГўГіГҐГІ ГЁ ГЅГІГ® Г¤ГҐГ©Г±ГІГўГЁГІГҐГ«ГјГ­Г® Г®ГЎГєГҐГЄГІ
   if Assigned(b) and (b is TJSONObject) then
     Body.Parse(b as TJSONObject);
 end;
@@ -414,7 +421,7 @@ begin
     AddPair(UpdatedKey, DateTimeToUnix(Updated));
     AddPair(CommitedKey, DateTimeToUnix(Commited));
     AddPair(ArchivedKey, DateTimeToUnix(Archived));
-    ///  добавляем настройки, тело и данные
+    ///  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Г­Г Г±ГІГ°Г®Г©ГЄГЁ, ГІГҐГ«Г® ГЁ Г¤Г Г­Г­Г»ГҐ
     if Settings <> nil then
       AddPair(SettingsKey, Settings.Serialize());
     if Data <> nil then
@@ -430,13 +437,13 @@ begin
 
   inherited Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ«Г Г±Г± Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ ГІГ®ГЈГ® Г·ГІГ® ГўГ»Г¤Г Г¤ГіГІ ГЇГ®ГІГ®Г¬ГЄГЁ
   Settings := SettingsClassType.Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ«Г Г±Г± Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ ГІГ®ГЈГ® Г·ГІГ® ГўГ»Г¤Г Г¤ГіГІ ГЇГ®ГІГ®Г¬ГЄГЁ
   Data := DataClassType.Create();
 
-  ///  создаем класс в зависимости от того что выдадут потомки
+  ///  Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ«Г Г±Г± Гў Г§Г ГўГЁГ±ГЁГ¬Г®Г±ГІГЁ Г®ГІ ГІГ®ГЈГ® Г·ГІГ® ГўГ»Г¤Г Г¤ГіГІ ГЇГ®ГІГ®Г¬ГЄГЁ
   Body := BodyClassType.Create();
 end;
 
@@ -459,8 +466,8 @@ end;
 
 function TEntityList.Assign(ASource: TEntityList): boolean;
 begin
-  /// создаем классы и вызываем функцию копирования полей
-  ///  и добавляем их в список
+  /// Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ«Г Г±Г±Г» ГЁ ГўГ»Г§Г»ГўГ ГҐГ¬ ГґГіГ­ГЄГ¶ГЁГѕ ГЄГ®ГЇГЁГ°Г®ГўГ Г­ГЁГї ГЇГ®Г«ГҐГ©
+  ///  ГЁ Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЁГµ Гў Г±ГЇГЁГ±Г®ГЄ
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -489,14 +496,14 @@ begin
 
   if not Assigned(src) then exit;
 
-  ///  формируем список
+  ///  ГґГ®Г°Г¬ГЁГ°ГіГҐГ¬ Г±ГЇГЁГ±Г®ГЄ
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Г±Г®Г§Г¤Г ГҐГ¬ Г®ГЎГєГҐГЄГІ Г±Г°Г Г§Гі ГЁГ§ JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  ГІГ®Г«ГЄГ ГҐГ¬ ГҐГЈГ® Гў Г±ГЇГЁГ±Г®ГЄ
       Add(e);
     end;
   end;
@@ -508,14 +515,14 @@ procedure TEntityList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  добавляем список
+  ///  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Г±ГЇГЁГ±Г®ГЄ
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Г±Г®Г§Г¤Г ГҐГ¬ Г®ГЎГєГҐГЄГІ Г±Г°Г Г§Гі ГЁГ§ JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  ГІГ®Г«ГЄГ ГҐГ¬ ГҐГЈГ® Гў Г±ГЇГЁГ±Г®ГЄ
       Add(e);
     end;
   end;
@@ -524,7 +531,7 @@ end;
 procedure TEntityList.SerializeList(dst: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
-  ///  пока этот метод и не нужен нам - ничего не делаем
+  ///  ГЇГ®ГЄГ  ГЅГІГ®ГІ Г¬ГҐГІГ®Г¤ ГЁ Г­ГҐ Г­ГіГ¦ГҐГ­ Г­Г Г¬ - Г­ГЁГ·ГҐГЈГ® Г­ГҐ Г¤ГҐГ«Г ГҐГ¬
 end;
 
 function TEntityList.SerializeList(
@@ -548,13 +555,13 @@ end;
 procedure TSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Гі ГЎГ Г§Г®ГўГ®ГЈГ® ГЄГ«Г Г±Г±Г  ГЇГіГ±ГІГ®
 end;
 
 procedure TSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  ГЎГ Г§Г®ГўГ»Г© ГЄГ«Г Г±Г± Г­ГҐ Г¤ГҐГ«ГҐГ ГҐГІ Г­ГЁГ·ГҐГЈГ®
 end;
 
 { TData }
@@ -562,12 +569,12 @@ end;
 procedure TData.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Гі ГЎГ Г§Г®ГўГ®ГЈГ® ГЄГ«Г Г±Г±Г  ГЇГіГ±ГІГ®
 end;
 
 procedure TData.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  ГЎГ Г§Г®ГўГ»Г© ГЄГ«Г Г±Г± Г­ГҐ Г¤ГҐГ«ГҐГ ГҐГІ Г­ГЁГ·ГҐГЈГ®
 end;
 
 { TBody }
@@ -575,20 +582,20 @@ end;
 procedure TBody.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  у базового класса пусто
+  ///  Гі ГЎГ Г§Г®ГўГ®ГЈГ® ГЄГ«Г Г±Г±Г  ГЇГіГ±ГІГ®
 end;
 
 procedure TBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  базовый класс не делеает ничего
+  ///  ГЎГ Г§Г®ГўГ»Г© ГЄГ«Г Г±Г± Г­ГҐ Г¤ГҐГ«ГҐГ ГҐГІ Г­ГЁГ·ГҐГЈГ®
 end;
 
 { TFieldSetList }
 
 function TFieldSetList.Assign(ASource: TFieldSetList): boolean;
 begin
-  /// создаем классы и вызываем функцию копирования полей
-  ///  и добавляем их в список
+  /// Г±Г®Г§Г¤Г ГҐГ¬ ГЄГ«Г Г±Г±Г» ГЁ ГўГ»Г§Г»ГўГ ГҐГ¬ ГґГіГ­ГЄГ¶ГЁГѕ ГЄГ®ГЇГЁГ°Г®ГўГ Г­ГЁГї ГЇГ®Г«ГҐГ©
+  ///  ГЁ Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ ГЁГµ Гў Г±ГЇГЁГ±Г®ГЄ
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -618,14 +625,14 @@ begin
   if not Assigned(src) then
     exit;
 
-  ///  формируем список
+  ///  ГґГ®Г°Г¬ГЁГ°ГіГҐГ¬ Г±ГЇГЁГ±Г®ГЄ
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Г±Г®Г§Г¤Г ГҐГ¬ Г®ГЎГєГҐГЄГІ Г±Г°Г Г§Гі ГЁГ§ JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  ГІГ®Г«ГЄГ ГҐГ¬ ГҐГЈГ® Гў Г±ГЇГЁГ±Г®ГЄ
       Add(e);
     end;
   end;
@@ -637,14 +644,14 @@ procedure TFieldSetList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  добавляем список
+  ///  Г¤Г®ГЎГ ГўГ«ГїГҐГ¬ Г±ГЇГЁГ±Г®ГЄ
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  создаем объект сразу из JSON
+      ///  Г±Г®Г§Г¤Г ГҐГ¬ Г®ГЎГєГҐГЄГІ Г±Г°Г Г§Гі ГЁГ§ JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  толкаем его в список
+      ///  ГІГ®Г«ГЄГ ГҐГ¬ ГҐГЈГ® Гў Г±ГЇГЁГ±Г®ГЄ
       Add(e);
     end;
   end;

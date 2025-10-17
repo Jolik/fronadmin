@@ -33,7 +33,6 @@ type
   /// </summary>
   TProfile = class(TEntity)
   private
-    FOwner: string;
     FDescription: string;
     function GetProfileBody: TProfileBody;
   protected
@@ -44,7 +43,6 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
-    property Owner: string read FOwner write FOwner;
     property Description: string read FDescription write FDescription;
     property ProfileBody: TProfileBody read GetProfileBody;
   end;
@@ -57,7 +55,6 @@ uses
 const
   RuleKey = 'rule';
   PlayKey = 'play';
-  OwnerKey = 'owner';
   DescriptionKey = 'descr';
   ProfileIdKey = 'prid';
 
@@ -174,7 +171,6 @@ begin
 
   SourceProfile := TProfile(ASource);
 
-  FOwner := SourceProfile.Owner;
   FDescription := SourceProfile.Description;
 
   Result := True;
@@ -202,7 +198,6 @@ procedure TProfile.Parse(src: TJSONObject; const APropertyNames: TArray<string>)
 begin
   inherited Parse(src, APropertyNames);
 
-  FOwner := GetValueStrDef(src, OwnerKey, '');
   FDescription := GetValueStrDef(src, DescriptionKey, '');
 end;
 
@@ -210,7 +205,6 @@ procedure TProfile.Serialize(dst: TJSONObject; const APropertyNames: TArray<stri
 begin
   inherited Serialize(dst, APropertyNames);
 
-  dst.AddPair(OwnerKey, FOwner);
   dst.AddPair(DescriptionKey, FDescription);
 end;
 
