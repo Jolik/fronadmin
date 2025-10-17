@@ -593,9 +593,10 @@ end;
 function TFieldSetList.Assign(ASource: TFieldSetList): boolean;
 begin
   ///  Instantiate objects, copy fields, and add them to the list
+  Clear;
   for var i := 0 to ASource.Count-1 do
   begin
-    var es := TEntity.Create();
+    var es := ItemClassType.Create();
     es.Assign(ASource.Items[i]);
     Add(es);
   end;
