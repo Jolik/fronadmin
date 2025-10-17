@@ -3,19 +3,36 @@ unit ProfileUnit;
 interface
 
 uses
-  System.SysUtils, System.JSON,
+  System.SysUtils, System.JSON, System.Generics.Collections,
   EntityUnit,
   SmallRuleUnit,
   StringUnit;
 
 type
   /// <summary>
+  ///   Настройки воспроизведения профиля маршрутизатора.
+  /// </summary>
+  TProfilePlay = class(TFieldSet)
+  private
+    FFta: TNamedStringList;
+  public
+    constructor Create; overload; override;
+    destructor Destroy; override;
+
+    function Assign(ASource: TFieldSet): boolean; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    property FTA: TNamedStringList read FFta;
+  end;
+
+  /// <summary>
   ///   Представляет тело профиля маршрутизатора.
   /// </summary>
   TProfileBody = class(TBody)
   private
     FRule: TSmallRule;
-    FPlay: TNamedStringListsObject;
+    FPlay: TProfilePlay;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -25,7 +42,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     property Rule: TSmallRule read FRule;
-    property Play: TNamedStringListsObject read FPlay;
+    property Play: TProfilePlay read FPlay;
   end;
 
   /// <summary>
@@ -47,6 +64,14 @@ type
     property ProfileBody: TProfileBody read GetProfileBody;
   end;
 
+  /// <summary>
+  ///   Список профилей маршрутизатора.
+  /// </summary>
+  TProfileList = class(TEntityList)
+  public
+    class function ItemClassType: TEntityClass; override;
+  end;
+
 implementation
 
 uses
@@ -55,8 +80,85 @@ uses
 const
   RuleKey = 'rule';
   PlayKey = 'play';
+  FtaKey = 'fta';
   DescriptionKey = 'descr';
   ProfileIdKey = 'prid';
+
+{ TProfilePlay }
+
+function TProfilePlay.Assign(ASource: TFieldSet): boolean;
+var
+  SourcePlay: TProfilePlay;
+begin
+  Result := False;
+
+  if not Assigned(ASource) then
+    Exit;
+
+  if not inherited Assign(ASource) then
+    Exit;
+
+  if not (ASource is TProfilePlay) then
+    Exit;
+
+  SourcePlay := TProfilePlay(ASource);
+
+  if Assigned(FFta) then
+  begin
+    if not FFta.Assign(SourcePlay.FTA) then
+      Exit;
+  end;
+
+  Result := True;
+end;
+
+constructor TProfilePlay.Create;
+begin
+  inherited Create;
+
+  FFta := TNamedStringList.Create;
+end;
+
+destructor TProfilePlay.Destroy;
+begin
+  FFta.Free;
+
+  inherited;
+end;
+
+procedure TProfilePlay.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Value: TJSONValue;
+begin
+  if Assigned(FFta) then
+    FFta.Parse(nil, APropertyNames);
+
+  if not Assigned(src) then
+    Exit;
+
+  Value := src.FindValue(FtaKey);
+  if (Value is TJSONObject) and Assigned(FFta) then
+    FFta.Parse(TJSONObject(Value), APropertyNames);
+end;
+
+procedure TProfilePlay.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  FtaObject: TJSONObject;
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  FtaObject := TJSONObject.Create;
+  try
+    if Assigned(FFta) then
+      FFta.Serialize(FtaObject, APropertyNames);
+
+    dst.AddPair(FtaKey, FtaObject);
+  except
+    FtaObject.Free;
+    raise;
+  end;
+end;
 
 { TProfileBody }
 
@@ -90,7 +192,7 @@ begin
   inherited Create;
 
   FRule := TSmallRule.Create;
-  FPlay := TNamedStringListsObject.Create;
+  FPlay := TProfilePlay.Create;
 end;
 
 destructor TProfileBody.Destroy;
@@ -206,6 +308,13 @@ begin
   inherited Serialize(dst, APropertyNames);
 
   dst.AddPair(DescriptionKey, FDescription);
+end;
+
+{ TProfileList }
+
+class function TProfileList.ItemClassType: TEntityClass;
+begin
+  Result := TProfile;
 end;
 
 end.
