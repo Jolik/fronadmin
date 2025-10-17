@@ -76,7 +76,7 @@ implementation
 
 uses
   uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
-  LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
+  LinkSettingsUnit, ParentLinkSettingEditFrameUnit, LinkEditFormUnit,
   ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
@@ -274,19 +274,17 @@ begin
       exit;
     end;
 
-    ParentEditForm.Entity := entity;
+    LinkEditForm.Entity := entity;
     var link := entity as TLink;
     case Link.linkType of
       ltSocketSpecial:
-        SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
+        SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
       else exit;
     end;
-    showmemo.Lines.Add( (Link.Data as TLinkData).DataSettings.ClassName);
-
 
     SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
-    SettingsFrame.Parent := ParentEditForm.pnClient;
-    ParentEditForm.ShowModal(UpdateLinkSettingsCallback);
+    SettingsFrame.Parent := LinkEditForm.pnClient;
+    LinkEditForm.ShowModal(UpdateLinkSettingsCallback);
 
   finally
     LinksBroker.Free;

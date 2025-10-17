@@ -22,12 +22,17 @@ type
     FrameCRT: TFrameTextInput;
     FrameCertKey: TFrameTextInput;
     FrameCertCA: TFrameTextInput;
+    FrameConnectionKey: TFrameTextInput;
   private
+    function GetHasConnectionKey: boolean;
+    procedure SetHasConnectionKey(const Value: boolean);
     { Private declarations }
   public
     { Public declarations }
     procedure SetData(src: TConnectionSettingsList); virtual;
     procedure GetData(dst: TConnectionSettingsList); virtual;
+    // HasConnectionKey показывать настройку "ключ соединения"
+    property HasConnectionKey: boolean read GetHasConnectionKey write SetHasConnectionKey;
   end;
 
 implementation
@@ -45,6 +50,7 @@ begin
   dst.Add(conn);
   conn.Addr := FrameAddr.GetDataStr();
   conn.Timeout := FrameTimeout.GetDataInt();
+  conn.ConnectionKey := FrameConnectionKey.GetDataStr();
   var Secure: TSecure;
   Secure.Auth.Login := FrameLogin.GetDataStr();
   Secure.Auth.Password := FramePassword.GetDataStr();
@@ -54,6 +60,8 @@ begin
   Secure.TLS.Certificates.CA := FrameCertCA.GetDataStr();
   conn.Secure := Secure;
 end;
+
+
 
 procedure TFrameConnections.SetData(src: TConnectionSettingsList);
 begin
@@ -78,6 +86,17 @@ begin
   FrameCRT.SetData(conn.Secure.TLS.Certificates.CRT);
   FrameCertCA.SetData(conn.Secure.TLS.Certificates.CA);
   FrameCertKey.SetData(conn.Secure.TLS.Certificates.Key);
+  FrameConnectionKey.SetData(conn.ConnectionKey);
+end;
+
+procedure TFrameConnections.SetHasConnectionKey(const Value: boolean);
+begin
+  FrameConnectionKey.Enabled := Value;
+end;
+
+function TFrameConnections.GetHasConnectionKey: boolean;
+begin
+  result := FrameConnectionKey.Enabled;
 end;
 
 end.
