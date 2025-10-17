@@ -1,4 +1,4 @@
-unit ProfilesBrokerUnit;
+﻿unit ProfilesBrokerUnit;
 
 interface
 
@@ -75,11 +75,13 @@ const
   constURLProfileUpdate = '/profiles/%s/update';
   constURLProfileDelete = '/profiles/%s/remove';
 
+  constURLProfileBaseSuffix = '/links';
+
 { TProfilesBroker }
 
 function TProfilesBroker.GetBasePath: string;
 begin
-  Result := constURLDatacommBasePath;
+  Result := constURLDatacommBasePath + constURLProfileBaseSuffix;
 end;
 
 class function TProfilesBroker.ClassType: TEntityClass;
@@ -100,7 +102,8 @@ function TProfilesBroker.List(
 var
   JSONResult: TJSONObject;
   ResponseObject: TJSONObject;
-  ProfilesArray: TJSONArray;
+  ProfilesObject: TJSONObject;
+  ItemsArray: TJSONArray;
   ResStr: String;
 begin
   Result := nil;
@@ -118,11 +121,15 @@ begin
       if not Assigned(ResponseObject) then
         Exit;
 
-      ProfilesArray := ResponseObject.GetValue('profiles') as TJSONArray;
-      if not Assigned(ProfilesArray) then
+      ProfilesObject := ResponseObject.GetValue('profiles') as TJSONObject;
+      if not Assigned(ProfilesObject) then
         Exit;
 
-      Result := ListClassType.Create(ProfilesArray);
+      ItemsArray := ProfilesObject.GetValue('items') as TJSONArray;
+      if not Assigned(ItemsArray) then
+        Exit;
+
+      Result := ListClassType.Create(ItemsArray);
     finally
       JSONResult.Free;
     end;

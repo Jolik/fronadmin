@@ -1296,9 +1296,9 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
-    ListStripTaskSources();
-      ListSummaryTaskSources();
-      ListMonitoringTaskSources();
+//    ListStripTaskSources();
+//      ListSummaryTaskSources();
+//      ListMonitoringTaskSources();
       ListProfiles();
 //      ListAliases();
 //      ListRules();
