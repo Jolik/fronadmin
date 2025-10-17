@@ -59,7 +59,7 @@ uses
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
-  ProfileUnit in '..\EntityClasses\router\ProfileUnit.pas',
+  ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',

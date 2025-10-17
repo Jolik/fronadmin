@@ -148,7 +148,7 @@
         <DCCReference Include="..\EntityClasses\Common\StringUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\SmallRuleUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\ProfileUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\datacomm\ProfileUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
