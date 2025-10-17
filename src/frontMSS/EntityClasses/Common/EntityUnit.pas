@@ -8,11 +8,11 @@ uses
   LoggingUnit;
 
 type
-  // Êëàññ-ññûëêà íà ëþáîé ïîòîìîê TFieldSet
+  // Class reference to any TFieldSet descendant
   TFieldSetClass = class of TFieldSet;
-  ///  àáñòðàêòðûé êëàññ - íàáîð ïîëåé
-  ///  îáúÿâëÿåò ôóíêöèþ êîòîðàÿ ïîçâîëÿåò ïðîèíèöèëèàçèðîâàòü ïîëÿ
-  ///  èç äðóãîãî òàêîãî æå îáúåêòà
+  ///  Abstract class representing a set of fields
+  ///  Declares a function that allows initializing fields
+  ///  from another instance of the same object
   TFieldSet = class (TObject)
   private
   protected
@@ -21,14 +21,14 @@ type
 
   public
     constructor Create(); overload; virtual;
-    ///  êîíñòðóêòîð ñðàçó èç JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  óñòàíàâëèâàåì ïîëÿ ñ äðóãîãî îáúåêòà
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSet): boolean; virtual;
 
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
@@ -36,27 +36,27 @@ type
 
   end;
 
-  // Êëàññ-ññûëêà íà ëþáîé ïîòîìîê TFieldSetList
+  // Class reference to any TFieldSetList descendant
   TFieldSetListClass = class of TFieldSetList;
-  ///  êëàññ - ñïèñîê êëàññîâ-íàáîðîâ ïîëåé
+  ///  Class that represents a list of field set objects
   TFieldSetList = class (TObjectList<TFieldSet>)
   private
   protected
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà ýëåìåíòà ñïèñêà
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific type of list element
+    ///  Descendants must override because they use different types
     class function ItemClassType: TFieldSetClass; virtual;
 
   public
-    ///  êîíñòðóêòîð ñðàçó èç JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
 
-    ///  óñòàíàâëèâàåì ïîëÿ ñ äðóãîãî îáúåêòà
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSetList): boolean; virtual;
 
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà ñïèñêà. íà îøèáêè - ýêñåøàí
-    ///  â APropertyNames ïåðåäàåòñÿ ñïèñîê ïîëåé êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid list instance. Errors raise exceptions
+    ///  The APropertyNames parameter lists the fields that must be used
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
-    /// äîîáàâëÿåò íîâûå çàïèñè èç JSON ìàññèâà
+    ///  Adds new records from the JSON array
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
@@ -64,42 +64,39 @@ type
   end;
 
 type
-  // Êëàññ-ññûëêà íà ëþáîé ïîòîìîê TSettings
+  // Class reference to any TSettings descendant
   TSettingsClass = class of TSettings;
-  ///  íàñòðîéêè ýòî òîæå íàáîð êàêèõ òî ïîëåé
+  ///  Settings are also a collection of fields
   TSettings = class (TFieldSet)
   public
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Êëàññ-ññûëêà íà ëþáîé ïîòîìîê TData
+  // Class reference to any TData descendant
   TDataClass = class of TData;
-  ///  TData ýòî òîæå íàñòðîéêè è òîæå íàáîð êàêèõ òî ïîëåé
+  ///  TData is also a configuration-like collection of fields
   TData = class (TFieldSet)
   public
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
   end;
 
 type
-  // Êëàññ-ññûëêà íà ëþáîé ïîòîìîê TBody
+  // Class reference to any TBody descendant
   TBodyClass = class of TBody;
-    FOwner: string;
-    ///
-    property Owner: string read FOwner write FOwner;
-  ///  TBody ýòî òîæå íàñòðîéêè è ýòî òîæå íàáîð êàêèõ òî ïîëåé
+  ///  TBody is also a configuration-like collection of fields
   TBody = class (TFieldSet)
   public
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
@@ -107,19 +104,20 @@ type
 
 
 type
-  // Êëàññ-ññûëêà íà ëþáîé ñïèñîê ñóùíîñòåé TEntity
+  // Class reference to any TEntity list descendant
   TEntityListClass = class of TEntityList;
 
-  // Êëàññ-ññûëêà íà ëþáîé ñïèñîê ñóùíîñòåé TEntity
+  // Class reference to any TEntity descendant
   TEntityClass = class of TEntity;
 
-  ///  Êëàññ Ñóùíîñòü - ïîòîìîê âñåõ ñóùíîñòåé ïðîåêòà
+  ///  Entity class - ancestor for every entity in the project
   TEntity = class (TFieldSet)
   private
     FId: String;
     FDepId: string;
     FName: String;
     FCompId: string;
+    FOwner: string;
     FCaption: String;
     FCreated: TDateTime;
     FUpdated: TDateTime;
@@ -132,86 +130,87 @@ type
     FCommited: TDateTime;
 
   protected
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Settings
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific Settings object type
+    ///  Descendants must override because their types differ
     class function SettingsClassType: TSettingsClass; virtual;
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Data
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific Data object type
+    ///  Descendants must override because their types differ
     class function DataClassType: TDataClass; virtual;
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Body
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific Body object type
+    ///  Descendants must override because their types differ
     class function BodyClassType: TBodyClass; virtual;
 
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà TEntityList
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific TEntityList object type
+    ///  Descendants must override because their types differ
     class function ListClassType: TEntityListClass; virtual;
 
-    ///  ïîòîìîê äîëæåí âåðíóòü èìÿ ïîëÿ äëÿ èäåíòèôèêàòîðà
+    ///  Descendants should return the identifier field name
     function GetIdKey: string; virtual;
 
   public
     constructor Create(); overload; override;
-    ///  êîíñòðóêòîð ñðàçó èç JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     destructor Destroy; override;
 
-    ///  óñòàíàâëèâàåì ïîëÿ ñ äðóãîãî îáúåêòà
+    ///  Assign fields from another object
     function Assign(ASource: TFieldSet): boolean; override;
 
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â const APropertyNames ïåðåäàåòñÿ ñïèñîê ïîëåé êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames parameter lists the fields that must be used
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    ///  èäåíòèôèêàòîð ñóùíîñòè
+    ///  Entity identifier
     property Id: String read FId write FId;
-    ///  èäåíòèôèêàòîð êîìïàíèè
+    ///  Company identifier
     property CompId: string read FCompId write FCompId;
-    ///  èäåíòèôèêàòîð äåïàðòàìåíòà
+    ///  Owner identifier
+    property Owner: string read FOwner write FOwner;
+    ///  Department identifier
     property DepId: string read FDepId write FDepId;
-    ///  íàèìåíîâàíèå ñóùíîñòè
+    ///  Entity name
     property Name: String read FName write FName;
-    ///  çàãîëîâîê ñóùíîñòè
+    ///  Entity caption
     property Caption: String read FCaption write FCaption;
-    ///  îïèñàíèå ñóùíîñòè
+    ///  Entity description
     property Def: String read FDef write FDef;
-    ///  âðåìÿ ñîçäàíèÿ ñóùíîñòè
+    ///  Entity enabled flag
     property Enabled: boolean read FEnabled write FEnabled;
-    ///  íàñòðîéêè
+    ///  Settings
     property Settings: TSettings read FSettings write FSettings;
-    ///  äàííûå ñóùíîñòè
+    ///  Entity data
     property Data: TData read FData write FData;
-    ///  òåëî ñóùíîñòè
+    ///  Entity body
     property Body: TBody read FBody write FBody;
-    ///  âðåìÿ ñîçäàíèÿ ñóùíîñòè
+    ///  Entity creation time
     property Created: TDateTime read FCreated write FCreated;
-    ///  âðåìÿ îáíîâëåíèÿ ñóùíîñòè
+    ///  Entity update time
     property Updated: TDateTime read FUpdated write FUpdated;
-    ///  âðåìÿ êîììèòà ñóùíîñòè
+    ///  Entity commit time
     property Commited: TDateTime read FCommited write FCommited;
-    ///  âðåìÿ àðõèâàöèè ñóùíîñòè
+    ///  Entity archive time
     property Archived: TDateTime read FArchived write FArchived;
   end;
 
-  ///  êëàññ - ñïèñîê ñóùíîñòåé
+  ///  Class representing a list of entities
   TEntityList = class (TObjectList<TEntity>)
   private
   protected
-    ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà ýëåìåíòà ñïèñêà
-    ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
+    ///  Returns the specific type of list element
+    ///  Descendants must override because their types differ
     class function ItemClassType: TEntityClass; virtual;
 
   public
-  OwnerKey = 'owner';
-    ///  êîíñòðóêòîð ñðàçó èç JSON
+    ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload;
 
-    ///  óñòàíàâëèâàåì ïîëÿ ñ äðóãîãî îáúåêòà
+    ///  Assign fields from another object
     function Assign(ASource: TEntityList): boolean; virtual;
 
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà ñïèñêà. íà îøèáêè - ýêñåøàí
-    ///  â APropertyNames ïåðåäàåòñÿ ñïèñîê ïîëåé êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
+    // These require an existing valid list instance. Errors raise exceptions
+    ///  The APropertyNames parameter lists the fields that must be used
     procedure ParseList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
@@ -229,6 +228,7 @@ const
   NameKey = 'name';
   CaptionKey = 'caption';
   CompIdKey = 'compid';
+  OwnerKey = 'owner';
   DepIdKey = 'depid';
   DefKey = 'Def';
   EnabledKey = 'enabled';
@@ -256,7 +256,7 @@ end;
 constructor TFieldSet.Create;
 begin
   inherited Create;
-  //íå óäàëÿòü! òàê íàäî!
+  // Do not remove! Required as is!
 end;
 
 function TFieldSet.JSON(const APropertyNames: TArray<string>): string;
@@ -303,22 +303,18 @@ end;
 
 { TEntity }
 
-///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Settings
+///  Returns the specific Settings object type
 class function TEntity.SettingsClassType: TSettingsClass;
 begin
   Result := TSettings;
 end;
 
-///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Data
+///  Returns the specific Data object type
 class function TEntity.DataClassType: TDataClass;
 begin
   Result := TData;
 end;
-
-    Self.Owner := LSource.Owner;
-  Owner := GetValueStrDef(src, OwnerKey, '');
-    AddPair(OwnerKey, Owner);
-///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Body
+///  Returns the specific Body object type
 class function TEntity.BodyClassType: TBodyClass;
 begin
   Result := TBody;
@@ -336,13 +332,14 @@ begin
   if not inherited Assign(ASource) then
     exit;
 
-  /// Ïðîâåðÿåì íà ñîâìåñòèìîñòü ñ íàøèì òèïîì
+  ///  Check compatibility with our type
   if ASource is TEntity then
     LSource := ASource as TEntity;
 
   try
     Self.Id := LSource.Id;
     Self.CompId := LSource.CompId;
+    Self.Owner := LSource.Owner;
     Self.DepId := LSource.DepId;
     Self.Name := LSource.Name;
     Self.Caption := LSource.Caption;
@@ -363,7 +360,7 @@ end;
 
 function TEntity.GetIdKey: string;
 begin
-  ///  ïî óìîë÷àíèþ âîçâðàùàåì id
+  ///  Return "id" by default
   Result := 'id';
 end;
 
@@ -378,6 +375,7 @@ begin
   Name := GetValueStrDef(src, NameKey, '');
   Caption := GetValueStrDef(src, CaptionKey, '');
   CompId := GetValueStrDef(src, CompIdKey, '');
+  Owner := GetValueStrDef(src, OwnerKey, '');
   DepId := GetValueStrDef(src, DepIdKey, '');
   Def := GetValueStrDef(src, DefKey, '');
   Enabled := GetValueBool(src, EnabledKey);
@@ -386,22 +384,22 @@ begin
   Commited := UnixToDateTime(GetValueIntDef(src, CommitedKey, 0));
   Archived := UnixToDateTime(GetValueIntDef(src, ArchivedKey, 0));
 
-  ///  ïîëó÷àåì ññûëêó íà JSON-îáúåêò settings
+  ///  Get a reference to the settings JSON object
   var s := src.FindValue(SettingsKey);
 
-  ///  ïàðñèì òîëüêî åñëè setting ñóùåñòâóåò è ýòî äåéñòâèòåëüíî îáúåêò
+  ///  Parse only if settings exists and is actually an object
   if Assigned(s) and (s is TJSONObject) then
     Settings.Parse(s as TJSONObject);
 
-  ///  ïîëó÷àåì ññûëêó íà JSON-îáúåêò data
+  ///  Get a reference to the data JSON object
   var d := src.FindValue(DataKey);
-  ///  ïàðñèì òîëüêî åñëè data ñóùåñòâóåò è ýòî äåéñòâèòåëüíî îáúåêò
+  ///  Parse only if data exists and is actually an object
   if Assigned(d) and (d is TJSONObject) then
     Data.Parse(d as TJSONObject);
 
-  ///  ïîëó÷àåì ññûëêó íà JSON-îáúåêò body
+  ///  Get a reference to the body JSON object
   var b := src.FindValue(BodyKey);
-  ///  ïàðñèì òîëüêî åñëè body ñóùåñòâóåò è ýòî äåéñòâèòåëüíî îáúåêò
+  ///  Parse only if body exists and is actually an object
   if Assigned(b) and (b is TJSONObject) then
     Body.Parse(b as TJSONObject);
 end;
@@ -415,13 +413,14 @@ begin
     AddPair(CaptionKey, Caption);
     AddPair(DefKey, Def);
     AddPair(CompIdKey, CompId);
+    AddPair(OwnerKey, Owner);
     AddPair(DepIdKey, DepId);
     AddPair(EnabledKey, Enabled);
     AddPair(CreatedKey, DateTimeToUnix(Created));
     AddPair(UpdatedKey, DateTimeToUnix(Updated));
     AddPair(CommitedKey, DateTimeToUnix(Commited));
     AddPair(ArchivedKey, DateTimeToUnix(Archived));
-    ///  äîáàâëÿåì íàñòðîéêè, òåëî è äàííûå
+    ///  Append settings, body, and data
     if Settings <> nil then
       AddPair(SettingsKey, Settings.Serialize());
     if Data <> nil then
@@ -437,13 +436,13 @@ begin
 
   inherited Create();
 
-  ///  ñîçäàåì êëàññ â çàâèñèìîñòè îò òîãî ÷òî âûäàäóò ïîòîìêè
+  ///  Instantiate the class provided by descendants
   Settings := SettingsClassType.Create();
 
-  ///  ñîçäàåì êëàññ â çàâèñèìîñòè îò òîãî ÷òî âûäàäóò ïîòîìêè
+  ///  Instantiate the class provided by descendants
   Data := DataClassType.Create();
 
-  ///  ñîçäàåì êëàññ â çàâèñèìîñòè îò òîãî ÷òî âûäàäóò ïîòîìêè
+  ///  Instantiate the class provided by descendants
   Body := BodyClassType.Create();
 end;
 
@@ -466,8 +465,7 @@ end;
 
 function TEntityList.Assign(ASource: TEntityList): boolean;
 begin
-  /// ñîçäàåì êëàññû è âûçûâàåì ôóíêöèþ êîïèðîâàíèÿ ïîëåé
-  ///  è äîáàâëÿåì èõ â ñïèñîê
+  ///  Instantiate objects, copy fields, and add them to the list
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -496,14 +494,14 @@ begin
 
   if not Assigned(src) then exit;
 
-  ///  ôîðìèðóåì ñïèñîê
+  ///  Build the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  ñîçäàåì îáúåêò ñðàçó èç JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  òîëêàåì åãî â ñïèñîê
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -515,14 +513,14 @@ procedure TEntityList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  äîáàâëÿåì ñïèñîê
+  ///  Append to the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  ñîçäàåì îáúåêò ñðàçó èç JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  òîëêàåì åãî â ñïèñîê
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -531,7 +529,7 @@ end;
 procedure TEntityList.SerializeList(dst: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
-  ///  ïîêà ýòîò ìåòîä è íå íóæåí íàì - íè÷åãî íå äåëàåì
+  ///  This method is not required yet, so do nothing
 end;
 
 function TEntityList.SerializeList(
@@ -555,13 +553,13 @@ end;
 procedure TSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  ó áàçîâîãî êëàññà ïóñòî
+  ///  Base class intentionally left blank
 end;
 
 procedure TSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  áàçîâûé êëàññ íå äåëåàåò íè÷åãî
+  ///  Base class does nothing
 end;
 
 { TData }
@@ -569,12 +567,12 @@ end;
 procedure TData.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  ó áàçîâîãî êëàññà ïóñòî
+  ///  Base class intentionally left blank
 end;
 
 procedure TData.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  áàçîâûé êëàññ íå äåëåàåò íè÷åãî
+  ///  Base class does nothing
 end;
 
 { TBody }
@@ -582,20 +580,19 @@ end;
 procedure TBody.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
-  ///  ó áàçîâîãî êëàññà ïóñòî
+  ///  Base class intentionally left blank
 end;
 
 procedure TBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  ///  áàçîâûé êëàññ íå äåëåàåò íè÷åãî
+  ///  Base class does nothing
 end;
 
 { TFieldSetList }
 
 function TFieldSetList.Assign(ASource: TFieldSetList): boolean;
 begin
-  /// ñîçäàåì êëàññû è âûçûâàåì ôóíêöèþ êîïèðîâàíèÿ ïîëåé
-  ///  è äîáàâëÿåì èõ â ñïèñîê
+  ///  Instantiate objects, copy fields, and add them to the list
   for var i := 0 to ASource.Count-1 do
   begin
     var es := TEntity.Create();
@@ -625,14 +622,14 @@ begin
   if not Assigned(src) then
     exit;
 
-  ///  ôîðìèðóåì ñïèñîê
+  ///  Build the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  ñîçäàåì îáúåêò ñðàçó èç JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  òîëêàåì åãî â ñïèñîê
+      ///  Push it into the list
       Add(e);
     end;
   end;
@@ -644,14 +641,14 @@ procedure TFieldSetList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  äîáàâëÿåì ñïèñîê
+  ///  Append to the list
   for var i in src do
   begin
     if i is TJSONObject then
     begin
-      ///  ñîçäàåì îáúåêò ñðàçó èç JSON
+      ///  Create the object directly from JSON
       var e:= ItemClassType.Create(i as TJSONObject);
-      ///  òîëêàåì åãî â ñïèñîê
+      ///  Push it into the list
       Add(e);
     end;
   end;
