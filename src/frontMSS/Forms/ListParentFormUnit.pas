@@ -13,7 +13,7 @@ uses
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityUnit, EntityBrokerUnit,
-  ParentFormUnit, ParentEditFormUnit;
+  ParentFormUnit, ParentEditFormUnit, uniLabel, unimLabel, StrUtils;
 
 type
   ///  базовая форма с таблицей-списком
@@ -33,14 +33,35 @@ type
     FDMemTableEntityCreated: TDateTimeField;
     FDMemTableEntityUpdated: TDateTimeField;
     FDMemTableEntityId: TStringField;
+    tsTaskInfo: TUniTabSheet;
+    cpTaskInfo: TUniContainerPanel;
+    cpTaskInfoID: TUniContainerPanel;
+    lTaskInfoID: TUniLabel;
+    lTaskInfoIDValue: TUniLabel;
+    cpTaskInfoName: TUniContainerPanel;
+    lTaskInfoName: TUniLabel;
+    lTaskInfoNameValue: TUniLabel;
+    lTaskCaption: TUniLabel;
+    pSeparator1: TUniPanel;
+    pSeparator2: TUniPanel;
+    cpTaskInfoCreated: TUniContainerPanel;
+    lTaskInfoCreated: TUniLabel;
+    lTaskInfoCreatedValue: TUniLabel;
+    pSeparator3: TUniPanel;
+    cpTaskInfoUpdated: TUniContainerPanel;
+    lTaskInfoUpdated: TUniLabel;
+    lTaskInfoUpdatedValue: TUniLabel;
+    pSeparator4: TUniPanel;
     procedure btnNewClick(Sender: TObject);
     procedure btnUpdateClick(Sender: TObject);
     procedure btnRefreshClick(Sender: TObject);
     procedure UniFormCreate(Sender: TObject);
     procedure btnRemoveClick(Sender: TObject);
+    procedure dbgEntitySelectionChange(Sender: TObject);
   protected
+    FID: string;
     procedure Refresh(const AId: String = ''); override;
-
+    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
   end;
 
 function ListParentForm: TListParentForm;
@@ -57,7 +78,7 @@ uses
 procedure TListParentForm.btnUpdateClick(Sender: TObject);
 var
   LEntity: TEntity;
-  LId : string;
+  //LId : string;
 
 begin
   PrepareEditForm;
@@ -65,9 +86,9 @@ begin
   ///  получаем информацию о выбранном элементе в гриде
   ///  !!!  LId :=
   ///  пока берем первый элемент
-  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  FId := FDMemTableEntity.FieldByName('Id').AsString;
   ///  получаем полную информацию о сущности от брокера
-  LEntity := Broker.Info(LId);
+  LEntity := Broker.Info(FId);
   ///  устанавлаием сущность в окно редактирования
   EditForm.Entity := LEntity;
 
@@ -77,6 +98,25 @@ begin
 ///  удалять нельзя потому что класс переходит под управление форму редактирования
 ///    LEntity.Free;
   end;
+end;
+
+procedure TListParentForm.dbgEntitySelectionChange(Sender: TObject);
+var
+  LEntity : TEntity;
+  LId     : string;
+  DT      : string;
+begin
+  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  ///  получаем полную информацию о сущности от брокера
+  LEntity := Broker.Info(LId);
+  lTaskInfoIDValue.Caption      := LEntity.ID;
+  lTaskInfoNameValue.Caption    := LEntity.Name;
+  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', LEntity.Created);
+  lTaskInfoCreatedValue.Caption := DT;
+  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', LEntity.Updated);
+  lTaskInfoUpdatedValue.Caption := DT;
+
+  tsTaskInfo.TabVisible := True;
 end;
 
 procedure TListParentForm.btnNewClick(Sender: TObject);
@@ -107,7 +147,9 @@ begin
   ///  получаем информацию о выбранном элементе в гриде
   ///  !!!  LId :=
 ///  Refresh(LId);
-   Refresh();
+   LId := IfThen(FDMemTableEntity.IsEmpty, '', FDMemTableEntity.FieldByName('Id').AsString);
+
+   Refresh(LId);
 end;
 
 procedure TListParentForm.btnRemoveClick(Sender: TObject);
@@ -138,23 +180,40 @@ begin
   EntityList := Broker.List(PageCount);
   try
     FDMemTableEntity.EmptyDataSet;
-    for var Entity in EntityList do
-    begin
-      FDMemTableEntity.Append;
-      FDMemTableEntity.FieldByName('Id').AsString := Entity.Id;
-      FDMemTableEntity.FieldByName('Name').AsString := Entity.Name;
-      FDMemTableEntity.FieldByName('Caption').AsString := Entity.Caption;
-      FDMemTableEntity.FieldByName('Created').AsDateTime := Entity.Created;
-      FDMemTableEntity.FieldByName('Updated').AsDateTime := Entity.Updated;
-      FDMemTableEntity.Post;
-    end;
-    if AID.IsEmpty then
-      FDMemTableEntity.First
+
+    if Assigned(EntityList) then
+      for var Entity in EntityList do
+      begin
+        FDMemTableEntity.Append;
+        FDMemTableEntity.FieldByName('Id').AsString := Entity.Id;
+        FDMemTableEntity.FieldByName('Name').AsString := Entity.Name;
+        FDMemTableEntity.FieldByName('Caption').AsString := Entity.Caption;
+        FDMemTableEntity.FieldByName('Created').AsDateTime := Entity.Created;
+        FDMemTableEntity.FieldByName('Updated').AsDateTime := Entity.Updated;
+        FDMemTableEntity.Post;
+      end;
+
+    if FDMemTableEntity.IsEmpty then
+      tsTaskInfo.TabVisible := False
     else
-      FDMemTableEntity.Locate('Id', AID, []);
+      if AID.IsEmpty then
+        FDMemTableEntity.First
+      else
+        FDMemTableEntity.Locate('Id', AID, []);
   finally
-    EntityList.Free;
+    if Assigned(EntityList) then
+      EntityList.Free;
   end;
+end;
+
+procedure TListParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+begin
+  inherited;
+
+  if FID = '' then
+    FDMemTableEntity.First
+  else
+    FDMemTableEntity.Locate('Id', FID, []);
 end;
 
 procedure TListParentForm.UniFormCreate(Sender: TObject);
