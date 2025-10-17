@@ -1305,7 +1305,7 @@ begin
 //      ListDsGroups();
 //      ListUsers();
 
-      // оставить консоль незакрытой до нажатия Enter
+      // keep the console open until Enter is pressed
       Writeln('press enter to finish...');
       Readln;
 

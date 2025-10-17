@@ -135,7 +135,7 @@ begin
 
     MonitoringTaskList := MonitoringTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -159,7 +159,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     MonitoringTaskList.Free;
 
     MonitoringTasksBroker.Free;
@@ -183,7 +183,7 @@ begin
 
     LinksList := LinksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -213,7 +213,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     LinksList.Free;
 
     LinksBroker.Free;
@@ -230,9 +230,9 @@ begin
   ShowMemo.Clear;
   LinksBroker := TLinksBroker.Create();
   try
-    // Выводим информацию о линке в TMemo
+    // Display link information in TMemo
     ShowMemo.Lines.Add(Format('Информация о линке %s:', [lid]));
-    // получаем инфу о линке
+    // Retrieve link info
     Link := LinksBroker.Info(lid);
     if Link = nil then
     begin
@@ -333,7 +333,7 @@ begin
 
     QueueList := QueuesBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -363,7 +363,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     QueueList.Free;
 
     QueuesBroker.Free;
@@ -433,7 +433,7 @@ begin
 
     StripTaskList := StripTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -463,7 +463,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     StripTaskList.Free;
 
     StripTasksBroker.Free;
@@ -481,10 +481,10 @@ begin
 
   try
     StripTasksBroker := TStripTasksBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Info  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    // получаем инфу о таске
+    // Retrieve task info
     StripTask := StripTasksBroker.Info(tid);
     if StripTask = nil then
     begin
@@ -530,11 +530,11 @@ begin
       Enabled := false;
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  New  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    // получаем инфу о таске
+    // Retrieve task info
     res := StripTasksBroker.New(st);
     if not res  then
     begin
@@ -543,7 +543,7 @@ begin
     end;
 
     (*
-    ///  получаем результат и запрашиваем информацию по tid из результата
+    ///  Retrieve the result and request information for the tid from it
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -583,11 +583,11 @@ begin
       Caption := 'First test update';
     end;
 
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Update  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [st.tid]));
 
-    // Обновлеем информацию
+    // Refresh the information
     res := StripTasksBroker.Update(st);
     if not res  then
     begin
@@ -595,7 +595,7 @@ begin
       exit;
     end;
 
-    ///  получаем результат и запрашиваем информацию по tid из результата
+    ///  Retrieve the result and request information for the tid from it
 
     ShowMemo.Lines.Add('Tid: '+ st.Tid);
     ShowMemo.Lines.Add('Name: '+ st.Name);
@@ -624,10 +624,10 @@ begin
 
   try
     StripTasksBroker := TStripTasksBroker.Create();
-    // Выводим информацию о таске в TMemo
+    // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Remove  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
-    // удаляем таск таске
+    // Delete the task
     var res := StripTasksBroker.Remove(tid);
 
     if not res then
@@ -665,7 +665,7 @@ begin
 
     SummaryTaskList := SummaryTasksBroker.List(Pages);
 
-    // Выводим информацию о каждом объекте в TMemo
+    // Display information about each object in TMemo
     ShowMemo.Lines.Add('----------  List  ----------');
     ShowMemo.Lines.Add('Содержимое списка:');
 
@@ -695,7 +695,7 @@ begin
     end;
 
   finally
-    // Освобождаем список (все объекты освободятся автоматически)
+    // Free the list (all objects will be released automatically)
     SummaryTaskList.Free;
 
     SummaryTasksBroker.Free;

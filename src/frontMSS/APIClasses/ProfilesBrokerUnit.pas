@@ -9,26 +9,26 @@ uses
   EntityUnit, ProfileUnit, EntityBrokerUnit;
 
 /// <summary>
-///   API брокер для работы с профилями маршрутизатора.
+///   API broker for working with router profiles.
 /// </summary>
 type
   TProfilesBroker = class(TEntityBroker)
   protected
     /// <summary>
-    ///   Базовый путь для всех запросов брокера.
+    ///   Base path for all broker requests.
     /// </summary>
     function GetBasePath: string; override;
     /// <summary>
-    ///   Класс сущности, с которой работает брокер.
+    ///   Entity class handled by the broker.
     /// </summary>
     class function ClassType: TEntityClass; override;
     /// <summary>
-    ///   Класс списка сущностей, используемый брокером.
+    ///   Entity list class used by the broker.
     /// </summary>
     class function ListClassType: TEntityListClass; override;
   public
     /// <summary>
-    ///   Запрашивает список профилей.
+    ///   Requests a list of profiles.
     /// </summary>
     function List(
       out APageCount: Integer;
@@ -40,23 +40,23 @@ type
       const AOrderDir: String = 'asc'): TEntityList; override;
 
     /// <summary>
-    ///   Создает пустой профиль.
+    ///   Creates an empty profile.
     /// </summary>
     function CreateNew(): TEntity; override;
     /// <summary>
-    ///   Отправляет новый профиль на сервер.
+    ///   Sends a new profile to the server.
     /// </summary>
     function New(AEntity: TEntity): Boolean; override;
     /// <summary>
-    ///   Возвращает информацию о профиле.
+    ///   Returns profile information.
     /// </summary>
     function Info(AId: String): TEntity; overload; override;
     /// <summary>
-    ///   Обновляет существующий профиль.
+    ///   Updates an existing profile.
     /// </summary>
     function Update(AEntity: TEntity): Boolean; override;
     /// <summary>
-    ///   Удаляет профиль.
+    ///   Deletes a profile.
     /// </summary>
     function Remove(AId: String): Boolean; overload; override;
   end;
