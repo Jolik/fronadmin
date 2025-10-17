@@ -1,4 +1,4 @@
-unit AbonentBrokerUnit;
+unit AbonentsBrokerUnit;
 
 interface
 
@@ -6,17 +6,20 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, AbonentUnit, ParentBrokerUnit;
+  EntityUnit, AbonentUnit, EntityBrokerUnit;
 
 type
   /// <summary>
   ///   Broker for working with router abonents API.
   /// </summary>
-  TAbonentBroker = class(TParentBroker)
+  TAbonentsBroker = class(TEntityBroker)
+  private
   protected
-    function BaseUrlPath: string; override;
+    ///  возвращает весь путь до API
+    function GetBasePath: string; override;
     class function ClassType: TEntityClass; override;
     class function ListClassType: TEntityListClass; override;
+    class function ResponseClassType: TResponseClass; override;
   public
     function List(
       out APageCount: Integer;
@@ -48,24 +51,34 @@ const
   constURLAbonentUpdate = '/abonents/%s/update';
   constURLAbonentRemove = '/abonents/%s/remove';
 
-{ TAbonentBroker }
+type
+  ///  класс - парсер ответа API TResponse
+  TAbonentsResponse = class(TResponse)
+  private
+    FAbid: string;
+  protected
+  public
+    ///  парсинг ответа
+    function ParseResponse(AResStr: string): boolean; override;
 
-function TAbonentBroker.BaseUrlPath: string;
-begin
-  Result := constURLRouterBasePath;
-end;
+    ///  идентификатор абонента в ответе АПИ
+    property Abid: string read FAbid;
 
-class function TAbonentBroker.ClassType: TEntityClass;
+  end;
+
+{ TAbonentsBroker }
+
+class function TAbonentsBroker.ClassType: TEntityClass;
 begin
   Result := TAbonent;
 end;
 
-class function TAbonentBroker.ListClassType: TEntityListClass;
+class function TAbonentsBroker.ListClassType: TEntityListClass;
 begin
   Result := TAbonentList;
 end;
 
-function TAbonentBroker.List(
+function TAbonentsBroker.List(
   out APageCount: Integer;
   const APage, APageSize: Integer;
   const ASearchStr, ASearchBy, AOrder, AOrderDir: String): TEntityList;
@@ -89,7 +102,7 @@ begin
     try
       RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
       try
-        ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLAbonentList, RequestStream);
+        ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLAbonentList, RequestStream);
         JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
         if not Assigned(JSONResult) then
           Exit;
@@ -126,18 +139,23 @@ begin
 
   except on E: Exception do
     begin
-      Log('TAbonentBroker.List ' + E.Message, lrtError);
+      Log('TAbonentsBroker.List ' + E.Message, lrtError);
       FreeAndNil(Result);
     end;
   end;
 end;
 
-function TAbonentBroker.CreateNew: TEntity;
+function TAbonentsBroker.CreateNew: TEntity;
 begin
   Result := ClassType.Create();
 end;
 
-function TAbonentBroker.Info(AId: String): TEntity;
+function TAbonentsBroker.GetBasePath: string;
+begin
+  Result := constURLRouterBasePath;
+end;
+
+function TAbonentsBroker.Info(AId: String): TEntity;
 var
   URL: String;
   ResStr: String;
@@ -151,7 +169,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLAbonentInfo, [AId]);
+    URL := Format(GetBasePath + constURLAbonentInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -173,13 +191,13 @@ begin
 
   except on E: Exception do
     begin
-      Log('TAbonentBroker.Info ' + E.Message, lrtError);
+      Log('TAbonentsBroker.Info ' + E.Message, lrtError);
       FreeAndNil(Result);
     end;
   end;
 end;
 
-function TAbonentBroker.New(AEntity: TEntity): Boolean;
+function TAbonentsBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
   JSONAbonent: TJSONObject;
@@ -192,7 +210,7 @@ begin
     Exit;
 
   try
-    URL := BaseUrlPath + constURLAbonentNew;
+    URL := GetBasePath + constURLAbonentNew;
     JSONAbonent := TJSONObject.Create;
     try
       AEntity.Serialize(JSONAbonent);
@@ -200,7 +218,13 @@ begin
       JSONRequestStream := TStringStream.Create(JSONAbonent.ToJSON, TEncoding.UTF8);
       try
         ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
-        Result := CheckResponseResult(ResStr);
+        ///  парсим ответ
+        var res := ResponseClassType.CreateWithResponse(ResStr);
+        try
+          Result := res.ResBool;
+        finally
+          res.Free;
+        end;
       finally
         JSONRequestStream.Free;
       end;
@@ -209,13 +233,13 @@ begin
     end;
   except on E: Exception do
     begin
-      Log('TAbonentBroker.New ' + E.Message, lrtError);
+      Log('TAbonentsBroker.New ' + E.Message, lrtError);
       Result := False;
     end;
   end;
 end;
 
-function TAbonentBroker.Remove(AId: String): Boolean;
+function TAbonentsBroker.Remove(AId: String): Boolean;
 var
   URL: String;
   ResStr: String;
@@ -226,18 +250,31 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLAbonentRemove, [AId]);
-    ResStr := MainHttpModuleUnit.DELETE(URL);
-    Result := CheckResponseResult(ResStr);
+    URL := Format(GetBasePath + constURLAbonentRemove, [AId]);
+
+    ///  вызываем без параметров
+    ResStr := MainHttpModuleUnit.POST(URL);
+    ///  парсим ответ
+    var res := ResponseClassType.CreateWithResponse(ResStr);
+    try
+      Result := res.ResBool;
+    finally
+      res.Free;
+    end;
   except on E: Exception do
     begin
-      Log('TAbonentBroker.Remove ' + E.Message, lrtError);
+      Log('TAbonentsBroker.Remove ' + E.Message, lrtError);
       Result := False;
     end;
   end;
 end;
 
-function TAbonentBroker.Update(AEntity: TEntity): Boolean;
+class function TAbonentsBroker.ResponseClassType: TResponseClass;
+begin
+  Result := TAbonentsResponse;
+end;
+
+function TAbonentsBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
   JSONAbonent: TJSONObject;
@@ -255,7 +292,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLAbonentUpdate, [AbonentId]);
+    URL := Format(GetBasePath + constURLAbonentUpdate, [AbonentId]);
     JSONAbonent := TJSONObject.Create;
     try
       AEntity.Serialize(JSONAbonent);
@@ -263,7 +300,15 @@ begin
       JSONRequestStream := TStringStream.Create(JSONAbonent.ToJSON, TEncoding.UTF8);
       try
         ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
-        Result := CheckResponseResult(ResStr);
+        ///  парсим ответ
+        var res := ResponseClassType.CreateWithResponse(ResStr);
+        try
+          /// получаем параметры ответа и устанавливаем идентификатор сущности
+          (AEntity as TAbonent).Abid := (res as TAbonentsResponse).Abid;
+          Result := res.ResBool;
+        finally
+          res.Free;
+        end;
       finally
         JSONRequestStream.Free;
       end;
@@ -272,10 +317,17 @@ begin
     end;
   except on E: Exception do
     begin
-      Log('TAbonentBroker.Update ' + E.Message, lrtError);
+      Log('TAbonentsBroker.Update ' + E.Message, lrtError);
       Result := False;
     end;
   end;
+end;
+
+{ TAbonentsResponse }
+
+function TAbonentsResponse.ParseResponse(AResStr: string): boolean;
+begin
+  Result := inherited ParseResponse(AResStr);
 end;
 
 end.

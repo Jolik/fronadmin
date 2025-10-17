@@ -11,13 +11,13 @@ uses
 
 type
   TMainForm = class(TUniForm)
-    btnAbonents: TUniButton;
     btnChannel: TUniButton;
     btnStripTasks: TUniButton;
     btnLinks: TUniButton;
     btnSummTask: TUniButton;
     btnRouterSources: TUniButton;
     btnAliases: TUniButton;
+    btnAbonents: TUniButton;
     procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
@@ -40,7 +40,7 @@ uses
   uniGUIVars, uniGUIApplication,
   MainModule,
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
-  AliasesFormUnit, AbonentFormUnit,
+  AliasesFormUnit, AbonentsFormUnit,
   RouterSourcesFormUnit;
 
 function MainForm: TMainForm;
@@ -57,12 +57,12 @@ end;
 
 procedure TMainForm.btnAbonentsClick(Sender: TObject);
 begin
-  AbonentForm.Show();
+  AbonentsForm.Show();
 end;
 
 procedure TMainForm.btnAliasesClick(Sender: TObject);
 begin
-  AliasesForm.Show();
+  AbonentsForm.Show();
 end;
 
 procedure TMainForm.btnRouterSourcesClick(Sender: TObject);

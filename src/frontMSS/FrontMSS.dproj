@@ -166,14 +166,6 @@
         </DCCReference>
         <DCCReference Include="Forms\AliasEditFormUnit.pas">
             <Form>AliasEditForm</Form>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="Forms\AliasesFormUnit.pas">
-            <Form>AliasesForm</Form>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
-        <DCCReference Include="Forms\AliasEditFormUnit.pas">
-            <Form>AliasEditForm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
@@ -187,8 +179,8 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms\AbonentFormUnit.pas">
-            <Form>AbonentForm</Form>
+        <DCCReference Include="Forms\AbonentsFormUnit.pas">
+            <Form>AbonentsForm</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
@@ -206,7 +198,7 @@
         <DCCReference Include="APIClasses\MonitoringTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\RouterSourceBrokerUnit.pas"/>
-        <DCCReference Include="APIClasses\AbonentBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\AbonentsBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\AliasesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>

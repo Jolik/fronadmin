@@ -1,6 +1,11 @@
-inherited AbonentForm: TAbonentForm
+inherited AbonentsForm: TAbonentsForm
   Caption = #1040#1073#1086#1085#1077#1085#1090#1099
   TextHeight = 15
+  inherited tbEntity: TUniToolBar
+    inherited btnRefresh: TUniToolButton
+      ExplicitTop = 3
+    end
+  end
   inherited DatasourceEntity: TDataSource
     Left = 270
     Top = 84

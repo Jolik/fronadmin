@@ -12,8 +12,8 @@ uses
 
 type
   TAbonentEditForm = class(TParentEditForm)
-    lAid: TUniLabel;
-    teAid: TUniEdit;
+    lAbid: TUniLabel;
+    teAbid: TUniEdit;
     lChannelName: TUniLabel;
     teChannelName: TUniEdit;
     lChannelValues: TUniLabel;
@@ -66,13 +66,13 @@ begin
   if not Assigned(LAbonent) then
     Exit(False);
 
-  LAbonent.Aid := teAid.Text;
+  LAbonent.Abid := teAbid.Text;
 
   Channels := LAbonent.Channels;
   if Assigned(Channels) then
   begin
     ChannelName := Trim(teChannelName.Text);
-    if ChannelName = '' then
+(*!!!    if ChannelName = '' then
       ChannelName := ChannelsKey;
     Channels.Name := ChannelName;
     Channels.Values.Clear;
@@ -99,7 +99,7 @@ begin
       Value := Trim(meAttrValues.Lines[Index]);
       if Value <> '' then
         Attr.Values.Add(Value);
-    end;
+    end; *)
   end;
 
   Result := True;
@@ -112,9 +112,9 @@ begin
   if not Result then
     Exit;
 
-  if teAid.Text = '' then
+  if teAbid.Text = '' then
   begin
-    MessageDlg(Format(rsWarningValueNotSetInField, [lAid.Caption]), TMsgDlgType.mtWarning, [mbOK], nil);
+    MessageDlg(Format(rsWarningValueNotSetInField, [lAbid.Caption]), TMsgDlgType.mtWarning, [mbOK], nil);
     Exit(False);
   end;
 
@@ -154,11 +154,11 @@ begin
     if not Assigned(LAbonent) then
       Exit;
 
-    teAid.Text := LAbonent.Aid;
+    teAbid.Text := LAbonent.Abid;
 
     Channels := LAbonent.Channels;
     meChannelValues.Lines.BeginUpdate;
-    try
+(*!!!    try
       meChannelValues.Lines.Clear;
       if Assigned(Channels) then
       begin
@@ -190,7 +190,7 @@ begin
       end;
     finally
       meAttrValues.Lines.EndUpdate;
-    end;
+    end; *)
 
   except
     Log('TAbonentEditForm.SetEntity error', lrtError);

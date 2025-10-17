@@ -1,4 +1,4 @@
-unit AbonentFormUnit;
+unit AbonentsFormUnit;
 
 interface
 
@@ -10,18 +10,18 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  ParentBrokerUnit, ParentEditFormUnit,
-  AbonentBrokerUnit;
+  EntityBrokerUnit, ParentEditFormUnit,
+  AbonentsBrokerUnit;
 
 type
-  TAbonentForm = class(TListParentForm)
+  TAbonentsForm = class(TListParentForm)
   protected
     procedure Refresh(const AId: String = ''); override;
-    function CreateBroker: TParentBroker; override;
+    function CreateBroker: TEntityBroker; override;
     function CreateEditForm: TParentEditForm; override;
   end;
 
-function AbonentForm: TAbonentForm;
+function AbonentsForm: TAbonentsForm;
 
 implementation
 
@@ -30,24 +30,24 @@ implementation
 uses
   MainModule, uniGUIApplication, AbonentEditFormUnit;
 
-function AbonentForm: TAbonentForm;
+function AbonentsForm: TAbonentsForm;
 begin
-  Result := TAbonentForm(UniMainModule.GetFormInstance(TAbonentForm));
+  Result := TAbonentsForm(UniMainModule.GetFormInstance(TAbonentsForm));
 end;
 
 { TAbonentForm }
 
-function TAbonentForm.CreateBroker: TParentBroker;
+function TAbonentsForm.CreateBroker: TEntityBroker;
 begin
-  Result := TAbonentBroker.Create;
+  Result := TAbonentsBroker.Create;
 end;
 
-function TAbonentForm.CreateEditForm: TParentEditForm;
+function TAbonentsForm.CreateEditForm: TParentEditForm;
 begin
   Result := AbonentEditForm();
 end;
 
-procedure TAbonentForm.Refresh(const AId: String);
+procedure TAbonentsForm.Refresh(const AId: String);
 begin
   inherited Refresh(AId);
 end;
