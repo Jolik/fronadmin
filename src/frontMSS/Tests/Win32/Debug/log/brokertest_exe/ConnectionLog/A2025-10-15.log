@@ -1,4 +1,0 @@
-BrokerTest.exe: 00001D00: 00:04:19 [127.0.0.1]:Failed Sequence Recovery: SeqId: 8, Event: click
-BrokerTest.exe: 000001CC: 20:25:53 [127.0.0.1]:Failed Sequence Recovery: SeqId: 5, Event: click
-BrokerTest.exe: 000001CC: 20:25:53 [127.0.0.1]:Sequence sent from cache:  SeqId: 5
-BrokerTest.exe: 000001CC: 20:25:53 [127.0.0.1]:Processed: Id: 5, Evt: click, [PAp4JAmBTl111DBCDFB]

@@ -55,9 +55,16 @@ begin
   FComboIndex := TKeyValue<integer>.Create;
   FComboIndex.Add('server', 0);
   FComboIndex.Add('client', 1);
+
+  FComboIndex.Add('1', 0);
+  FComboIndex.Add('2', 1);
+  FComboIndex.Add('2g', 1);
+  FComboIndex.Add('2G', 1);
+
   FComboIndex.Add('light', 0);
   FComboIndex.Add('normal', 1);
   FComboIndex.Add('strong', 2);
+
   FComboIndex.Add('mitra', 0);
   FComboIndex.Add('unimas', 1);
   FComboIndex.Add('sriv', 2);
@@ -101,7 +108,7 @@ begin
   FrameConnections1.SetData(FSettings.Connections);
   FrameQueue1.SetData(FSettings.QueueSettings);
   FrameAType.SetDataIndex(FComboIndex.ValueByKey(FSettings.Atype, 0));
-  FrameProtocolVer.SetDataStr(FSettings.ProtocolVer);
+  FrameProtocolVer.SetDataIndex(FComboIndex.ValueByKey(FSettings.ProtocolVer, 0));
   // TODO FrameConnKey
   FrameAckCount.SetData(FSettings.AckCount);
   FrameAckTimeout.SetData(FSettings.AckTimeout);

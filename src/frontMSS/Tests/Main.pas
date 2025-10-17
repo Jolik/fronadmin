@@ -268,7 +268,7 @@ begin
   LinksBroker := TLinksBroker.Create();
   try
     var entity := LinksBroker.Info(lid);
-    if entity = nil then
+    if not (entity is TLink) then
     begin
       ShowMemo.Lines.Add('link not found');
       exit;
@@ -281,6 +281,8 @@ begin
         SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
       else exit;
     end;
+    showmemo.Lines.Add( (Link.Data as TLinkData).DataSettings.ClassName);
+
 
     SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
     SettingsFrame.Parent := ParentEditForm.pnClient;
