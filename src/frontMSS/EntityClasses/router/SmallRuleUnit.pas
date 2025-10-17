@@ -11,7 +11,7 @@ uses
 
 type
   /// <summary>
-  ///   Представляет правило маршрутизации небольшого формата.
+  ///   Represents a small-format routing rule.
   /// </summary>
   TSmallRule = class(TFieldSet)
   private
@@ -20,7 +20,7 @@ type
     FPriority: Integer;
     FHandlers: TFieldSetStringList;
     FBreakRule: Boolean;
-    FChannels: TFieldSetStringListsObject;
+    FChannels: TNamedStringListsObject;
     FIncFilters: TFilterList;
     FExcFilters: TFilterList;
     procedure ResetCollections;
@@ -38,7 +38,7 @@ type
     property Priority: Integer read FPriority write FPriority;
     property Handlers: TFieldSetStringList read FHandlers;
     property BreakRule: Boolean read FBreakRule write FBreakRule;
-    property Channels: TFieldSetStringListsObject read FChannels;
+    property Channels: TNamedStringListsObject read FChannels;
     property IncFilters: TFilterList read FIncFilters;
     property ExcFilters: TFilterList read FExcFilters;
   end;
@@ -82,22 +82,7 @@ begin
   if not FHandlers.Assign(SourceRule.Handlers) then
     Exit;
 
-  FChannels.Clear;
-  for var Index := 0 to SourceRule.Channels.Count - 1 do
-  begin
-    var Channel := TFieldSetStringList.Create;
-    try
-      if not Channel.Assign(SourceRule.Channels[Index]) then
-      begin
-        Channel.Free;
-        Continue;
-      end;
-      FChannels.Add(Channel);
-    except
-      Channel.Free;
-      raise;
-    end;
-  end;
+  FChannels.Assign(SourceRule.Channels);
 
   FIncFilters.Clear;
   for var Index := 0 to SourceRule.IncFilters.Count - 1 do
@@ -141,8 +126,7 @@ begin
   inherited Create;
 
   FHandlers := TFieldSetStringList.Create;
-  FHandlers.Name := HandlersKey;
-  FChannels := TFieldSetStringListsObject.Create;
+  FChannels := TNamedStringListsObject.Create;
   FIncFilters := TFilterList.Create;
   FExcFilters := TFilterList.Create;
 
@@ -187,34 +171,17 @@ begin
 
   Value := src.FindValue(HandlersKey);
   if Value is TJSONArray then
-  begin
-    FHandlers.Name := HandlersKey;
-    FHandlers.Values.Clear;
-    for var HandlerValue in TJSONArray(Value) do
-    begin
-      if HandlerValue is TJSONString then
-        FHandlers.Values.Add(TJSONString(HandlerValue).Value)
-      else if Assigned(HandlerValue) then
-        FHandlers.Values.Add(HandlerValue.Value);
-    end;
-  end;
+    FHandlers.ParseList(TJSONArray(Value))
+  else
+    FHandlers.ClearStrings;
 
   Value := src.FindValue(ChannelsKey);
   if Value is TJSONObject then
-  begin
+    FChannels.Parse(TJSONObject(Value))
+  else if Value is TJSONArray then
+    FChannels.ParseList(TJSONArray(Value))
+  else
     FChannels.Clear;
-    for var Pair in TJSONObject(Value) do
-    begin
-      var Channel := TFieldSetStringList.Create;
-      try
-        Channel.ParsePair(Pair);
-        FChannels.Add(Channel);
-      except
-        Channel.Free;
-        raise;
-      end;
-    end;
-  end;
 
   Value := src.FindValue(IncFiltersKey);
   if Value is TJSONArray then
@@ -232,10 +199,7 @@ end;
 procedure TSmallRule.ResetCollections;
 begin
   if Assigned(FHandlers) then
-  begin
-    FHandlers.Name := HandlersKey;
-    FHandlers.Values.Clear;
-  end;
+    FHandlers.ClearStrings;
 
   if Assigned(FChannels) then
     FChannels.Clear;
@@ -251,9 +215,7 @@ procedure TSmallRule.Serialize(dst: TJSONObject; const APropertyNames: TArray<st
 var
   HandlersArray: TJSONArray;
   ChannelsObject: TJSONObject;
-  ValuesArray: TJSONArray;
   FilterArray: TJSONArray;
-  ChannelList: TFieldSetStringList;
 begin
   if not Assigned(dst) then
     Exit;
@@ -265,8 +227,7 @@ begin
 
   HandlersArray := TJSONArray.Create;
   try
-    for var Handler in FHandlers.Values do
-      HandlersArray.Add(Handler);
+    FHandlers.SerializeList(HandlersArray);
     dst.AddPair(HandlersKey, HandlersArray);
   except
     HandlersArray.Free;
@@ -275,24 +236,7 @@ begin
 
   ChannelsObject := TJSONObject.Create;
   try
-    for var Index := 0 to FChannels.Count - 1 do
-    begin
-      ChannelList := FChannels[Index];
-      if not Assigned(ChannelList) then
-        Continue;
-      if ChannelList.Name = '' then
-        Continue;
-
-      ValuesArray := TJSONArray.Create;
-      try
-        for var Alias in ChannelList.Values do
-          ValuesArray.Add(Alias);
-        ChannelsObject.AddPair(ChannelList.Name, ValuesArray);
-      except
-        ValuesArray.Free;
-        raise;
-      end;
-    end;
+    FChannels.Serialize(ChannelsObject);
     dst.AddPair(ChannelsKey, ChannelsObject);
   except
     ChannelsObject.Free;

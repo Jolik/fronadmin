@@ -10,7 +10,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  ParentBrokerUnit, ParentEditFormUnit,
+  EntityBrokerUnit,
+  ParentEditFormUnit,
   SummaryTasksBrokerUnit;
 
 type
@@ -22,7 +23,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///
-    function CreateBroker(): TParentBroker; override;
+    function CreateBroker(): TEntityBroker; override;
 
     ///
     function CreateEditForm(): TParentEditForm; override;
@@ -47,7 +48,7 @@ end;
 
 { TSummaryTasksForm }
 
-function TSummaryTasksForm.CreateBroker: TParentBroker;
+function TSummaryTasksForm.CreateBroker: TEntityBroker;
 begin
   ///   ""
   Result := TSummaryTasksBroker.Create();

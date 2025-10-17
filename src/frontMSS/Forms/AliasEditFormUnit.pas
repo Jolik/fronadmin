@@ -50,7 +50,8 @@ end;
 function TAliasEditForm.Apply: Boolean;
 var
   LAlias: TAlias;
-  Channels: TFieldSetStringList;
+  Channels: TNamedStringListsObject;
+  ChannelList: TNamedStringList;
   Value: string;
 begin
   Result := inherited Apply();
@@ -70,14 +71,27 @@ begin
   Channels := LAlias.Channels;
   if Assigned(Channels) then
   begin
-    Channels.Name := teChannelName.Text;
-    Channels.Values.Clear;
+    Channels.Clear;
 
-    for var Index := 0 to meChannelValues.Lines.Count - 1 do
-    begin
-      Value := Trim(meChannelValues.Lines[Index]);
-      if Value <> '' then
-        Channels.Values.Add(Value);
+    ChannelList := TNamedStringList.Create;
+    try
+      ChannelList.Name := Trim(teChannelName.Text);
+      ChannelList.Values.ClearStrings;
+
+      for var Index := 0 to meChannelValues.Lines.Count - 1 do
+      begin
+        Value := Trim(meChannelValues.Lines[Index]);
+        if Value <> '' then
+          ChannelList.Values.AddString(Value);
+      end;
+
+      if ChannelList.Name <> '' then
+        Channels.Add(ChannelList)
+      else
+        ChannelList.Free;
+    except
+      ChannelList.Free;
+      raise;
     end;
   end;
 
@@ -116,7 +130,8 @@ end;
 procedure TAliasEditForm.SetEntity(AEntity: TEntity);
 var
   LAlias: TAlias;
-  Channels: TFieldSetStringList;
+  Channels: TNamedStringListsObject;
+  ChannelList: TNamedStringList;
 begin
   ///        -   !
   if not (AEntity is TAlias) then
@@ -134,25 +149,29 @@ begin
 
     teAlid.Text := LAlias.Alid;
 
-    Channels := LAlias.Channels;
-    if Assigned(Channels) then
+(*!!!!    Channels := LAlias.Channels;
+    if Assigned(Channels) and (Channels.Count > 0) then
     begin
-      teChannelName.Text := Channels.Name;
+      ChannelList := Channels[0];
+      if Assigned(ChannelList) then
+      begin
+        teChannelName.Text := ChannelList.Name;
 
-      meChannelValues.Lines.BeginUpdate;
-      try
-        meChannelValues.Lines.Clear;
-        for var Value in Channels.Values do
-          meChannelValues.Lines.Add(Value);
-      finally
-        meChannelValues.Lines.EndUpdate;
+        meChannelValues.Lines.BeginUpdate;
+        try
+          meChannelValues.Lines.Clear;
+          for var Value in ChannelList.Values.ToStringArray do
+            meChannelValues.Lines.Add(Value);
+        finally
+          meChannelValues.Lines.EndUpdate;
+        end;
       end;
     end
     else
     begin
       teChannelName.Text := '';
       meChannelValues.Lines.Clear;
-    end;
+    end; *)
 
   except
     Log('TAliasEditForm.SetEntity error', lrtError);

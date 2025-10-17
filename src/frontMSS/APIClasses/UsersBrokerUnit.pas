@@ -6,13 +6,13 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, UserUnit, ParentBrokerUnit;
+  EntityUnit, UserUnit, EntityBrokerUnit;
 
 type
   ///    API Users
-  TUsersBroker = class(TParentBroker)
+  TUsersBroker = class(TEntityBroker)
   protected
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     class function ClassType: TEntityClass; override;
     class function ListClassType: TEntityListClass; override;
   public
@@ -47,7 +47,7 @@ const
 
 { TUsersBroker }
 
-function TUsersBroker.BaseUrlPath: string;
+function TUsersBroker.GetBasePath: string;
 begin
   Result := constURLAclBasePath;
 end;
@@ -79,7 +79,7 @@ begin
   try
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
-      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLUsersList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLUsersList, RequestStream);
     finally
       RequestStream.Free;
     end;
@@ -120,7 +120,7 @@ begin
     Exit;
 
   try
-    URL := Format(BaseUrlPath + constURLUsersInfo, [AId]);
+    URL := Format(GetBasePath + constURLUsersInfo, [AId]);
     ResStr := MainHttpModuleUnit.GET(URL);
 
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
@@ -147,7 +147,7 @@ var
   JSONRequestStream: TStringStream;
   ResStr: String;
 begin
-  URL := BaseUrlPath + constURLUsersNew;
+  URL := GetBasePath + constURLUsersNew;
   JSONUser := AEntity.Serialize();
   JSONRequestStream := TStringStream.Create(JSONUser.ToJSON, TEncoding.UTF8);
   try
@@ -169,7 +169,7 @@ begin
   if not (AEntity is TUser) then
     Exit(false);
 
-  URL := Format(BaseUrlPath + constURLUsersUpdate, [(AEntity as TUser).Usid]);
+  URL := Format(GetBasePath + constURLUsersUpdate, [(AEntity as TUser).Usid]);
   JSONUser := AEntity.Serialize();
   JSONRequestStream := TStringStream.Create(JSONUser.ToJSON, TEncoding.UTF8);
   try
@@ -187,7 +187,7 @@ var
   ResStr: String;
   JSONRequestStream: TStringStream;
 begin
-  URL := Format(BaseUrlPath + constURLUsersRemove, [AId]);
+  URL := Format(GetBasePath + constURLUsersRemove, [AId]);
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try
     ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);

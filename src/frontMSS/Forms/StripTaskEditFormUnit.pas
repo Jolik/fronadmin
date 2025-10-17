@@ -8,12 +8,12 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel,
   LoggingUnit,
-  EntityUnit, StripTaskUnit;
+  EntityUnit, StripTaskUnit, uniMultiItem, uniComboBox, Math;
 
 type
   TStripTaskEditForm = class(TParentEditForm)
-    teModule: TUniEdit;
     lModule: TUniLabel;
+    cbModule: TUniComboBox;
   private
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
@@ -49,9 +49,9 @@ function TStripTaskEditForm.Apply : boolean;
 begin
   Result := inherited Apply();
 
-  if not Result then exit;
+  if not Result then Exit;
 
-  StripTask.Module := teModule.Text;
+  StripTask.Module := cbModule.Text;
 
   Result := true;
 end;
@@ -89,7 +89,7 @@ begin
     inherited SetEntity(AEntity);
 
     ///  выводим название модуля
-    teModule.Text := StripTask.Module;
+    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
 
   except
     Log('TStripTaskEditForm.SetEntity error', lrtError);

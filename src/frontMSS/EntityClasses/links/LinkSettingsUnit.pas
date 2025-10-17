@@ -29,7 +29,7 @@ type
     property Dump: boolean read FDump write FDump;
   end;
 
-type
+
   // TSocketSpecialDataSettings םאסענמךיט SOCKET_SPECIAL
   TSocketSpecialDataSettings = class (TDataSettings)
   private

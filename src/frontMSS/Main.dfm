@@ -31,6 +31,16 @@ object MainForm: TMainForm
     TabOrder = 6
     OnClick = btnAliasesClick
   end
+  object btnAliases: TUniButton
+    Left = 40
+    Top = 152
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1040#1083#1080#1072#1089#1099
+    TabOrder = 6
+    OnClick = btnAliasesClick
+  end
   object btnChannel: TUniButton
     Left = 40
     Top = 264

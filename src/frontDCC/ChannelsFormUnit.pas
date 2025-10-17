@@ -216,17 +216,17 @@ end;
 
 procedure TChannelsForm.SetupLayout;
 begin
-  // Убрать установку WindowState и Layout
+  // Remove WindowState and Layout setup
   //Self.Align := alClient;
   Self.Color := clWindow;
 
-  // Toolbar panel setup - использовать Align вместо фиксированных координат
+  // Toolbar panel setup - use Align instead of fixed coordinates
   ToolbarPanel.Align := alTop;
   ToolbarPanel.Height := 40;
   ToolbarPanel.Color := $F0F0F0;
   ToolbarPanel.BorderStyle := ubsNone;
 
-  // Position toolbar buttons относительно панели
+  // Position toolbar buttons relative to the panel
   SearchEdit.Left := 10;
   SearchEdit.Top := 8;
   SearchEdit.Width := 200;
@@ -257,7 +257,7 @@ begin
   RefreshButton.Width := 70;
   RefreshButton.Caption := 'Обновить';
 
-  // Main panel setup - занять всё доступное пространство
+  // Main panel setup - occupy all available space
   MainPanel.Align := alClient;
   MainPanel.BorderStyle := ubsNone;
 end;
@@ -366,7 +366,7 @@ begin
     InfoText := InfoText + 'Название: ' + ChannelDetails.GetValue<string>('caption', '') + #13#10;
     InfoText := InfoText + 'Имя: ' + ChannelDetails.GetValue<string>('name', '') + #13#10;
 
-    // Информация об очереди
+    // Queue information
     QueueObj := ChannelDetails.GetValue<TJSONObject>('queue');
     if Assigned(QueueObj) then
     begin
@@ -387,7 +387,7 @@ begin
       end;
     end;
 
-    // Информация о линке
+    // Link information
     LinkObj := ChannelDetails.GetValue<TJSONObject>('link');
     if Assigned(LinkObj) then
     begin
@@ -457,7 +457,7 @@ begin
     if DeleteChannel(ChannelsDataSet.FieldByName('ChID').AsString) then
       begin
         ShowMessage('Канал успешно удален');
-        LoadChannelsFromAPI; // Обновляем список
+        LoadChannelsFromAPI; // Refresh the list
       end;
   end
   else

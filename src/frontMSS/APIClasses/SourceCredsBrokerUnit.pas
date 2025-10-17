@@ -6,14 +6,14 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, SourceCredsUnit, ParentBrokerUnit;
+  EntityUnit, SourceCredsUnit, EntityBrokerUnit;
 
 type
   ///    API Source Credentials
-  TSourceCredsBroker = class (TParentBroker)
+  TSourceCredsBroker = class (TEntityBroker)
   protected
     ///      API
-    function BaseUrlPath: string; override;
+    function GetBasePath: string; override;
     ///
     ///     ,
     class function ClassType: TEntityClass; override;
@@ -67,7 +67,7 @@ const
 
 { TSourceCredsBroker }
 
-function TSourceCredsBroker.BaseUrlPath: string;
+function TSourceCredsBroker.GetBasePath: string;
 begin
   Result := constURLDataserverBasePath;
 end;
@@ -112,7 +112,7 @@ begin
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
       ///    -
-      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLSourceCredsList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLSourceCredsList, RequestStream);
       ///
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
@@ -173,7 +173,7 @@ begin
     exit;
 
   try
-    URL := Format(BaseUrlPath + constURLSourceCredsInfo, [AId]);
+    URL := Format(GetBasePath + constURLSourceCredsInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -215,7 +215,7 @@ begin
   Result := false;
 
   ///
-  URL := BaseUrlPath + constURLSourceCredsNew;
+  URL := GetBasePath + constURLSourceCredsNew;
   ///     JSON
   JSONCreds := AEntity.Serialize();
 
@@ -251,7 +251,7 @@ begin
     exit;
 
   ///
-  URL := Format(BaseUrlPath + constURLSourceCredsUpdate, [(AEntity as TSourceCreds).Crid]);
+  URL := Format(GetBasePath + constURLSourceCredsUpdate, [(AEntity as TSourceCreds).Crid]);
 
   ///     JSON
   JSONCreds := AEntity.Serialize();
@@ -282,7 +282,7 @@ var
 begin
   Result := false;
 
-  URL := Format(BaseUrlPath + constURLSourceCredsRemove, [AId]);
+  URL := Format(GetBasePath + constURLSourceCredsRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

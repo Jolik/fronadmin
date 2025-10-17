@@ -7,12 +7,16 @@
 uses
   System.SysUtils,
   System.JSON,
+  System.DateUtils,
+  IdURI,
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
+  AbonensBrokerUnit in '..\APIClasses\AbonensBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
+  ProfilesBrokerUnit in '..\APIClasses\ProfilesBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
   MonitoringTasksBrokerUnit in '..\APIClasses\MonitoringTasksBrokerUnit.pas',
-  ParentBrokerUnit in '..\APIClasses\ParentBrokerUnit.pas',
+  EntityBrokerUnit in '..\APIClasses\EntityBrokerUnit.pas',
   QueuesBrokerUnit in '..\APIClasses\QueuesBrokerUnit.pas',
   AliasesBrokerUnit in '..\APIClasses\AliasesBrokerUnit.pas',
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
@@ -22,36 +26,653 @@ uses
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
+  TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
+  TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
+  StripTaskSourceBrokerUnit in '..\APIClasses\StripTaskSourceBrokerUnit.pas',
+  SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
+  MonitoringTaskSourceBrokerUnit in '..\APIClasses\MonitoringTaskSourceBrokerUnit.pas',
   LoggingUnit in '..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
   GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
+  AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
   RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
-  TDsGroupUnit in '..\EntityClasses\dataserver\TDsGroupUnit.pas',
+  DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
+  ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
-  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas';
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
+
+procedure ListSummaryTaskTypes();
+var
+  TaskTypesBroker: TTaskTypesBroker;
+  TaskTypesList: TFieldSetList;
+  PageCount: Integer;
+begin
+  try
+    TaskTypesBroker := TTaskTypesBroker.Create;
+    try
+      TaskTypesList := nil;
+      try
+        TaskTypesList := TaskTypesBroker.List(PageCount);
+
+        Writeln('---------- Summary Task Types ----------');
+
+        if Assigned(TaskTypesList) and (TaskTypesList.Count > 0) then
+        begin
+          for var FieldSet: TFieldSet in TaskTypesList do
+          begin
+            if not (FieldSet is TTaskTypes) then
+              Continue;
+
+            var TaskType := TTaskTypes(FieldSet);
+            Writeln(Format('Class: %s | Address: %p', [TaskType.ClassName, Pointer(TaskType)]));
+            Writeln('Name: ' + TaskType.Name);
+            Writeln('Caption: ' + TaskType.Caption);
+
+            Writeln('As JSON:');
+            var Json := TaskType.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Summary task types list is empty.');
+
+      finally
+        TaskTypesList.Free;
+      end;
+    finally
+      TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListStripTaskSources();
+var
+  StripTasksBroker: TStripTasksBroker;
+  StripTaskSourcesBroker: TStripTaskSourcesBroker;
+  StripTaskList: TEntityList;
+  StripTaskEntity: TEntity;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  StripTaskPageCount: Integer;
+  TaskSourcePageCount: Integer;
+  FirstStripTaskTid: string;
+begin
+  try
+    StripTasksBroker := TStripTasksBroker.Create;
+    try
+      StripTaskList := nil;
+      FirstStripTaskTid := '';
+      try
+        StripTaskList := StripTasksBroker.List(StripTaskPageCount);
+
+        Writeln('---------- Strip Tasks List ----------');
+
+        if Assigned(StripTaskList) and (StripTaskList.Count > 0) then
+        begin
+          for StripTaskEntity in StripTaskList do
+          begin
+            var StripTask := StripTaskEntity as TStripTask;
+            Writeln(Format('Class: %s | Address: %p', [StripTask.ClassName, Pointer(StripTask)]));
+            Writeln('Tid: ' + StripTask.Tid);
+            Writeln('Name: ' + StripTask.Name);
+            Writeln('Enabled: ' + BoolToStr(StripTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := StripTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          FirstStripTaskTid := (StripTaskList.Items[0] as TStripTask).Tid;
+        end
+        else
+          Writeln('Strip tasks list is empty.');
+
+      finally
+        StripTaskList.Free;
+      end;
+    finally
+      StripTasksBroker.Free;
+    end;
+
+    if FirstStripTaskTid = '' then
+    begin
+      Writeln('No strip task available to request strip task sources.');
+      Exit;
+    end;
+
+    StripTaskSourcesBroker := TStripTaskSourcesBroker.Create;
+    try
+      StripTaskSourcesBroker.AddPath := '/' + FirstStripTaskTid;
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := StripTaskSourcesBroker.List(TaskSourcePageCount);
+
+        Writeln('---------- Strip Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Strip Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := StripTaskSourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Strip task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      StripTaskSourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListSummaryTaskSources();
+var
+  SummaryTasksBroker: TSummaryTasksBroker;
+  SummaryTaskSourcesBroker: TSummaryTaskSourcesBroker;
+  SummaryTaskList: TEntityList;
+  SummaryTaskEntity: TEntity;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  SummaryTaskPageCount: Integer;
+  TaskSourcePageCount: Integer;
+  FirstSummaryTaskTid: string;
+begin
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create;
+    try
+      SummaryTaskList := nil;
+      FirstSummaryTaskTid := '';
+      try
+        SummaryTaskList := SummaryTasksBroker.List(SummaryTaskPageCount);
+
+        Writeln('---------- Summary Tasks List ----------');
+
+        if Assigned(SummaryTaskList) and (SummaryTaskList.Count > 0) then
+        begin
+          for SummaryTaskEntity in SummaryTaskList do
+          begin
+            var SummaryTask := SummaryTaskEntity as TSummaryTask;
+            Writeln(Format('Class: %s | Address: %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
+            Writeln('Tid: ' + SummaryTask.Tid);
+            Writeln('Name: ' + SummaryTask.Name);
+            Writeln('Enabled: ' + BoolToStr(SummaryTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := SummaryTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          FirstSummaryTaskTid := (SummaryTaskList.Items[0] as TSummaryTask).Tid;
+        end
+        else
+          Writeln('Summary tasks list is empty.');
+
+      finally
+        SummaryTaskList.Free;
+      end;
+    finally
+      SummaryTasksBroker.Free;
+    end;
+
+    if FirstSummaryTaskTid = '' then
+    begin
+      Writeln('No summary task available to request summary task sources.');
+      Exit;
+    end;
+
+    SummaryTaskSourcesBroker := TSummaryTaskSourcesBroker.Create;
+    try
+      SummaryTaskSourcesBroker.AddPath := '/' + FirstSummaryTaskTid;
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := SummaryTaskSourcesBroker.List(TaskSourcePageCount);
+
+        Writeln('---------- Summary Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Summary Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := SummaryTaskSourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Summary task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      SummaryTaskSourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListMonitoringTaskSources();
+var
+  MonitoringTasksBroker: TMonitoringTasksBroker;
+  MonitoringTaskSourcesBroker: TMonitoringTaskSourcesBroker;
+  MonitoringTaskList: TEntityList;
+  MonitoringTaskEntity: TEntity;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  MonitoringTaskPageCount: Integer;
+  TaskSourcePageCount: Integer;
+  FirstMonitoringTaskTid: string;
+begin
+  try
+    MonitoringTasksBroker := TMonitoringTasksBroker.Create;
+    try
+      MonitoringTaskList := nil;
+      FirstMonitoringTaskTid := '';
+      try
+        MonitoringTaskList := MonitoringTasksBroker.List(MonitoringTaskPageCount);
+
+        Writeln('---------- Monitoring Tasks List ----------');
+
+        if Assigned(MonitoringTaskList) and (MonitoringTaskList.Count > 0) then
+        begin
+          for MonitoringTaskEntity in MonitoringTaskList do
+          begin
+            var MonitoringTask := MonitoringTaskEntity as TMonitoringTask;
+            Writeln(Format('Class: %s | Address: %p', [MonitoringTask.ClassName, Pointer(MonitoringTask)]));
+            Writeln('Tid: ' + MonitoringTask.Tid);
+            Writeln('Name: ' + MonitoringTask.Name);
+            Writeln('Enabled: ' + BoolToStr(MonitoringTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := MonitoringTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          FirstMonitoringTaskTid := (MonitoringTaskList.Items[0] as TMonitoringTask).Tid;
+        end
+        else
+          Writeln('Monitoring tasks list is empty.');
+
+      finally
+        MonitoringTaskList.Free;
+      end;
+    finally
+      MonitoringTasksBroker.Free;
+    end;
+
+    if FirstMonitoringTaskTid = '' then
+    begin
+      Writeln('No monitoring task available to request monitoring task sources.');
+      Exit;
+    end;
+
+    MonitoringTaskSourcesBroker := TMonitoringTaskSourcesBroker.Create;
+    try
+      MonitoringTaskSourcesBroker.AddPath := '/' + FirstMonitoringTaskTid;
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := MonitoringTaskSourcesBroker.List(TaskSourcePageCount);
+
+        Writeln('---------- Monitoring Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Monitoring Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := MonitoringTaskSourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Monitoring task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      MonitoringTaskSourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListProfiles();
+var
+  LinksBroker: TLinksBroker;
+  ProfilesBroker: TProfilesBroker;
+  LinksList: TEntityList;
+  ProfilesList: TEntityList;
+  LinkEntity: TEntity;
+  ProfileEntity: TEntity;
+  LinkPageCount: Integer;
+  ProfilePageCount: Integer;
+  FirstLinkLid: string;
+begin
+  try
+    LinksBroker := TLinksBroker.Create;
+    try
+      LinksList := nil;
+      FirstLinkLid := '';
+      try
+        LinksList := LinksBroker.List(LinkPageCount);
+
+        Writeln('---------- Links List ----------');
+
+        if Assigned(LinksList) and (LinksList.Count > 0) then
+        begin
+          for LinkEntity in LinksList do
+          begin
+            var Link := LinkEntity as TLink;
+            Writeln(Format('Class: %s | Address: %p', [Link.ClassName, Pointer(Link)]));
+            Writeln('Lid: ' + Link.Lid);
+            Writeln('Name: ' + Link.Name);
+            Writeln('Dir: ' + Link.Dir);
+            Writeln('Status: ' + Link.Status);
+            Writeln('Comsts: ' + Link.Comsts);
+            Writeln('Last activity time: ' + IntToStr(Link.LastActivityTime));
+            Writeln('----------');
+          end;
+
+          FirstLinkLid := (LinksList.Items[0] as TLink).Lid;
+        end
+        else
+          Writeln('Links list is empty.');
+
+      finally
+        LinksList.Free;
+      end;
+    finally
+      LinksBroker.Free;
+    end;
+
+    if FirstLinkLid = '' then
+    begin
+      Writeln('No link available to request profiles.');
+      Exit;
+    end;
+
+    ProfilesBroker := TProfilesBroker.Create;
+    try
+      ProfilesBroker.AddPath := '/' + FirstLinkLid;
+
+      ProfilesList := nil;
+      try
+        ProfilesList := ProfilesBroker.List(ProfilePageCount);
+
+        Writeln('---------- Profiles List ----------');
+
+        if Assigned(ProfilesList) and (ProfilesList.Count > 0) then
+        begin
+          for ProfileEntity in ProfilesList do
+          begin
+            var Profile := ProfileEntity as TProfile;
+            Writeln(Format('Class: %s | Address: %p', [Profile.ClassName, Pointer(Profile)]));
+            Writeln('Id: ' + Profile.Id);
+            Writeln('Name: ' + Profile.Name);
+            Writeln('Description: ' + Profile.Description);
+
+            var Body := Profile.ProfileBody;
+            if Assigned(Body) then
+            begin
+              var Rule := Body.Rule;
+              if Assigned(Rule) then
+              begin
+                Writeln('Rule priority: ' + IntToStr(Rule.Priority));
+                Writeln('Rule doubles: ' + BoolToStr(Rule.Doubles, True));
+              end;
+
+              var Play := Body.Play;
+              if Assigned(Play) and Assigned(Play.FTA) then
+              begin
+                Writeln('FTA name: ' + Play.FTA.Name);
+                Writeln('FTA values count: ' + IntToStr(Play.FTA.Values.Count));
+              end;
+            end;
+
+            Writeln('As JSON:');
+            var Json := Profile.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Profiles list is empty.');
+
+      finally
+        ProfilesList.Free;
+      end;
+    finally
+      ProfilesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
 
 procedure ListRouterSource();
 var
@@ -137,6 +758,95 @@ begin
       end;
     finally
       RouterSourceBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListAbonents();
+var
+  AbonentsBroker: TAbonentsBroker;
+  AbonentList: TEntityList;
+  AbonentEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    AbonentsBroker := TAbonentsBroker.Create;
+    try
+      AbonentList := nil;
+      try
+        AbonentList := AbonentsBroker.List(PageCount);
+
+        Writeln('---------- Abonents List ----------');
+
+        if Assigned(AbonentList) then
+        begin
+          var FirstAbonent: TAbonent := nil;
+
+          if AbonentList.Count > 0 then
+            FirstAbonent := AbonentList.Items[0] as TAbonent;
+
+          for AbonentEntity in AbonentList do
+          begin
+            var Abonent := AbonentEntity as TAbonent;
+            Writeln(Format('Class: %s | Address: %p', [Abonent.ClassName, Pointer(Abonent)]));
+            Writeln('Abid: ' + Abonent.Abid);
+            Writeln('Name: ' + Abonent.Name);
+            Writeln('Caption: ' + Abonent.Caption);
+            Writeln('Channels count: ' + IntToStr(Abonent.Channels.Count));
+            Writeln('Attr pairs count: ' + IntToStr(Abonent.Attr.Count));
+
+            Writeln('As JSON:');
+            var Json := Abonent.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstAbonent) then
+          begin
+            Writeln('---------- Abonent Info ----------');
+            Writeln('Requesting info for: ' + FirstAbonent.Abid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := AbonentsBroker.Info(FirstAbonent.Abid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoAbonent := InfoEntity as TAbonent;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoAbonent.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Abonents list is empty.');
+
+      finally
+        AbonentList.Free;
+      end;
+    finally
+      AbonentsBroker.Free;
     end;
   except
     on E: Exception do
@@ -265,7 +975,7 @@ begin
             Writeln('Rule position: ' + IntToStr(Rule.Rule.Position));
             Writeln('Rule doubles: ' + BoolToStr(Rule.Rule.Doubles, True));
             Writeln('Rule break: ' + BoolToStr(Rule.Rule.BreakRule, True));
-            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Values.Count));
+            Writeln('Handlers count: ' + IntToStr(Rule.Rule.Handlers.Count));
             Writeln('Channels count: ' + IntToStr(Rule.Rule.Channels.Count));
             Writeln('Inc filters count: ' + IntToStr(Rule.Rule.IncFilters.Count));
             Writeln('Exc filters count: ' + IntToStr(Rule.Rule.ExcFilters.Count));
@@ -600,17 +1310,94 @@ begin
 end;
 
 
+procedure GetLogs();
+
+var
+  StartTimeISO, EndTimeISO: string;
+  QueryParam, Url, Response: string;
+  JsonValue: TJSONValue;
+  Logs: TLogs;
+begin
+  try
+    EndTimeISO := DateToISO8601(Now, False);
+    StartTimeISO := DateToISO8601(IncMinute(Now, -10), False);
+
+    QueryParam := '{level="error"}';
+    Url := Format('/signals/logs/query_range?query=%s&start=%s&end=%s', [
+      TIdURI.ParamsEncode(QueryParam),
+      TIdURI.ParamsEncode(StartTimeISO),
+      TIdURI.ParamsEncode(EndTimeISO)
+    ]);
+
+    Url := '/signals/api/v1/logs/query_range?query={level="error"}&start=2025-10-15T00:40:51.781Z&end=2025-10-16T23:40:51.781Z';
+
+    try
+      Response := GET(Url);
+    except
+      on E: Exception do
+      begin
+        Writeln('Failed to query logs from API: ' + E.Message);
+        Response := '{}';
+      end;
+    end;
+
+    JsonValue := TJSONObject.ParseJSONValue(Response);
+    try
+      if JsonValue is TJSONObject then
+      begin
+        Logs := TLogs.Create(TJSONObject(JsonValue));
+        try
+          Writeln('---------- Logs ----------');
+          Writeln('Status: ' + Logs.Status);
+          Writeln('Result type: ' + Logs.ResultType);
+          Writeln('Request query: ' + Logs.RequestQuery);
+          Writeln('Request limit: ' + IntToStr(Logs.RequestLimit));
+          Writeln('Request start: ' + Logs.RequestStart);
+          Writeln('Request end: ' + Logs.RequestEnd);
+          Writeln('Streams count: ' + IntToStr(Logs.Results.Count));
+          if Logs.StatisticsJson <> '' then
+            Writeln('Statistics: ' + Logs.StatisticsJson);
+
+          if Logs.Results.Count > 0 then
+          begin
+            var FirstResult := Logs.Results[0];
+            Writeln('First stream host: ' + FirstResult.Host);
+            Writeln('First stream container: ' + FirstResult.ContainerName);
+            Writeln('First stream entries: ' + IntToStr(Length(FirstResult.Entries)));
+          end;
+          Writeln('----------');
+        finally
+          Logs.Free;
+        end;
+      end
+      else
+        Writeln('Logs response is not a JSON object.');
+    finally
+      JsonValue.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 begin
   try
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-      ListAliases();
+//    ListSummaryTaskTypes();
+//    ListStripTaskSources();
+//    ListSummaryTaskSources();
+//    ListMonitoringTaskSources();
+//      ListProfiles();
+      ListAbonents();
+//      ListAliases();
 //      ListRules();
 //      ListDsGroups();
 //      ListUsers();
 
-      // оставить консоль незакрытой до нажатия Enter
+      // keep the console open until Enter is pressed
       Writeln('press enter to finish...');
       Readln;
 

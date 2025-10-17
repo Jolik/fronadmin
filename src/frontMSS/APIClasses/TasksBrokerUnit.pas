@@ -6,11 +6,11 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, TaskUnit, ParentBrokerUnit;
+  EntityUnit, TaskUnit, EntityBrokerUnit;
 
 type
   ///  брокер для API tasks
-  TTasksBroker = class (TParentBroker)
+  TTasksBroker = class (TEntityBroker)
   private
   protected
     ///  метод возвращает конкретный тип сущности с которым работает брокер
@@ -102,7 +102,7 @@ begin
     JSONResult := TJSONObject.Create;
     try
       ///  делаем запрос
-      ResStr := MainHttpModuleUnit.GET(BaseUrlPath + constURLTaskGetList);
+      ResStr := MainHttpModuleUnit.GET(GetBasePath + constURLTaskGetList);
       ///  парсим результат
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       ///  объект - ответ
@@ -155,7 +155,7 @@ begin
     exit;
 
   try
-    URL := Format(BaseUrlPath + constURLTaskGetOneInfo, [AId]);
+    URL := Format(GetBasePath + constURLTaskGetOneInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -223,7 +223,7 @@ var
 
 begin
   ///  строим запрос
-  URL := BaseUrlPath + constURLTaskNew;
+  URL := GetBasePath + constURLTaskNew;
   ///  получаем из сущности JSON
   JSONTask := AEntity.Serialize();
 
@@ -260,7 +260,7 @@ begin
     exit;
 
   ///  строим запрос
-  URL := Format(BaseUrlPath + constURLTaskUpdate, [(AEntity as TTask).TId]);
+  URL := Format(GetBasePath + constURLTaskUpdate, [(AEntity as TTask).TId]);
 
   ///  получаем из сущности JSON
   JSONTask := AEntity.Serialize();
@@ -292,7 +292,7 @@ var
   JSONRequestStream: TStringStream;
 
 begin
-  URL := Format(BaseUrlPath + constURLTaskDelete, [AId]);
+  URL := Format(GetBasePath + constURLTaskDelete, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
 
