@@ -173,6 +173,26 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\AliasEditFormUnit.pas">
+            <Form>AliasEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\AliasesFormUnit.pas">
+            <Form>AliasesForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\AbonentEditFormUnit.pas">
+            <Form>AbonentEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\AbonentFormUnit.pas">
+            <Form>AbonentForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="Forms\RouterSourceEditFormUnit.pas">
             <Form>RouterSourceEditForm</Form>
             <FormType>dfm</FormType>
@@ -190,6 +210,8 @@
         <DCCReference Include="APIClasses\ParentBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\RouterSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\AbonentBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\AliasesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
@@ -199,6 +221,8 @@
         <DCCReference Include="EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\AliasUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\AbonentUnit.pas"/>
         <DCCReference Include="EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
