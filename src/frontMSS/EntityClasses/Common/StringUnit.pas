@@ -1,4 +1,4 @@
-﻿unit StringUnit;
+unit StringUnit;
 
 interface
 
