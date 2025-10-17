@@ -65,6 +65,7 @@ const
   constURLTaskSourceNew = '/sources/new';
   constURLTaskSourceUpdate = '/sources/%s/update';
   constURLTaskSourceDelete = '/sources/%s/remove';
+
   constURLTaskSourceBaseSuffix = '/tasks';
 
 function TTaskSourcesBroker.GetServicePath: string;

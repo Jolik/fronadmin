@@ -8,7 +8,7 @@ uses
 
 type
   /// <summary>
-  ///   Элемент списка строк.
+  ///   String list item.
   /// </summary>
   TFieldSetString = class(TFieldSet)
   private
@@ -22,22 +22,22 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Разбирает значение из произвольного JSON-элемента.
+    ///   Parses a value from an arbitrary JSON element.
     /// </summary>
     procedure ParseValue(const AValue: TJSONValue);
     /// <summary>
-    ///   Создаёт JSON-представление строки.
+    ///   Creates a JSON representation of the string.
     /// </summary>
     function SerializeValue: TJSONValue;
 
     /// <summary>
-    ///   Хранимое текстовое значение.
+    ///   Stored text value.
     /// </summary>
     property Value: string read FValue write FValue;
   end;
 
   /// <summary>
-  ///   Список строковых значений.
+  ///   List of string values.
   /// </summary>
   TFieldSetStringList = class(TFieldSetList)
   private
@@ -55,15 +55,15 @@ type
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; override;
 
     /// <summary>
-    ///   Добавление нового значения.
+    ///   Adds a new value.
     /// </summary>
     procedure AddString(const AValue: string);
     /// <summary>
-    ///   Очистка списка.
+    ///   Clears the list.
     /// </summary>
     procedure ClearStrings;
     /// <summary>
-    ///   Представление содержимого в виде массива строк.
+    ///   Represents the contents as an array of strings.
     /// </summary>
     function ToStringArray: TArray<string>;
 
@@ -72,7 +72,7 @@ type
   end;
 
   /// <summary>
-  ///   Именованный список строк вида "имя": ["значения"].
+  ///   Named list of strings in the form "name": ["values"].
   /// </summary>
   TNamedStringList = class(TFieldSet)
   private
@@ -91,22 +91,22 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Разбор пары JSON.
+    ///   Parses a JSON pair.
     /// </summary>
     procedure ParsePair(APair: TJSONPair; const APropertyNames: TArray<string> = nil);
 
     /// <summary>
-    ///   Имя набора строк.
+    ///   Name of the string set.
     /// </summary>
     property Name: string read FName write FName;
     /// <summary>
-    ///   Значения, связанные с именем.
+    ///   Values associated with the name.
     /// </summary>
     property Values: TFieldSetStringList read FValues;
   end;
 
   /// <summary>
-  ///   Коллекция именованных списков строк.
+  ///   Collection of named string lists.
   /// </summary>
   TNamedStringListList = class(TFieldSetList)
   private
@@ -129,7 +129,7 @@ type
   end;
 
   /// <summary>
-  ///   JSON-объект с именованными списками строк.
+  ///   JSON object with named string lists.
   /// </summary>
   TNamedStringListsObject = class(TNamedStringListList)
   public

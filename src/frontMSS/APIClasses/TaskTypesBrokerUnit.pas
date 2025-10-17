@@ -11,7 +11,7 @@ uses
   FieldSetBrokerUnit;
 
 type
-  /// <summary>Брокер API типов задач summary.</summary>
+  /// <summary>API broker for summary task types.</summary>
   TTaskTypesBroker = class(TFieldSetBroker)
   protected
     function BaseUrlPath: string; override;

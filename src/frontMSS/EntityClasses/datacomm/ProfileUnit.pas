@@ -1,4 +1,4 @@
-unit ProfileUnit;
+﻿unit ProfileUnit;
 
 interface
 
@@ -10,7 +10,7 @@ uses
 
 type
   /// <summary>
-  ///   Router profile playback settings.
+  ///   Настройки воспроизведения профиля маршрутизатора.
   /// </summary>
   TProfilePlay = class(TFieldSet)
   private
@@ -27,7 +27,7 @@ type
   end;
 
   /// <summary>
-  ///   Represents the router profile body.
+  ///   Представляет тело профиля маршрутизатора.
   /// </summary>
   TProfileBody = class(TBody)
   private
@@ -46,7 +46,7 @@ type
   end;
 
   /// <summary>
-  ///   Router profile.
+  ///   Профиль маршрутизатора.
   /// </summary>
   TProfile = class(TEntity)
   private
@@ -65,7 +65,7 @@ type
   end;
 
   /// <summary>
-  ///   List of router profiles.
+  ///   Список профилей маршрутизатора.
   /// </summary>
   TProfileList = class(TEntityList)
   public
