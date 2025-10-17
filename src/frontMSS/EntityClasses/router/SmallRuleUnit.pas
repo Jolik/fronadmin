@@ -11,7 +11,7 @@ uses
 
 type
   /// <summary>
-  ///   Представляет правило маршрутизации небольшого формата.
+  ///   Represents a small-format routing rule.
   /// </summary>
   TSmallRule = class(TFieldSet)
   private

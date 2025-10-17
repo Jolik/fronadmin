@@ -8,21 +8,21 @@ uses
 
 type
   /// <summary>
-  ///   Описание отдельной записи лога.
+  ///   Description of a single log entry.
   /// </summary>
   TLogEntry = record
     /// <summary>
-    ///   Метка времени сообщения в наносекундах от монотонного таймера.
+    ///   Message timestamp in nanoseconds from the monotonic timer.
     /// </summary>
     Timestamp: string;
     /// <summary>
-    ///   JSON-представление сообщения.
+    ///   JSON representation of the message.
     /// </summary>
     Payload: string;
   end;
 
   /// <summary>
-  ///   Результат запроса логов.
+  ///   Result of the log query.
   /// </summary>
   TLogResult = class(TFieldSet)
   private
@@ -42,37 +42,37 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Имя контейнера, предоставившего лог.
+    ///   Name of the container that provided the log.
     /// </summary>
     property ContainerName: string read FContainerName write FContainerName;
     /// <summary>
-    ///   Путь к файлу логов на хосте Docker.
+    ///   Path to the log file on the Docker host.
     /// </summary>
     property Filename: string read FFilename write FFilename;
     /// <summary>
-    ///   Имя хоста Docker.
+    ///   Docker host name.
     /// </summary>
     property Host: string read FHost write FHost;
     /// <summary>
-    ///   Источник потока вывода.
+    ///   Source of the output stream.
     /// </summary>
     property Source: string read FSource write FSource;
     /// <summary>
-    ///   Имя сервиса Docker Swarm.
+    ///   Docker Swarm service name.
     /// </summary>
     property SwarmService: string read FSwarmService write FSwarmService;
     /// <summary>
-    ///   Имя стека Docker Swarm.
+    ///   Docker Swarm stack name.
     /// </summary>
     property SwarmStack: string read FSwarmStack write FSwarmStack;
     /// <summary>
-    ///   Список записей, возвращённых Loki.
+    ///   List of entries returned by Loki.
     /// </summary>
     property Entries: TArray<TLogEntry> read FEntries write FEntries;
   end;
 
   /// <summary>
-  ///   Ответ сервиса логов.
+  ///   Response from the logging service.
   /// </summary>
   TLogs = class(TFieldSet)
   private
@@ -102,55 +102,55 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     /// <summary>
-    ///   Статус ответа сервиса.
+    ///   Status of the service response.
     /// </summary>
     property Status: string read FStatus write FStatus;
     /// <summary>
-    ///   Тип результата (streams и т.п.).
+    ///   Result type (streams, etc.).
     /// </summary>
     property ResultType: string read FResultType write FResultType;
     /// <summary>
-    ///   Тип ошибки (если status=error).
+    ///   Error type (when status=error).
     /// </summary>
     property ErrorType: string read FErrorType write FErrorType;
     /// <summary>
-    ///   Текст ошибки (если status=error).
+    ///   Error text (when status=error).
     /// </summary>
     property Error: string read FError write FError;
     /// <summary>
-    ///   Коллекция потоков с логами.
+    ///   Collection of streams with logs.
     /// </summary>
     property Results: TObjectList<TLogResult> read FResults;
     /// <summary>
-    ///   Статистика выполнения запроса (в сыром JSON-виде).
+    ///   Request execution statistics (in raw JSON form).
     /// </summary>
     property StatisticsJson: string read FStatisticsJson write FStatisticsJson;
     /// <summary>
-    ///   Исходный запрос (query параметр).
+    ///   Original query (the query parameter).
     /// </summary>
     property RequestQuery: string read FRequestQuery write FRequestQuery;
     /// <summary>
-    ///   Ограничение количества записей.
+    ///   Limit on the number of entries.
     /// </summary>
     property RequestLimit: Integer read FRequestLimit write FRequestLimit;
     /// <summary>
-    ///   Временная метка начала выборки.
+    ///   Timestamp of the selection start.
     /// </summary>
     property RequestStart: string read FRequestStart write FRequestStart;
     /// <summary>
-    ///   Временная метка окончания выборки.
+    ///   Timestamp of the selection end.
     /// </summary>
     property RequestEnd: string read FRequestEnd write FRequestEnd;
     /// <summary>
-    ///   Направление чтения (backward / forward).
+    ///   Read direction (backward / forward).
     /// </summary>
     property RequestDirection: string read FRequestDirection write FRequestDirection;
     /// <summary>
-    ///   Регулярное выражение фильтра.
+    ///   Filter regular expression.
     /// </summary>
     property RequestRegexp: string read FRequestRegexp write FRequestRegexp;
     /// <summary>
-    ///   Шаг агрегации (если указан).
+    ///   Aggregation step (if specified).
     /// </summary>
     property RequestStep: string read FRequestStep write FRequestStep;
   end;

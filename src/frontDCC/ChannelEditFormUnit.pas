@@ -397,13 +397,13 @@ begin
   try
     if FIsEditMode then
     begin
-      // Для обновления
+      // For updates
       JSONObj.AddPair('caption', ChannelCaptionEdit.Text);
       JSONObj.AddPair('name', ChannelNameEdit.Text);
     end
     else
     begin
-      // Для создания
+      // For creation
       JSONObj.AddPair('compid', '85697f9f-b80d-4668-8ed2-2f70ed825eee');
       JSONObj.AddPair('depid', '4cf0dbf0-820b-4e05-a819-d6d1ec5652f0');
       JSONObj.AddPair('name', ChannelNameEdit.Text);
@@ -420,7 +420,7 @@ begin
     LimitsObj.AddPair('critical', TJSONNumber.Create(StrToInt(CriticalLimitEdit.Text)));
     QueueObj.AddPair('limits', LimitsObj);
 
-    QueueObj.AddPair('caption', ChannelCaptionEdit.Text); // Тот же caption что и в корне
+    QueueObj.AddPair('caption', ChannelCaptionEdit.Text); // Same caption as in the root
     QueueObj.AddPair('filters', TJSONArray.Create);
 
     QueueObj.AddPair('compid', '85697f9f-b80d-4668-8ed2-2f70ed825eee');
@@ -447,7 +447,7 @@ begin
     LinkObj.AddPair('compid', '85697f9f-b80d-4668-8ed2-2f70ed825eee');
     LinkObj.AddPair('depid', '4cf0dbf0-820b-4e05-a819-d6d1ec5652f0');
 
-    // Link data and settings - исправленная структура
+    // Link data and settings - corrected structure
     DataObj := TJSONObject.Create;
     SettingsObj := TJSONObject.Create;
 

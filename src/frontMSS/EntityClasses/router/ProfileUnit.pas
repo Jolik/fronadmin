@@ -10,7 +10,7 @@ uses
 
 type
   /// <summary>
-  ///   Настройки воспроизведения профиля маршрутизатора.
+  ///   Router profile playback settings.
   /// </summary>
   TProfilePlay = class(TFieldSet)
   private
@@ -27,7 +27,7 @@ type
   end;
 
   /// <summary>
-  ///   Представляет тело профиля маршрутизатора.
+  ///   Represents the router profile body.
   /// </summary>
   TProfileBody = class(TBody)
   private
@@ -46,7 +46,7 @@ type
   end;
 
   /// <summary>
-  ///   Профиль маршрутизатора.
+  ///   Router profile.
   /// </summary>
   TProfile = class(TEntity)
   private
@@ -65,7 +65,7 @@ type
   end;
 
   /// <summary>
-  ///   Список профилей маршрутизатора.
+  ///   List of router profiles.
   /// </summary>
   TProfileList = class(TEntityList)
   public

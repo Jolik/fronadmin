@@ -9,7 +9,7 @@ uses
   EntityUnit;
 
 type
-  /// <summary>Тип задачи сервиса summary.</summary>
+  /// <summary>Task type of the summary service.</summary>
   TTaskTypes = class(TFieldSet)
   private
     FName: string;
@@ -23,7 +23,7 @@ type
     property Caption: string read FCaption write FCaption;
   end;
 
-  /// <summary>Список типов задач сервиса summary.</summary>
+  /// <summary>List of task types for the summary service.</summary>
   TTaskTypesList = class(TFieldSetList)
   private
     function GetTaskType(Index: Integer): TTaskTypes;
