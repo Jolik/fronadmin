@@ -1,5 +1,0 @@
-BrokerTest.exe: 00000B78: 18:43:47 [127.0.0.1]:Failed Sequence Recovery: SeqId: 5, Event: click
-BrokerTest.exe: 00001AE4: 18:43:48 [127.0.0.1]:Failed Sequence Recovery: SeqId: 6, Event: resize
-BrokerTest.exe: 00001A88: 21:17:47 [127.0.0.1]:Failed Sequence Recovery: SeqId: 6, Event: click
-BrokerTest.exe: 00001BA8: 21:29:42 [127.0.0.1]:Failed Sequence Recovery: SeqId: 5, Event: click
-BrokerTest.exe: 00000CC0: 21:49:32 [127.0.0.1]:Failed Sequence Recovery: SeqId: 6, Event: click
