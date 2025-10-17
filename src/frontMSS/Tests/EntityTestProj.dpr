@@ -1295,11 +1295,11 @@ begin
     try
 //      ListSourceCreds();
 //      ListRouterSource();
-//    ListSummaryTaskTypes();
-//    ListStripTaskSources();
-//      ListSummaryTaskSources();
-//      ListMonitoringTaskSources();
-      ListProfiles();
+    ListSummaryTaskTypes();
+    ListStripTaskSources();
+    ListSummaryTaskSources();
+    ListMonitoringTaskSources();
+//      ListProfiles();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
