@@ -3,21 +3,24 @@ unit AbonentUnit;
 interface
 
 uses
-  System.SysUtils, System.JSON,
+  System.JSON,
   EntityUnit,
   StringUnit;
 
+const
+  ChannelsKey = 'channels';
+  AttrKey = 'attr';
+
 type
   /// <summary>
-  ///   Router abonent entity.
+  ///   Represents a router abonent entity.
   /// </summary>
   TAbonent = class(TEntity)
   private
     FChannels: TFieldSetStringList;
-    FAttr: TFieldSetStringListObject;
-    function GetAbid: string;
-    procedure SetAbid(const Value: string);
-    procedure SetAttr(const Value: TFieldSetStringListObject);
+    FAttr: TFieldSetStringList;
+    function GetAid: string;
+    procedure SetAid(const Value: string);
   protected
     function GetIdKey: string; override;
   public
@@ -25,19 +28,16 @@ type
     constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
     destructor Destroy; override;
 
-    function Assign(ASource: TFieldSet): boolean; override;
+    function Assign(ASource: TFieldSet): Boolean; override;
 
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
-    property Abid: string read GetAbid write SetAbid;
+    property Aid: string read GetAid write SetAid;
     property Channels: TFieldSetStringList read FChannels;
-    property Attr: TFieldSetStringListObject read FAttr write SetAttr;
+    property Attr: TFieldSetStringList read FAttr;
   end;
 
-  /// <summary>
-  ///   List of router abonents.
-  /// </summary>
   TAbonentList = class(TEntityList)
   public
     class function ItemClassType: TEntityClass; override;
@@ -45,13 +45,11 @@ type
 
 implementation
 
-const
-  ChannelsKey = 'channels';
-  AttrKey = 'attr';
+{ TAbonent }
 
-function TAbonent.Assign(ASource: TFieldSet): boolean;
+function TAbonent.Assign(ASource: TFieldSet): Boolean;
 var
-  SourceAbonent: TAbonent;
+  Source: TAbonent;
 begin
   Result := False;
 
@@ -64,15 +62,10 @@ begin
   if not (ASource is TAbonent) then
     Exit;
 
-  SourceAbonent := TAbonent(ASource);
+  Source := TAbonent(ASource);
 
-  if Assigned(FChannels) then
-    if not FChannels.Assign(SourceAbonent.Channels) then
-      Exit;
-
-  if Assigned(FAttr) then
-    if not FAttr.Assign(SourceAbonent.Attr) then
-      Exit;
+  FChannels.Assign(Source.Channels);
+  FAttr.Assign(Source.Attr);
 
   Result := True;
 end;
@@ -82,7 +75,7 @@ begin
   inherited Create;
 
   FChannels := TFieldSetStringList.Create;
-  FAttr := TFieldSetStringListObject.Create;
+  FAttr := TFieldSetStringList.Create;
 end;
 
 constructor TAbonent.Create(src: TJSONObject; const APropertyNames: TArray<string>);
@@ -90,16 +83,6 @@ begin
   Create;
 
   Parse(src, APropertyNames);
-end;
-
-function TAbonent.GetAbid: string;
-begin
-  Result := Id;
-end;
-
-function TAbonent.GetIdKey: string;
-begin
-  Result := 'abid';
 end;
 
 destructor TAbonent.Destroy;
@@ -110,80 +93,57 @@ begin
   inherited;
 end;
 
+function TAbonent.GetAid: string;
+begin
+  Result := Id;
+end;
+
+function TAbonent.GetIdKey: string;
+begin
+  Result := 'aid';
+end;
+
 procedure TAbonent.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
-  Value: TJSONValue;
+  ChannelsValue: TJSONValue;
+  AttrValue: TJSONValue;
 begin
   inherited Parse(src, APropertyNames);
-
-  if Assigned(FChannels) then
-    FChannels.ClearStrings;
-
-  if Assigned(FAttr) then
-    FAttr.Clear;
 
   if not Assigned(src) then
     Exit;
 
-  Value := src.FindValue(ChannelsKey);
-  if Value is TJSONArray then
-    FChannels.ParseList(TJSONArray(Value), APropertyNames)
-  else if Assigned(FChannels) then
-    FChannels.ClearStrings;
+  FChannels.Name := '';
+  FChannels.Values.Clear;
+  FAttr.Name := '';
+  FAttr.Values.Clear;
 
-  Value := src.FindValue(AttrKey);
-  if Value is TJSONObject then
-    FAttr.Parse(TJSONObject(Value), APropertyNames)
-  else if Assigned(FAttr) then
-    FAttr.Clear;
+  ChannelsValue := src.FindValue(ChannelsKey);
+  if ChannelsValue is TJSONObject then
+    FChannels.Parse(TJSONObject(ChannelsValue), APropertyNames);
+
+  AttrValue := src.FindValue(AttrKey);
+  if AttrValue is TJSONObject then
+    FAttr.Parse(TJSONObject(AttrValue), APropertyNames);
 end;
 
 procedure TAbonent.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
-var
-  ChannelsArray: TJSONArray;
-  AttrObject: TJSONObject;
 begin
   if not Assigned(dst) then
     Exit;
 
   inherited Serialize(dst, APropertyNames);
 
-  ChannelsArray := TJSONArray.Create;
-  try
-    if Assigned(FChannels) then
-      FChannels.SerializeList(ChannelsArray, APropertyNames);
-    dst.AddPair(ChannelsKey, ChannelsArray);
-  except
-    ChannelsArray.Free;
-    raise;
-  end;
-
-  AttrObject := TJSONObject.Create;
-  try
-    if Assigned(FAttr) then
-      FAttr.Serialize(AttrObject, APropertyNames);
-    dst.AddPair(AttrKey, AttrObject);
-  except
-    AttrObject.Free;
-    raise;
-  end;
+  dst.AddPair(ChannelsKey, FChannels.Serialize);
+  dst.AddPair(AttrKey, FAttr.Serialize);
 end;
 
-procedure TAbonent.SetAbid(const Value: string);
+procedure TAbonent.SetAid(const Value: string);
 begin
   Id := Value;
 end;
 
-procedure TAbonent.SetAttr(const Value: TFieldSetStringListObject);
-begin
-  if not Assigned(FAttr) then
-    FAttr := TFieldSetStringListObject.Create;
-
-  if Assigned(Value) then
-    FAttr.Assign(Value)
-  else
-    FAttr.Clear;
-end;
+{ TAbonentList }
 
 class function TAbonentList.ItemClassType: TEntityClass;
 begin

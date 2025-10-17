@@ -18,6 +18,7 @@ type
     btnSummTask: TUniButton;
     btnRouterSources: TUniButton;
     btnAliases: TUniButton;
+    procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnLinksClick(Sender: TObject);
@@ -39,7 +40,7 @@ uses
   uniGUIVars, uniGUIApplication,
   MainModule,
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
-  AliasesFormUnit,
+  AliasesFormUnit, AbonentFormUnit,
   RouterSourcesFormUnit;
 
 function MainForm: TMainForm;
@@ -52,6 +53,11 @@ end;
 procedure TMainForm.btnChannelClick(Sender: TObject);
 begin
   ChannelsForm.Show();
+end;
+
+procedure TMainForm.btnAbonentsClick(Sender: TObject);
+begin
+  AbonentForm.Show();
 end;
 
 procedure TMainForm.btnAliasesClick(Sender: TObject);
@@ -83,3 +89,4 @@ initialization
   RegisterAppFormClass(TMainForm);
 
 end.
+
