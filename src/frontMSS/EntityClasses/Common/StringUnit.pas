@@ -72,7 +72,7 @@ type
   end;
 
   /// <summary>
-  ///   Named list of strings in the form "name": ["values"].
+  ///   Named list of strings in the form "name": ["value1", "value2", "value3"].
   /// </summary>
   TNamedStringList = class(TFieldSet)
   private
@@ -106,7 +106,7 @@ type
   end;
 
   /// <summary>
-  ///   Collection of named string lists.
+  ///   Collection of named string lists in the form
   /// </summary>
   TNamedStringListList = class(TFieldSetList)
   private
