@@ -7,6 +7,30 @@ uses
   EntityUnit;
 
 type
+  // Класс-ссылка на ответ API TResponse
+  TResponseClass = class of TResponse;
+
+  ///  базовый класс - парсер ответа API TResponse
+  ///  класс парсит ответ и заполняет свои поля
+  TResponse = class(TObject)
+  private
+    FResStr: string;
+    FResBool: boolean;
+  protected
+  public
+    ///  конструктор класса сразу с ответом
+    constructor CreateWithResponse(AResStr: string); virtual;
+    ///  парсинг ответа
+    function ParseResponse(AResStr: string): boolean; virtual;
+
+    ///  строка ответ
+    property ResStr: string read FResStr;
+    ///  результат в виде булева типа
+    property ResBool: boolean read FResBool;
+  end;
+
+
+type
   // Класс-ссылка на брокер TEntityBroker
   TEntityBrokerClass = class of TEntityBroker;
 
@@ -21,6 +45,9 @@ type
     ///  метод возвращает конкретный тип объекта элемента списка
     ///  потомки должны переопределить его, потому что он у всех разный
     class function ListClassType: TEntityListClass; virtual;
+    ///  метод возвращает конкретный тип объекта обработчика ответа
+    ///  потомки должны переопределить его, потому что он у всех разный
+    class function ResponseClassType: TResponseClass; virtual;
 
     ///  возвращает базовый путь до API - потомок должен переопредеоить
     function GetBasePath: string; virtual; abstract;
@@ -94,6 +121,27 @@ end;
 function TEntityBroker.Remove(AEntity: TEntity): Boolean;
 begin
   result := Remove(AEntity.Id);
+end;
+
+class function TEntityBroker.ResponseClassType: TResponseClass;
+begin
+  Result := TResponse;
+end;
+
+{ TResponse }
+
+constructor TResponse.CreateWithResponse(AResStr: string);
+begin
+  inherited Create();
+
+  ///  парсим сразу ответ
+  FResBool := ParseResponse(AResStr);
+end;
+
+function TResponse.ParseResponse(AResStr: string): boolean;
+begin
+  /// !!!
+  Result := true;
 end;
 
 end.

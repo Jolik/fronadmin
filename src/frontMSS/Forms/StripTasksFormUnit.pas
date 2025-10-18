@@ -10,12 +10,17 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  //ParentBrokerUnit,
+  EntityBrokerUnit,
   ParentEditFormUnit,
-  StripTasksBrokerUnit;
+  StripTasksBrokerUnit, uniPanel, uniLabel;
 
 type
   TStripTasksForm = class(TListParentForm)
+    cpTaskInfoModule: TUniContainerPanel;
+    lTaskInfoModule: TUniLabel;
+    lTaskInfoModuleValue: TUniLabel;
+    pSeparator5: TUniPanel;
+    procedure dbgEntitySelectionChange(Sender: TObject);
   private
 
   protected
@@ -23,7 +28,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///  функция для создания нужного брокера потоком
-    //function CreateBroker(): TParentBroker; override;
+    function CreateBroker(): TEntityBroker; override;
 
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
@@ -39,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, StripTaskEditFormUnit;
+  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit;
 
 function StripTasksForm: TStripTasksForm;
 begin
@@ -47,18 +52,31 @@ begin
 end;
 
 { TStripTasksForm }
-    {
-function TStripTasksForm.CreateBroker: TParentBroker;
+function TStripTasksForm.CreateBroker: TEntityBroker;
 begin
   ///  создаем "наш" брокер для Задач
   Result := TStripTasksBroker.Create();
 end;
-}
+
 
 function TStripTasksForm.CreateEditForm: TParentEditForm;
 begin
   ///  создаем "нашу" форму редактирования для Задач
   Result := StripTaskEditForm();
+end;
+
+procedure TStripTasksForm.dbgEntitySelectionChange(Sender: TObject);
+var
+  LEntity : TStripTask;
+  LId     : string;
+  DT      : string;
+begin
+  inherited;
+
+  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  ///  получаем полную информацию о сущности от брокера
+  LEntity := Broker.Info(LId) as TStripTask;
+  lTaskInfoModuleValue.Caption    := LEntity.Module;
 end;
 
 procedure TStripTasksForm.Refresh(const AId: String = '');

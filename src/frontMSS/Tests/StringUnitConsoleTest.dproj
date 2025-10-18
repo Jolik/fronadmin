@@ -1,15 +1,15 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{2B01573F-55D4-4056-9620-29DBC82FA147}</ProjectGuid>
+        <ProjectGuid>{F91F3E0C-7F21-4F48-9C7B-9E6A3D4B2F5E}</ProjectGuid>
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <ProjectName Condition="'$(ProjectName)'==''">EntityTestProj</ProjectName>
+        <ProjectName Condition="'$(ProjectName)'==''">StringUnitConsoleTest</ProjectName>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
-        <MainSource>EntityTestProj.dpr</MainSource>
+        <MainSource>StringUnitConsoleTest.dpr</MainSource>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
         <Base>true</Base>
@@ -54,7 +54,7 @@
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <SanitizedProjectName>EntityTestProj</SanitizedProjectName>
+        <SanitizedProjectName>StringUnitConsoleTest</SanitizedProjectName>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Linux64)'!=''">
         <DCC_UsePackage>DataSnapServer;fmx;emshosting;DbxCommonDriver;bindengine;FireDACCommonODBC;emsclient;FireDACCommonDriver;IndyProtocols;dbxcds;emsedge;bindcompfmx;inetdb;FireDACSqliteDriver;DbxClientDriver;FireDACASADriver;soapmidas;fmxFireDAC;dbexpress;FireDACInfxDriver;inet;DataSnapCommon;dbrtl;FireDACOracleDriver;CustomIPTransport;FireDACMSSQLDriver;DataSnapIndy10ServerTransport;DataSnapConnectors;FireDACMongoDBDriver;IndySystem;FireDACTDataDriver;bindcomp;FireDACCommon;DataSnapServerMidas;FireDACODBCDriver;emsserverresource;inetstn;IndyCore;RESTBackendComponents;rtl;FireDACMySQLDriver;FireDACADSDriver;RESTComponents;dsnapxml;DataSnapClient;DataSnapFireDAC;emsclientfiredac;FireDACPgDriver;FireDAC;xmlrtl;dsnap;CloudService;FireDACDb2Driver;DataSnapNativeClient;DatasnapConnectorsFreePascal;soaprtl;soapserver;FireDACIBDriver;$(DCC_UsePackage)</DCC_UsePackage>
@@ -98,64 +98,10 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\APIClasses\APIConst.pas"/>
-        <DCCReference Include="..\APIClasses\ChannelsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\AbonensBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\LinksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\ProfilesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
-        <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\EntityBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\QueuesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\AliasesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\RulesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\DsGroupsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TaskSourcesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\StripTaskSourceBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\MonitoringTaskSourceBrokerUnit.pas"/>
-        <DCCReference Include="..\Logging\LoggingUnit.pas"/>
-        <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
-        <DCCReference Include="..\Common\ConstsUnit.pas"/>
-        <DCCReference Include="..\Common\FuncUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskSourceUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\ChannelUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\AbonentUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\AliasUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\RuleUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\acl\UserUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\dataserver\DsGroupUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskTypesUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>
+        <DCCReference Include="..\Common\FuncUnit.pas"/>
+        <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\StringUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\router\SmallRuleUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\datacomm\ProfileUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
-        <DCCReference Include="..\APIClasses\FieldSetBrokerUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\signals\LogUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -174,7 +120,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">EntityTestProj.dpr</Source>
+                    <Source Name="MainSource">StringUnitConsoleTest.dpr</Source>
                 </Source>
             </Delphi.Personality>
             <Deployment Version="5">
@@ -193,9 +139,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Win32\Debug\EntityTestProj.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="Win32\Debug\StringUnitConsoleTest.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>EntityTestProj.exe</RemoteName>
+                        <RemoteName>StringUnitConsoleTest.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
