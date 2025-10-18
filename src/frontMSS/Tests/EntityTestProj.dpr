@@ -22,6 +22,7 @@ uses
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
+  CredsBrokerUnit in '..\APIClasses\CredsBrokerUnit.pas',
   ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
   ContextTypesBrokerUnit in '..\APIClasses\ContextTypesBrokerUnit.pas',
   SourceTypesBrokerUnit in '..\APIClasses\SourceTypesBrokerUnit.pas',
@@ -54,6 +55,7 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  CredUnit in '..\EntityClasses\dataserver\CredUnit.pas',
   ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
   ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
   SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
@@ -872,7 +874,125 @@ begin
   end;
 end;
 
-procedure ListContexts();
+procedure ListCreds();
+var
+  CredsBroker: TCredsBroker;
+  CredList: TEntityList;
+  CredEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    CredsBroker := TCredsBroker.Create;
+    try
+      CredList := nil;
+      try
+        CredList := CredsBroker.List(PageCount);
+
+        Writeln('---------- Creds List ----------');
+
+        if Assigned(CredList) then
+        begin
+          var FirstCred: TCred := nil;
+
+          if CredList.Count > 0 then
+            FirstCred := CredList.Items[0] as TCred;
+
+          for CredEntity in CredList do
+          begin
+            var Cred := CredEntity as TCred;
+            Writeln(Format('Class: %s | Address: %p', [Cred.ClassName, Pointer(Cred)]));
+            Writeln('Crid: ' + Cred.Crid);
+            Writeln('Name: ' + Cred.Name);
+            Writeln('Caption: ' + Cred.Caption);
+            Writeln('CtxId: ' + Cred.CtxId);
+            Writeln('Lid: ' + Cred.Lid);
+            Writeln('Login: ' + Cred.Login);
+            Writeln('Pass: ' + Cred.Pass);
+            Writeln('Data.Def: ' + Cred.CredData.Def);
+            if Assigned(Cred.CredData.Additional) then
+              Writeln('Data additional count: ' + IntToStr(Cred.CredData.Additional.Count))
+            else
+              Writeln('Data additional count: 0');
+            if Assigned(Cred.CredBody) and Assigned(Cred.CredBody.Content) then
+              Writeln('Body field count: ' + IntToStr(Cred.CredBody.Content.Count))
+            else
+              Writeln('Body field count: 0');
+
+            Writeln('As JSON:');
+            var Json := Cred.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstCred) then
+          begin
+            Writeln('---------- Cred Info ----------');
+            Writeln('Requesting info for: ' + FirstCred.Crid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := CredsBroker.Info(FirstCred.Crid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoCred := InfoEntity as TCred;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoCred.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Creds list is empty.');
+
+        if Assigned(CredList) then
+        begin
+          Writeln('---------- Creds Info ----------');
+          var ListJson := CredList.Serialize();
+          try
+            if ListJson <> nil then
+              Writeln(ListJson.Format);
+          finally
+            ListJson.Free;
+          end;
+        end;
+
+      finally
+        CredList.Free;
+      end;
+    finally
+      CredsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListContextsSample();
+const
+  SampleContextsJson =
+    '{"meta": {}, "response": {"info": {"page": 3, "pagecount": 3, "pagesize": 1000, "total": 3004}, "contexts": [' +
+    '{"ctxid": "1631cd00-d431-4152-8b0e-2887e1200747", "ctxtid": "CTX_TYPE_METPLACE", "sid": "0001-012345-0000", "index": "12345", "data": {}},' +
+    '{"ctxid": "a631cd00-d431-4152-8b0e-2887e1200747", "ctxtid": "CTX_TYPE_METEOPLACE", "sid": "0001-012345-0001", "index": "54321", "data": {"params": {"meteoRange": 900, "timeShift": 900}}}' +
+    ']}}';
 var
   ContextsBroker: TContextsBroker;
   ContextList: TEntityList;
@@ -1648,6 +1768,7 @@ begin
 //      ListProfiles();
       ListContexts();
 //      ListAbonents();
+//      ListCreds();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
