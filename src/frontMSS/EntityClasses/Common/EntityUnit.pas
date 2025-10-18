@@ -62,6 +62,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload; virtual;
     function JSON(const APropertyNames: TArray<string> = nil): string;
+    function JSONList(const APropertyNames: TArray<string> = nil): string;
 
     // These require an existing valid list instance. Errors raise exceptions
     ///  The APropertyNames parameter lists the fields that must be used
@@ -507,7 +508,9 @@ end;
 constructor TEntityList.Create(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
+  inherited Create();
 
+  Parse(src, APropertyNames);
 end;
 
 constructor TEntityList.Create(src: TJSONArray;
@@ -525,13 +528,61 @@ end;
 
 function TEntityList.JSON(const APropertyNames: TArray<string>): string;
 begin
+  Result := '{}';
+  var LObject := TJSONObject.Create;
+  try
+    try
+      Serialize(LObject, APropertyNames);
+      Result := LObject.ToJSON;
+    except
+      on e: exception do
+        Log('TEntityList.JSON ' + e.Message, lrtError);
+    end;
+  finally
+    LObject.Free;
+  end;
+end;
 
+function TEntityList.JSONList(const APropertyNames: TArray<string>): string;
+begin
+  Result := '[]';
+  var LArray := TJSONArray.Create;
+  try
+    try
+      SerializeList(LArray, APropertyNames);
+      Result := LArray.ToJSON;
+    except
+      on e: exception do
+        Log('TEntityList.JSONList ' + e.Message, lrtError);
+    end;
+  finally
+    LArray.Free;
+  end;
 end;
 
 procedure TEntityList.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
+  if not Assigned(src) then
+    Exit;
 
+  Clear();
+
+  for var Pair in src do
+  begin
+    if Pair.JsonValue is TJSONObject then
+    begin
+      var Item := ItemClassType.Create();
+      try
+        Item.ObjectName := Pair.JsonString.Value;
+        Item.Parse(Pair.JsonValue as TJSONObject, APropertyNames);
+        inherited Add(Item);
+      except
+        Item.Free;
+        raise;
+      end;
+    end;
+  end;
 end;
 
 procedure TEntityList.ParseList(src: TJSONArray;
@@ -558,7 +609,24 @@ end;
 procedure TEntityList.Add(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
+  if not Assigned(src) then
+    Exit;
 
+  for var Pair in src do
+  begin
+    if Pair.JsonValue is TJSONObject then
+    begin
+      var Item := ItemClassType.Create();
+      try
+        Item.ObjectName := Pair.JsonString.Value;
+        Item.Parse(Pair.JsonValue as TJSONObject, APropertyNames);
+        inherited Add(Item);
+      except
+        Item.Free;
+        raise;
+      end;
+    end;
+  end;
 end;
 
 procedure TEntityList.AddList(src: TJSONArray;
@@ -601,13 +669,41 @@ end;
 procedure TEntityList.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
+  if not Assigned(dst) then
+    Exit;
 
+  for var i := 0 to Count - 1 do
+  begin
+    var Item := Items[i];
+    var Name := Item.ObjectName;
+    if Name = '' then
+      Name := Format('Item%d', [i + 1]);
+
+    var LObject := TJSONObject.Create;
+    try
+      Item.Serialize(LObject, APropertyNames);
+      dst.AddPair(Name, LObject);
+    except
+      LObject.Free;
+      raise;
+    end;
+  end;
 end;
 
 function TEntityList.Serialize(
   const APropertyNames: TArray<string>): TJSONObject;
 begin
+  result := TJSONObject.Create;
 
+  try
+    Serialize(result, APropertyNames);
+
+  except on e:exception do
+    begin
+      Log('TEntityList.Serialize '+ e.Message, lrtError);
+      FreeAndNil(result);
+    end;
+  end;
 end;
 
 function TEntityList.SerializeList(
