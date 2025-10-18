@@ -17,7 +17,6 @@ type
     FrameQueue1: TFrameQueue;
     FrameAType: TFrameCombobox;
     FrameProtocolVer: TFrameCombobox;
-    FrameConnKey: TFrameTextInput;
     UniGroupBox1: TUniGroupBox;
     FrameAckCount: TFrameTextInput;
     FrameAckTimeout: TFrameTextInput;
@@ -28,6 +27,7 @@ type
     FrameTriggerSec: TFrameTextInput;
     FrameCompatibility: TFrameCombobox;
     FrameRR: TFrameBoolInput;
+    procedure FrameProtocolVerComboBoxChange(Sender: TObject);
   private
     { Private declarations }
     FSettings: TSocketSpecialDataSettings;
@@ -77,6 +77,13 @@ begin
 end;
 
 
+procedure TSocketSpecialSettingEditFrame.FrameProtocolVerComboBoxChange(
+  Sender: TObject);
+begin
+  inherited;
+  FrameConnections1.HasConnectionKey := FrameProtocolVer.ComboBox.ItemIndex = 1;
+end;
+
 function TSocketSpecialSettingEditFrame.Apply: boolean;
 begin
   inherited;
@@ -84,7 +91,6 @@ begin
   FrameQueue1.GetData(FSettings.QueueSettings);
   FSettings.Atype := FComboIndex.KeyByValue(FrameAType.GetDataIndex());
   FSettings.ProtocolVer := FrameProtocolVer.GetDataStr();
-  // TODO FrameConnKey
   FSettings.AckCount := FrameAckCount.GetDataInt();
   FSettings.AckTimeout := FrameAckTimeout.GetDataInt();
   FSettings.InputTriggerSize := FrameTriggerByte.GetDataInt();
@@ -109,7 +115,6 @@ begin
   FrameQueue1.SetData(FSettings.QueueSettings);
   FrameAType.SetDataIndex(FComboIndex.ValueByKey(FSettings.Atype, 0));
   FrameProtocolVer.SetDataIndex(FComboIndex.ValueByKey(FSettings.ProtocolVer, 0));
-  // TODO FrameConnKey
   FrameAckCount.SetData(FSettings.AckCount);
   FrameAckTimeout.SetData(FSettings.AckTimeout);
   FrameTriggerByte.SetData(FSettings.InputTriggerSize);
@@ -119,6 +124,8 @@ begin
   FrameConfirm.SetDataIndex(FComboIndex.ValueByKey(FSettings.ConfirmationMode, 0));
   FrameCompatibility.SetDataIndex(FComboIndex.ValueByKey(FSettings.Compatibility, 0));
   FrameRR.SetData(FSettings.KeepAlive);
+
+  FrameProtocolVerComboBoxChange(nil);
 end;
 
 end.

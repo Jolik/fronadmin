@@ -38,7 +38,9 @@ type
     FTimeout: integer;
     FDisabled: boolean;
     FSecure: TSecure;
-
+    // для отдельных линков
+    FConnectionKey: string; //socketspecial
+    FReplaceIP: boolean; // ftp cli
   public
     ///  устанавливаем поля с другого объекта
     function Assign(ASource: TFieldSet): boolean; override;
@@ -52,6 +54,10 @@ type
     property Timeout: integer read FTimeout write FTimeout;
     property Disabled: boolean read FDisabled write FDisabled;
     property Secure: TSecure read FSecure write FSecure;
+
+    // для отдельных линков
+    property ConnectionKey: string read FConnectionKey write FConnectionKey;
+    property ReplaceIP: boolean read FReplaceIP write FReplaceIP;
   end;
 
 
@@ -84,6 +90,8 @@ begin
   Timeout := src.Timeout;
   Disabled := src.Disabled;
   Secure := src.Secure;
+  ConnectionKey := src.ConnectionKey;
+  ReplaceIP := src.ReplaceIP;
   Result := true;
 end;
 
@@ -92,6 +100,8 @@ begin
   Addr := GetValueStrDef(src, 'addr', '');
   Timeout := GetValueIntDef(src, 'timeout', 0);
   Disabled := GetValueBool(src, 'disabled');
+  ConnectionKey := GetValueStrDef(src, 'key', '');
+  ReplaceIP := GetValueBool(src, 'replace_ip');
   var s: TSecure;
   with s.tls.Certificates do
   begin
@@ -116,6 +126,10 @@ begin
   dst.AddPair('addr', Addr);
   dst.AddPair('timeout', Timeout);
   dst.AddPair('disabled', Disabled);
+  if ConnectionKey <> '' then
+    dst.AddPair('key', ConnectionKey);
+  if ReplaceIP then
+    dst.AddPair('replace_ip', ReplaceIP);
   dst.Parse(TEncoding.UTF8.GetBytes(connectionStr),0);
   var s := dst.FindValue('secure.auth') as TJSONObject;
   s.AddPair('login', Secure.Auth.Login);
