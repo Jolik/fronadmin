@@ -51,3 +51,22 @@
 7. Иконка конкретного окна
 9. Класс MainModule.IdHTTP для обмена с бэкендом
    
+
+Классы для хранения массивов строк
+
+Варианты
+      "channels": [
+        "lch1",
+        "mitra"
+      ],
+      "attr": {
+        "name": "TTAAii",
+        "email": "first@sample.com"
+      },
+
+        "channels": {
+          "lch1": [],
+          "lch2": [
+            "ab1"
+          ]
+        },

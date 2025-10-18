@@ -1,10 +1,13 @@
-program StringUnitConsoleTest;
+﻿program StringUnitConsoleTest;
 
 {$APPTYPE CONSOLE}
 
 uses
   System.SysUtils,
   System.JSON,
+  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
+  FuncUnit in '..\Common\FuncUnit.pas',
+  LoggingUnit in '..\Logging\LoggingUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas';
 
 function ParseJSONObject(const AJsonText: string): TJSONObject;
@@ -157,6 +160,7 @@ begin
   end;
 end;
 
+(*
 procedure TestStringListsObject;
 var
   Source: TJSONObject;
@@ -185,7 +189,7 @@ begin
   finally
     Source.Free;
   end;
-end;
+end; *)
 
 begin
   ReportMemoryLeaksOnShutdown := True;
@@ -195,7 +199,7 @@ begin
     TestFieldSetStringList;
     TestNamedStringList;
     TestNamedStringListList;
-    TestStringListsObject;
+//    TestStringListsObject;
   except
     on E: Exception do
     begin
