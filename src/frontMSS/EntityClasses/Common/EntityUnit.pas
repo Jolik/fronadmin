@@ -588,11 +588,12 @@ end;
 procedure TEntityList.ParseList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
+  ///  Replace any previously parsed content with the incoming JSON payload
   Clear();
 
   if not Assigned(src) then exit;
 
-  ///  Build the list
+  ///  Build the list from each element of the JSON array
   for var i in src do
   begin
     if i is TJSONObject then
@@ -612,6 +613,7 @@ begin
   if not Assigned(src) then
     Exit;
 
+  ///  Append new items without clearing previously parsed entities
   for var Pair in src do
   begin
     if Pair.JsonValue is TJSONObject then
@@ -634,7 +636,7 @@ procedure TEntityList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  Append to the list
+  ///  Append the JSON objects from the array to the existing list
   for var i in src do
   begin
     if i is TJSONObject then
@@ -653,6 +655,7 @@ begin
   if not Assigned(dst) then
     exit;
 
+  ///  Convert the in-memory list to a JSON array representation
   for var i := 0 to Count - 1 do
   begin
     var LObject := TJSONObject.Create;
@@ -672,6 +675,7 @@ begin
   if not Assigned(dst) then
     Exit;
 
+  ///  Materialize the list as a JSON object keyed by entity name
   for var i := 0 to Count - 1 do
   begin
     var Item := Items[i];
@@ -861,9 +865,10 @@ begin
   if not Assigned(src) then
     exit;
 
+  ///  Drop previously cached field sets before loading fresh data
   Clear();
 
-  ///  Build the list
+  ///  Build the list from each element of the JSON array
   for var i in src do
   begin
     if i is TJSONObject then
@@ -883,6 +888,7 @@ begin
   if not Assigned(src) then
     Exit;
 
+  ///  Append new items without removing the existing ones
   for var Pair in src do
   begin
     if Pair.JsonValue is TJSONObject then
@@ -905,7 +911,7 @@ procedure TFieldSetList.AddList(src: TJSONArray;
 begin
   if not Assigned(src) then exit;
 
-  ///  Append to the list
+  ///  Append the JSON objects from the array to the existing list
   for var i in src do
   begin
     if i is TJSONObject then
@@ -923,6 +929,7 @@ procedure TFieldSetList.SerializeList(dst: TJSONArray;
 begin
   for var i := 0 to Count-1 do
   begin
+    ///  Serialize each item in sequence and place it into the JSON array
     var Obj := TJSONObject.Create;
     try
       Items[i].Serialize(Obj, APropertyNames);
@@ -940,6 +947,7 @@ begin
   if not Assigned(dst) then
     Exit;
 
+  ///  Materialize the list as a JSON object keyed by field-set name
   for var i := 0 to Count - 1 do
   begin
     var Item := Items[i];
