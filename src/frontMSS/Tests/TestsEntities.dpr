@@ -10,23 +10,45 @@ uses
   LoggingUnit in '..\Logging\LoggingUnit.pas';
 
 type
-  TSimpleEntity = class;
-
-  TSimpleEntityList = class(TEntityList)
-  protected
-    class function ItemClassType: TEntityClass; override;
-  end;
-
-  TSimpleEntity = class(TEntity)
+  TSimpleFieldSet = class(TFieldSet)
   private
-    FValue: string;
+    FKey1: string;
+    FKey2: string;
+    FKey3: string;
   public
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    class function ListClassType: TEntityListClass; override;
 
-    property Value: string read FValue write FValue;
+    property Key1: string read FKey1 write FKey1;
+    property Key2: string read FKey2 write FKey2;
+    property Key3: string read FKey3 write FKey3;
   end;
+
+  TSimpleFieldSetList = class(TFieldSetList)
+  protected
+    class function ItemClassType: TFieldSetClass; override;
+  end;
+
+const
+  SAMPLE_ARRAY_JSON =
+    '[{"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' {"key1":"value4","key2":"value5","key3":"value6"},' +
+    ' {"key1":"value7","key2":"value8","key3":"value9"}]';
+
+  SAMPLE_OBJECT_JSON =
+    '{"class1":{"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' "class2":{"key1":"value4","key2":"value5","key3":"value6"},' +
+    ' "class3":{"key1":"value7","key2":"value8","key3":"value9"}}';
+
+  REPEATING_ARRAY_JSON =
+    '[{"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' {"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' {"key1":"value1","key2":"value2","key3":"value3"}]';
+
+  REPEATING_OBJECT_JSON =
+    '{"class1":{"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' "class2":{"key1":"value1","key2":"value2","key3":"value3"},' +
+    ' "class3":{"key1":"value1","key2":"value2","key3":"value3"}}';
 
 { Helper routines }
 
@@ -78,30 +100,56 @@ begin
     raise Exception.CreateFmt('%s. Ожидалось %d, получено %d', [Msg, Expected, Actual]);
 end;
 
-{ TSimpleEntity }
+{ TSimpleFieldSet }
 
-procedure TSimpleEntity.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TSimpleFieldSet.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Parse(src, APropertyNames);
-  Value := GetValueStrDef(src, 'value', '');
+  FKey1 := GetValueStrDef(src, 'key1', '');
+  FKey2 := GetValueStrDef(src, 'key2', '');
+  FKey3 := GetValueStrDef(src, 'key3', '');
 end;
 
-procedure TSimpleEntity.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TSimpleFieldSet.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited Serialize(dst, APropertyNames);
-  dst.AddPair('value', Value);
+  dst.AddPair('key1', Key1);
+  dst.AddPair('key2', Key2);
+  dst.AddPair('key3', Key3);
 end;
 
-class function TSimpleEntity.ListClassType: TEntityListClass;
+{ TSimpleFieldSetList }
+
+class function TSimpleFieldSetList.ItemClassType: TFieldSetClass;
 begin
-  Result := TSimpleEntityList;
+  Result := TSimpleFieldSet;
 end;
 
-{ TSimpleEntityList }
+{ Helper creators }
 
-class function TSimpleEntityList.ItemClassType: TEntityClass;
+function CreateListFromArray: TSimpleFieldSetList;
+var
+  Source: TJSONArray;
 begin
-  Result := TSimpleEntity;
+  Source := ParseJSONArray(SAMPLE_ARRAY_JSON);
+  try
+    Result := TSimpleFieldSetList.Create;
+    Result.ParseList(Source);
+  finally
+    Source.Free;
+  end;
+end;
+
+function CreateListFromObject: TSimpleFieldSetList;
+var
+  Source: TJSONObject;
+begin
+  Source := ParseJSONObject(SAMPLE_OBJECT_JSON);
+  try
+    Result := TSimpleFieldSetList.Create(Source);
+  finally
+    Source.Free;
+  end;
 end;
 
 { Tests }
@@ -109,24 +157,18 @@ end;
 procedure TestParseList;
 var
   Source: TJSONArray;
-  List: TSimpleEntityList;
-  Item: TSimpleEntity;
+  List: TSimpleFieldSetList;
 begin
   Writeln('--- Тест ParseList ---');
-  Source := ParseJSONArray('[{"id":"1","value":"one"},{"id":"2","value":"two"}]');
+  Source := ParseJSONArray(SAMPLE_ARRAY_JSON);
   try
-    List := TSimpleEntityList.Create;
+    List := TSimpleFieldSetList.Create;
     try
       List.ParseList(Source);
-      AssertEquals('Количество элементов после ParseList', 2, List.Count);
-
-      Item := TSimpleEntity(List.Items[0]);
-      AssertEquals('Первый элемент.Id', '1', Item.Id);
-      AssertEquals('Первый элемент.Value', 'one', Item.Value);
-
-      Item := TSimpleEntity(List.Items[1]);
-      AssertEquals('Второй элемент.Id', '2', Item.Id);
-      AssertEquals('Второй элемент.Value', 'two', Item.Value);
+      AssertEquals('Количество элементов после ParseList', 3, List.Count);
+      AssertEquals('Первый элемент.key1', 'value1', TSimpleFieldSet(List.Items[0]).Key1);
+      AssertEquals('Второй элемент.key2', 'value5', TSimpleFieldSet(List.Items[1]).Key2);
+      AssertEquals('Третий элемент.key3', 'value9', TSimpleFieldSet(List.Items[2]).Key3);
     finally
       List.Free;
     end;
@@ -138,22 +180,17 @@ end;
 procedure TestParseObject;
 var
   Source: TJSONObject;
-  List: TSimpleEntityList;
-  Item: TSimpleEntity;
+  List: TSimpleFieldSetList;
 begin
   Writeln('--- Тест Parse ---');
-  Source := ParseJSONObject('{"first":{"id":"1","value":"one"},"second":{"id":"2","value":"two"}}');
+  Source := ParseJSONObject(SAMPLE_OBJECT_JSON);
   try
-    List := TSimpleEntityList.Create;
+    List := TSimpleFieldSetList.Create;
     try
       List.Parse(Source);
-      AssertEquals('Количество элементов после Parse', 2, List.Count);
-
-      Item := TSimpleEntity(List.Items[0]);
-      AssertEquals('Первый элемент.Value', 'one', Item.Value);
-
-      Item := TSimpleEntity(List.Items[1]);
-      AssertEquals('Второй элемент.Value', 'two', Item.Value);
+      AssertEquals('Количество элементов после Parse', 3, List.Count);
+      AssertEquals('ObjectName первого элемента', 'class1', TSimpleFieldSet(List.Items[0]).ObjectName);
+      AssertEquals('Первый элемент.key2', 'value2', TSimpleFieldSet(List.Items[0]).Key2);
     finally
       List.Free;
     end;
@@ -164,21 +201,22 @@ end;
 
 procedure TestAddFromObject;
 var
-  InitialArray: TJSONArray;
+  BaseArray: TJSONArray;
   ExtraObject: TJSONObject;
-  List: TSimpleEntityList;
+  List: TSimpleFieldSetList;
 begin
-  Writeln('--- Тест Add (JSON объект) ---');
-  InitialArray := ParseJSONArray('[{"id":"1","value":"one"}]');
+  Writeln('--- Тест Add ---');
+  BaseArray := ParseJSONArray('[{"key1":"value1","key2":"value2","key3":"value3"}]');
   try
-    ExtraObject := ParseJSONObject('{"second":{"id":"2","value":"two"}}');
+    ExtraObject := ParseJSONObject('{"extra":{"key1":"value4","key2":"value5","key3":"value6"}}');
     try
-      List := TSimpleEntityList.Create;
+      List := TSimpleFieldSetList.Create;
       try
-        List.ParseList(InitialArray);
+        List.ParseList(BaseArray);
         List.Add(ExtraObject);
         AssertEquals('Количество элементов после Add', 2, List.Count);
-        AssertEquals('Последний элемент.Value', 'two', TSimpleEntity(List.Items[List.Count-1]).Value);
+        AssertEquals('ObjectName добавленного элемента', 'extra', TSimpleFieldSet(List.Items[1]).ObjectName);
+        AssertEquals('Добавленный элемент.key3', 'value6', TSimpleFieldSet(List.Items[1]).Key3);
       finally
         List.Free;
       end;
@@ -186,26 +224,13 @@ begin
       ExtraObject.Free;
     end;
   finally
-    InitialArray.Free;
-  end;
-end;
-
-function CreateListFromArray: TSimpleEntityList;
-var
-  Source: TJSONArray;
-begin
-  Source := ParseJSONArray('[{"id":"1","value":"one"},{"id":"2","value":"two"}]');
-  try
-    Result := TSimpleEntityList.Create;
-    Result.ParseList(Source);
-  finally
-    Source.Free;
+    BaseArray.Free;
   end;
 end;
 
 procedure TestSerializeList;
 var
-  List: TSimpleEntityList;
+  List: TSimpleFieldSetList;
   Target: TJSONArray;
   Item: TJSONObject;
 begin
@@ -215,15 +240,9 @@ begin
     Target := TJSONArray.Create;
     try
       List.SerializeList(Target);
-      AssertEquals('Количество элементов в сериализованном массиве', 2, Target.Count);
-
+      AssertEquals('Количество элементов в сериализованном массиве', 3, Target.Count);
       Item := Target.Items[0] as TJSONObject;
-      AssertEquals('SerializeList[0].id', '1', GetValueStrDef(Item, 'id', ''));
-      AssertEquals('SerializeList[0].value', 'one', GetValueStrDef(Item, 'value', ''));
-
-      Item := Target.Items[1] as TJSONObject;
-      AssertEquals('SerializeList[1].id', '2', GetValueStrDef(Item, 'id', ''));
-      AssertEquals('SerializeList[1].value', 'two', GetValueStrDef(Item, 'value', ''));
+      AssertEquals('SerializeList[0].key1', 'value1', GetValueStrDef(Item, 'key1', ''));
     finally
       Target.Free;
     end;
@@ -234,28 +253,20 @@ end;
 
 procedure TestSerializeObject;
 var
-  List: TSimpleEntityList;
+  List: TSimpleFieldSetList;
   Target: TJSONObject;
-  Value: TJSONValue;
   Item: TJSONObject;
 begin
   Writeln('--- Тест Serialize ---');
-  List := CreateListFromArray;
+  List := CreateListFromObject;
   try
     Target := TJSONObject.Create;
     try
       List.Serialize(Target);
-      AssertEquals('Количество пар в сериализованном объекте', 2, Target.Count);
-
-      Value := Target.Values['1'];
-      AssertTrue(Assigned(Value) and (Value is TJSONObject), 'Ожидается объект для ключа 1');
-      Item := TJSONObject(Value);
-      AssertEquals('Serialize["1"].value', 'one', GetValueStrDef(Item, 'value', ''));
-
-      Value := Target.Values['2'];
-      AssertTrue(Assigned(Value) and (Value is TJSONObject), 'Ожидается объект для ключа 2');
-      Item := TJSONObject(Value);
-      AssertEquals('Serialize["2"].value', 'two', GetValueStrDef(Item, 'value', ''));
+      AssertEquals('Количество пар в сериализованном объекте', 3, Target.Count);
+      Item := Target.Values['class2'] as TJSONObject;
+      AssertTrue(Assigned(Item), 'Ожидается объект для ключа class2');
+      AssertEquals('Serialize["class2"].key3', 'value6', GetValueStrDef(Item, 'key3', ''));
     finally
       Target.Free;
     end;
@@ -266,20 +277,17 @@ end;
 
 procedure TestJSONList;
 var
-  List: TSimpleEntityList;
+  List: TSimpleFieldSetList;
   JsonText: string;
   Parsed: TJSONArray;
-  Item: TJSONObject;
 begin
   Writeln('--- Тест JSONList ---');
-  List := CreateListFromArray;
+  List := CreateListFromObject;
   try
     JsonText := List.JSONList;
     Parsed := ParseJSONArray(JsonText);
     try
-      AssertEquals('JSONList количество элементов', 2, Parsed.Count);
-      Item := Parsed.Items[0] as TJSONObject;
-      AssertEquals('JSONList[0].value', 'one', GetValueStrDef(Item, 'value', ''));
+      AssertEquals('Количество элементов в JSONList', 3, Parsed.Count);
     finally
       Parsed.Free;
     end;
@@ -290,7 +298,7 @@ end;
 
 procedure TestJSONObject;
 var
-  List: TSimpleEntityList;
+  List: TSimpleFieldSetList;
   JsonText: string;
   Parsed: TJSONObject;
   Item: TJSONObject;
@@ -301,14 +309,69 @@ begin
     JsonText := List.JSON;
     Parsed := ParseJSONObject(JsonText);
     try
-      Item := Parsed.Values['1'] as TJSONObject;
-      AssertTrue(Assigned(Item), 'Ожидается объект для ключа 1');
-      AssertEquals('JSON["1"].value', 'one', GetValueStrDef(Item, 'value', ''));
+      Item := Parsed.Values['Item2'] as TJSONObject;
+      AssertTrue(Assigned(Item), 'Ожидается объект для ключа Item2');
+      AssertEquals('JSON["Item2"].key2', 'value5', GetValueStrDef(Item, 'key2', ''));
     finally
       Parsed.Free;
     end;
   finally
     List.Free;
+  end;
+end;
+
+procedure TestArrayToJSONObject;
+var
+  Source: TJSONArray;
+  List: TSimpleFieldSetList;
+  JsonText: string;
+  Parsed: TJSONObject;
+begin
+  Writeln('--- Тест загрузки массива и выгрузки объекта ---');
+  Source := ParseJSONArray(REPEATING_ARRAY_JSON);
+  try
+    List := TSimpleFieldSetList.Create;
+    try
+      List.ParseList(Source);
+      JsonText := List.JSON;
+      Parsed := ParseJSONObject(JsonText);
+      try
+        AssertEquals('JSON объект из массива содержит 3 элемента', 3, Parsed.Count);
+      finally
+        Parsed.Free;
+      end;
+    finally
+      List.Free;
+    end;
+  finally
+    Source.Free;
+  end;
+end;
+
+procedure TestObjectToJSONArray;
+var
+  Source: TJSONObject;
+  List: TSimpleFieldSetList;
+  JsonText: string;
+  Parsed: TJSONArray;
+begin
+  Writeln('--- Тест загрузки объекта и выгрузки массива ---');
+  Source := ParseJSONObject(REPEATING_OBJECT_JSON);
+  try
+    List := TSimpleFieldSetList.Create(Source);
+    try
+      JsonText := List.JSONList;
+      Parsed := ParseJSONArray(JsonText);
+      try
+        AssertEquals('JSON массив из объекта содержит 3 элемента', 3, Parsed.Count);
+      finally
+        Parsed.Free;
+      end;
+    finally
+      List.Free;
+    end;
+  finally
+    Source.Free;
   end;
 end;
 
@@ -322,6 +385,8 @@ begin
     TestSerializeObject;
     TestJSONList;
     TestJSONObject;
+    TestArrayToJSONObject;
+    TestObjectToJSONArray;
     Writeln('Все тесты успешно выполнены.');
   except
     on E: Exception do
@@ -331,3 +396,4 @@ begin
     end;
   end;
 end.
+
