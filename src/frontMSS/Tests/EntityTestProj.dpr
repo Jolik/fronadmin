@@ -25,6 +25,7 @@ uses
   ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
   ContextTypesBrokerUnit in '..\APIClasses\ContextTypesBrokerUnit.pas',
   SourceTypesBrokerUnit in '..\APIClasses\SourceTypesBrokerUnit.pas',
+  BindingsBrokerUnit in '..\APIClasses\BindingsBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
@@ -62,6 +63,7 @@ uses
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
   TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
@@ -872,6 +874,119 @@ begin
   end;
 end;
 
+procedure ListBindings();
+var
+  BindingsBroker: TBindingsBroker;
+  BindingList: TEntityList;
+  BindingEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    BindingsBroker := TBindingsBroker.Create;
+    try
+      BindingList := nil;
+      try
+        BindingList := BindingsBroker.List(PageCount);
+
+        Writeln('---------- Metadata Bindings ----------');
+
+        if Assigned(BindingList) then
+        begin
+          var FirstBinding: TBinding := nil;
+
+          if BindingList.Count > 0 then
+            FirstBinding := BindingList.Items[0] as TBinding;
+
+          for BindingEntity in BindingList do
+          begin
+            var Binding := BindingEntity as TBinding;
+            Writeln(Format('Class: %s | Address: %p', [Binding.ClassName, Pointer(Binding)]));
+            Writeln('Bid: ' + Binding.Bid);
+            Writeln('CompId: ' + Binding.CompId);
+            Writeln('Entity: ' + Binding.EntityId);
+            Writeln('Type: ' + Binding.BindingType);
+            Writeln('Urn: ' + Binding.Urn);
+            Writeln('Index: ' + Binding.Index);
+            Writeln('Created: ' + DateTimeToStr(Binding.Created));
+            Writeln('Updated: ' + DateTimeToStr(Binding.Updated));
+
+            if Assigned(Binding.BindingData) then
+            begin
+              Writeln('Data.Def: ' + Binding.BindingData.Def);
+              if Assigned(Binding.BindingData.Attr) then
+                Writeln('Data.Attr: ' + Binding.BindingData.Attr.ToJSON)
+              else
+                Writeln('Data.Attr: {}');
+            end;
+
+            Writeln('As JSON:');
+            var Json := Binding.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstBinding) then
+          begin
+            Writeln('---------- Binding Info ----------');
+            Writeln('Requesting info for: ' + FirstBinding.Bid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := BindingsBroker.Info(FirstBinding.Bid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoBinding := InfoEntity as TBinding;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoBinding.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Bindings list is empty.');
+
+        if Assigned(BindingList) then
+        begin
+          Writeln('---------- Bindings List JSON ----------');
+          var InfoJson := BindingList.Serialize();
+          try
+            if InfoJson <> nil then
+              Writeln(InfoJson.Format);
+          finally
+            InfoJson.Free;
+          end;
+        end;
+
+      finally
+        BindingList.Free;
+      end;
+    finally
+      BindingsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListContexts();
 var
   ContextsBroker: TContextsBroker;
@@ -1647,6 +1762,7 @@ begin
 //    ListMonitoringTaskSources();
 //      ListProfiles();
       ListContexts();
+//      ListBindings();
 //      ListAbonents();
 //      ListAliases();
 //      ListRules();

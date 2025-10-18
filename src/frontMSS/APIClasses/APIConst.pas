@@ -21,6 +21,9 @@ const
   constURLDataserverBasePath = '/dataserver/api/v2';
 
 const
+  constURLMetadataBasePath = '/api/v2/metadata';
+
+const
   constURLAclBasePath = '/acl/api/v1';
 
 implementation
