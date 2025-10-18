@@ -22,6 +22,7 @@ uses
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
+  ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
@@ -51,6 +52,7 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
   SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
@@ -868,6 +870,157 @@ begin
   end;
 end;
 
+procedure ListContextsSample();
+const
+  SampleContextsJson =
+    '{"meta": {}, "response": {"info": {"page": 3, "pagecount": 3, "pagesize": 1000, "total": 3004}, "contexts": [' +
+    '{"ctxid": "1631cd00-d431-4152-8b0e-2887e1200747", "ctxtid": "CTX_TYPE_METPLACE", "sid": "0001-012345-0000", "index": "12345", "data": {}},' +
+    '{"ctxid": "a631cd00-d431-4152-8b0e-2887e1200747", "ctxtid": "CTX_TYPE_METEOPLACE", "sid": "0001-012345-0001", "index": "54321", "data": {"params": {"meteoRange": 900, "timeShift": 900}}}' +
+    ']}}';
+var
+  JsonValue: TJSONValue;
+  ResponseValue: TJSONValue;
+  ResponseObject: TJSONObject;
+  InfoValue: TJSONValue;
+  InfoObject: TJSONObject;
+  ItemsValue: TJSONValue;
+  ItemsArray: TJSONArray;
+  Contexts: TContextList;
+begin
+  JsonValue := TJSONObject.ParseJSONValue(SampleContextsJson);
+  try
+    if not (JsonValue is TJSONObject) then
+    begin
+      Writeln('Sample JSON is not a JSON object.');
+      Exit;
+    end;
+
+    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
+    if not (ResponseValue is TJSONObject) then
+    begin
+      Writeln('Response object is missing.');
+      Exit;
+    end;
+    ResponseObject := ResponseValue as TJSONObject;
+
+    InfoValue := ResponseObject.GetValue('info');
+    if InfoValue is TJSONObject then
+    begin
+      InfoObject := InfoValue as TJSONObject;
+      Writeln('Info:');
+      Writeln('  Page: ' + IntToStr(GetValueIntDef(InfoObject, 'page', 0)));
+      Writeln('  Pagecount: ' + IntToStr(GetValueIntDef(InfoObject, 'pagecount', 0)));
+      Writeln('  Pagesize: ' + IntToStr(GetValueIntDef(InfoObject, 'pagesize', 0)));
+      Writeln('  Total: ' + IntToStr(GetValueIntDef(InfoObject, 'total', 0)));
+    end;
+
+    ItemsValue := ResponseObject.GetValue('contexts');
+    if not (ItemsValue is TJSONArray) then
+    begin
+      Writeln('Contexts array is missing.');
+      Exit;
+    end;
+    ItemsArray := ItemsValue as TJSONArray;
+
+    Contexts := TContextList.Create(ItemsArray);
+    try
+      Writeln('---------- Dataserver Contexts ----------');
+      if Contexts.Count = 0 then
+      begin
+        Writeln('Contexts list is empty.');
+        Exit;
+      end;
+
+      for var Entity in Contexts do
+      begin
+        if not (Entity is TContext) then
+          Continue;
+
+        var Context := TContext(Entity);
+        Writeln(Format('Class: %s | Address: %p', [Context.ClassName, Pointer(Context)]));
+        Writeln('CtxId: ' + Context.CtxId);
+        Writeln('CtxtId: ' + Context.CtxtId);
+        Writeln('Sid: ' + Context.Sid);
+        Writeln('Index: ' + Context.Index);
+        if Assigned(Context.Data) then
+          Writeln('Data: ' + Context.Data.ToJSON)
+        else
+          Writeln('Data: {}');
+
+        var Json := Context.Serialize();
+        try
+          if Assigned(Json) then
+            Writeln('As JSON: ' + Json.ToJSON);
+        finally
+          Json.Free;
+        end;
+
+        var Clone := TContext.Create;
+        try
+          if Clone.Assign(Context) then
+          begin
+            var CloneJson := Clone.Serialize();
+            try
+              if Assigned(CloneJson) then
+                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+            finally
+              CloneJson.Free;
+            end;
+          end;
+        finally
+          Clone.Free;
+        end;
+
+        Writeln('----------');
+      end;
+
+      var ListJson := Contexts.SerializeList();
+      try
+        if Assigned(ListJson) then
+          Writeln('List JSON: ' + ListJson.ToJSON);
+      finally
+        ListJson.Free;
+      end;
+    finally
+      Contexts.Free;
+    end;
+  finally
+    JsonValue.Free;
+  end;
+
+  var Broker := TContextsBroker.Create;
+  try
+    var NewContext := Broker.CreateNew as TContext;
+    try
+      NewContext.CtxId := 'test-context-id';
+      NewContext.CtxtId := 'CTX_TYPE_METPLACE';
+      NewContext.Sid := '0001-012345-0002';
+      NewContext.Index := 'index123';
+      if Assigned(NewContext.Data) then
+      begin
+        NewContext.Data.Clear;
+        var Params := TJSONObject.Create;
+        Params.AddPair('meteoRange', TJSONNumber.Create(600));
+        Params.AddPair('timeShift', TJSONNumber.Create(300));
+        NewContext.Data.AddPair('params', Params);
+        NewContext.Data.AddPair('note', 'sample');
+      end;
+
+      var NewJson := NewContext.Serialize();
+      try
+        if Assigned(NewJson) then
+          Writeln('CreateNew JSON: ' + NewJson.ToJSON);
+      finally
+        NewJson.Free;
+      end;
+    finally
+      NewContext.Free;
+    end;
+  finally
+    Broker.Free;
+  end;
+end;
+
 procedure ListSourceTypes();
 const
   SampleSourceTypesJson =
@@ -1618,7 +1771,7 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
-      ListContextTypes();
+      ListContextsSample();
       ListSourceTypes();
       ListAbonents();
 //      ListAliases();
