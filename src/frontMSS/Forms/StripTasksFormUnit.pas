@@ -12,10 +12,15 @@ uses
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit,
   ParentEditFormUnit,
-  StripTasksBrokerUnit;
+  StripTasksBrokerUnit, uniPanel, uniLabel;
 
 type
   TStripTasksForm = class(TListParentForm)
+    cpTaskInfoModule: TUniContainerPanel;
+    lTaskInfoModule: TUniLabel;
+    lTaskInfoModuleValue: TUniLabel;
+    pSeparator5: TUniPanel;
+    procedure dbgEntitySelectionChange(Sender: TObject);
   private
 
   protected
@@ -39,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, StripTaskEditFormUnit;
+  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit;
 
 function StripTasksForm: TStripTasksForm;
 begin
@@ -53,10 +58,25 @@ begin
   Result := TStripTasksBroker.Create();
 end;
 
+
 function TStripTasksForm.CreateEditForm: TParentEditForm;
 begin
   ///  создаем "нашу" форму редактирования для Задач
   Result := StripTaskEditForm();
+end;
+
+procedure TStripTasksForm.dbgEntitySelectionChange(Sender: TObject);
+var
+  LEntity : TStripTask;
+  LId     : string;
+  DT      : string;
+begin
+  inherited;
+
+  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  ///  получаем полную информацию о сущности от брокера
+  LEntity := Broker.Info(LId) as TStripTask;
+  lTaskInfoModuleValue.Caption    := LEntity.Module;
 end;
 
 procedure TStripTasksForm.Refresh(const AId: String = '');
