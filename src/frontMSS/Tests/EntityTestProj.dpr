@@ -52,6 +52,7 @@ uses
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
+  ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
@@ -978,6 +979,108 @@ begin
   end;
 end;
 
+procedure ListContextTypes();
+const
+  SampleContextTypesJson =
+    '{"meta": {}, "response": {"ctxtypes": [{"ctxtid": "CTX_TYPE_METEO", "def": {}, "name": "Метеорологический индекс"}, {"ctxtid": "CTX_TYPE_EQU", "def": {}, "name": "Идентификатор оборудования"}, {"ctxtid": "CTX_TYPE_AVIA", "def": {}, "name": "Индекс авиационного метеорологического органа"}, {"ctxtid": "CTX_TYPE_HYDRO", "def": {}, "name": "Гидрологический индекс"}]}}';
+var
+  JsonValue: TJSONValue;
+  ResponseValue, ContextTypesValue: TJSONValue;
+  ResponseObject: TJSONObject;
+  ContextTypesArray: TJSONArray;
+  ContextTypes: TContextTypeList;
+begin
+  JsonValue := TJSONObject.ParseJSONValue(SampleContextTypesJson);
+  try
+    if not (JsonValue is TJSONObject) then
+    begin
+      Writeln('Sample JSON is not a JSON object.');
+      Exit;
+    end;
+
+    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
+    if not (ResponseValue is TJSONObject) then
+    begin
+      Writeln('Response object is missing.');
+      Exit;
+    end;
+    ResponseObject := ResponseValue as TJSONObject;
+
+    ContextTypesValue := ResponseObject.GetValue('ctxtypes');
+    if not (ContextTypesValue is TJSONArray) then
+    begin
+      Writeln('Context types array is missing.');
+      Exit;
+    end;
+    ContextTypesArray := ContextTypesValue as TJSONArray;
+
+    ContextTypes := TContextTypeList.Create(ContextTypesArray);
+    try
+      Writeln('---------- Dataserver Context Types ----------');
+      if ContextTypes.Count = 0 then
+      begin
+        Writeln('Context types list is empty.');
+        Exit;
+      end;
+
+      for var FieldSet in ContextTypes do
+      begin
+        if not (FieldSet is TContextType) then
+          Continue;
+
+        var ContextType := TContextType(FieldSet);
+        Writeln(Format('Class: %s | Address: %p', [ContextType.ClassName, Pointer(ContextType)]));
+        Writeln('Ctxtid: ' + ContextType.Ctxtid);
+        Writeln('Name: ' + ContextType.Name);
+        if Assigned(ContextType.Def) then
+          Writeln('Def: ' + ContextType.Def.ToJSON)
+        else
+          Writeln('Def: {}');
+
+        Writeln('As JSON:');
+        var Json := ContextType.Serialize();
+        try
+          if Json <> nil then
+            Writeln(Json.Format);
+        finally
+          Json.Free;
+        end;
+
+        var Clone := TContextType.Create;
+        try
+          if Clone.Assign(ContextType) then
+          begin
+            var CloneJson := Clone.Serialize();
+            try
+              if CloneJson <> nil then
+                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+            finally
+              CloneJson.Free;
+            end;
+          end;
+        finally
+          Clone.Free;
+        end;
+
+        Writeln('----------');
+      end;
+
+      Writeln('List as JSON:');
+      var ListJson := ContextTypes.SerializeList();
+      try
+        if ListJson <> nil then
+          Writeln(ListJson.Format);
+      finally
+        ListJson.Free;
+      end;
+    finally
+      ContextTypes.Free;
+    end;
+  finally
+    JsonValue.Free;
+  end;
+end;
+
 procedure ListAliases();
 var
   AliasesBroker: TAliasesBroker;
@@ -1515,6 +1618,7 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
+      ListContextTypes();
       ListSourceTypes();
       ListAbonents();
 //      ListAliases();
