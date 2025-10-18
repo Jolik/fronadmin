@@ -68,7 +68,8 @@ function TContextsBroker.List(out APageCount: Integer; const APage,
   AOrderDir: String): TEntityList;
 var
   JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
+  ResponseObject, ContextsObject
+  : TJSONObject;
   ItemsValue: TJSONValue;
   ItemsArray: TJSONArray;
   RequestStream: TStringStream;
@@ -95,7 +96,12 @@ begin
       if Assigned(InfoObject) then
         APageCount := GetValueIntDef(InfoObject, 'pagecount', 0);
 
-      ItemsValue := ResponseObject.GetValue('contexts');
+      ContextsObject := ResponseObject.GetValue('contexts') as TJSONObject;
+      if not Assigned(ContextsObject) then
+        Exit;
+
+      ItemsValue := TJSONObject(ContextsObject).GetValue('items');
+
       if ItemsValue is TJSONArray then
         ItemsArray := ItemsValue as TJSONArray
       else

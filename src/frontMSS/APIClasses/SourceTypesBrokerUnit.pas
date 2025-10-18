@@ -6,6 +6,7 @@ uses
   System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
+  EntityUnit,
   FieldSetBrokerUnit,
   SourceTypeUnit;
 

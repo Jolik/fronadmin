@@ -1647,8 +1647,6 @@ begin
 //    ListMonitoringTaskSources();
 //      ListProfiles();
       ListContexts();
-      ListSourceTypes();
-      ListContextTypes();
 //      ListAbonents();
 //      ListAliases();
 //      ListRules();
