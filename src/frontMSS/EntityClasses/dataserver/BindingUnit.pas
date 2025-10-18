@@ -39,8 +39,6 @@ type
     function GetIdKey: string; override;
     class function DataClassType: TDataClass; override;
   public
-    constructor Create; overload; override;
-
     function Assign(ASource: TFieldSet): boolean; override;
 
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -63,21 +61,17 @@ type
 implementation
 
 uses
-  System.SysUtils, System.DateUtils,
+  System.SysUtils,
   FuncUnit;
 
 const
   BidKey = 'bid';
-  CompIdKey = 'compid';
   EntityKey = 'entity';
   TypeKey = 'type';
   UrnKey = 'urn';
   IndexKey = 'index';
-  DataKey = 'data';
   DataDefKey = 'def';
   DataAttrKey = 'attr';
-  CreatedKey = 'created';
-  UpdatedKey = 'updated';
 
 { TBindingData }
 
@@ -201,72 +195,39 @@ begin
   Result := TBindingData;
 end;
 
-constructor TBinding.Create;
-begin
-  inherited Create;
-end;
-
 procedure TBinding.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
-var
-  DataValue: TJSONValue;
 begin
-  Id := '';
-  CompId := '';
   FEntityId := '';
   FBindingType := '';
   FUrn := '';
   FIndex := '';
-  Created := 0;
-  Updated := 0;
+
+  inherited Parse(src, APropertyNames);
 
   if not Assigned(src) then
-  begin
-    BindingData.Parse(nil);
     Exit;
-  end;
 
-  Id := GetValueStrDef(src, GetIdKey, '');
-  CompId := GetValueStrDef(src, CompIdKey, '');
   FEntityId := GetValueStrDef(src, EntityKey, '');
   FBindingType := GetValueStrDef(src, TypeKey, '');
   FUrn := GetValueStrDef(src, UrnKey, '');
   FIndex := GetValueStrDef(src, IndexKey, '');
-  Created := UnixToDateTime(GetValueIntDef(src, CreatedKey, 0));
-  Updated := UnixToDateTime(GetValueIntDef(src, UpdatedKey, 0));
 
   DataValue := src.FindValue(DataKey);
-  if DataValue is TJSONObject then
-    BindingData.Parse(DataValue as TJSONObject)
-  else
+  if not (DataValue is TJSONObject) then
     BindingData.Parse(nil);
 end;
 
 procedure TBinding.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
-var
-  DataObject: TJSONObject;
 begin
   if not Assigned(dst) then
     Exit;
 
-  dst.AddPair(GetIdKey, Id);
-  dst.AddPair(CompIdKey, CompId);
+  inherited Serialize(dst, APropertyNames);
+
   dst.AddPair(EntityKey, FEntityId);
   dst.AddPair(TypeKey, FBindingType);
   dst.AddPair(UrnKey, FUrn);
   dst.AddPair(IndexKey, FIndex);
-  dst.AddPair(CreatedKey, DateTimeToUnix(Created));
-  dst.AddPair(UpdatedKey, DateTimeToUnix(Updated));
-
-  DataObject := BindingData.Serialize();
-  try
-    if Assigned(DataObject) then
-      dst.AddPair(DataKey, DataObject)
-    else
-      dst.AddPair(DataKey, TJSONObject.Create);
-  except
-    DataObject.Free;
-    raise;
-  end;
 end;
 
 procedure TBinding.SetBid(const Value: string);
