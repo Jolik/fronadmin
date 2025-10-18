@@ -13,7 +13,7 @@ uses
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityUnit, EntityBrokerUnit,
-  ParentFormUnit, ParentEditFormUnit, uniLabel, unimLabel, StrUtils;
+  ParentFormUnit, ParentEditFormUnit, uniLabel, StrUtils;
 
 type
   ///  базовая форма с таблицей-списком

@@ -32,7 +32,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
-    function JSON(const APropertyNames: TArray<string> = nil): string; overload;
+    function JSON(const APropertyNames: TArray<string> = nil): string;
 
   end;
 
@@ -60,6 +60,16 @@ type
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
+    ///  return result as JSON list
+    function JSONList(const APropertyNames: TArray<string> = nil): string;
+
+    // These require an existing valid object instance. Errors raise exceptions
+    ///  The const APropertyNames array specifies the fields that must be used
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
+    ///  return result as JSON object
+    function JSON(const APropertyNames: TArray<string> = nil): string;
 
   end;
 
@@ -614,6 +624,22 @@ begin
   Result := TFieldSet;
 end;
 
+function TFieldSetList.JSON(const APropertyNames: TArray<string>): string;
+begin
+
+end;
+
+function TFieldSetList.JSONList(const APropertyNames: TArray<string>): string;
+begin
+
+end;
+
+procedure TFieldSetList.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
+end;
+
 procedure TFieldSetList.ParseList(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
@@ -661,6 +687,26 @@ begin
     dst.AddElement(Items[i].Serialize());
 end;
 
+procedure TFieldSetList.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
+end;
+
+function TFieldSetList.Serialize(
+  const APropertyNames: TArray<string>): TJSONObject;
+begin
+  result := TJSONObject.Create;
+  try
+    Serialize(result);
+  except on e:exception do
+    begin
+      Log('TFieldSetList.Serialize '+ e.Message, lrtError);
+      FreeAndNil(result);
+    end;
+  end;
+end;
+
 function TFieldSetList.SerializeList(
   const APropertyNames: TArray<string>): TJSONArray;
 begin
@@ -669,7 +715,7 @@ begin
     SerializeList(result);
   except on e:exception do
     begin
-      Log('TFieldSetList.Serialize '+ e.Message, lrtError);
+      Log('TFieldSetList.SerializeList '+ e.Message, lrtError);
       FreeAndNil(result);
     end;
   end;
