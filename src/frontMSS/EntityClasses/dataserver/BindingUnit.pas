@@ -39,8 +39,6 @@ type
     function GetIdKey: string; override;
     class function DataClassType: TDataClass; override;
   public
-    constructor Create; overload; override;
-
     function Assign(ASource: TFieldSet): boolean; override;
 
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -72,7 +70,6 @@ const
   TypeKey = 'type';
   UrnKey = 'urn';
   IndexKey = 'index';
-  DataKey = 'data';
   DataDefKey = 'def';
   DataAttrKey = 'attr';
 
@@ -198,14 +195,7 @@ begin
   Result := TBindingData;
 end;
 
-constructor TBinding.Create;
-begin
-  inherited Create;
-end;
-
 procedure TBinding.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
-var
-  DataValue: TJSONValue;
 begin
   FEntityId := '';
   FBindingType := '';
@@ -215,10 +205,7 @@ begin
   inherited Parse(src, APropertyNames);
 
   if not Assigned(src) then
-  begin
-    BindingData.Parse(nil);
     Exit;
-  end;
 
   FEntityId := GetValueStrDef(src, EntityKey, '');
   FBindingType := GetValueStrDef(src, TypeKey, '');
