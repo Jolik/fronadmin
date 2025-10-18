@@ -1,4 +1,4 @@
-program TestsEntities;
+﻿program TestsEntities;
 
 {$APPTYPE CONSOLE}
 
@@ -387,7 +387,8 @@ begin
     TestJSONObject;
     TestArrayToJSONObject;
     TestObjectToJSONArray;
-    Writeln('Все тесты успешно выполнены.');
+    Writeln('Все тесты успешно выполнены. Нажмите любую кнопку!');
+    Readln;
   except
     on E: Exception do
     begin

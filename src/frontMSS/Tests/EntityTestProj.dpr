@@ -842,6 +842,18 @@ begin
         else
           Writeln('Abonents list is empty.');
 
+        if Assigned(AbonentList) then
+        begin
+          Writeln('---------- Abonents Info ----------');
+          var InfoJson := AbonentList.Serialize();
+          try
+            if InfoJson <> nil then
+              Writeln(InfoJson.Format);
+          finally
+            InfoJson.Free;
+          end;
+        end;
+
       finally
         AbonentList.Free;
       end;

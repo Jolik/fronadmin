@@ -30,8 +30,8 @@ type
 
     // These require an existing valid object instance. Errors raise exceptions
     ///  The const APropertyNames array specifies the fields that must be used
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual; abstract;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual; abstract;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload;
     function JSON(const APropertyNames: TArray<string> = nil): string;
 
@@ -216,9 +216,16 @@ type
   public
     ///  Constructor that parses JSON immediately
     constructor Create(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
 
     ///  Assign fields from another object
     function Assign(ASource: TEntityList): boolean; virtual;
+
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Add(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
+    function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload; virtual;
+    function JSON(const APropertyNames: TArray<string> = nil): string;
 
     // These require an existing valid list instance. Errors raise exceptions
     ///  The APropertyNames parameter lists the fields that must be used
@@ -226,8 +233,6 @@ type
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
-    ///  return result as JSON list
-    function JSONList(const APropertyNames: TArray<string> = nil): string;
 
   end;
 
@@ -290,9 +295,21 @@ begin
   end;
 end;
 
+procedure TFieldSet.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
+end;
+
 procedure TFieldSet.RaiseInvalidObjects(o1, o2: TObject);
 begin
   raise exception.CreateFmt('invalid objects input: %s %s', [ClassNameSafe(o1), ClassNameSafe(o2)]);
+end;
+
+procedure TFieldSet.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
 end;
 
 function TFieldSet.Serialize(const APropertyNames: TArray<string>): TJSONObject;
@@ -487,6 +504,12 @@ begin
   end;
 end;
 
+constructor TEntityList.Create(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
+end;
+
 constructor TEntityList.Create(src: TJSONArray;
   const APropertyNames: TArray<string>);
 begin
@@ -500,22 +523,15 @@ begin
   Result := TEntity;
 end;
 
-function TEntityList.JSONList(const APropertyNames: TArray<string>): string;
+function TEntityList.JSON(const APropertyNames: TArray<string>): string;
 begin
-  Result := '[]';
-  var arr := TJSONArray.Create;
-  try
-    try
-      SerializeList(arr, APropertyNames);
-      Result := arr.ToJSON;
-    except on e:exception do
-      begin
-        Log('TEntityList.SerializeList '+ e.Message, lrtError);
-      end;
-    end;
-  finally
-    arr.Free;
-  end;
+
+end;
+
+procedure TEntityList.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
 end;
 
 procedure TEntityList.ParseList(src: TJSONArray;
@@ -536,6 +552,12 @@ begin
       inherited Add(e);
     end;
   end;
+
+end;
+
+procedure TEntityList.Add(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
 
 end;
 
@@ -574,6 +596,18 @@ begin
       raise;
     end;
   end;
+end;
+
+procedure TEntityList.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+
+end;
+
+function TEntityList.Serialize(
+  const APropertyNames: TArray<string>): TJSONObject;
+begin
+
 end;
 
 function TEntityList.SerializeList(
