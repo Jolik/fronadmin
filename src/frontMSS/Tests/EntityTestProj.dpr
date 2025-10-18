@@ -51,6 +51,7 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
@@ -866,6 +867,117 @@ begin
   end;
 end;
 
+procedure ListSourceTypes();
+const
+  SampleSourceTypesJson =
+    '{"meta": {}, "response": {"srctypes": {"items": [{"srctid": "SRC_TYP_UNKNOWN", "name": "Неизвестный", "def": {}}, {"srctid": "SRC_TYP_METPLACE", "srcType": 31, "name": "Метеорологическая площадка", "def": {}}, {"srctid": "SRC_TYP_AGROMETST", "srcType": 31, "name": "Агрометеорологическая станция", "def": {}}, {"srctid": "SRC_TYP_HYDROPOST", "srcType": 53, "name": "Гидрологический пост", "def": {}}, {"srctid": "SRC_TYP_COUNTRY", "srcType": 10100, "name": "Государство", "def": {}}, {"srctid": "SRC_TYP_REGION", "srcType": 10200, "name": "Регион", "def": {}}, {"srctid": "SRC_TYP_MUNICIPAL", "srcType": 10300, "name": "Населенный пункт", "def": {}}]}}}';
+var
+  JsonValue: TJSONValue;
+  ResponseValue, SourceTypesValue, ItemsValue: TJSONValue;
+  ResponseObject, SourceTypesObject: TJSONObject;
+  ItemsArray: TJSONArray;
+  SourceTypes: TSourceTypeList;
+begin
+  JsonValue := TJSONObject.ParseJSONValue(SampleSourceTypesJson);
+  try
+    if not (JsonValue is TJSONObject) then
+    begin
+      Writeln('Sample JSON is not a JSON object.');
+      Exit;
+    end;
+
+    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
+    if not (ResponseValue is TJSONObject) then
+    begin
+      Writeln('Response object is missing.');
+      Exit;
+    end;
+    ResponseObject := ResponseValue as TJSONObject;
+
+    SourceTypesValue := ResponseObject.GetValue('srctypes');
+    if not (SourceTypesValue is TJSONObject) then
+    begin
+      Writeln('Source types object is missing.');
+      Exit;
+    end;
+    SourceTypesObject := SourceTypesValue as TJSONObject;
+
+    ItemsValue := SourceTypesObject.GetValue('items');
+    if not (ItemsValue is TJSONArray) then
+    begin
+      Writeln('Source types items array is missing.');
+      Exit;
+    end;
+    ItemsArray := ItemsValue as TJSONArray;
+
+    SourceTypes := TSourceTypeList.Create(ItemsArray);
+    try
+      Writeln('---------- Dataserver Source Types ----------');
+      if SourceTypes.Count = 0 then
+      begin
+        Writeln('Source types list is empty.');
+        Exit;
+      end;
+
+      for var FieldSet in SourceTypes do
+      begin
+        if not (FieldSet is TSourceType) then
+          Continue;
+
+        var SourceType := TSourceType(FieldSet);
+        Writeln(Format('Class: %s | Address: %p', [SourceType.ClassName, Pointer(SourceType)]));
+        Writeln('Srctid: ' + SourceType.Srctid);
+        Writeln('SrcType: ' + IntToStr(SourceType.SrcType));
+        Writeln('Name: ' + SourceType.Name);
+        if Assigned(SourceType.Def) then
+          Writeln('Def: ' + SourceType.Def.ToJSON)
+        else
+          Writeln('Def: {}');
+
+        Writeln('As JSON:');
+        var Json := SourceType.Serialize();
+        try
+          if Json <> nil then
+            Writeln(Json.Format);
+        finally
+          Json.Free;
+        end;
+
+        var Clone := TSourceType.Create;
+        try
+          if Clone.Assign(SourceType) then
+          begin
+            var CloneJson := Clone.Serialize();
+            try
+              if CloneJson <> nil then
+                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+            finally
+              CloneJson.Free;
+            end;
+          end;
+        finally
+          Clone.Free;
+        end;
+
+        Writeln('----------');
+      end;
+
+      Writeln('List as JSON:');
+      var ListJson := SourceTypes.SerializeList();
+      try
+        if ListJson <> nil then
+          Writeln(ListJson.Format);
+      finally
+        ListJson.Free;
+      end;
+    finally
+      SourceTypes.Free;
+    end;
+  finally
+    JsonValue.Free;
+  end;
+end;
+
 procedure ListAliases();
 var
   AliasesBroker: TAliasesBroker;
@@ -1403,6 +1515,7 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
+      ListSourceTypes();
       ListAbonents();
 //      ListAliases();
 //      ListRules();
