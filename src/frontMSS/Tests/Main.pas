@@ -224,7 +224,7 @@ end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
 const
-  lid = '83789614-a334-4953-afaf-34093c8b43e4';
+  lid = '2f3230a4-cec7-4846-af88-bfc5cd69a154';
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
@@ -279,10 +279,26 @@ begin
     LinkEditForm.Entity := entity;
     var link := entity as TLink;
     case Link.linkType of
+      //ltDirDown: SettingsFrame := .Create(LinkEditForm);
+      //ltDirUp: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpClientUp: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpServerDown: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpServerUp: SettingsFrame := .Create(LinkEditForm);
+      ltOpenMCEP: SettingsFrame := TOpenMCEPSettingEditFrame.Create(LinkEditForm);
+      //ltPop3ClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSmtpCliUp: SettingsFrame := .Create(LinkEditForm);
+      //ltSmtpSrvDown: SettingsFrame := .Create(LinkEditForm);
       ltSocketSpecial: SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
-      ltOpenMCEP:  SettingsFrame := TOpenMCEPSettingEditFrame.Create(LinkEditForm);
+      //ltHttpClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSebaSgsClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSebaUsrCsdClientDown     : SettingsFrame := .Create(LinkEditForm);
       else exit;
     end;
+
+   {
+
+    }
 
     SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
     SettingsFrame.Parent := LinkEditForm.pnClient;

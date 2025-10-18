@@ -25,9 +25,8 @@ type
 
   protected
     procedure SetDataSettings(const Value: TDataSettings); virtual;
-    function Apply: boolean; virtual;
-
   public
+    function Apply: boolean; virtual;
     ///  класс с настройками которе правит фрейм
     property DataSettings: TDataSettings read FDataSettings write SetDataSettings;
   end;

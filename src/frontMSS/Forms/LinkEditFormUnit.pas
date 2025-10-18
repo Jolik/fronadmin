@@ -38,8 +38,10 @@ end;
 
 function TLinkEditForm.Apply: boolean;
 begin
+  result := false;
+  if not  LinkSettingsEditFrame.Apply() then
+    exit;
   result := inherited Apply;
-  // LinkSettingsEditFrame.Apply?
 end;
 
 end.

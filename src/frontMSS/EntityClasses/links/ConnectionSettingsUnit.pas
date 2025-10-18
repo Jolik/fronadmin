@@ -40,6 +40,7 @@ type
     FSecure: TSecure;
     // для отдельных линков
     FConnectionKey: string; //socketspecial
+    FReplaceIP: boolean; // ftp cli
   public
     ///  устанавливаем поля с другого объекта
     function Assign(ASource: TFieldSet): boolean; override;
@@ -56,6 +57,7 @@ type
 
     // для отдельных линков
     property ConnectionKey: string read FConnectionKey write FConnectionKey;
+    property ReplaceIP: boolean read FReplaceIP write FReplaceIP;
   end;
 
 
@@ -89,6 +91,7 @@ begin
   Disabled := src.Disabled;
   Secure := src.Secure;
   ConnectionKey := src.ConnectionKey;
+  ReplaceIP := src.ReplaceIP;
   Result := true;
 end;
 
@@ -98,6 +101,7 @@ begin
   Timeout := GetValueIntDef(src, 'timeout', 0);
   Disabled := GetValueBool(src, 'disabled');
   ConnectionKey := GetValueStrDef(src, 'key', '');
+  ReplaceIP := GetValueBool(src, 'replace_ip');
   var s: TSecure;
   with s.tls.Certificates do
   begin
@@ -124,6 +128,8 @@ begin
   dst.AddPair('disabled', Disabled);
   if ConnectionKey <> '' then
     dst.AddPair('key', ConnectionKey);
+  if ReplaceIP then
+    dst.AddPair('replace_ip', ReplaceIP);
   dst.Parse(TEncoding.UTF8.GetBytes(connectionStr),0);
   var s := dst.FindValue('secure.auth') as TJSONObject;
   s.AddPair('login', Secure.Auth.Login);

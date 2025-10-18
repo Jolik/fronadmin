@@ -113,7 +113,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\APIClasses\ParentBrokerUnit.pas"/>
         <DCCReference Include="..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
@@ -209,33 +208,11 @@
         <DCCReference Include="..\Common\ConstsUnit.pas"/>
         <DCCReference Include="..\Common\FuncUnit.pas"/>
         <DCCReference Include="..\Common\KeyValUnit.pas"/>
-        <DCCReference Include="..\APIClasses\AliasesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\APIConst.pas"/>
-        <DCCReference Include="..\APIClasses\ChannelsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\DsGroupsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\EntityBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\FieldSetBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\LinksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
-        <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\QueuesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\RulesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TaskSourceBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TaskSourcesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
-        <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
@@ -283,12 +260,39 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\APIClasses\StripTaskSourceBrokerUnit.pas"/>
         <DCCReference Include="..\Forms\LinksFrames\OpenMCEPSettingEditFrameUnit.pas">
             <Form>OpenMCEPSettingEditFrame</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\EntityClasses\datacomm\ProfileUnit.pas"/>
+        <DCCReference Include="..\APIClasses\AliasesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\APIConst.pas"/>
+        <DCCReference Include="..\APIClasses\ChannelsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\DsGroupsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\EntityBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\FieldSetBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\LinksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\MainHttpModuleUnit.pas"/>
+        <DCCReference Include="..\APIClasses\MonitoringTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\MonitoringTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\ParentBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\ProfilesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\QueuesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\RouterSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\RulesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\StripTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\StripTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\SummaryTasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TasksBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TaskSourcesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\S3SettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
