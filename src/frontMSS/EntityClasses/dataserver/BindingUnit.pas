@@ -211,10 +211,6 @@ begin
   FBindingType := GetValueStrDef(src, TypeKey, '');
   FUrn := GetValueStrDef(src, UrnKey, '');
   FIndex := GetValueStrDef(src, IndexKey, '');
-
-  DataValue := src.FindValue(DataKey);
-  if not (DataValue is TJSONObject) then
-    BindingData.Parse(nil);
 end;
 
 procedure TBinding.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
