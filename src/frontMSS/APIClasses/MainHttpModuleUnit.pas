@@ -20,7 +20,7 @@ type
 
     procedure InitializeHTTPClient();
 
-    function Post(AURL: string; const ASourceFile: TStream): string;
+    function Post(AURL: string; const ASourceFile: TStream = nil): string;
     function Get(AURL: string): string;
 
   public
@@ -30,7 +30,7 @@ type
   end;
 
 /// глобальные функции
-function POST(AURL: string; const ASourceFile: TStream): string;
+function POST(AURL: string; const ASourceFile: TStream = nil): string;
 function GET(AURL: string): string;
 
 implementation
@@ -40,7 +40,7 @@ var
   MainHttpModule: TMainHttpModule;
 
 /// глобальная функция POST
-function POST(AURL: string; const ASourceFile: TStream): string;
+function POST(AURL: string; const ASourceFile: TStream = nil): string;
 begin
   Result := MainHttpModule.Post(API_BASE_URL + AURL, ASourceFile);
 end;
@@ -81,9 +81,13 @@ begin
   inherited;
 end;
 
-function TMainHttpModule.Post(AURL: string; const ASourceFile: TStream): string;
+function TMainHttpModule.Post(AURL: string; const ASourceFile: TStream = nil): string;
 begin
-  Result := FIdHTTP.Post(AURL, ASourceFile);
+  ///  если параметров не передали, то значит POST без тела
+  if ASourceFile = nil then
+    Result := FIdHTTP.Post(AURL, '')
+  else
+    Result := FIdHTTP.Post(AURL, ASourceFile);
 end;
 
 function TMainHttpModule.Get(AURL: string): string;

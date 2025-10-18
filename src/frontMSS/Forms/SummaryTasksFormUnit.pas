@@ -10,12 +10,17 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  //ParentBrokerUnit,
+  EntityBrokerUnit,
   ParentEditFormUnit,
-  SummaryTasksBrokerUnit;
+  SummaryTasksBrokerUnit, uniPanel, uniLabel;
 
 type
   TSummaryTasksForm = class(TListParentForm)
+    cpTaskInfoModule: TUniContainerPanel;
+    lTaskInfoModule: TUniLabel;
+    lTaskInfoModuleValue: TUniLabel;
+    pSeparator5: TUniPanel;
+    procedure dbgEntitySelectionChange(Sender: TObject);
   private
 
   protected
@@ -23,7 +28,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///
-  //  function CreateBroker(): TParentBroker; override;
+    function CreateBroker(): TEntityBroker; override;
 
     ///
     function CreateEditForm(): TParentEditForm; override;
@@ -39,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SummaryTaskEditFormUnit;
+  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit;
 
 function SummaryTasksForm: TSummaryTasksForm;
 begin
@@ -47,18 +52,32 @@ begin
 end;
 
 { TSummaryTasksForm }
-{
-function TSummaryTasksForm.CreateBroker: TParentBroker;
+
+function TSummaryTasksForm.CreateBroker: TEntityBroker;
 begin
   ///   ""
   Result := TSummaryTasksBroker.Create();
 end;
-}
+
 
 function TSummaryTasksForm.CreateEditForm: TParentEditForm;
 begin
   ///   ""
   Result := SummaryTaskEditForm();
+end;
+
+procedure TSummaryTasksForm.dbgEntitySelectionChange(Sender: TObject);
+var
+  LEntity : TSummaryTask;
+  LId     : string;
+  DT      : string;
+begin
+  inherited;
+
+  LId := FDMemTableEntity.FieldByName('Id').AsString;
+  ///  получаем полную информацию о сущности от брокера
+  LEntity := Broker.Info(LId) as TSummaryTask;
+  lTaskInfoModuleValue.Caption    := LEntity.Module;
 end;
 
 procedure TSummaryTasksForm.Refresh(const AId: String = '');

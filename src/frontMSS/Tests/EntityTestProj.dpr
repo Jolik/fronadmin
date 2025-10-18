@@ -11,6 +11,7 @@ uses
   IdURI,
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
+  AbonensBrokerUnit in '..\APIClasses\AbonensBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
   ProfilesBrokerUnit in '..\APIClasses\ProfilesBrokerUnit.pas',
   MainHttpModuleUnit in '..\APIClasses\MainHttpModuleUnit.pas',
@@ -43,6 +44,7 @@ uses
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
+  AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
   RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
@@ -763,6 +765,107 @@ begin
   end;
 end;
 
+procedure ListAbonents();
+var
+  AbonentsBroker: TAbonentsBroker;
+  AbonentList: TEntityList;
+  AbonentEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    AbonentsBroker := TAbonentsBroker.Create;
+    try
+      AbonentList := nil;
+      try
+        AbonentList := AbonentsBroker.List(PageCount);
+
+        Writeln('---------- Abonents List ----------');
+
+        if Assigned(AbonentList) then
+        begin
+          var FirstAbonent: TAbonent := nil;
+
+          if AbonentList.Count > 0 then
+            FirstAbonent := AbonentList.Items[0] as TAbonent;
+
+          for AbonentEntity in AbonentList do
+          begin
+            var Abonent := AbonentEntity as TAbonent;
+            Writeln(Format('Class: %s | Address: %p', [Abonent.ClassName, Pointer(Abonent)]));
+            Writeln('Abid: ' + Abonent.Abid);
+            Writeln('Name: ' + Abonent.Name);
+            Writeln('Caption: ' + Abonent.Caption);
+            Writeln('Channels count: ' + IntToStr(Abonent.Channels.Count));
+            Writeln('Attr pairs count: ' + IntToStr(Abonent.Attr.Count));
+
+            Writeln('As JSON:');
+            var Json := Abonent.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstAbonent) then
+          begin
+            Writeln('---------- Abonent Info ----------');
+            Writeln('Requesting info for: ' + FirstAbonent.Abid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := AbonentsBroker.Info(FirstAbonent.Abid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoAbonent := InfoEntity as TAbonent;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoAbonent.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Abonents list is empty.');
+
+        if Assigned(AbonentList) then
+        begin
+          Writeln('---------- Abonents Info ----------');
+          var InfoJson := AbonentList.Serialize();
+          try
+            if InfoJson <> nil then
+              Writeln(InfoJson.Format);
+          finally
+            InfoJson.Free;
+          end;
+        end;
+
+      finally
+        AbonentList.Free;
+      end;
+    finally
+      AbonentsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListAliases();
 var
   AliasesBroker: TAliasesBroker;
@@ -1297,9 +1400,10 @@ begin
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
 //    ListStripTaskSources();
-//      ListSummaryTaskSources();
-//      ListMonitoringTaskSources();
-      ListProfiles();
+//    ListSummaryTaskSources();
+//    ListMonitoringTaskSources();
+//      ListProfiles();
+      ListAbonents();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
