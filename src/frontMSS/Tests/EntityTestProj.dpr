@@ -1761,8 +1761,8 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
-      ListContexts();
-//      ListBindings();
+//      ListContexts();
+      ListBindings();
 //      ListAbonents();
 //      ListAliases();
 //      ListRules();

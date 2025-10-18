@@ -31,7 +31,6 @@ type
     function Update(AEntity: TEntity): Boolean; override;
     function Remove(AId: String): Boolean; overload; override;
 
-    function NewGroup(ABindings: TBindingList; out ACreatedBids: TArray<string>): Boolean;
   end;
 
 implementation
@@ -42,13 +41,14 @@ uses
   APIConst;
 
 const
-  constURLBindingsBasePath = constURLMetadataBasePath;
+  constURLMetadataPath = '/metadata';
+  constURLBindingsBasePath = constURLDataserverBasePath + constURLMetadataPath;
   constURLBindingsList = '/bindings/list';
   constURLBindingsInfo = '/bindings/%s';
   constURLBindingsNew = '/bindings/new';
-  constURLBindingsNewGroup = '/bindings/newgroup';
   constURLBindingsUpdate = '/bindings/%s/update';
   constURLBindingsRemove = '/bindings/%s/remove';
+
   ResponseKey = 'response';
   BindingsKey = 'bindings';
   BindingKey = 'binding';
@@ -175,6 +175,11 @@ begin
   end;
 end;
 
+class function TBindingsBroker.ListClassType: TEntityListClass;
+begin
+  Result := TBindingList;
+end;
+
 function TBindingsBroker.New(AEntity: TEntity): Boolean;
 var
   URL: string;
@@ -244,99 +249,6 @@ begin
     BidValue := ResponseObject.GetValue(BidKey);
     if Assigned(BidValue) then
       Binding.Bid := BidValue.Value;
-  finally
-    JSONResult.Free;
-  end;
-end;
-
-function TBindingsBroker.NewGroup(ABindings: TBindingList;
-  out ACreatedBids: TArray<string>): Boolean;
-var
-  URL: string;
-  RequestObject: TJSONObject;
-  BindingsArray: TJSONArray;
-  Binding: TBinding;
-  BindingJson: TJSONObject;
-  RequestStream: TStringStream;
-  ResStr: string;
-  JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
-  BidsValue: TJSONValue;
-  BidsArray: TJSONArray;
-  I: Integer;
-begin
-  Result := false;
-  SetLength(ACreatedBids, 0);
-
-  if not Assigned(ABindings) then
-    Exit;
-
-  URL := GetBasePath + constURLBindingsNewGroup;
-
-  RequestObject := TJSONObject.Create;
-  try
-    BindingsArray := TJSONArray.Create;
-    RequestObject.AddPair(BindingsKey, BindingsArray);
-
-    for Binding in ABindings do
-    begin
-      BindingJson := TJSONObject.Create;
-      try
-        if Binding.Bid <> '' then
-          BindingJson.AddPair(BidKey, Binding.Bid);
-        if Binding.CompId <> '' then
-          BindingJson.AddPair(CompIdKey, Binding.CompId);
-        if Binding.EntityId <> '' then
-          BindingJson.AddPair(EntityKey, Binding.EntityId);
-        if Binding.BindingType <> '' then
-          BindingJson.AddPair(TypeKey, Binding.BindingType);
-        if Binding.Urn <> '' then
-          BindingJson.AddPair(UrnKey, Binding.Urn);
-        if Binding.Index <> '' then
-          BindingJson.AddPair(IndexKey, Binding.Index);
-
-        var DataObject := Binding.BindingData.Serialize();
-        if Assigned(DataObject) then
-          BindingJson.AddPair(DataKey, DataObject);
-
-        BindingsArray.AddElement(BindingJson);
-      except
-        BindingJson.Free;
-        raise;
-      end;
-    end;
-
-    RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
-    try
-      ResStr := MainHttpModuleUnit.POST(URL, RequestStream);
-      Result := true;
-    finally
-      RequestStream.Free;
-    end;
-  finally
-    RequestObject.Free;
-  end;
-
-  if not Result then
-    Exit;
-
-  JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-  try
-    if not Assigned(JSONResult) then
-      Exit;
-
-    ResponseObject := JSONResult.GetValue(ResponseKey) as TJSONObject;
-    if not Assigned(ResponseObject) then
-      Exit;
-
-    BidsValue := ResponseObject.GetValue(BindingsKey);
-    if not (BidsValue is TJSONArray) then
-      Exit;
-
-    BidsArray := TJSONArray(BidsValue);
-    SetLength(ACreatedBids, BidsArray.Count);
-    for I := 0 to BidsArray.Count - 1 do
-      ACreatedBids[I] := BidsArray.Items[I].Value;
   finally
     JSONResult.Free;
   end;
