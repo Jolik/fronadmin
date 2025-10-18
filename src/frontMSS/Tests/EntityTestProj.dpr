@@ -24,6 +24,8 @@ uses
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
   CredsBrokerUnit in '..\APIClasses\CredsBrokerUnit.pas',
   ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
+  ContextTypesBrokerUnit in '..\APIClasses\ContextTypesBrokerUnit.pas',
+  SourceTypesBrokerUnit in '..\APIClasses\SourceTypesBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
@@ -55,8 +57,8 @@ uses
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   CredUnit in '..\EntityClasses\dataserver\CredUnit.pas',
   ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
-  SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
+  SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
@@ -992,359 +994,238 @@ const
     '{"ctxid": "a631cd00-d431-4152-8b0e-2887e1200747", "ctxtid": "CTX_TYPE_METEOPLACE", "sid": "0001-012345-0001", "index": "54321", "data": {"params": {"meteoRange": 900, "timeShift": 900}}}' +
     ']}}';
 var
-  JsonValue: TJSONValue;
-  ResponseValue: TJSONValue;
-  ResponseObject: TJSONObject;
-  InfoValue: TJSONValue;
-  InfoObject: TJSONObject;
-  ItemsValue: TJSONValue;
-  ItemsArray: TJSONArray;
-  Contexts: TContextList;
+  ContextsBroker: TContextsBroker;
+  ContextList: TEntityList;
+  ContextEntity: TEntity;
+  PageCount: Integer;
 begin
-  JsonValue := TJSONObject.ParseJSONValue(SampleContextsJson);
   try
-    if not (JsonValue is TJSONObject) then
-    begin
-      Writeln('Sample JSON is not a JSON object.');
-      Exit;
-    end;
-
-    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
-    if not (ResponseValue is TJSONObject) then
-    begin
-      Writeln('Response object is missing.');
-      Exit;
-    end;
-    ResponseObject := ResponseValue as TJSONObject;
-
-    InfoValue := ResponseObject.GetValue('info');
-    if InfoValue is TJSONObject then
-    begin
-      InfoObject := InfoValue as TJSONObject;
-      Writeln('Info:');
-      Writeln('  Page: ' + IntToStr(GetValueIntDef(InfoObject, 'page', 0)));
-      Writeln('  Pagecount: ' + IntToStr(GetValueIntDef(InfoObject, 'pagecount', 0)));
-      Writeln('  Pagesize: ' + IntToStr(GetValueIntDef(InfoObject, 'pagesize', 0)));
-      Writeln('  Total: ' + IntToStr(GetValueIntDef(InfoObject, 'total', 0)));
-    end;
-
-    ItemsValue := ResponseObject.GetValue('contexts');
-    if not (ItemsValue is TJSONArray) then
-    begin
-      Writeln('Contexts array is missing.');
-      Exit;
-    end;
-    ItemsArray := ItemsValue as TJSONArray;
-
-    Contexts := TContextList.Create(ItemsArray);
+    ContextsBroker := TContextsBroker.Create;
     try
-      Writeln('---------- Dataserver Contexts ----------');
-      if Contexts.Count = 0 then
-      begin
-        Writeln('Contexts list is empty.');
-        Exit;
-      end;
+      ContextList := nil;
+      try
+        ContextList := ContextsBroker.List(PageCount);
 
-      for var Entity in Contexts do
-      begin
-        if not (Entity is TContext) then
-          Continue;
+        Writeln('---------- Dataserver Contexts ----------');
 
-        var Context := TContext(Entity);
-        Writeln(Format('Class: %s | Address: %p', [Context.ClassName, Pointer(Context)]));
-        Writeln('CtxId: ' + Context.CtxId);
-        Writeln('CtxtId: ' + Context.CtxtId);
-        Writeln('Sid: ' + Context.Sid);
-        Writeln('Index: ' + Context.Index);
-        if Assigned(Context.Data) then
-          Writeln('Data: ' + Context.Data.ToJSON)
-        else
-          Writeln('Data: {}');
+        if Assigned(ContextList) then
+        begin
+          var FirstContext: TContext := nil;
 
-        var Json := Context.Serialize();
-        try
-          if Assigned(Json) then
-            Writeln('As JSON: ' + Json.ToJSON);
-        finally
-          Json.Free;
-        end;
+          if ContextList.Count > 0 then
+            FirstContext := ContextList.Items[0] as TContext;
 
-        var Clone := TContext.Create;
-        try
-          if Clone.Assign(Context) then
+          for ContextEntity in ContextList do
           begin
-            var CloneJson := Clone.Serialize();
+            var Context := ContextEntity as TContext;
+            Writeln(Format('Class: %s | Address: %p', [Context.ClassName, Pointer(Context)]));
+            Writeln('CtxId: ' + Context.CtxId);
+            Writeln('CtxtId: ' + Context.CtxtId);
+            Writeln('Sid: ' + Context.Sid);
+            Writeln('Index: ' + Context.Index);
+            if Assigned(Context.Data) then
+              Writeln('Data: ' + Context.Data.ToJSON)
+            else
+              Writeln('Data: {}');
+
+            Writeln('As JSON:');
+            var Json := Context.Serialize();
             try
-              if Assigned(CloneJson) then
-                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+              if Json <> nil then
+                Writeln(Json.Format);
             finally
-              CloneJson.Free;
+              Json.Free;
             end;
+
+            Writeln('----------');
           end;
-        finally
-          Clone.Free;
-        end;
 
-        Writeln('----------');
-      end;
+          if Assigned(FirstContext) then
+          begin
+            Writeln('---------- Context Info ----------');
+            Writeln('Requesting info for: ' + FirstContext.CtxId);
 
-      var ListJson := Contexts.SerializeList();
-      try
-        if Assigned(ListJson) then
-          Writeln('List JSON: ' + ListJson.ToJSON);
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := ContextsBroker.Info(FirstContext.CtxId);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoContext := InfoEntity as TContext;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoContext.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Contexts list is empty.');
+
       finally
-        ListJson.Free;
+        ContextList.Free;
       end;
     finally
-      Contexts.Free;
+      ContextsBroker.Free;
     end;
-  finally
-    JsonValue.Free;
-  end;
-
-  var Broker := TContextsBroker.Create;
-  try
-    var NewContext := Broker.CreateNew as TContext;
-    try
-      NewContext.CtxId := 'test-context-id';
-      NewContext.CtxtId := 'CTX_TYPE_METPLACE';
-      NewContext.Sid := '0001-012345-0002';
-      NewContext.Index := 'index123';
-      if Assigned(NewContext.Data) then
-      begin
-        NewContext.Data.Clear;
-        var Params := TJSONObject.Create;
-        Params.AddPair('meteoRange', TJSONNumber.Create(600));
-        Params.AddPair('timeShift', TJSONNumber.Create(300));
-        NewContext.Data.AddPair('params', Params);
-        NewContext.Data.AddPair('note', 'sample');
-      end;
-
-      var NewJson := NewContext.Serialize();
-      try
-        if Assigned(NewJson) then
-          Writeln('CreateNew JSON: ' + NewJson.ToJSON);
-      finally
-        NewJson.Free;
-      end;
-    finally
-      NewContext.Free;
-    end;
-  finally
-    Broker.Free;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
   end;
 end;
 
 procedure ListSourceTypes();
-const
-  SampleSourceTypesJson =
-    '{"meta": {}, "response": {"srctypes": {"items": [{"srctid": "SRC_TYP_UNKNOWN", "name": "Неизвестный", "def": {}}, {"srctid": "SRC_TYP_METPLACE", "srcType": 31, "name": "Метеорологическая площадка", "def": {}}, {"srctid": "SRC_TYP_AGROMETST", "srcType": 31, "name": "Агрометеорологическая станция", "def": {}}, {"srctid": "SRC_TYP_HYDROPOST", "srcType": 53, "name": "Гидрологический пост", "def": {}}, {"srctid": "SRC_TYP_COUNTRY", "srcType": 10100, "name": "Государство", "def": {}}, {"srctid": "SRC_TYP_REGION", "srcType": 10200, "name": "Регион", "def": {}}, {"srctid": "SRC_TYP_MUNICIPAL", "srcType": 10300, "name": "Населенный пункт", "def": {}}]}}}';
 var
-  JsonValue: TJSONValue;
-  ResponseValue, SourceTypesValue, ItemsValue: TJSONValue;
-  ResponseObject, SourceTypesObject: TJSONObject;
-  ItemsArray: TJSONArray;
-  SourceTypes: TSourceTypeList;
+  SourceTypesBroker: TSourceTypesBroker;
+  SourceTypesList: TFieldSetList;
+  PageCount: Integer;
 begin
-  JsonValue := TJSONObject.ParseJSONValue(SampleSourceTypesJson);
   try
-    if not (JsonValue is TJSONObject) then
-    begin
-      Writeln('Sample JSON is not a JSON object.');
-      Exit;
-    end;
-
-    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
-    if not (ResponseValue is TJSONObject) then
-    begin
-      Writeln('Response object is missing.');
-      Exit;
-    end;
-    ResponseObject := ResponseValue as TJSONObject;
-
-    SourceTypesValue := ResponseObject.GetValue('srctypes');
-    if not (SourceTypesValue is TJSONObject) then
-    begin
-      Writeln('Source types object is missing.');
-      Exit;
-    end;
-    SourceTypesObject := SourceTypesValue as TJSONObject;
-
-    ItemsValue := SourceTypesObject.GetValue('items');
-    if not (ItemsValue is TJSONArray) then
-    begin
-      Writeln('Source types items array is missing.');
-      Exit;
-    end;
-    ItemsArray := ItemsValue as TJSONArray;
-
-    SourceTypes := TSourceTypeList.Create(ItemsArray);
+    SourceTypesBroker := TSourceTypesBroker.Create;
     try
-      Writeln('---------- Dataserver Source Types ----------');
-      if SourceTypes.Count = 0 then
-      begin
-        Writeln('Source types list is empty.');
-        Exit;
-      end;
+      SourceTypesList := nil;
+      try
+        SourceTypesList := SourceTypesBroker.List(PageCount);
 
-      for var FieldSet in SourceTypes do
-      begin
-        if not (FieldSet is TSourceType) then
-          Continue;
+        Writeln('---------- Dataserver Source Types ----------');
 
-        var SourceType := TSourceType(FieldSet);
-        Writeln(Format('Class: %s | Address: %p', [SourceType.ClassName, Pointer(SourceType)]));
-        Writeln('Srctid: ' + SourceType.Srctid);
-        Writeln('SrcType: ' + IntToStr(SourceType.SrcType));
-        Writeln('Name: ' + SourceType.Name);
-        if Assigned(SourceType.Def) then
-          Writeln('Def: ' + SourceType.Def.ToJSON)
-        else
-          Writeln('Def: {}');
-
-        Writeln('As JSON:');
-        var Json := SourceType.Serialize();
-        try
-          if Json <> nil then
-            Writeln(Json.Format);
-        finally
-          Json.Free;
-        end;
-
-        var Clone := TSourceType.Create;
-        try
-          if Clone.Assign(SourceType) then
+        if Assigned(SourceTypesList) then
+        begin
+          if SourceTypesList.Count = 0 then
+            Writeln('Source types list is empty.')
+          else
           begin
-            var CloneJson := Clone.Serialize();
+            for var FieldSet in SourceTypesList do
+            begin
+              if not (FieldSet is TSourceType) then
+                Continue;
+
+              var SourceType := TSourceType(FieldSet);
+              Writeln(Format('Class: %s | Address: %p', [SourceType.ClassName, Pointer(SourceType)]));
+              Writeln('Srctid: ' + SourceType.Srctid);
+              Writeln('SrcType: ' + IntToStr(SourceType.SrcType));
+              Writeln('Name: ' + SourceType.Name);
+              if Assigned(SourceType.Def) then
+                Writeln('Def: ' + SourceType.Def.ToJSON)
+              else
+                Writeln('Def: {}');
+
+              Writeln('As JSON:');
+              var Json := SourceType.Serialize();
+              try
+                if Json <> nil then
+                  Writeln(Json.Format);
+              finally
+                Json.Free;
+              end;
+
+              Writeln('----------');
+            end;
+
+            Writeln('List as JSON:');
+            var ListJson := SourceTypesList.SerializeList();
             try
-              if CloneJson <> nil then
-                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+              if ListJson <> nil then
+                Writeln(ListJson.Format);
             finally
-              CloneJson.Free;
+              ListJson.Free;
             end;
           end;
-        finally
-          Clone.Free;
-        end;
+        end
+        else
+          Writeln('Source types list is empty.');
 
-        Writeln('----------');
-      end;
-
-      Writeln('List as JSON:');
-      var ListJson := SourceTypes.SerializeList();
-      try
-        if ListJson <> nil then
-          Writeln(ListJson.Format);
       finally
-        ListJson.Free;
+        SourceTypesList.Free;
       end;
     finally
-      SourceTypes.Free;
+      SourceTypesBroker.Free;
     end;
-  finally
-    JsonValue.Free;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
   end;
 end;
 
 procedure ListContextTypes();
-const
-  SampleContextTypesJson =
-    '{"meta": {}, "response": {"ctxtypes": [{"ctxtid": "CTX_TYPE_METEO", "def": {}, "name": "Метеорологический индекс"}, {"ctxtid": "CTX_TYPE_EQU", "def": {}, "name": "Идентификатор оборудования"}, {"ctxtid": "CTX_TYPE_AVIA", "def": {}, "name": "Индекс авиационного метеорологического органа"}, {"ctxtid": "CTX_TYPE_HYDRO", "def": {}, "name": "Гидрологический индекс"}]}}';
 var
-  JsonValue: TJSONValue;
-  ResponseValue, ContextTypesValue: TJSONValue;
-  ResponseObject: TJSONObject;
-  ContextTypesArray: TJSONArray;
-  ContextTypes: TContextTypeList;
+  ContextTypesBroker: TContextTypesBroker;
+  ContextTypesList: TFieldSetList;
+  PageCount: Integer;
 begin
-  JsonValue := TJSONObject.ParseJSONValue(SampleContextTypesJson);
   try
-    if not (JsonValue is TJSONObject) then
-    begin
-      Writeln('Sample JSON is not a JSON object.');
-      Exit;
-    end;
-
-    ResponseValue := (JsonValue as TJSONObject).GetValue('response');
-    if not (ResponseValue is TJSONObject) then
-    begin
-      Writeln('Response object is missing.');
-      Exit;
-    end;
-    ResponseObject := ResponseValue as TJSONObject;
-
-    ContextTypesValue := ResponseObject.GetValue('ctxtypes');
-    if not (ContextTypesValue is TJSONArray) then
-    begin
-      Writeln('Context types array is missing.');
-      Exit;
-    end;
-    ContextTypesArray := ContextTypesValue as TJSONArray;
-
-    ContextTypes := TContextTypeList.Create(ContextTypesArray);
+    ContextTypesBroker := TContextTypesBroker.Create;
     try
-      Writeln('---------- Dataserver Context Types ----------');
-      if ContextTypes.Count = 0 then
-      begin
-        Writeln('Context types list is empty.');
-        Exit;
-      end;
+      ContextTypesList := nil;
+      try
+        ContextTypesList := ContextTypesBroker.List(PageCount);
 
-      for var FieldSet in ContextTypes do
-      begin
-        if not (FieldSet is TContextType) then
-          Continue;
+        Writeln('---------- Dataserver Context Types ----------');
 
-        var ContextType := TContextType(FieldSet);
-        Writeln(Format('Class: %s | Address: %p', [ContextType.ClassName, Pointer(ContextType)]));
-        Writeln('Ctxtid: ' + ContextType.Ctxtid);
-        Writeln('Name: ' + ContextType.Name);
-        if Assigned(ContextType.Def) then
-          Writeln('Def: ' + ContextType.Def.ToJSON)
-        else
-          Writeln('Def: {}');
-
-        Writeln('As JSON:');
-        var Json := ContextType.Serialize();
-        try
-          if Json <> nil then
-            Writeln(Json.Format);
-        finally
-          Json.Free;
-        end;
-
-        var Clone := TContextType.Create;
-        try
-          if Clone.Assign(ContextType) then
+        if Assigned(ContextTypesList) then
+        begin
+          if ContextTypesList.Count = 0 then
+            Writeln('Context types list is empty.')
+          else
           begin
-            var CloneJson := Clone.Serialize();
+            for var FieldSet in ContextTypesList do
+            begin
+              if not (FieldSet is TContextType) then
+                Continue;
+
+              var ContextType := TContextType(FieldSet);
+              Writeln(Format('Class: %s | Address: %p', [ContextType.ClassName, Pointer(ContextType)]));
+              Writeln('Ctxtid: ' + ContextType.Ctxtid);
+              Writeln('Name: ' + ContextType.Name);
+              if Assigned(ContextType.Def) then
+                Writeln('Def: ' + ContextType.Def.ToJSON)
+              else
+                Writeln('Def: {}');
+
+              Writeln('As JSON:');
+              var Json := ContextType.Serialize();
+              try
+                if Json <> nil then
+                  Writeln(Json.Format);
+              finally
+                Json.Free;
+              end;
+
+              Writeln('----------');
+            end;
+
+            Writeln('List as JSON:');
+            var ListJson := ContextTypesList.SerializeList();
             try
-              if CloneJson <> nil then
-                Writeln('Clone JSON: ' + CloneJson.ToJSON);
+              if ListJson <> nil then
+                Writeln(ListJson.Format);
             finally
-              CloneJson.Free;
+              ListJson.Free;
             end;
           end;
-        finally
-          Clone.Free;
-        end;
+        end
+        else
+          Writeln('Context types list is empty.');
 
-        Writeln('----------');
-      end;
-
-      Writeln('List as JSON:');
-      var ListJson := ContextTypes.SerializeList();
-      try
-        if ListJson <> nil then
-          Writeln(ListJson.Format);
       finally
-        ListJson.Free;
+        ContextTypesList.Free;
       end;
     finally
-      ContextTypes.Free;
+      ContextTypesBroker.Free;
     end;
-  finally
-    JsonValue.Free;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
   end;
 end;
 
@@ -1885,8 +1766,7 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
-      ListContextsSample();
-///      ListSourceTypes();
+      ListContexts();
 //      ListAbonents();
 //      ListCreds();
 //      ListAliases();
