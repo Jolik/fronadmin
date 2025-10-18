@@ -593,7 +593,7 @@ begin
   Writeln('--- Тест Entity JSONList ---');
   List := CreateEntityListFromObject;
   try
-    JsonText := List.JSONList;
+    JsonText := List.JSONList();
     Parsed := ParseJSONArray(JsonText);
     try
       AssertEquals('Количество элементов Entity в JSONList', 3, Parsed.Count);

@@ -62,7 +62,6 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; virtual;
     function Serialize(const APropertyNames: TArray<string> = nil): TJSONObject; overload; virtual;
     function JSON(const APropertyNames: TArray<string> = nil): string;
-    function JSONList(const APropertyNames: TArray<string> = nil): string;
 
     // These require an existing valid list instance. Errors raise exceptions
     ///  The APropertyNames parameter lists the fields that must be used
@@ -234,6 +233,7 @@ type
     procedure AddList(src: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     procedure SerializeList(dst: TJSONArray; const APropertyNames: TArray<string> = nil); overload; virtual;
     function SerializeList(const APropertyNames: TArray<string> = nil): TJSONArray; overload; virtual;
+    function JSONList(const APropertyNames: TArray<string> = nil): string;
 
   end;
 
