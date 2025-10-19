@@ -100,7 +100,12 @@
         </DelphiCompile>
         <DCCReference Include="SimpleEntityTest.Constants.pas"/>
         <DCCReference Include="..\Common\FuncUnit.pas"/>
+        <DCCReference Include="..\Common\KeyValUnit.pas"/>
+        <DCCReference Include="..\Logging\LoggingUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\StringUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\AbonentUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\AliasUnit.pas"/>
@@ -109,11 +114,18 @@
         <DCCReference Include="..\EntityClasses\dataserver\ContextUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DsGroupUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\datacomm\ProfileUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\RuleUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\router\SmallRuleUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\S3SettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\Common\TaskSourceUnit.pas"/>
