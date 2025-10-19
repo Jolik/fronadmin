@@ -1,0 +1,2 @@
+inherited SummaryHydraTaskCustomSettingsEditFrame: TSummaryHydraTaskCustomSettingsEditFrame
+end

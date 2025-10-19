@@ -272,10 +272,10 @@
         <DCCReference Include="EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\StringListUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\StringUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskSourceUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskTypesUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskSourceUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskTypesUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskUnit.pas"/>
         <DCCReference Include="EntityClasses\links\ConnectionSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\links\DirSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
@@ -285,6 +285,26 @@
         <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas"/>
         <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
+        <DCCReference Include="Forms\TasksFrames\SummaryCXMTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummaryCXMTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummarySynopTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummarySynopTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummaryHydraTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummaryHydraTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummarySEBATaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

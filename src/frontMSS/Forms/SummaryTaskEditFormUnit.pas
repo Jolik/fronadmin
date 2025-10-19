@@ -33,6 +33,8 @@ type
     teExcludeWeek: TUniEdit;
     lExcludeWeek: TUniLabel;
     cbModule: TUniComboBox;
+    pnCustomSettings: TUniContainerPanel;
+    pnSources: TUniContainerPanel;
   private
     function Apply: boolean; override;
     function DoCheck: Boolean; override;

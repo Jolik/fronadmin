@@ -1,4 +1,4 @@
-unit StringListUnit;
+﻿unit StringListUnit;
 
 interface
 
@@ -11,6 +11,9 @@ type
   /// <summary>
   ///   Класс для хранения и сериализации массива строк, полученного из JSON.
   /// </summary>
+  ///  формат JSON который парсит класс
+  ///  ["lch1","mitra"]
+  ///
   TStringArray = class
   private
     FItems: TList<string>;
@@ -40,6 +43,13 @@ type
   /// <summary>
   ///   Набор объектов TStringArray с поддержкой разных форматов JSON.
   /// </summary>
+  ///
+  ///  формат массива JSON который парсит класс для вызова ParseList
+  ///  [["lch1","mitra"],["ab1","ab2","ab3"]]
+  ///
+  ///  формат объекта  JSON который парсит класс для вызова Parse
+  ///  {"lch1":["lch1","mitra"],"lch2":["ab1","ab2"]}
+  ///
   TStringArrayList = class(TObjectList<TStringArray>)
   private
     function GetItem(Index: Integer): TStringArray;
@@ -71,6 +81,10 @@ type
   /// <summary>
   ///   Коллекция строковых пар «ключ-значение» с разбором из JSON-объекта.
   /// </summary>
+  ///
+  ///  формам объекта который парсит класс
+  ///  {"name":"TTAAii","email":"first@sample.com"}
+  ///
   TKeyValueStringList = class
   private
     FItems: TDictionary<string, string>;

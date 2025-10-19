@@ -62,10 +62,10 @@ uses
   GUIDListUnit in 'EntityClasses\Common\GUIDListUnit.pas',
   StringListUnit in 'EntityClasses\Common\StringListUnit.pas',
   StringUnit in 'EntityClasses\Common\StringUnit.pas',
-  TaskSettingsUnit in 'EntityClasses\Common\TaskSettingsUnit.pas',
-  TaskSourceUnit in 'EntityClasses\Common\TaskSourceUnit.pas',
-  TaskTypesUnit in 'EntityClasses\Common\TaskTypesUnit.pas',
-  TaskUnit in 'EntityClasses\Common\TaskUnit.pas',
+  TaskSettingsUnit in 'EntityClasses\tasks\TaskSettingsUnit.pas',
+  TaskSourceUnit in 'EntityClasses\tasks\TaskSourceUnit.pas',
+  TaskTypesUnit in 'EntityClasses\tasks\TaskTypesUnit.pas',
+  TaskUnit in 'EntityClasses\tasks\TaskUnit.pas',
   ConnectionSettingsUnit in 'EntityClasses\links\ConnectionSettingsUnit.pas',
   DirSettingsUnit in 'EntityClasses\links\DirSettingsUnit.pas',
   LinkSettingsUnit in 'EntityClasses\links\LinkSettingsUnit.pas',
@@ -74,7 +74,11 @@ uses
   S3SettingsUnit in 'EntityClasses\links\S3SettingsUnit.pas',
   ScheduleSettingsUnit in 'EntityClasses\links\ScheduleSettingsUnit.pas',
   SummaryTaskCustomSettingsUnit in 'EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas',
-  SummaryTaskUnit in 'EntityClasses\summary\SummaryTaskUnit.pas';
+  SummaryTaskUnit in 'EntityClasses\summary\SummaryTaskUnit.pas',
+  SummaryCXMTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummaryCXMTaskCustomSettingsEditFrameUnit.pas' {SummaryCXMTaskCustomSettingsEditFrame: TUniFrame},
+  SummarySynopTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySynopTaskCustomSettingsEditFrameUnit.pas' {SummarySynopTaskCustomSettingsEditFrame: TUniFrame},
+  SummaryHydraTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummaryHydraTaskCustomSettingsEditFrameUnit.pas' {SummaryHydraTaskCustomSettingsEditFrame: TUniFrame},
+  SummarySEBATaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas' {SummarySEBATaskCustomSettingsEditFrame: TUniFrame};
 
 {$R *.res}
 
