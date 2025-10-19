@@ -16,7 +16,6 @@ type
     FPath: string;
     FDepth: integer;
 
-
   public
     ///  устанавливаем поля с другого объекта
     function Assign(ASource: TFieldSet): boolean; override;

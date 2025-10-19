@@ -2,13 +2,13 @@ object FrameConnections: TFrameConnections
   Left = 0
   Top = 0
   Width = 365
-  Height = 393
+  Height = 433
   TabOrder = 0
   object UniGroupBox1: TUniGroupBox
     Left = 0
     Top = 0
     Width = 365
-    Height = 393
+    Height = 433
     Hint = ''
     Caption = ' '#1057#1086#1077#1076#1080#1085#1077#1085#1080#1077' '
     Align = alClient
@@ -70,7 +70,7 @@ object FrameConnections: TFrameConnections
     object UniGroupBox3: TUniGroupBox
       AlignWithMargins = True
       Left = 12
-      Top = 85
+      Top = 115
       Width = 341
       Height = 84
       Hint = ''
@@ -139,7 +139,7 @@ object FrameConnections: TFrameConnections
     object UniGroupBox2: TUniGroupBox
       AlignWithMargins = True
       Left = 12
-      Top = 189
+      Top = 219
       Width = 341
       Height = 194
       Hint = ''
@@ -169,6 +169,7 @@ object FrameConnections: TFrameConnections
         end
         inherited CheckBox: TUniCheckBox
           Width = 199
+          ExplicitWidth = 199
         end
       end
       object UniGroupBox4: TUniGroupBox
@@ -266,6 +267,33 @@ object FrameConnections: TFrameConnections
             ExplicitLeft = 287
           end
         end
+      end
+    end
+    inline FrameConnectionKey: TFrameTextInput
+      Left = 2
+      Top = 75
+      Width = 361
+      Height = 30
+      Align = alTop
+      Anchors = [akLeft, akTop, akRight]
+      Constraints.MaxHeight = 30
+      Constraints.MinHeight = 30
+      TabOrder = 5
+      Background.Picture.Data = {00}
+      ExplicitLeft = 2
+      ExplicitTop = 75
+      ExplicitWidth = 361
+      inherited PanelText: TUniPanel
+        Caption = #1050#1083#1102#1095' '#1089#1086#1077#1076#1080#1085#1077#1085#1080#1103
+      end
+      inherited Edit: TUniEdit
+        Width = 190
+        ExplicitWidth = 190
+      end
+      inherited PanelUnits: TUniPanel
+        Left = 335
+        Caption = ''
+        ExplicitLeft = 335
       end
     end
   end

@@ -1,4 +1,4 @@
-unit LinkUnit;
+п»їunit LinkUnit;
 
 interface
 
@@ -9,63 +9,79 @@ uses
   LinkSettingsUnit;
 
 type
-  // TLink абстрактный
+
+  TLinkType = (
+    ltUnknown,
+    ltDirDown,
+    ltDirUp,
+    ltFtpClientDown,
+    ltFtpClientUp,
+    ltFtpServerDown,
+    ltFtpServerUp,
+    ltOpenMCEP,
+    ltPop3ClientDown,
+    ltSmtpCliUp,
+    ltSmtpSrvDown,
+    ltSocketSpecial,
+    ltHttpClientDown,
+    ltSebaSgsClientDown,
+    ltSebaUsrCsdClientDown
+    );
+
+  // TLink Р°Р±СЃС‚СЂР°РєС‚РЅС‹Р№
   TLink = class (TEntity)
   private
     FDir: string;
     FStatus: string;
     FComsts: string;
     FLastActivityTime: int64;
-    FQid: string;
     function GetLid: string;
     procedure SetLid(const Value: string);
     function GetTypeStr: string;
     function GetLinkType: TLinkType;
 
   protected
-    ///  потомок должен вернуть имя поля для идентификатора
+    ///  РїРѕС‚РѕРјРѕРє РґРѕР»Р¶РµРЅ РІРµСЂРЅСѓС‚СЊ РёРјСЏ РїРѕР»СЏ РґР»СЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
     function GetIdKey: string; override;
-    ///  метод возвращает конкретный тип объекта Settings
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° Settings
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
     class function DataClassType: TDataClass; override;
 
   public
     function Assign(ASource: TFieldSet): boolean; override;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
+    // СЌС‚Рё С‚СЂРµР±СѓСЋС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РѕР±СЉРµРєС‚Р°. РЅР° РѕС€РёР±РєРё - СЌРєСЃРµС€Р°РЅ
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    // идентификатор линка
+    // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р»РёРЅРєР°
     property Lid: string read GetLid write SetLid;
-    /// тип линка
+    /// С‚РёРї Р»РёРЅРєР°
     property LinkType: TLinkType read GetLinkType;
-    /// тип линка строкой
+    /// С‚РёРї Р»РёРЅРєР° СЃС‚СЂРѕРєРѕР№
     property TypeStr: string read GetTypeStr;
-    // Dir направление upload|download|duplex
+    // Dir РЅР°РїСЂР°РІР»РµРЅРёРµ upload|download|duplex
     property Dir: string read FDir write FDir;
-    // Идентификатор очереди к которой привязан Линкс
-    property Qid: string read FQid write FQid;
     // Status unknown|starting|stopping|stopped|running|error|halt|unavailable
     property Status: string read FStatus write FStatus;
     // Comsts disconnected|connecting|connected|unknown
     property Comsts: string read FComsts write FComsts;
-    // LastActivityTime послений раз когда была активность линка
+    // LastActivityTime РїРѕСЃР»РµРЅРёР№ СЂР°Р· РєРѕРіРґР° Р±С‹Р»Р° Р°РєС‚РёРІРЅРѕСЃС‚СЊ Р»РёРЅРєР°
     property LastActivityTime: int64 read FLastActivityTime write FLastActivityTime;
 
   end;
 
 type
-  ///  список задач
+  ///  СЃРїРёСЃРѕРє Р·Р°РґР°С‡
   TLinkList = class (TEntityList)
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
     class function ItemClassType: TEntityClass; override;
 
   end;
 
 type
-  /// класс Data для Линков
+  /// РєР»Р°СЃСЃ Data РґР»СЏ Р›РёРЅРєРѕРІ
   TLinkData = class(TData)
   private
     FAutostart: boolean;
@@ -78,21 +94,21 @@ type
     constructor Create(); override;
     destructor Destroy(); override;
 
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
+    // СЌС‚Рё С‚СЂРµР±СѓСЋС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РѕР±СЉРµРєС‚Р°. РЅР° РѕС€РёР±РєРё - СЌРєСЃРµС€Р°РЅ
+    ///  РІ РјР°СЃСЃРёРІРµ const APropertyNames РїРµСЂРµРґР°СЋС‚СЃСЏ РїРѕР»СЏ, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    /// возвращает тип линка в виде строки
+    /// РІРѕР·РІСЂР°С‰Р°РµС‚ С‚РёРї Р»РёРЅРєР° РІ РІРёРґРµ СЃС‚СЂРѕРєРё
     function LinkTypeStr: string;
 
-    // для поля autostart
+    // РґР»СЏ РїРѕР»СЏ autostart
     property Autostart: boolean read FAutostart write FAutostart;
-    // Snapshot рабочие данные линка хранящиеся в ядре. для фронта readonly
+    // Snapshot СЂР°Р±РѕС‡РёРµ РґР°РЅРЅС‹Рµ Р»РёРЅРєР° С…СЂР°РЅСЏС‰РёРµСЃСЏ РІ СЏРґСЂРµ. РґР»СЏ С„СЂРѕРЅС‚Р° readonly
     property Snapshot: string read FSnapshot write FSnapshot;    
-    ///  для поля Settings
+    ///  РґР»СЏ РїРѕР»СЏ Settings
     property DataSettings: TDataSettings read FDataSettings write FDataSettings;
-    // TypeStr тип линка например SOCKET_SPECIAL
+    // TypeStr С‚РёРї Р»РёРЅРєР° РЅР°РїСЂРёРјРµСЂ SOCKET_SPECIAL
     property LinkType: TLinkType read FLinkType write SetLinkType;
 
 
@@ -102,7 +118,7 @@ implementation
 
 uses
   System.SysUtils, 
-  FuncUnit;
+  FuncUnit, KeyValUnit;
 
 const
   LidKey = 'lid';
@@ -117,10 +133,9 @@ const
   SnapshotKey = 'snapshot';
   SettingsKey = 'settings';
 
-const
-  ///  значения строки type
-  OPENMCEP_type = 'OPENMCEP';
-  SOCKETSPECIAL_type = 'SOCKET_SPECIAL';
+var
+  // LinkType2Str СЃС‚СЂРѕРєР° = TLinkType
+  LinkType2Str: TKeyValue<TLinkType>;
 
 { TLink }
 
@@ -164,41 +179,31 @@ begin
   Result := TLinkData;
 end;
 
-///  метод возвращает наименование ключа идентификатора который используется
-///  для данной сущности (у каждого он может быть свой)
+///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°РёРјРµРЅРѕРІР°РЅРёРµ РєР»СЋС‡Р° РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РєРѕС‚РѕСЂС‹Р№ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
+///  РґР»СЏ РґР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё (Сѓ РєР°Р¶РґРѕРіРѕ РѕРЅ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРІРѕР№)
 function TLink.GetIdKey: string;
 begin
-  ///  имя поля идентификатора Lid
+  ///  РёРјСЏ РїРѕР»СЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° Lid
   Result := LidKey;
 end;
 
 procedure TLink.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
-  ///  санчала читаем поле типа и в зависимоти от него создаем нужный класс настроек
-  ///  читаем поле TypeStr
+  ///  СЃР°РЅС‡Р°Р»Р° С‡РёС‚Р°РµРј РїРѕР»Рµ С‚РёРїР° Рё РІ Р·Р°РІРёСЃРёРјРѕС‚Рё РѕС‚ РЅРµРіРѕ СЃРѕР·РґР°РµРј РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ РЅР°СЃС‚СЂРѕРµРє
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ TypeStr
   var ts := GetValueStrDef(src, TypeStrKey, '');
 
-  with (Data as TLinkData) do
-  begin
-    if SameText(ts, OPENMCEP_type) then
-      LinkType := ltOpenMCEP
-    else if SameText(ts, SOCKETSPECIAL_type) then
-      LinkType := ltSocketSpecial
-    else
-      LinkType := ltUnknown;
-  end;
+  (Data as TLinkData).LinkType := LinkType2Str.ValueByKey(ts, ltUnknown);
 
   inherited Parse(src);
 
-  ///  читаем поле Dir
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ Dir
   Dir := GetValueStrDef(src, DirKey, '');
-  ///  читаем поле Qid
-  Qid := GetValueStrDef(src, QidKey, '');
-  ///  читаем поле Status
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ Status
   Status := GetValueStrDef(src, StatusKey, '');
-  ///  читаем поле Comsts
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ Comsts
   Comsts := GetValueStrDef(src, ComstsKey, '');
-  ///  читаем поле LastActivityTime
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ LastActivityTime
   LastActivityTime := GetValueIntDef(src, LastActivityTimeKey, 0);
 
 end;
@@ -206,17 +211,10 @@ end;
 procedure TLink.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
   inherited Serialize(dst);
-  ///  запсиываем поле Dir
   dst.AddPair(TypeStrKey, (Data as TLinkData).LinkTypeStr);
-  ///  запсиываем поле Dir
   dst.AddPair(DirKey, Dir);
-  ///  запсиываем поле Dir
-  dst.AddPair(QidKey, Qid);
-  ///  запсиываем поле Dir
   dst.AddPair(StatusKey, Status);
-  ///  запсиываем поле Dir
   dst.AddPair(ComstsKey, Comsts);
-  ///  запсиываем поле Dir
   dst.AddPair(LastActivityTimeKey, LastActivityTime);
 end;
 
@@ -225,7 +223,7 @@ end;
 constructor TLinkData.Create;
 begin
   inherited Create();
-  ///  создаем секцию Settings
+  ///  СЃРѕР·РґР°РµРј СЃРµРєС†РёСЋ Settings
   FDataSettings := TDataSettings.Create();
 end;
 
@@ -237,11 +235,7 @@ end;
 
 function TLinkData.LinkTypeStr: string;
 begin
-  case LinkType of
-    ltUnknown: Result := 'UNKNOWN';
-    ltOpenMCEP: Result := OPENMCEP_type;
-    ltSocketSpecial: Result := SOCKETSPECIAL_type;
-  end;
+  result := LinkType2Str.KeyByValue(LinkType, 'UNKNOWN');
 end;
 
 procedure TLinkData.Parse(src: TJSONObject;
@@ -253,9 +247,9 @@ begin
   var s := src.GetValue(SettingsKey);
   if not (s is TJSONObject) then
     exit;
-  ///  добавляем поля Settings
+  ///  РґРѕР±Р°РІР»СЏРµРј РїРѕР»СЏ Settings
   var dso := s as TJSONObject;
-  ///  передаем в DataSettings
+  ///  РїРµСЂРµРґР°РµРј РІ DataSettings
   if DataSettings <> nil then
     DataSettings.Parse(dso);
 end;
@@ -265,7 +259,7 @@ procedure TLinkData.Serialize(dst: TJSONObject;
 begin
   inherited;
   dst.AddPair(AutostartKey, Autostart);
-  ///  добавляем настройки settings в объект data
+  ///  РґРѕР±Р°РІР»СЏРµРј РЅР°СЃС‚СЂРѕР№РєРё settings РІ РѕР±СЉРµРєС‚ data
   if DataSettings <> nil then
     dst.AddPair(SettingsKey, DataSettings.Serialize());
 end;
@@ -276,10 +270,22 @@ begin
   if Assigned(FDataSettings) then
     FreeAndNil(FDataSettings);
   FLinkType := Value;
-  ///  в зависимости от типа устанавливаем различные настройки
+  ///  РІ Р·Р°РІРёСЃРёРјРѕСЃС‚Рё РѕС‚ С‚РёРїР° СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЂР°Р·Р»РёС‡РЅС‹Рµ РЅР°СЃС‚СЂРѕР№РєРё
   case Value of
+    ltDirDown: FDataSettings := TDirDownDataSettings.Create();
+    ltDirUp: FDataSettings := TDirUpDataSettings.Create();
     ltOpenMCEP: FDataSettings := TOpenMCEPDataSettings.Create();
     ltSocketSpecial: FDataSettings := TSocketSpecialDataSettings.Create();
+    ltFtpClientDown: FDataSettings := TFtpCliDownDataSettings.Create();
+    ltFtpClientUp: FDataSettings := TFtpCliUpDataSettings.Create();
+    ltFtpServerDown: FDataSettings := TFtpSrvDownDataSettings.Create();
+    ltFtpServerUp: FDataSettings := TFtpSrvUpDataSettings.Create();
+    ltPop3ClientDown: FDataSettings := TPop3CliDownDataSettings.Create();
+    ltSmtpCliUp: FDataSettings := TSmtpCliUpDataSettings.Create();
+    ltSmtpSrvDown: FDataSettings := TSmtpSrvDownDataSettings.Create();
+    ltHttpClientDown: FDataSettings := THttpCliDownDataSettings.Create();
+    ltSebaSgsClientDown:  FDataSettings := TSebaSgsCliDownDataSettings.Create();
+    ltSebaUsrCsdClientDown: FDataSettings := TSebaUsrCsdCliDownDataSettings.Create();
     else FLinkType :=  ltUnknown;
   end;
 end;
@@ -290,5 +296,26 @@ class function TLinkList.ItemClassType: TEntityClass;
 begin
   Result := TLink;
 end;
+
+
+initialization
+  LinkType2Str := TKeyValue<TLinkType>.Create;
+  LinkType2Str.Add('DIR_DOWN', ltDirDown);
+  LinkType2Str.Add('DIR_UP', ltDirUp);
+  LinkType2Str.Add('FTP_CLIENT_DOWN', ltFtpClientDown);
+  LinkType2Str.Add('FTP_CLIENT_UP', ltFtpClientUp);
+  LinkType2Str.Add('FTP_SERVER_DOWN', ltFtpServerDown);
+  LinkType2Str.Add('FTP_SERVER_UP', ltFtpServerUp);
+  LinkType2Str.Add('OPENMCEP', ltOpenMCEP);
+  LinkType2Str.Add('POP3_CLI_DOWN', ltPop3ClientDown);
+  LinkType2Str.Add('SMTP_CLI_UP', ltSmtpCliUp);
+  LinkType2Str.Add('SMTP_SRV_DOWN', ltSmtpSrvDown);
+  LinkType2Str.Add('SOCKET_SPECIAL', ltSocketSpecial);
+  LinkType2Str.Add('HTTP_CLIENT_DOWN', ltHttpClientDown);
+  LinkType2Str.Add('SEBA_SGS_CLIENT_DOWN', ltSebaSgsClientDown);
+  LinkType2Str.Add('SEBA_USR_CSD_CLIENT_DOWN', ltSebaUsrCsdClientDown);                      
+
+finalization
+  LinkType2Str.Free;
 
 end.

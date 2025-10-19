@@ -76,8 +76,10 @@ implementation
 
 uses
   uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
-  LinkSettingsUnit, ParentLinkSettingEditFrameUnit,
-  ParentEditFormUnit, SocketSpecialSettingEditFrameUnit;
+  LinkSettingsUnit, ParentLinkSettingEditFrameUnit, LinkEditFormUnit,
+  ParentEditFormUnit,
+  OpenMCEPSettingEditFrameUnit,
+  SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
 begin
@@ -222,7 +224,7 @@ end;
 
 procedure TMainForm.btnLinkInfoClick(Sender: TObject);
 const
-  lid = '83789614-a334-4953-afaf-34093c8b43e4';
+  lid = '2f3230a4-cec7-4846-af88-bfc5cd69a154';
 var
   Link : TEntity;
   LinksBroker : TLinksBroker;
@@ -260,7 +262,7 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '90d77ba1-85f2-4dc9-8019-d4f1a00e4476';
+  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
 var
   LinksBroker : TLinksBroker;
   SettingsFrame: TParentLinkSettingEditFrame;
@@ -274,19 +276,33 @@ begin
       exit;
     end;
 
-    ParentEditForm.Entity := entity;
+    LinkEditForm.Entity := entity;
     var link := entity as TLink;
     case Link.linkType of
-      ltSocketSpecial:
-        SettingsFrame := TSocketSpecialSettingEditFrame.Create(ParentEditForm);
+      //ltDirDown: SettingsFrame := .Create(LinkEditForm);
+      //ltDirUp: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpClientUp: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpServerDown: SettingsFrame := .Create(LinkEditForm);
+      //ltFtpServerUp: SettingsFrame := .Create(LinkEditForm);
+      ltOpenMCEP: SettingsFrame := TOpenMCEPSettingEditFrame.Create(LinkEditForm);
+      //ltPop3ClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSmtpCliUp: SettingsFrame := .Create(LinkEditForm);
+      //ltSmtpSrvDown: SettingsFrame := .Create(LinkEditForm);
+      ltSocketSpecial: SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
+      //ltHttpClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSebaSgsClientDown: SettingsFrame := .Create(LinkEditForm);
+      //ltSebaUsrCsdClientDown     : SettingsFrame := .Create(LinkEditForm);
       else exit;
     end;
-    showmemo.Lines.Add( (Link.Data as TLinkData).DataSettings.ClassName);
 
+   {
+
+    }
 
     SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
-    SettingsFrame.Parent := ParentEditForm.pnClient;
-    ParentEditForm.ShowModal(UpdateLinkSettingsCallback);
+    SettingsFrame.Parent := LinkEditForm.pnClient;
+    LinkEditForm.ShowModal(UpdateLinkSettingsCallback);
 
   finally
     LinksBroker.Free;

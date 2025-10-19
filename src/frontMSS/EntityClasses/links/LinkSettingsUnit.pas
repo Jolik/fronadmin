@@ -1,4 +1,4 @@
-unit LinkSettingsUnit;
+Ôªøunit LinkSettingsUnit;
 
 interface
 
@@ -7,21 +7,21 @@ uses
   ConnectionSettingsUnit,
   QueueSettingsUnit,
   DirSettingsUnit,
+  S3SettingsUnit,
   ScheduleSettingsUnit,
   EntityUnit;
 
-type
-  TLinkType = (ltUnknown, ltOpenMCEP, ltSocketSpecial);
+
 
 type
-  ///  ·‡ÁÓ‚˚Â Ì‡ÒÚÓÈÍË settings ÍÓÚÓ˚Â Ì‡ıÓ‰ˇÚÒˇ ‚ ÔÓÎÂ Data
+  ///  –±–∞–∑–æ–≤—ã–µ –Ω–∞—Å—Ç—Ä–æ–π–∫–∏ settings –∫–æ—Ç–æ—Ä—ã–µ –Ω–∞—Ö–æ–¥—è—Ç—Å—è –≤ –ø–æ–ª–µ Data
   TDataSettings = class (TFieldSet)
   private
     FLastActivityTimeout: integer;
     FDump: boolean;
   public
-    // ˝ÚË ÚÂ·Û˛Ú ÒÛ˘ÂÒÚ‚Û˛˘Â„Ó Ô‡‚ËÎ¸ÌÓ„Ó ˝ÍÁÂÏÔÎˇ‡ Ó·˙ÂÍÚ‡. Ì‡ Ó¯Ë·ÍË - ˝ÍÒÂ¯‡Ì
-    ///  ‚ Ï‡ÒÒË‚Â const APropertyNames ÔÂÂ‰‡˛ÚÒˇ ÔÓÎˇ, ÍÓÚÓ˚Â ÌÂÓ·ıÓ‰ËÏÓ ËÒÔÓÎ¸ÁÓ‚‡Ú¸
+    // —ç—Ç–∏ —Ç—Ä–µ–±—É—é—Ç —Å—É—â–µ—Å—Ç–≤—É—é—â–µ–≥–æ –ø—Ä–∞–≤–∏–ª—å–Ω–æ–≥–æ —ç–∫–∑–µ–º–ø–ª—è—Ä–∞ –æ–±—ä–µ–∫—Ç–∞. –Ω–∞ –æ—à–∏–±–∫–∏ - —ç–∫—Å–µ—à–∞–Ω
+    ///  –≤ –º–∞—Å—Å–∏–≤–µ const APropertyNames –ø–µ—Ä–µ–¥–∞—é—Ç—Å—è –ø–æ–ª—è, –∫–æ—Ç–æ—Ä—ã–µ –Ω–µ–æ–±—Ö–æ–¥–∏–º–æ –∏—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
@@ -30,10 +30,10 @@ type
   end;
 
 
-  // TSocketSpecialDataSettings Ì‡ÒÚÓÍÈË SOCKET_SPECIAL
+  // TSocketSpecialDataSettings SOCKET_SPECIAL
   TSocketSpecialDataSettings = class (TDataSettings)
   private
-    FConnectionsSettingsList: TConnectionSettingsList;
+    FConnections: TConnectionSettingsList;
     FQueueSettings: TQueueSettings;
     FType: string; // 'client'|'server'
     FAckTimeout: integer;
@@ -52,7 +52,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
-    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
     property QueueSettings: TQueueSettings read FQueueSettings write FQueueSettings;
     property Atype: string read FType write FType;
     property ProtocolVer: string read FProtocolVer write FProtocolVer;
@@ -68,10 +68,10 @@ type
   end;
 
 
-  // TSocketSpecialDataSettings Ì‡ÒÚÓÍÈË OPENMCEP
+  // TSocketSpecialDataSettings OPENMCEP
   TOpenMCEPDataSettings = class (TDataSettings)
   private
-    FConnectionsSettingsList: TConnectionSettingsList;
+    FConnections: TConnectionSettingsList;
     FQueueSettings: TQueueSettings;
     FDirSettings: TDirSettings;
     FType: string;  // 'client'|'server'
@@ -85,7 +85,7 @@ type
     destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    property Connections: TConnectionSettingsList read FConnectionsSettingsList write FConnectionsSettingsList;
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
     property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
     property Dir: TDirSettings read FDirSettings write FDirSettings;
     property AType: string read FType write FType;
@@ -94,6 +94,237 @@ type
     property ResendTimeoutSec: integer read FResendTimeoutSec write FResendTimeoutSec;
     property HeartbeatDelay: integer read FHeartbeatDelay write FHeartbeatDelay;
     property MaxFileSize: integer read FMaxFileSize write FMaxFileSize;
+  end;
+
+  // TDirDownDataSettings DIR_DOWN
+  TDirDownDataSettings = class (TDataSettings)
+  private
+    FWork: TWorkSettings;
+    FDirSettings: TDirSettings;
+    FS3: TS3Settings;
+    FSeekMetaFile: boolean;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Work: TWorkSettings read FWork write FWork;
+    property Dir: TDirSettings read FDirSettings write FDirSettings;
+    property S3: TS3Settings read FS3 write FS3;
+    property SeekMetaFile: boolean read FSeekMetaFile write FSeekMetaFile;
+  end;
+
+
+  TSebaSort = record
+    Enabled: boolean;
+    PathTemplate: string;
+  end;
+
+  // TDirUpDataSettings DIR_UP
+  TDirUpDataSettings = class (TDataSettings)
+  private
+    FFolder: string;
+    FSebaSort: TSebaSort;
+    FS3: TS3Settings;
+    FQueueSettings: TQueueSettings;
+    FOnConflict: string;
+    FDisableTmp: boolean;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Folder: string read FFolder write FFolder;
+    property SebaSort: TSebaSort read FSebaSort write FSebaSort;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+    property S3: TS3Settings read FS3 write FS3;
+    property OnConflict: string read FOnConflict write FOnConflict;
+    property DisableTmp: boolean read FDisableTmp write FDisableTmp;
+  end;
+
+  // TFtpCliDownDataSettings  FTP_CLIENT_DOWN
+  TFtpCliDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FWork: TWorkSettings;
+    FDirSettings: TDirSettings;
+    FTracking: Boolean;
+    FReplaceIp: Boolean; // TODO: —É–±—Ä–∞—Ç—å (—á–∞—Å—Ç—å FConnections. –∫–æ–≥–¥–∞ –¥–æ–±–∞–≤–ª—é –≤ –¥–∞—Ç–∞–∫–æ–º–µ)
+    FDelete: boolean;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Work: TWorkSettings read FWork write FWork;
+    property Dir: TDirSettings read FDirSettings write FDirSettings;
+    property Tracking: Boolean read FTracking write FTracking;
+    property ReplaceIp: Boolean read FReplaceIp write FReplaceIp;
+    property DeleteFiles: Boolean read FDelete write FDelete;
+  end;
+
+  // TFtpCliUpDataSettings  FTP_CLIENT_UP
+  TFtpCliUpDataSettings = class(TDataSettings)
+  private
+    FFolder: string;
+    FConnections: TConnectionSettingsList;
+    FQueueSettings: TQueueSettings;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+    property Folder: string read FFolder write FFolder;
+  end;
+
+  // TFtpSrvDownDataSettings FTP_SERVER_DOWN
+  TFtpSrvDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FPassivePorts: string;
+    FPublicIP: string;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property PassivePorts: string read FPassivePorts write FPassivePorts;
+    property PublicIP: string read FPublicIP write FPublicIP;
+  end;
+
+
+  // TFtpSrvUpDataSettings FTP_SERVER_UP
+  TFtpSrvUpDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FPassivePorts: string;
+    FPublicIP: string;
+    FDirSettings: TDirSettings;
+    FQueueSettings: TQueueSettings;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property PassivePorts: string read FPassivePorts write FPassivePorts;
+    property PublicIP: string read FPublicIP write FPublicIP;
+    property Dir: TDirSettings read FDirSettings write FDirSettings;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+  end;
+
+  // TPop3CliDownDataSettings POP3_CLI_DOWN
+  TPop3CliDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FWork: TWorkSettings;
+    FDelete: boolean;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Work: TWorkSettings read FWork write FWork;
+    property DeleteFiles: Boolean read FDelete write FDelete;
+  end;
+
+  // TSmtpCliUpDataSettings SMTP_CLI_UP
+  TSmtpCliUpDataSettings = class (TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FQueueSettings: TQueueSettings;
+    FEmail: string;
+    FMeteoAttachment: boolean;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
+    property Email: string read FEmail write FEmail;
+    property MeteoAttachment: boolean read FMeteoAttachment write FMeteoAttachment;
+  end;
+
+  // TSmtpSrvDownDataSettings SMTP_SRV_DOWN
+  TSmtpSrvDownDataSettings = class (TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+  end;
+
+  // THttpCliDownDataSettings  HTTP_CLIENT_DOWN
+  THttpCliDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FWork: TWorkSettings;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Work: TWorkSettings read FWork write FWork;
+  end;
+
+  // TSebaSgsCliDownDataSettings SEBA_SGS_CLIENT_DOWN
+  TSebaSgsCliDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FWork: TWorkSettings;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Work: TWorkSettings read FWork write FWork;
+  end;
+
+  // TSebaUsrCsdCliDownDataSettings SEBA_USR_CSD_CLIENT_DOWN
+  TSebaUsrCsdCliDownDataSettings = class(TDataSettings)
+  private
+    FConnections: TConnectionSettingsList;
+    FWork: TWorkSettings;
+
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    property Connections: TConnectionSettingsList read FConnections write FConnections;
+    property Work: TWorkSettings read FWork write FWork;
   end;
 
 implementation
@@ -123,13 +354,13 @@ end;
 constructor TSocketSpecialDataSettings.Create;
 begin
   inherited;
-  FConnectionsSettingsList := TConnectionSettingsList.Create;
+  FConnections := TConnectionSettingsList.Create;
   FQueueSettings := TQueueSettings.Create;
 end;
 
 destructor TSocketSpecialDataSettings.Destroy;
 begin
-  FConnectionsSettingsList.Free;
+  FConnections.Free;
   FQueueSettings.Free;
   inherited;
 end;
@@ -139,14 +370,14 @@ procedure TSocketSpecialDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  FConnectionsSettingsList.Clear;
+  FConnections.Clear;
   var cs := src.FindValue('connections');
   var qs := src.FindValue('QueueSettings');
   var custom := src.FindValue('custom');
   var protocol := src.FindValue('custom.protocol');
 
   if cs is TJSONArray then
-    FConnectionsSettingsList.ParseList(cs as TJSONArray);
+    FConnections.ParseList(cs as TJSONArray);
 
   if qs is TJSONObject then
     FQueueSettings.Parse(qs as TJSONObject);
@@ -174,7 +405,7 @@ procedure TSocketSpecialDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
+  dst.AddPair('connections', FConnections.SerializeList());
   dst.AddPair('QueueSettings', FQueueSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
@@ -198,14 +429,14 @@ end;
 constructor TOpenMCEPDataSettings.Create;
 begin
   inherited;
-  FConnectionsSettingsList := TConnectionSettingsList.Create;
+  FConnections := TConnectionSettingsList.Create;
   FQueueSettings := TQueueSettings.Create;
   FDirSettings := TDirSettings.Create;
 end;
 
 destructor TOpenMCEPDataSettings.Destroy;
 begin
-  FConnectionsSettingsList.Free;
+  FConnections.Free;
   FQueueSettings.Free;
   FDirSettings.Free;
   inherited;
@@ -215,25 +446,24 @@ procedure TOpenMCEPDataSettings.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  FConnectionsSettingsList.Clear;
+
   var cs := src.FindValue('connections');
-  var qs := src.FindValue('queue');
-  var custom := src.FindValue('custom');
-  var protocol := src.FindValue('custom.protocol');
-  var ds := src.FindValue('custom.dir');
-
   if cs is TJSONArray then
-    FConnectionsSettingsList.ParseList(cs as TJSONArray);
+    FConnections.ParseList(cs as TJSONArray);
 
+  var qs := src.FindValue('queue');
   if qs is TJSONObject then
     FQueueSettings.Parse(qs as TJSONObject);
 
+  var ds := src.FindValue('custom.dir');
   if ds is TJSONObject then
     FDirSettings.Parse(ds as TJSONObject);
 
+  var custom := src.FindValue('custom');
   if (custom is TJSONObject) then
     Atype := GetValueStrDef(custom, 'type', '');
 
+  var protocol := src.FindValue('custom.protocol');
   if (protocol is TJSONObject) then
   begin
     PostponeTimeout := GetValueIntDef(protocol, 'postpone_timeout', 0);
@@ -248,7 +478,7 @@ procedure TOpenMCEPDataSettings.Serialize(dst: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  dst.AddPair('connections', FConnectionsSettingsList.SerializeList());
+  dst.AddPair('connections', FConnections.SerializeList());
   dst.AddPair('queue', FQueueSettings.Serialize());
   dst.AddPair('dir', FDirSettings.Serialize());
   var custom := TJSONObject.Create;
@@ -261,6 +491,547 @@ begin
   protocol.AddPair('resend_timeout_sec', ResendTimeoutSec);
   protocol.AddPair('heartbeat_delay', HeartbeatDelay);
   protocol.AddPair('max_file_size', MaxFileSize);
+end;
+
+{ TDirDownDataSettings }
+
+constructor TDirDownDataSettings.Create;
+begin
+  inherited;
+  FWork := TWorkSettings.Create;
+  FDirSettings := TDirSettings.Create;
+  FS3 := TS3Settings.Create;
+end;
+
+destructor TDirDownDataSettings.Destroy;
+begin
+  FWork.Free;
+  FDirSettings.Free;
+  FS3.Free;
+  inherited;
+end;
+
+procedure TDirDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  var ws := src.FindValue('work');
+  var custom := src.FindValue('custom');
+  var ds := src.FindValue('custom.dir');
+  var s3s := src.FindValue('custom.s3');
+
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+
+  if ds is TJSONObject then
+    Dir.Parse(ds as TJSONObject);
+
+  if s3s is TJSONObject then
+    S3.Parse(s3s as TJSONObject);
+
+  SeekMetaFile := GetValueBool(custom, 'seek_meta_file');
+end;
+
+procedure TDirDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('work', FWork.Serialize());
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('seek_meta_file', FSeekMetaFile);
+  custom.AddPair('dir', FDirSettings.Serialize());
+  custom.AddPair('s3', FS3.Serialize());
+end;
+
+{ TDirUpDataSettings }
+
+constructor TDirUpDataSettings.Create;
+begin
+  inherited;
+  FQueueSettings := TQueueSettings.Create;
+  FS3 := TS3Settings.Create
+end;
+
+destructor TDirUpDataSettings.Destroy;
+begin
+  FQueueSettings.Free;
+  FS3.Free;
+  inherited;
+end;
+
+procedure TDirUpDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  Folder := GetValueStrDef(src, 'default.folder', '');
+  OnConflict := GetValueStrDef(src, 'custom.on_conflict', '');
+  DisableTmp := GetValueBool(src, 'custom.disable_tmp');
+  with FSebaSort do
+  begin
+    Enabled := GetValueBool(src, 'default.seba_sort.enabled');
+    PathTemplate := GetValueStrDef(src, 'default.seba_sort.path_template', '');
+  end;
+
+  var s3s := src.FindValue('custom.s3');
+  if s3s is TJSONObject then
+    S3.Parse(s3s as TJSONObject);
+
+  var qs := src.FindValue('queue');
+  if qs is TJSONObject then
+    FQueueSettings.Parse(qs as TJSONObject);
+end;
+
+procedure TDirUpDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var default := TJSONObject.Create;
+  dst.AddPair('default', default);
+  default.AddPair('folder', Folder);
+
+  var ss := TJSONObject.Create;
+  default.AddPair('seba_sort', ss);
+  ss.AddPair('enabled', SebaSort.Enabled);
+  ss.AddPair('path_template', SebaSort.PathTemplate);
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('on_conflict', OnConflict);
+  custom.AddPair('disable_tmp', DisableTmp);
+  custom.AddPair('s3', S3.Serialize());
+
+  dst.AddPair('queue', Queue.Serialize());
+end;
+
+{ TFtpCliDownDataSettings }
+
+constructor TFtpCliDownDataSettings.Create;
+begin
+  inherited;
+  FWork := TWorkSettings.Create;
+  FDirSettings := TDirSettings.Create;
+  FConnections := TConnectionSettingsList.Create;
+end;
+
+destructor TFtpCliDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FWork.Free;
+  FDirSettings.Free;
+  inherited;
+end;
+
+procedure TFtpCliDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var ws := src.FindValue('work');
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+
+  var ds := src.FindValue('custom.dir');
+  if ds is TJSONObject then
+    FDirSettings.Parse(ds as TJSONObject);
+
+  Tracking := GetValueBool(src, 'custom.tracking');
+  ReplaceIp := GetValueBool(src, 'custom.replace_ip');
+  DeleteFiles := GetValueBool(src, 'custom.delete');
+end;
+
+procedure TFtpCliDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('work', FWork.Serialize());
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('tracking', Tracking);
+  custom.AddPair('replace_ip', ReplaceIp);
+  custom.AddPair('delete', DeleteFiles);
+  custom.AddPair('dir', FDirSettings.Serialize());
+end;
+
+{ TFtpCliUpDataSettings }
+
+constructor TFtpCliUpDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+  FQueueSettings := TQueueSettings.Create;
+end;
+
+destructor TFtpCliUpDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FQueueSettings.Free;
+  inherited;
+end;
+
+procedure TFtpCliUpDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var qs := src.FindValue('queue');
+  if qs is TJSONObject then
+    FQueueSettings.Parse(qs as TJSONObject);
+
+  Folder := GetValueStrDef(src, 'default.folder', '');
+end;
+
+procedure TFtpCliUpDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('queue', FQueueSettings.Serialize());
+
+  var default := TJSONObject.Create;
+  dst.AddPair('default', default);
+  default.AddPair('folder', Folder);
+end;
+
+{ TFtpSrvDownDataSettings }
+
+constructor TFtpSrvDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+end;
+
+destructor TFtpSrvDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  inherited;
+end;
+
+procedure TFtpSrvDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  PassivePorts := GetValueStrDef(src, 'custom.passive_ports', '');
+  PublicIP := GetValueStrDef(src, 'custom.public_ip', '');
+end;
+
+procedure TFtpSrvDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('passive_ports', PassivePorts);
+  custom.AddPair('public_ip', PublicIP);
+end;
+
+{ TFtpSrvUpDataSettings }
+
+constructor TFtpSrvUpDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+  FDirSettings := TDirSettings.Create();
+  FQueueSettings := TQueueSettings.Create();
+end;
+
+destructor TFtpSrvUpDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FDirSettings.Free;
+  FQueueSettings.Free;
+  inherited;
+end;
+
+procedure TFtpSrvUpDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var qs := src.FindValue('queue');
+  if qs is TJSONObject then
+    FQueueSettings.Parse(qs as TJSONObject);
+
+  var ds := src.FindValue('custom.dir');
+  if ds is TJSONObject then
+    FDirSettings.Parse(ds as TJSONObject);
+
+  PassivePorts := GetValueStrDef(src, 'custom.passive_ports', '');
+  PublicIP := GetValueStrDef(src, 'custom.public_ip', '');
+end;
+
+procedure TFtpSrvUpDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('queue', FQueueSettings.Serialize());
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('passive_ports', PassivePorts);
+  custom.AddPair('public_ip', PublicIP);
+  custom.AddPair('dir', FDirSettings.Serialize());
+end;
+
+{ TPop3CliDownDataSettings }
+
+constructor TPop3CliDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create;
+  FWork := TWorkSettings.Create;
+end;
+
+destructor TPop3CliDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FWork.Free;
+  inherited;
+end;
+
+procedure TPop3CliDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var ws := src.FindValue('work');
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+
+  DeleteFiles := GetValueBool(src, 'custom.delete');
+end;
+
+procedure TPop3CliDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('work', Work.Serialize());
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('delete', DeleteFiles);
+end;
+
+{ TSmtpCliUpDataSettings }
+
+constructor TSmtpCliUpDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create;
+  FQueueSettings := TQueueSettings.Create;
+end;
+
+destructor TSmtpCliUpDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FQueueSettings.Free;
+  inherited;
+end;
+
+procedure TSmtpCliUpDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var qs := src.FindValue('queue');
+  if qs is TJSONObject then
+    FQueueSettings.Parse(qs as TJSONObject);
+
+  Email := GetValueStrDef(src, 'default.email', '');
+  MeteoAttachment := GetValueBool(src, 'custom.meteo_attachment');
+end;
+
+
+procedure TSmtpCliUpDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('queue', FQueueSettings.Serialize());
+
+  var custom := TJSONObject.Create;
+  dst.AddPair('custom', custom);
+  custom.AddPair('meteo_attachment', MeteoAttachment);
+
+  var default := TJSONObject.Create;
+  dst.AddPair('default', default);
+  default.AddPair('email', Email);
+end;
+
+
+{ TSmtpSrvDownDataSettings }
+
+constructor TSmtpSrvDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+end;
+
+destructor TSmtpSrvDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  inherited;
+end;
+
+procedure TSmtpSrvDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+end;
+
+procedure TSmtpSrvDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+end;
+
+{ THttpCliDownDataSettings }
+
+constructor THttpCliDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+  FWork := TWorkSettings.Create;
+end;
+
+destructor THttpCliDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FWork.Free;
+  inherited;
+end;
+
+procedure THttpCliDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var ws := src.FindValue('work');
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+end;
+
+procedure THttpCliDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('work', Work.Serialize());
+end;
+
+{ TSebaSgsCliDownDataSettings }
+
+constructor TSebaSgsCliDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+  FWork := TWorkSettings.Create;
+end;
+
+destructor TSebaSgsCliDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FWork.Free;
+  inherited;
+end;
+
+procedure TSebaSgsCliDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var ws := src.FindValue('work');
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+end;
+
+procedure TSebaSgsCliDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('work', Work.Serialize());
+end;
+
+{ TSebaUsrCsdCliDownDataSettings }
+
+constructor TSebaUsrCsdCliDownDataSettings.Create;
+begin
+  inherited;
+  FConnections := TConnectionSettingsList.Create();
+  FWork := TWorkSettings.Create;
+end;
+
+destructor TSebaUsrCsdCliDownDataSettings.Destroy;
+begin
+  FConnections.Free;
+  FWork.Free;
+  inherited;
+end;
+
+procedure TSebaUsrCsdCliDownDataSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  var cs := src.FindValue('connections');
+  if cs is TJSONArray then
+    FConnections.ParseList(cs as TJSONArray);
+
+  var ws := src.FindValue('work');
+  if ws is TJSONObject then
+    Work.Parse(ws as TJSONObject);
+end;
+
+procedure TSebaUsrCsdCliDownDataSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair('connections', FConnections.SerializeList());
+  dst.AddPair('work', Work.Serialize());
 end;
 
 end.

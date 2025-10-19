@@ -51,7 +51,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           Left = 3
           Top = 63
           Width = 333
-          Height = 82
+          Height = 109
           Align = alTop
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
@@ -59,10 +59,10 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           ExplicitLeft = 3
           ExplicitTop = 63
           ExplicitWidth = 333
-          ExplicitHeight = 82
+          ExplicitHeight = 109
           inherited UniGroupBox1: TUniGroupBox
             Width = 333
-            Height = 82
+            Height = 109
             Margins.Left = 10
             Margins.Top = 10
             Margins.Right = 10
@@ -173,11 +173,24 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
                 end
               end
             end
+            inherited FrameConnectionKey: TFrameTextInput
+              Width = 329
+              ExplicitTop = 75
+              ExplicitWidth = 329
+              inherited Edit: TUniEdit
+                Width = 158
+                ExplicitWidth = 158
+              end
+              inherited PanelUnits: TUniPanel
+                Left = 303
+                ExplicitLeft = 303
+              end
+            end
           end
         end
         inline FrameQueue1: TFrameQueue
           Left = 0
-          Top = 178
+          Top = 175
           Width = 339
           Height = 66
           Align = alTop
@@ -188,8 +201,6 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           ExplicitWidth = 339
           inherited FrameQid: TFrameTextInput
             Width = 339
-            ExplicitLeft = 0
-            ExplicitTop = 0
             ExplicitWidth = 339
             inherited Edit: TUniEdit
               Width = 168
@@ -202,8 +213,6 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inherited FrameQueueEnable: TFrameBoolInput
             Width = 339
-            ExplicitLeft = 0
-            ExplicitTop = 30
             ExplicitWidth = 339
             inherited CheckBox: TUniCheckBox
               Width = 201
@@ -265,6 +274,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
               '1'
               '2G')
             ItemIndex = 0
+            OnChange = FrameProtocolVerComboBoxChange
             ExplicitTop = 2
             ExplicitWidth = 168
             ExplicitHeight = 26
@@ -274,41 +284,16 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
             ExplicitLeft = 313
           end
         end
-        inline FrameConnKey: TFrameTextInput
-          Left = 0
-          Top = 148
-          Width = 339
-          Height = 30
-          Align = alTop
-          Anchors = [akLeft, akTop, akRight]
-          Constraints.MaxHeight = 30
-          Constraints.MinHeight = 30
-          TabOrder = 5
-          Background.Picture.Data = {00}
-          ExplicitTop = 148
-          ExplicitWidth = 339
-          inherited PanelText: TUniPanel
-            Caption = #1050#1083#1102#1095' '#1089#1086#1077#1076#1080#1085#1077#1085#1080#1103
-          end
-          inherited Edit: TUniEdit
-            Width = 168
-            ExplicitWidth = 168
-          end
-          inherited PanelUnits: TUniPanel
-            Left = 313
-            Caption = ''
-            ExplicitLeft = 313
-          end
-        end
         object UniGroupBox1: TUniGroupBox
           Left = 0
-          Top = 244
+          Top = 241
           Width = 339
           Height = 293
           Hint = ''
           Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1087#1088#1086#1090#1086#1082#1086#1083#1072' '
           Align = alTop
-          TabOrder = 6
+          TabOrder = 5
+          ExplicitTop = 244
           inline FrameAckCount: TFrameTextInput
             Left = 2
             Top = 15
