@@ -80,6 +80,7 @@ uses
   TaskSettingsUnit in '..\EntityClasses\Common\TaskSettingsUnit.pas',
   SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas';
 
+procedure ListSummaryTasks();
 procedure ListSummaryTaskTypes();
 var
   TaskTypesBroker: TTaskTypesBroker;
@@ -127,6 +128,121 @@ begin
       end;
     finally
       TaskTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListSummaryTasks();
+var
+  SummaryTasksBroker: TSummaryTasksBroker;
+  SummaryTaskList: TEntityList;
+  SummaryTaskEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    SummaryTasksBroker := TSummaryTasksBroker.Create;
+    try
+      SummaryTaskList := nil;
+      try
+        SummaryTaskList := SummaryTasksBroker.List(PageCount);
+
+        Writeln('---------- Summary Tasks List ----------');
+
+        if Assigned(SummaryTaskList) then
+        begin
+          var FirstSummaryTask: TSummaryTask := nil;
+
+          if SummaryTaskList.Count > 0 then
+            FirstSummaryTask := SummaryTaskList.Items[0] as TSummaryTask;
+
+          for SummaryTaskEntity in SummaryTaskList do
+          begin
+            var SummaryTask := SummaryTaskEntity as TSummaryTask;
+            Writeln(Format('Class: %s | Address: %p', [SummaryTask.ClassName, Pointer(SummaryTask)]));
+            Writeln('Tid: ' + SummaryTask.Tid);
+            Writeln('Name: ' + SummaryTask.Name);
+            Writeln('Module: ' + SummaryTask.Module);
+            Writeln('Enabled: ' + BoolToStr(SummaryTask.Enabled, True));
+
+            if SummaryTask.Settings is TSummaryTaskSettings then
+            begin
+              var Settings := TSummaryTaskSettings(SummaryTask.Settings);
+              Writeln('LatePeriod: ' + IntToStr(Settings.LatePeriod));
+              Writeln('LateEvery: ' + IntToStr(Settings.LateEvery));
+              Writeln('MonthDays: ' + Settings.MonthDays);
+              Writeln('Header: ' + Settings.Header);
+              Writeln('Header2: ' + Settings.Header2);
+              Writeln('HeaderCorr: ' + IntToStr(Settings.HeaderCorr));
+              Writeln('Local: ' + BoolToStr(Settings.Local, True));
+              Writeln('CheckLate: ' + BoolToStr(Settings.CheckLate, True));
+              Writeln('Time: ' + Settings.Time);
+
+              var ExcludeWeekText := '';
+              for var i := 0 to Length(Settings.ExcludeWeek) - 1 do
+              begin
+                if i > 0 then
+                  ExcludeWeekText := ExcludeWeekText + ',';
+                ExcludeWeekText := ExcludeWeekText + IntToStr(Settings.ExcludeWeek[i]);
+              end;
+              Writeln('ExcludeWeek: ' + ExcludeWeekText);
+
+              if Assigned(Settings.TaskCustomSettings) then
+                Writeln('Custom settings class: ' + Settings.TaskCustomSettings.ClassName);
+            end;
+
+            Writeln('As JSON:');
+            var TaskJson := SummaryTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSummaryTask) then
+          begin
+            Writeln('---------- Summary Task Info ----------');
+            Writeln('Requesting info for: ' + FirstSummaryTask.Tid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := SummaryTasksBroker.Info(FirstSummaryTask.Tid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoTask := InfoEntity as TSummaryTask;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoTask.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Summary tasks list is empty.');
+
+      finally
+        SummaryTaskList.Free;
+      end;
+    finally
+      SummaryTasksBroker.Free;
     end;
   except
     on E: Exception do
@@ -1761,6 +1877,7 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
+//    ListSummaryTasks();
 //    ListStripTaskSources();
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
