@@ -19,6 +19,8 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
   end
   inherited pnClient: TUniContainerPanel
     ExplicitTop = 53
+    ScrollHeight = 414
+    ScrollWidth = 819
     object lTid: TUniLabel
       Left = 24
       Top = 16
@@ -149,7 +151,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object lCustomAnyTime: TUniLabel
       Left = 24
       Top = 312
-      Width = 84
+      Width = 85
       Height = 13
       Hint = ''
       Caption = 'Custom.AnyTime'

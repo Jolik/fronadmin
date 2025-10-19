@@ -1,4 +1,4 @@
-program SimpleEntityTest;
+﻿program SimpleEntityTest;
 
 {$APPTYPE CONSOLE}
 
