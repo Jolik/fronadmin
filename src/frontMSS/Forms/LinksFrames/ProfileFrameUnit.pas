@@ -29,11 +29,11 @@ type
     FProfile: TProfile;
     FLid: string;
     FFTACheckboxes: TKeyValue<TUniCheckbox> ;
+
     procedure SetPrid(const Value: string);
     function GetPrid: string;
 
   protected
-    function Apply: boolean; virtual;
     procedure Clear; virtual;
     procedure Load(prid: string); virtual;
     function Save: boolean; virtual;
@@ -42,6 +42,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
+    function Apply: boolean; virtual;
     property Lid: string read FLid write FLid;
     property Prid: string read GetPrid write SetPrid;
 
@@ -126,8 +128,15 @@ begin
   broker.Lid := Lid;
   try
     try
-      if not broker.Update(FProfile) then
-        exit;
+      if FProfile.IsNew then
+      begin
+        if not broker.New(FProfile) then
+          exit;
+        FProfile.IsNew := false;
+      end
+      else
+        if not broker.Update(FProfile) then
+          exit;
     except on e: exception do begin
       Log('TProfileFrame.Save ' + e.Message, lrtError);
       exit;
@@ -138,11 +147,15 @@ begin
   result := true;
 end;
 
+
+
+
 procedure TProfileFrame.SetPrid(const Value: string);
 begin
   Load(Value);
   DrawProfile;
 end;
+
 
 
 function TProfileFrame.Delete: boolean;

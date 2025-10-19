@@ -52,6 +52,7 @@ type
   TProfile = class(TEntity)
   private
     FDescription: string;
+    FIsNew: boolean;
     function GetProfileBody: TProfileBody;
   protected
     function GetIdKey: string; override;
@@ -63,6 +64,8 @@ type
 
     property Description: string read FDescription write FDescription;
     property ProfileBody: TProfileBody read GetProfileBody;
+
+    property IsNew: boolean read FIsNew write FIsNew;
   end;
 
   /// <summary>

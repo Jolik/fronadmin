@@ -58,6 +58,7 @@ object ProfilesFrame: TProfilesFrame
         Caption = '+'
         Align = alTop
         TabOrder = 2
+        OnClick = btnAddProfileClick
       end
     end
   end

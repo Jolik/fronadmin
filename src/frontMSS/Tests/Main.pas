@@ -262,8 +262,8 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  //lid = '718e95d1-b9dc-47c1-afb5-430eb47174e3';
-  lid = '9c7d3aaa-4197-4582-afae-19ef8e87cb51';
+  lid = '718e95d1-b9dc-47c1-afb5-430eb47174e3';
+  //lid = '9c7d3aaa-4197-4582-afae-19ef8e87cb51';
 var
   LinksBroker : TLinksBroker;
   SettingsForm: TParentEditForm;

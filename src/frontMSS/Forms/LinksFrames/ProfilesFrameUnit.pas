@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses, LinkUnit,
   uniGUIClasses, uniGUIFrame, uniGUIBaseClasses, uniTabControl, uniPanel,
   uniButton, uniPageControl, ProfileUnit, uniBitBtn, uniMultiItem, uniListBox,
-  uniLabel;
+  uniLabel, ProfileFrameUnit;
 
 type
   TProfilesFrame = class(TUniFrame)
@@ -19,9 +19,11 @@ type
     profilePanel: TUniPanel;
     procedure listboxProfilesChange(Sender: TObject);
     procedure btnRemoveProfileClick(Sender: TObject);
+    procedure btnAddProfileClick(Sender: TObject);
   private
     FProfiles: TProfileList;
     FLink: TLink;
+    FProfileFrame: TProfileFrame;
     procedure Clear;
     procedure LoadList;
     function DeleteProfile(prid: string): boolean;
@@ -35,8 +37,8 @@ type
 implementation
 
 uses
- LoggingUnit, ProfilesBrokerUnit,
- ProfileFrameUnit;
+ LoggingUnit,
+ ProfilesBrokerUnit;
 
 {$R *.dfm}
 
@@ -72,6 +74,11 @@ begin
 end;
 
 
+procedure TProfilesFrame.btnAddProfileClick(Sender: TObject);
+begin
+//
+end;
+
 procedure TProfilesFrame.btnRemoveProfileClick(Sender: TObject);
 begin
   if listboxProfiles.ItemIndex = -1 then
@@ -99,7 +106,6 @@ begin
   // todo: убрать (удаляет реальные профили)
   Showmessage('profile removing is disabled for test purposes');
   exit;
-
 
   result := false;
   var broker := TProfilesBroker.Create;
@@ -133,10 +139,11 @@ begin
   if listboxProfiles.ItemIndex = -1 then
     exit;
   var prid := listboxProfiles.Items[listboxProfiles.ItemIndex];
-  var profileFrame := TProfileFrame.Create(Self);
-  profileFrame.Parent := profilePanel;
-  profileFrame.Lid := Link.Id;
-  profileFrame.Prid := prid;
+  FreeAndNil(FProfileFrame);
+  FProfileFrame := TProfileFrame.Create(Self);
+  FProfileFrame.Parent := profilePanel;
+  FProfileFrame.Lid := Link.Id;
+  FProfileFrame.Prid := prid;
 end;
 
 procedure TProfilesFrame.SetLink(const Value: TLink);
