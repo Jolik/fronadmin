@@ -1,4 +1,4 @@
-program StringListTests;
+﻿program StringListTests;
 
 {$APPTYPE CONSOLE}
 
@@ -189,6 +189,8 @@ begin
     TestStringArrayListFromArray;
     TestStringArrayListFromObject;
     TestKeyValueStringList;
+    Writeln('Все тесты успешно выполнены. Нажмите любую кнопку!');
+    Readln;
   except
     on E: Exception do
     begin

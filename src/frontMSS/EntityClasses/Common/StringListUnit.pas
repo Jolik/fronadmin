@@ -9,7 +9,7 @@ uses
 
 type
   /// <summary>
-  ///   Represents an array of string values parsed from JSON.
+  ///   Класс для хранения и сериализации массива строк, полученного из JSON.
   /// </summary>
   TStringArray = class
   private
@@ -38,7 +38,7 @@ type
   end;
 
   /// <summary>
-  ///   Represents a list of TStringArray instances.
+  ///   Набор объектов TStringArray с поддержкой разных форматов JSON.
   /// </summary>
   TStringArrayList = class(TObjectList<TStringArray>)
   private
@@ -69,7 +69,7 @@ type
   end;
 
   /// <summary>
-  ///   Represents a key-value collection of string pairs parsed from JSON.
+  ///   Коллекция строковых пар «ключ-значение» с разбором из JSON-объекта.
   /// </summary>
   TKeyValueStringList = class
   private
@@ -158,6 +158,7 @@ procedure TStringArray.Parse(src: TJSONArray);
 var
   Value: TJSONValue;
 begin
+  // При повторном чтении полностью очищаем текущий список значений
   Clear;
 
   if not Assigned(src) then
@@ -165,6 +166,7 @@ begin
 
   for Value in src do
   begin
+    // Поддерживаем хранение как строковых значений, так и любых JSON, конвертируя их в строку
     if Value is TJSONString then
       Add(TJSONString(Value).Value)
     else
@@ -180,6 +182,7 @@ begin
     Exit;
 
   for Item in FItems do
+    // Каждый элемент исходного списка превращаем в строковый JSON-элемент
     dst.AddElement(TJSONString.Create(Item));
 end;
 
@@ -249,6 +252,7 @@ begin
   begin
     if Value is TJSONArray then
     begin
+      // Создаём новый элемент списка для каждого вложенного массива
       Item := CreateItem;
       try
         Item.Parse(TJSONArray(Value));
@@ -273,6 +277,7 @@ begin
   begin
     if Pair.JsonValue is TJSONArray then
     begin
+      // Имя свойства сохраняем в ObjectName для дальнейшей сериализации
       Item := CreateItem;
       try
         Item.ObjectName := Pair.JsonString.Value;
@@ -314,6 +319,7 @@ begin
     Inc(Index);
     Name := Item.ObjectName;
     if Name = '' then
+      // Если имя отсутствует, создаём уникальный идентификатор
       Name := Format('Item%d', [Index]);
 
     Arr := Item.Serialize;
@@ -482,6 +488,7 @@ begin
     if Pair.JsonValue is TJSONString then
       SetValue(Pair.JsonString.Value, TJSONString(Pair.JsonValue).Value)
     else
+      // Для нестандартных типов приводим значение к строковому представлению
       SetValue(Pair.JsonString.Value, Pair.JsonValue.Value);
   end;
 end;
@@ -497,6 +504,7 @@ begin
   for Key in FOrder do
   begin
     Value := FItems[Key];
+    // Значения хранятся в словаре, поэтому при сериализации восстанавливаем порядок по списку ключей
     dst.AddPair(Key, TJSONString.Create(Value));
   end;
 end;

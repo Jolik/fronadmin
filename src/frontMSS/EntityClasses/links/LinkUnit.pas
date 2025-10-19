@@ -5,7 +5,7 @@ interface
 uses
   System.Classes, System.JSON, System.Generics.Collections,
   LoggingUnit,
-  EntityUnit,  
+  EntityUnit,
   LinkSettingsUnit;
 
 type
@@ -32,8 +32,6 @@ type
   TLink = class (TEntity)
   private
     FDir: string;
-    FCompid: string;
-    FDepid: string;
     FStatus: string;
     FComsts: string;
     FLastActivityTime: int64;
@@ -150,13 +148,9 @@ begin
     exit;
   var src := ASource as TLink;
   Dir := src.Dir;
-  Compid := src.Compid;
-  Depid := src.Depid;
   Status := src.Status;
   Comsts := src.Comsts;
   LastActivityTime := src.LastActivityTime;
-  ///  присваиваем Data
-  Data.Assign(src.Data);
   result := true;
 end;
 

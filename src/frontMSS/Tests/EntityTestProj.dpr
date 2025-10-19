@@ -22,6 +22,10 @@ uses
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
+  ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
+  ContextTypesBrokerUnit in '..\APIClasses\ContextTypesBrokerUnit.pas',
+  SourceTypesBrokerUnit in '..\APIClasses\SourceTypesBrokerUnit.pas',
+  BindingsBrokerUnit in '..\APIClasses\BindingsBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
@@ -51,11 +55,15 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
+  ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
+  SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
   TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
   ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
@@ -866,6 +874,356 @@ begin
   end;
 end;
 
+procedure ListBindings();
+var
+  BindingsBroker: TBindingsBroker;
+  BindingList: TEntityList;
+  BindingEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    BindingsBroker := TBindingsBroker.Create;
+    try
+      BindingList := nil;
+      try
+        BindingList := BindingsBroker.List(PageCount);
+
+        Writeln('---------- Metadata Bindings ----------');
+
+        if Assigned(BindingList) then
+        begin
+          var FirstBinding: TBinding := nil;
+
+          if BindingList.Count > 0 then
+            FirstBinding := BindingList.Items[0] as TBinding;
+
+          for BindingEntity in BindingList do
+          begin
+            var Binding := BindingEntity as TBinding;
+            Writeln(Format('Class: %s | Address: %p', [Binding.ClassName, Pointer(Binding)]));
+            Writeln('Bid: ' + Binding.Bid);
+            Writeln('CompId: ' + Binding.CompId);
+            Writeln('Entity: ' + Binding.EntityId);
+            Writeln('Type: ' + Binding.BindingType);
+            Writeln('Urn: ' + Binding.Urn);
+            Writeln('Index: ' + Binding.Index);
+            Writeln('Created: ' + DateTimeToStr(Binding.Created));
+            Writeln('Updated: ' + DateTimeToStr(Binding.Updated));
+
+            if Assigned(Binding.BindingData) then
+            begin
+              Writeln('Data.Def: ' + Binding.BindingData.Def);
+              if Assigned(Binding.BindingData.Attr) then
+                Writeln('Data.Attr: ' + Binding.BindingData.Attr.ToJSON)
+              else
+                Writeln('Data.Attr: {}');
+            end;
+
+            Writeln('As JSON:');
+            var Json := Binding.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstBinding) then
+          begin
+            Writeln('---------- Binding Info ----------');
+            Writeln('Requesting info for: ' + FirstBinding.Bid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := BindingsBroker.Info(FirstBinding.Bid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoBinding := InfoEntity as TBinding;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoBinding.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Bindings list is empty.');
+
+        if Assigned(BindingList) then
+        begin
+          Writeln('---------- Bindings List JSON ----------');
+          var InfoJson := BindingList.Serialize();
+          try
+            if InfoJson <> nil then
+              Writeln(InfoJson.Format);
+          finally
+            InfoJson.Free;
+          end;
+        end;
+
+      finally
+        BindingList.Free;
+      end;
+    finally
+      BindingsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListContexts();
+var
+  ContextsBroker: TContextsBroker;
+  ContextList: TEntityList;
+  ContextEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    ContextsBroker := TContextsBroker.Create;
+    try
+      ContextList := nil;
+      try
+        ContextList := ContextsBroker.List(PageCount);
+
+        Writeln('---------- Dataserver Contexts ----------');
+
+        if Assigned(ContextList) then
+        begin
+          var FirstContext: TContext := nil;
+
+          if ContextList.Count > 0 then
+            FirstContext := ContextList.Items[0] as TContext;
+
+          for ContextEntity in ContextList do
+          begin
+            var Context := ContextEntity as TContext;
+            Writeln(Format('Class: %s | Address: %p', [Context.ClassName, Pointer(Context)]));
+            Writeln('CtxId: ' + Context.CtxId);
+            Writeln('CtxtId: ' + Context.CtxtId);
+            Writeln('Sid: ' + Context.Sid);
+            Writeln('Index: ' + Context.Index);
+            if Assigned(Context.Data) then
+              Writeln('Data: ' + Context.Data.ToJSON)
+            else
+              Writeln('Data: {}');
+
+            Writeln('As JSON:');
+            var Json := Context.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstContext) then
+          begin
+            Writeln('---------- Context Info ----------');
+            Writeln('Requesting info for: ' + FirstContext.CtxId);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := ContextsBroker.Info(FirstContext.CtxId);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoContext := InfoEntity as TContext;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoContext.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Contexts list is empty.');
+
+      finally
+        ContextList.Free;
+      end;
+    finally
+      ContextsBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListSourceTypes();
+var
+  SourceTypesBroker: TSourceTypesBroker;
+  SourceTypesList: TFieldSetList;
+  PageCount: Integer;
+begin
+  try
+    SourceTypesBroker := TSourceTypesBroker.Create;
+    try
+      SourceTypesList := nil;
+      try
+        SourceTypesList := SourceTypesBroker.List(PageCount);
+
+        Writeln('---------- Dataserver Source Types ----------');
+
+        if Assigned(SourceTypesList) then
+        begin
+          if SourceTypesList.Count = 0 then
+            Writeln('Source types list is empty.')
+          else
+          begin
+            for var FieldSet in SourceTypesList do
+            begin
+              if not (FieldSet is TSourceType) then
+                Continue;
+
+              var SourceType := TSourceType(FieldSet);
+              Writeln(Format('Class: %s | Address: %p', [SourceType.ClassName, Pointer(SourceType)]));
+              Writeln('Srctid: ' + SourceType.Srctid);
+              Writeln('SrcType: ' + IntToStr(SourceType.SrcType));
+              Writeln('Name: ' + SourceType.Name);
+              if Assigned(SourceType.Def) then
+                Writeln('Def: ' + SourceType.Def.ToJSON)
+              else
+                Writeln('Def: {}');
+
+              Writeln('As JSON:');
+              var Json := SourceType.Serialize();
+              try
+                if Json <> nil then
+                  Writeln(Json.Format);
+              finally
+                Json.Free;
+              end;
+
+              Writeln('----------');
+            end;
+
+            Writeln('List as JSON:');
+            var ListJson := SourceTypesList.SerializeList();
+            try
+              if ListJson <> nil then
+                Writeln(ListJson.Format);
+            finally
+              ListJson.Free;
+            end;
+          end;
+        end
+        else
+          Writeln('Source types list is empty.');
+
+      finally
+        SourceTypesList.Free;
+      end;
+    finally
+      SourceTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListContextTypes();
+var
+  ContextTypesBroker: TContextTypesBroker;
+  ContextTypesList: TFieldSetList;
+  PageCount: Integer;
+begin
+  try
+    ContextTypesBroker := TContextTypesBroker.Create;
+    try
+      ContextTypesList := nil;
+      try
+        ContextTypesList := ContextTypesBroker.List(PageCount);
+
+        Writeln('---------- Dataserver Context Types ----------');
+
+        if Assigned(ContextTypesList) then
+        begin
+          if ContextTypesList.Count = 0 then
+            Writeln('Context types list is empty.')
+          else
+          begin
+            for var FieldSet in ContextTypesList do
+            begin
+              if not (FieldSet is TContextType) then
+                Continue;
+
+              var ContextType := TContextType(FieldSet);
+              Writeln(Format('Class: %s | Address: %p', [ContextType.ClassName, Pointer(ContextType)]));
+              Writeln('Ctxtid: ' + ContextType.Ctxtid);
+              Writeln('Name: ' + ContextType.Name);
+              if Assigned(ContextType.Def) then
+                Writeln('Def: ' + ContextType.Def.ToJSON)
+              else
+                Writeln('Def: {}');
+
+              Writeln('As JSON:');
+              var Json := ContextType.Serialize();
+              try
+                if Json <> nil then
+                  Writeln(Json.Format);
+              finally
+                Json.Free;
+              end;
+
+              Writeln('----------');
+            end;
+
+            Writeln('List as JSON:');
+            var ListJson := ContextTypesList.SerializeList();
+            try
+              if ListJson <> nil then
+                Writeln(ListJson.Format);
+            finally
+              ListJson.Free;
+            end;
+          end;
+        end
+        else
+          Writeln('Context types list is empty.');
+
+      finally
+        ContextTypesList.Free;
+      end;
+    finally
+      ContextTypesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListAliases();
 var
   AliasesBroker: TAliasesBroker;
@@ -1403,7 +1761,9 @@ begin
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
 //      ListProfiles();
-      ListAbonents();
+//      ListContexts();
+      ListBindings();
+//      ListAbonents();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();

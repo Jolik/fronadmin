@@ -1,0 +1,17 @@
+	
+{ "type": "Point", 
+    "coordinates": [30, 10]
+}
+
+{ "type": "LineString", 
+    "coordinates": [
+        [30, 10], [10, 30], [40, 40]
+    ]
+}
+
+{ "type": "Polygon", 
+    "coordinates": [
+        [[30, 10], [40, 40], [20, 40], [10, 20], [30, 10]]
+    ]
+}
+
