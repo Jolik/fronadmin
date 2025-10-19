@@ -11,7 +11,7 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ParentEditFormUnit,
-  RouterSourceBrokerUnit;
+  RouterSourceBrokerUnit, uniPanel, uniLabel;
 
 type
   TRouterSourcesForm = class(TListParentForm)

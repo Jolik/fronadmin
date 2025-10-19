@@ -21,7 +21,7 @@ object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
       Width = 431
       Height = 478
       Hint = ''
-      Caption = 'SettingsGroupBox'
+      Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1083#1080#1085#1082#1072' '
       Align = alClient
       TabOrder = 1
       object UniPanel3: TUniPanel
@@ -35,8 +35,7 @@ object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'UniPanel3'
-        ExplicitTop = 366
-        inline ActivTimeoutFrame: TFrameTextInput
+        inline ActiveTimeoutFrame: TFrameTextInput
           Left = 0
           Top = 0
           Width = 427
@@ -96,7 +95,6 @@ object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'SettingsParentPanel'
-        ExplicitHeight = 351
         ScrollHeight = 391
         ScrollWidth = 427
       end
@@ -108,9 +106,24 @@ object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
     Width = 327
     Height = 480
     Hint = ''
-    Caption = 'ProfilesGroupBox'
+    Caption = ' '#1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1087#1088#1086#1092#1080#1083#1077#1081' '
     Align = alClient
     TabOrder = 1
+    object ProfilesPanel: TUniPanel
+      Left = 2
+      Top = 15
+      Width = 323
+      Height = 463
+      Hint = ''
+      AutoScroll = True
+      Align = alClient
+      TabOrder = 1
+      BorderStyle = ubsNone
+      ShowCaption = False
+      Caption = 'ProfilesPanel'
+      ScrollHeight = 463
+      ScrollWidth = 323
+    end
   end
   object UniSplitter1: TUniSplitter
     Left = 433
