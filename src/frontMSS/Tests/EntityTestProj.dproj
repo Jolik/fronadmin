@@ -164,6 +164,10 @@
         <DCCReference Include="..\EntityClasses\links\ScheduleSettingsUnit.pas"/>
         <DCCReference Include="..\APIClasses\FieldSetBrokerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\signals\LogUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\links\S3SettingsUnit.pas"/>
+        <DCCReference Include="..\Common\KeyValUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
