@@ -3,10 +3,34 @@
 interface
 
 uses
-  System.Classes, System.JSON, System.Generics.Collections,
+  System.Classes, System.JSON, System.Generics.Collections, System.SysUtils,
   LoggingUnit,
-  FuncUnit,
-  EntityUnit, TaskUnit;
+  FuncUnit, KeyValUnit,
+  EntityUnit,
+  TaskUnit, TaskSettingsUnit, SummaryTaskCustomSettingsUnit;
+
+type
+  ///  TaskTypes
+  TSummaryTaskType = (
+    sttUnknown,
+    sttTaskSummaryCXML,
+    sttTaskSummarySEBA,
+    sttTaskSummarySynop,
+    sttTaskSummaryHydra
+    );
+
+type
+    ///  íàñòðîéêè ñóùíîñòè SummaryTask
+  TSummaryTaskSettings = class (TTaskSettings)
+  private
+    FSummaryTaskType: TSummaryTaskType;
+    procedure SetSummaryTaskType(const Value: TSummaryTaskType);
+  protected
+  public
+    // SummaryTaskType example SummarySynop
+    property SummaryTaskType: TSummaryTaskType read FSummaryTaskType write SetSummaryTaskType;
+
+  end;
 
 type
   /// Êëàññ çàäà÷è ïàðñåðà (ñåðâèñ summary)
@@ -14,6 +38,8 @@ type
   private
 
   protected
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
     ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Settings
     ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
     class function SettingsClassType: TSettingsClass; override;
@@ -32,50 +58,12 @@ type
 
   end;
 
-type
-  ///  èíôîðìàöèÿ Custom èç Settings
-  TCustom = record
-    Meteo: boolean;
-    AnyTime: integer;
-    Separate: boolean;
-  end;
-
-  ///  ìàññèâ çíà÷åíèé ExcludeWeek èç Settings
-  TExcludeWeek = array of integer;
-
-  ///  íàñòðîéêè ñóùíîñòè SummaryTask
-  TSummaryTaskSettings = class (TSettings)
-  private
-    FLatePeriod: integer;
-    FCustom: TCustom;
-    FExcludeWeek: TExcludeWeek;
-
-  public
-    // ýòè òðåáóþò ñóùåñòâóþùåãî ïðàâèëüíîãî ýêçåìïëÿðà îáúåêòà. íà îøèáêè - ýêñåøàí
-    ///  â ìàññèâå const APropertyNames ïåðåäàþòñÿ ïîëÿ, êîòîðûå íåîáõîäèìî èñïîëüçîâàòü
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    // äëÿ ïîëÿ module - òèïà Çàäà÷è
-    property LatePeriod: integer read FLatePeriod write FLatePeriod;
-  ///  èíôîðìàöèÿ Custom èç Settings
-    property Custom: TCustom read FCustom write FCustom;
-    ///  ìàññèâ çíà÷åíèé ExcludeWeek èç Settings
-    property ExcludeWeek: TExcludeWeek read FExcludeWeek write FExcludeWeek;
-
-  end;
-
 
 implementation
 
-const
-  LatePeriodKey = 'LatePeriod';
-
-  CustomKey = 'Custom';
-  MeteoKey = 'Meteo';
-  AnyTimeKey = 'AnyTime';
-  SeparateKey = 'Separate';
-
+var
+  // SummaryTaskType2Str строка = TSummaryTaskType
+  SummaryTaskType2Str: TKeyValue<TSummaryTaskType>;
 
 { TSummaryTaskList }
 
@@ -86,72 +74,49 @@ end;
 
 { TSummaryTaskSettings }
 
-///   ôîðìàò Settings
-///
-///  "settings": {
-///      "LatePeriod": 120,
-///      "MonthDays": "1-32",
-///      "Header2": "",
-//      "Local": false,
-//      "CheckLate": false,
-//      "Custom": {
-//          "Meteo": false,
-//          "AnyTime": 0,
-//          "Separate": false
-//      },
-//      "HeaderCorr": 0,
-//      "LateEvery": 60,
-//      "ExcludeWeek": [0,0,0,0,0,0,0],
-//      "Time": "00:00/+5 00:10/* ",
-//      "Header": "TTAA11 CXML"
-//  }
-
-procedure TSummaryTaskSettings.Parse(src: TJSONObject;
-  const APropertyNames: TArray<string>);
+procedure TSummaryTaskSettings.SetSummaryTaskType(const Value: TSummaryTaskType);
 begin
-  inherited;
+  if Assigned(FTaskCustomSettings) then
+    FreeAndNil(FTaskCustomSettings);
 
-  ///  ÷èòàåì ïîëå LatePeriod
-  LatePeriod := GetValueIntDef(src, LatePeriodKey, 0);
-
-  ///  äîáàâëÿåì ïîëÿ TCustom
-  var CustomObject := src.GetValue(CustomKey) as TJSONObject;
-
-  ///  Custom çàâèñèò îò ïîëÿ module
-(*  FCustom.Meteo := GetValueBool(CustomObject, MeteoKey);
-  FCustom.AnyTime := GetValueIntDef(CustomObject, AnyTimeKey, 0);
-  FCustom.Separate := GetValueBool(CustomObject, SeparateKey); *)
-
-  /// äîáàâëÿåì ìàñèèâ TExcludeWeek
-  /// !!!
-end;
-
-procedure TSummaryTaskSettings.Serialize(dst: TJSONObject;
-  const APropertyNames: TArray<string>);
-begin
-  inherited;
-
-  with dst do
-  begin
-    AddPair(LatePeriodKey, LatePeriod);
-
-    ///  äîáàâëÿåì ïîëÿ TCustom
-    var CustomObject := TJSONObject.Create();
-
-(*    CustomObject.AddPair(MeteoKey, FCustom.Meteo);
-    CustomObject.AddPair(AnyTimeKey, FCustom.AnyTime);
-    CustomObject.AddPair(SeparateKey, FCustom.Separate); *)
-
-    AddPair(CustomKey, CustomObject)
-
+  FSummaryTaskType := Value;
+  ///  в зависимости от типа устанавливаем различные настройки
+  case Value of
+    sttTaskSummaryCXML: FTaskCustomSettings := TSummaryCXMLCustomSettings.Create();
+    sttTaskSummarySEBA: FTaskCustomSettings := TSummarySEBACustomSettings.Create();
+    sttTaskSummarySynop: FTaskCustomSettings := TSummarySynopCustomSettings.Create();
+    sttTaskSummaryHydra: FTaskCustomSettings := TSummaryHydraCustomSettings.Create();
+    else FSummaryTaskType :=  sttUnknown;
   end;
 end;
 
+
 { TSummaryTask }
+
+procedure TSummaryTask.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  ///  заполняем базовые поля задачи
+  inherited Parse(src, APropertyNames);
+
+  ///  в зависимости от типа задачи выбираем класс настроек Settings
+  (Settings as TSummaryTaskSettings).SummaryTaskType := SummaryTaskType2Str.ValueByKey(Module, sttUnknown);
+
+end;
 
 class function TSummaryTask.SettingsClassType: TSettingsClass;
 begin
   Result := TSummaryTaskSettings;
 end;
+
+initialization
+  SummaryTaskType2Str := TKeyValue<TSummaryTaskType>.Create;
+  SummaryTaskType2Str.Add('SummaryCXML', sttTaskSummaryCXML);
+  SummaryTaskType2Str.Add('SummarySEBA', sttTaskSummarySEBA);
+  SummaryTaskType2Str.Add('SummarySynop', sttTaskSummarySynop);
+  SummaryTaskType2Str.Add('SummaryHydra', sttTaskSummaryHydra);
+
+finalization
+  SummaryTaskType2Str.Free;
 
 end.

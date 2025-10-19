@@ -38,8 +38,8 @@ type
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;
     function GetSummarySettings: TSummaryTaskSettings;
-    function FormatExcludeWeek(const Values: TExcludeWeek): string;
-    function ParseExcludeWeekText(const AText: string): TExcludeWeek;
+(*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
+    function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
   protected
     ///
@@ -85,13 +85,13 @@ begin
   begin
     Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
 
-    var Custom := Settings.Custom;
+(*!!!    var Custom := Settings.Custom;
     Custom.Meteo := cbCustomMeteo.Checked;
     Custom.AnyTime := StrToIntDef(teCustomAnyTime.Text, 0);
     Custom.Separate := cbCustomSeparate.Checked;
     Settings.Custom := Custom;
 
-    Settings.ExcludeWeek := ParseExcludeWeekText(teExcludeWeek.Text);
+    Settings.ExcludeWeek := ParseExcludeWeekText(teExcludeWeek.Text);  *)
   end;
 
   Result := true;
@@ -133,7 +133,7 @@ begin
   Result := SummaryTask.Settings as TSummaryTaskSettings;
 end;
 
-function TSummaryTaskEditForm.FormatExcludeWeek(
+(* !!!! function TSummaryTaskEditForm.FormatExcludeWeek(
   const Values: TExcludeWeek): string;
 begin
   Result := '';
@@ -176,7 +176,7 @@ begin
   finally
     Parts.Free;
   end;
-end;
+end;    *)
 
 procedure TSummaryTaskEditForm.SetEntity(AEntity: TEntity);
 begin
@@ -203,12 +203,12 @@ begin
     begin
       teLatePeriod.Text := IntToStr(Settings.LatePeriod);
 
-      var Custom := Settings.Custom;
+(* !!!      var Custom := Settings.Custom;
       cbCustomMeteo.Checked := Custom.Meteo;
       teCustomAnyTime.Text := IntToStr(Custom.AnyTime);
       cbCustomSeparate.Checked := Custom.Separate;
 
-      teExcludeWeek.Text := FormatExcludeWeek(Settings.ExcludeWeek);
+      teExcludeWeek.Text := FormatExcludeWeek(Settings.ExcludeWeek);*)
     end
     else
     begin

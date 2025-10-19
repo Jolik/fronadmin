@@ -74,7 +74,11 @@ uses
   DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
   ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
   FieldSetBrokerUnit in '..\APIClasses\FieldSetBrokerUnit.pas',
-  LogUnit in '..\EntityClasses\signals\LogUnit.pas';
+  LogUnit in '..\EntityClasses\signals\LogUnit.pas',
+  S3SettingsUnit in '..\EntityClasses\links\S3SettingsUnit.pas',
+  KeyValUnit in '..\Common\KeyValUnit.pas',
+  TaskSettingsUnit in '..\EntityClasses\Common\TaskSettingsUnit.pas',
+  SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas';
 
 procedure ListSummaryTaskTypes();
 var
@@ -1762,7 +1766,7 @@ begin
 //    ListMonitoringTaskSources();
 //      ListProfiles();
 //      ListContexts();
-      ListBindings();
+//      ListBindings();
 //      ListAbonents();
 //      ListAliases();
 //      ListRules();
