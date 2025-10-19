@@ -1,4 +1,4 @@
-﻿program SimpleEntityTest;
+program SimpleEntityTest;
 
 {$APPTYPE CONSOLE}
 
@@ -7,26 +7,26 @@ uses
   System.Math,
   System.JSON,
   System.DateUtils,
-  FuncUnit,
-  SimpleEntityTest.Constants,
-  EntityUnit,
-  StringUnit,
-  AbonentUnit,
-  AliasUnit,
-  BindingUnit,
-  ChannelUnit,
-  ContextUnit,
-  DataserieUnit,
-  DsGroupUnit,
-  LinkUnit,
-  ProfileUnit,
-  QueueUnit,
-  RouterSourceUnit,
-  RuleUnit,
-  SourceCredsUnit,
-  TaskUnit,
-  TaskSourceUnit,
-  UserUnit;
+  FuncUnit in '..\Common\FuncUnit.pas',
+  SimpleEntityTest.Constants in 'SimpleEntityTest.Constants.pas',
+  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
+  StringUnit in '..\EntityClasses\Common\StringUnit.pas',
+  AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
+  AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
+  BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
+  ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
+  ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
+  DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
+  DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
+  LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
+  ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
+  QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
+  RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
+  RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
+  SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
+  UserUnit in '..\EntityClasses\acl\UserUnit.pas';
 
 type
   ETestFailure = class(Exception);
