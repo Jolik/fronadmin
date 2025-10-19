@@ -58,10 +58,11 @@ begin
   LatePeriod := GetValueIntDef(src, LatePeriodKey, 0);
 
   ///  äîáàâëÿåì ïîëÿ TTaskCustomSettings
-  var TaskCustomSettingsObject := src.GetValue(CustomKey) as TJSONObject;
+  var TaskCustomSettingsValue := src.FindValue(CustomKey);
 
   ///  TaskCustomSettings çàâèñèò îò ïîëÿ module
-  if Assigned(TaskCustomSettings) then TaskCustomSettings.Parse(TaskCustomSettingsObject);
+  if Assigned(TaskCustomSettings) and (TaskCustomSettingsValue is TJSONObject) then
+    TaskCustomSettings.Parse(TaskCustomSettingsValue as TJSONObject);
 
 end;
 
