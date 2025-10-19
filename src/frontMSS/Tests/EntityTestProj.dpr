@@ -80,7 +80,6 @@ uses
   TaskSettingsUnit in '..\EntityClasses\Common\TaskSettingsUnit.pas',
   SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas';
 
-procedure ListSummaryTasks();
 procedure ListSummaryTaskTypes();
 var
   TaskTypesBroker: TTaskTypesBroker;
@@ -1877,7 +1876,7 @@ begin
 //      ListSourceCreds();
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
-//    ListSummaryTasks();
+    ListSummaryTasks();
 //    ListStripTaskSources();
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();

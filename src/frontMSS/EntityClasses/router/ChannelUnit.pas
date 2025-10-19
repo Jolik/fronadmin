@@ -20,7 +20,7 @@ type
     procedure SetChid(const Value: string);
 
   public
-    constructor Create;
+    constructor Create; override;
     destructor Destroy; override;
 
     // идентификатор канала
