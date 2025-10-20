@@ -1,2 +1,0 @@
-inherited SummaryCXMTaskCustomSettingsEditFrame: TSummaryCXMTaskCustomSettingsEditFrame
-end

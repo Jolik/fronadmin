@@ -1,4 +1,4 @@
-unit SummaryCXMTaskCustomSettingsEditFrameUnit;
+unit SummaryCXMLTaskCustomSettingsEditFrameUnit;
 
 interface
 
@@ -8,7 +8,7 @@ uses
   uniGUIClasses, uniGUIFrame, ParentTaskCustomSettingsEditFrameUnit;
 
 type
-  TSummaryCXMTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
+  TSummaryCXMLTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
   private
     { Private declarations }
   public
