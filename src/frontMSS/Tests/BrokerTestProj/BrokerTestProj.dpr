@@ -4,42 +4,40 @@ program BrokerTestProj;
 
 uses
   System.SysUtils,
-  HttpRequestUnit in '..\..\APIClasses\HttpRequestUnit.pas';
+  HttpClientUnit in '..\HttpClasses\HttpClientUnit.pas';
 
-procedure ExecuteGetRequest;
+procedure ExecuteRequest;
 var
-  Broker: TBroker;
   Request: THttpRequest;
   Response: TJSONResponse;
+  StatusCode: Integer;
 begin
-  Writeln('=== GET REQUEST ===');
-  Broker := TBroker.Create('', 0);
   Request := THttpRequest.Create;
   Response := TJSONResponse.Create;
   try
-    Request.URL := '/summary/api/v2/tasks/list';
-    Request.Method := mGET;
+    Request.Curl := 'curl --location ''http://213.167.42.170:8088/summary/api/v2/tasks/list'' --header ''X-Ticket: ST-Test''';
 
-    Broker.Request(Request, Response);
+    StatusCode := HttpClient.Request(Request, Response);
 
-    if Assigned(Request) then
-      Writeln(Request.Curl);
-
-    if Assigned(Response) then
-      Writeln(Response.Response);
+    Writeln('Request CURL:');
+    Writeln(Request.Curl);
+    Writeln;
+    Writeln(Format('Response (HTTP %d):', [StatusCode]));
+    Writeln(Response.Response);
   finally
-    Response.Free;
     Request.Free;
-    Broker.Free;
+    Response.Free;
   end;
 end;
 
 begin
-  ReportMemoryLeaksOnShutdown := True;
   try
-    ExecuteGetRequest;
+    HttpClient.Addr := '213.167.42.170';
+    HttpClient.Port := 8088;
+
+    ExecuteRequest;
   except
     on E: Exception do
-      Writeln('Error: ' + E.Message);
+      Writeln(E.ClassName + ': ' + E.Message);
   end;
 end.
