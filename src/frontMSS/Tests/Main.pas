@@ -63,7 +63,7 @@ type
   private
     { Private declarations }
   protected
-    procedure UpdateLinkSettingsCallback(ASender: TComponent; AResult: Integer);
+
   public
     { Public declarations }
   end;
@@ -262,11 +262,13 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '0f914724-698a-481b-8f86-f832b12ff1d7';
+  lid = '718e95d1-b9dc-47c1-afb5-430eb47174e3';
+  //lid = '9c7d3aaa-4197-4582-afae-19ef8e87cb51';
 var
   LinksBroker : TLinksBroker;
-  SettingsFrame: TParentLinkSettingEditFrame;
+  SettingsForm: TParentEditForm;
 begin
+  ShowMemo.Clear;
   LinksBroker := TLinksBroker.Create();
   try
     var entity := LinksBroker.Info(lid);
@@ -275,59 +277,22 @@ begin
       ShowMemo.Lines.Add('link not found');
       exit;
     end;
-
     LinkEditForm.Entity := entity;
-    var link := entity as TLink;
-    case Link.linkType of
-      //ltDirDown: SettingsFrame := .Create(LinkEditForm);
-      //ltDirUp: SettingsFrame := .Create(LinkEditForm);
-      //ltFtpClientDown: SettingsFrame := .Create(LinkEditForm);
-      //ltFtpClientUp: SettingsFrame := .Create(LinkEditForm);
-      //ltFtpServerDown: SettingsFrame := .Create(LinkEditForm);
-      //ltFtpServerUp: SettingsFrame := .Create(LinkEditForm);
-      ltOpenMCEP: SettingsFrame := TOpenMCEPSettingEditFrame.Create(LinkEditForm);
-      //ltPop3ClientDown: SettingsFrame := .Create(LinkEditForm);
-      //ltSmtpCliUp: SettingsFrame := .Create(LinkEditForm);
-      //ltSmtpSrvDown: SettingsFrame := .Create(LinkEditForm);
-      ltSocketSpecial: SettingsFrame := TSocketSpecialSettingEditFrame.Create(LinkEditForm);
-      //ltHttpClientDown: SettingsFrame := .Create(LinkEditForm);
-      //ltSebaSgsClientDown: SettingsFrame := .Create(LinkEditForm);
-      //ltSebaUsrCsdClientDown     : SettingsFrame := .Create(LinkEditForm);
-      else exit;
+    if LinkEditForm.ShowModal() <> mrOk then
+    begin
+      ShowMemo.Lines.Add('canceled');
+      exit;
     end;
-
-   {
-
-    }
-
-    SettingsFrame.DataSettings := (Link.Data as TLinkData).DataSettings;
-    SettingsFrame.Parent := LinkEditForm.pnClient;
-    LinkEditForm.ShowModal(UpdateLinkSettingsCallback);
-
+    var json := (entity as TLink).Serialize();
+    if json <> nil then
+      ShowMemo.Lines.Add(json.Format());
   finally
     LinksBroker.Free;
   end;
 end;
 
 
-procedure TMainForm.UpdateLinkSettingsCallback(ASender: TComponent;
-  AResult: Integer);
-begin
-  ShowMemo.Clear;
-  if AResult <> mrOk then
-  begin
-    ShowMemo.Lines.Add('canceled');
-    exit;
-  end;
-  var e := (ASender as TParentEditForm).Entity;
-  if not (e is TLink) then
-    exit;
 
-  var json := (e as TLink).Serialize();
-  if json <> nil then
-    ShowMemo.Lines.Add(json.Format());
-
-end;
 
 
 

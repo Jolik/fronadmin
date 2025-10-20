@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame,
+  uniGUIClasses, uniGUIFrame, LinkUnit,   ProfilesFrameUnit,
   LinkSettingsUnit, uniGUIBaseClasses, uniPanel, uniSplitter, uniEdit,
   uniCheckBox, uniGroupBox, uniButton, SharedFrameTextInput,
   SharedFrameBoolInput;
@@ -17,18 +17,23 @@ type
     ProfilesGroupBox: TUniGroupBox;
     UniPanel3: TUniPanel;
     UniSplitter1: TUniSplitter;
-    ActivTimeoutFrame: TFrameTextInput;
+    ActiveTimeoutFrame: TFrameTextInput;
     DumpFrame: TFrameBoolInput;
     SettingsParentPanel: TUniPanel;
+    ProfilesPanel: TUniPanel;
   private
+    Flink: TLink;
+    FLid: string;
     FDataSettings: TDataSettings;
-
+    FProfilesFrame: TProfilesFrame;
   protected
-    procedure SetDataSettings(const Value: TDataSettings); virtual;
+    property DataSettings: TDataSettings read FDataSettings write FDataSettings;
+    property Lid: string read FLid write FLid;
+    procedure SetLink(const Value: TLink); virtual;
   public
     function Apply: boolean; virtual;
-    ///  класс с настройками которе правит фрейм
-    property DataSettings: TDataSettings read FDataSettings write SetDataSettings;
+    ///  класс с настройками которые правит фрейм
+    property Link: TLink read Flink write SetLink;
   end;
 
 implementation
@@ -40,21 +45,29 @@ uses
 
 function TParentLinkSettingEditFrame.Apply: boolean;
 begin
+  result := false;
+  if FProfilesFrame <> nil then
+    if not  FProfilesFrame.Apply() then
+      exit;
   FDataSettings.Dump := DumpFrame.GetData;
-  FDataSettings.LastActivityTimeout := ActivTimeoutFrame.GetDataInt();
+  FDataSettings.LastActivityTimeout := ActiveTimeoutFrame.GetDataInt();
   result := true;
 end;
 
 
-
-
-procedure TParentLinkSettingEditFrame.SetDataSettings(
-  const Value: TDataSettings);
+procedure TParentLinkSettingEditFrame.SetLink(const Value: TLink);
 begin
-  FDataSettings := Value;
+  Flink := Value;
+  FDataSettings := (Link.Data as TLinkData).DataSettings;
+  FLid := Flink.Id;
 
   DumpFrame.SetData(FDataSettings.Dump);
-  ActivTimeoutFrame.SetData(FDataSettings.LastActivityTimeout);
+  ActiveTimeoutFrame.SetData(FDataSettings.LastActivityTimeout);
+
+  FProfilesFrame := TProfilesFrame.Create(self);
+  FProfilesFrame.Parent := ProfilesPanel;
+  FProfilesFrame.Align := alClient;
+  FProfilesFrame.Link := Flink;
 end;
 
 end.

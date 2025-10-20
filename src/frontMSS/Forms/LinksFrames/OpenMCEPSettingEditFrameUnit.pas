@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIFrame, ParentLinkSettingEditFrameUnit, uniCheckBox,
-  LinkSettingsUnit, KeyValUnit,
+  LinkSettingsUnit, KeyValUnit, LinkUnit,
   uniEdit, uniGroupBox, uniSplitter, uniGUIBaseClasses, uniPanel, uniButton,
   SharedFrameBoolInput, SharedFrameTextInput, SharedFrameConnections,
   SharedFrameQueue, SharedFrameCombobox;
@@ -17,7 +17,6 @@ type
     FrameQueue1: TFrameQueue;
     FrameAType: TFrameCombobox;
     FrameDir: TFrameTextInput;
-    UniGroupBox1: TUniGroupBox;
     UniGroupBox2: TUniGroupBox;
     FramePostponeTimeout: TFrameTextInput;
   private
@@ -25,7 +24,7 @@ type
     FSettings: TOpenMCEPDataSettings;
     FComboIndex: TKeyValue<integer>;
   protected
-    procedure SetDataSettings(const Value: TDataSettings); override;
+    procedure SetLink(const Value: TLink); override;
     function Apply: boolean; override;
   public
     { Public declarations }
@@ -41,17 +40,6 @@ implementation
 
 { TParentLinkSettingEditFrame1 }
 
-function TOpenMCEPSettingEditFrame.Apply: boolean;
-begin
-
-end;
-
-procedure TOpenMCEPSettingEditFrame.SetDataSettings(
-  const Value: TDataSettings);
-begin
-  inherited;
-
-end;
 
 constructor TOpenMCEPSettingEditFrame.Create(AOwner: TComponent);
 begin
@@ -66,6 +54,19 @@ begin
   FComboIndex.Free;
   inherited;
 end;
+
+
+procedure TOpenMCEPSettingEditFrame.SetLink(const Value: TLink);
+begin
+  inherited;
+  FSettings := DataSettings as TOpenMCEPDataSettings;
+end;
+
+function TOpenMCEPSettingEditFrame.Apply: boolean;
+begin
+
+end;
+
 
 
 

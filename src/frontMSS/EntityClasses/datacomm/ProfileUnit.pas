@@ -5,6 +5,7 @@ interface
 uses
   System.SysUtils, System.JSON, System.Generics.Collections,
   EntityUnit,
+  StringListUnit,
   SmallRuleUnit,
   StringUnit;
 
@@ -14,7 +15,7 @@ type
   /// </summary>
   TProfilePlay = class(TFieldSet)
   private
-    FFta: TNamedStringList;
+    FFta: TStringArray;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -23,7 +24,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
-    property FTA: TNamedStringList read FFta;
+    property FTA: TStringArray read FFta;
   end;
 
   /// <summary>
@@ -51,6 +52,7 @@ type
   TProfile = class(TEntity)
   private
     FDescription: string;
+    FIsNew: boolean;
     function GetProfileBody: TProfileBody;
   protected
     function GetIdKey: string; override;
@@ -62,6 +64,8 @@ type
 
     property Description: string read FDescription write FDescription;
     property ProfileBody: TProfileBody read GetProfileBody;
+
+    property IsNew: boolean read FIsNew write FIsNew;
   end;
 
   /// <summary>
@@ -105,8 +109,10 @@ begin
 
   if Assigned(FFta) then
   begin
-    if not FFta.Assign(SourcePlay.FTA) then
-      Exit;
+    FFta.Clear;
+    FFta.Parse(SourcePlay.FTA.Serialize)
+    //if not FFta.Assign(SourcePlay.FTA) then
+    //  Exit;
   end;
 
   Result := True;
@@ -115,14 +121,12 @@ end;
 constructor TProfilePlay.Create;
 begin
   inherited Create;
-
-  FFta := TNamedStringList.Create;
+  FFta := TStringArray.Create;
 end;
 
 destructor TProfilePlay.Destroy;
 begin
   FFta.Free;
-
   inherited;
 end;
 
@@ -131,33 +135,27 @@ var
   Value: TJSONValue;
 begin
   if Assigned(FFta) then
-    FFta.Parse(nil, APropertyNames);
+    FFta.Clear;
 
   if not Assigned(src) then
     Exit;
 
   Value := src.FindValue(FtaKey);
-  if (Value is TJSONObject) and Assigned(FFta) then
-    FFta.Parse(TJSONObject(Value), APropertyNames);
+  if (Value is TJSONArray) and Assigned(FFta) then
+    FFta.Parse(TJSONArray(Value));
 end;
 
 procedure TProfilePlay.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
-var
-  FtaObject: TJSONObject;
 begin
   if not Assigned(dst) then
     Exit;
 
-  FtaObject := TJSONObject.Create;
-  try
-    if Assigned(FFta) then
-      FFta.Serialize(FtaObject, APropertyNames);
+  var jArr := TJSONArray.Create;
 
-    dst.AddPair(FtaKey, FtaObject);
-  except
-    FtaObject.Free;
-    raise;
-  end;
+  if Assigned(FFta) then
+    FFta.Serialize(jArr);
+
+  dst.AddPair(FtaKey, jArr);
 end;
 
 { TProfileBody }

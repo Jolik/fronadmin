@@ -18,7 +18,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
         Width = 339
         ExplicitTop = 583
         ExplicitWidth = 339
-        inherited ActivTimeoutFrame: TFrameTextInput
+        inherited ActiveTimeoutFrame: TFrameTextInput
           Width = 339
           ExplicitWidth = 339
           inherited Edit: TUniEdit
@@ -40,11 +40,12 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
         end
       end
       inherited SettingsParentPanel: TUniPanel
+        Top = 22
         Width = 339
-        Height = 568
+        Height = 561
         ExplicitWidth = 339
         ExplicitHeight = 568
-        ScrollHeight = 568
+        ScrollHeight = 561
         ScrollWidth = 339
         inline FrameConnections1: TFrameConnections
           AlignWithMargins = True
@@ -175,7 +176,6 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
             end
             inherited FrameConnectionKey: TFrameTextInput
               Width = 329
-              ExplicitTop = 75
               ExplicitWidth = 329
               inherited Edit: TUniEdit
                 Width = 158
@@ -199,6 +199,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           Background.Picture.Data = {00}
           ExplicitTop = 178
           ExplicitWidth = 339
+          ExplicitHeight = 66
           inherited FrameQid: TFrameTextInput
             Width = 339
             ExplicitWidth = 339
@@ -296,7 +297,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           ExplicitTop = 244
           inline FrameAckCount: TFrameTextInput
             Left = 2
-            Top = 15
+            Top = 22
             Width = 335
             Height = 30
             Align = alTop
@@ -324,7 +325,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameAckTimeout: TFrameTextInput
             Left = 2
-            Top = 45
+            Top = 52
             Width = 335
             Height = 30
             Align = alTop
@@ -351,7 +352,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerByte: TFrameTextInput
             Left = 2
-            Top = 75
+            Top = 82
             Width = 335
             Height = 30
             Align = alTop
@@ -379,7 +380,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerCount: TFrameTextInput
             Left = 2
-            Top = 105
+            Top = 112
             Width = 335
             Height = 30
             Align = alTop
@@ -408,7 +409,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerSec: TFrameTextInput
             Left = 2
-            Top = 135
+            Top = 142
             Width = 335
             Height = 30
             Align = alTop
@@ -436,7 +437,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameConfirm: TFrameCombobox
             Left = 2
-            Top = 165
+            Top = 172
             Width = 335
             Height = 30
             Align = alTop
@@ -468,7 +469,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameBufferSize: TFrameTextInput
             Left = 2
-            Top = 195
+            Top = 202
             Width = 335
             Height = 30
             Align = alTop
@@ -497,7 +498,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameCompatibility: TFrameCombobox
             Left = 2
-            Top = 225
+            Top = 232
             Width = 335
             Height = 30
             Align = alTop
@@ -529,7 +530,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameRR: TFrameBoolInput
             Left = 2
-            Top = 255
+            Top = 262
             Width = 335
             Height = 30
             Align = alTop

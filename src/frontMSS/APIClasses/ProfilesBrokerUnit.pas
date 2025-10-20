@@ -13,6 +13,8 @@ uses
 /// </summary>
 type
   TProfilesBroker = class(TEntityBroker)
+  private
+    FLid: string;
   protected
     /// <summary>
     ///   Base path for all broker requests.
@@ -59,6 +61,9 @@ type
     ///   Deletes a profile.
     /// </summary>
     function Remove(AId: String): Boolean; overload; override;
+
+    // Lid link id
+    property Lid: string read FLid write FLid;
   end;
 
 implementation
@@ -112,7 +117,8 @@ begin
   try
     JSONResult := nil;
     try
-      ResStr := MainHttpModuleUnit.GET(GetPath + constURLProfilesList);
+      var url := Format('%s/%s%s', [GetPath, FLid, constURLProfilesList]);
+      ResStr := MainHttpModuleUnit.GET(url);
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
         Exit;
@@ -161,7 +167,7 @@ begin
     Exit;
 
   try
-    URL := Format(GetPath + constURLProfileInfo, [AId]);
+    URL := Format('%s/%s/profiles/%s', [GetPath, FLid, AId ]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
