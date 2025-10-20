@@ -228,14 +228,13 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Width = 320
       Hint = ''
       Style = csDropDownList
-      Text = 'SummaryUnknown'
+      Text = 'SummarySynop'
       Items.Strings = (
         'SummarySynop'
         'SummaryHydra'
         'SummaryCXML'
-        'SummarySEBA'
-        'SummaryUnknown')
-      ItemIndex = 4
+        'SummarySEBA')
+      ItemIndex = 0
       TabOrder = 21
       IconItems = <>
     end
