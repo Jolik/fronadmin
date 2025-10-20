@@ -6,7 +6,7 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, TaskUnit, EntityBrokerUnit;
+  EntityUnit, TaskUnit, EntityBrokerUnit, uniGUIForm;
 
 type
   ///  брокер для API tasks

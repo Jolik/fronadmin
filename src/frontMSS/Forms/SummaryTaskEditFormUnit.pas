@@ -196,7 +196,7 @@ begin
     teTid.Text         := SummaryTask.Tid;
     teCompId.Text      := SummaryTask.CompId;
     teDepId.Text       := SummaryTask.DepId;
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(SummaryTask.Module) <> -1, cbModule.Items.IndexOf(SummaryTask.Module), 4);
+    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(SummaryTask.Module) <> -1, cbModule.Items.IndexOf(SummaryTask.Module), cbModule.Items.Count - 1);
     meDef.Lines.Text   := SummaryTask.Def;
     cbEnabled.Checked  := SummaryTask.Enabled;
 

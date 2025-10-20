@@ -7,12 +7,10 @@ inherited SummaryTasksForm: TSummaryTasksForm
         ExplicitLeft = 0
         inherited cpTaskInfoID: TUniContainerPanel
           inherited lTaskInfoID: TUniLabel
-            Font.Height = -13
             ExplicitTop = 7
             ExplicitHeight = 20
           end
           inherited lTaskInfoIDValue: TUniLabel
-            Font.Height = -13
             ExplicitLeft = 115
             ExplicitTop = 7
             ExplicitWidth = 235
@@ -24,13 +22,11 @@ inherited SummaryTasksForm: TSummaryTasksForm
         end
         inherited cpTaskInfoName: TUniContainerPanel
           inherited lTaskInfoName: TUniLabel
-            Font.Height = -13
             ExplicitLeft = 5
             ExplicitTop = 7
             ExplicitHeight = 20
           end
           inherited lTaskInfoNameValue: TUniLabel
-            Font.Height = -13
             ExplicitLeft = 115
             ExplicitTop = 7
             ExplicitWidth = 235
@@ -47,12 +43,12 @@ inherited SummaryTasksForm: TSummaryTasksForm
         inherited cpTaskInfoCreated: TUniContainerPanel
           Top = 159
           ExplicitLeft = 10
-          ExplicitTop = 119
+          ExplicitTop = 159
         end
         inherited cpTaskInfoUpdated: TUniContainerPanel
           Top = 199
           ExplicitLeft = 10
-          ExplicitTop = 159
+          ExplicitTop = 199
         end
         object cpTaskInfoModule: TUniContainerPanel
           AlignWithMargins = True
@@ -71,8 +67,6 @@ inherited SummaryTasksForm: TSummaryTasksForm
           TabOrder = 6
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          ExplicitLeft = 14
-          ExplicitTop = 131
           object lTaskInfoModule: TUniLabel
             AlignWithMargins = True
             Left = 5

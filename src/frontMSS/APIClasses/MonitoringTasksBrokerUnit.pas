@@ -38,7 +38,7 @@ uses
 
 function TMonitoringTasksBroker.GetBasePath: string;
 begin
-  Result := constURLStripBasePath;
+  Result := constURLMonitoringBasePath;
 end;
 
 class function TMonitoringTasksBroker.ClassType: TEntityClass;
