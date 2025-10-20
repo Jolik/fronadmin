@@ -90,12 +90,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="ConsoleAliasesBrokerUnit.pas"/>
         <DCCReference Include="..\..\APIClasses\HttpRequestUnit.pas"/>
-        <DCCReference Include="..\..\APIClasses\EntityBrokerUnit.pas"/>
-        <DCCReference Include="..\..\EntityClasses\router\AliasUnit.pas"/>
         <DCCReference Include="..\..\EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="..\..\Common\FuncUnit.pas"/>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>

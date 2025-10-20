@@ -6,12 +6,12 @@ uses
   System.SysUtils,
   System.Classes,
   System.Generics.Collections,
-  Data.DB;
+  EntityUnit;
 
 type
-  TMethod = (mGET, mPOST, mPUT, mDELETE);
+  TMethod = (mGET, mPOST);
 
-  TBody = class(TFieldDef)
+  TReqBody = class(TFieldSet)
   private
     FContent: string;
   public
@@ -24,8 +24,8 @@ type
     FURL: string;
     FMethod: TMethod;
     FHeaders: TDictionary<string, string>;
-    FBody: TBody;
-    procedure SetBody(const Value: TBody);
+    FBody: TReqBody;
+    procedure SetBody(const Value: TReqBody);
     function MethodToString: string;
   public
     constructor Create;
@@ -34,7 +34,7 @@ type
     property URL: string read FURL write FURL;
     property Method: TMethod read FMethod write FMethod;
     property Headers: TDictionary<string, string> read FHeaders;
-    property Body: TBody read FBody write SetBody;
+    property Body: TReqBody read FBody write SetBody;
   end;
 
   TJSONResponse = class
@@ -61,11 +61,11 @@ uses
   System.StrUtils,
   MainHttpModuleUnit;
 
-{ TBody }
+{ TReqBody }
 
-constructor TBody.Create;
+constructor TReqBody.Create;
 begin
-  inherited Create(nil);
+  inherited Create;
   FContent := '';
 end;
 
@@ -90,14 +90,12 @@ begin
   case FMethod of
     mGET: Result := 'GET';
     mPOST: Result := 'POST';
-    mPUT: Result := 'PUT';
-    mDELETE: Result := 'DELETE';
   else
     Result := 'GET';
   end;
 end;
 
-procedure THttpRequest.SetBody(const Value: TBody);
+procedure THttpRequest.SetBody(const Value: TReqBody);
 begin
   if FBody = Value then
     Exit;
@@ -157,8 +155,6 @@ begin
   if (Req = nil) or (Res = nil) then
     raise EArgumentNilException.Create('Request and response must be assigned.');
 
-  CONFIGUREHEADERS(Req.Headers);
-
   if StartsText('http://', Req.URL) then
     FullUrl := Req.URL
   else if FPort = 0 then
@@ -177,12 +173,8 @@ begin
     case Req.Method of
       mGET:
         Res.Response := GET(FullUrl);
-      mDELETE:
-        Res.Response := DELETE(FullUrl);
       mPOST:
         Res.Response := POST(FullUrl, BodyStream);
-      mPUT:
-        Res.Response := PUT(FullUrl, BodyStream);
     else
       Res.Response := GET(FullUrl);
     end;
