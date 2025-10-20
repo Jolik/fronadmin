@@ -26,21 +26,26 @@ type
     FURL: string;
     FMethod: TMethod;
     FHeaders: TDictionary<string, string>;
+    FParams: TDictionary<string, string>;
     FBody: TBody;
     function GetCurl: string;
     procedure SetCurl(const Value: string);
     procedure SetMethodFromString(const Value: string);
     function GetBodyContent: string;
     procedure SetBodyContent(const Value: string);
+    procedure SetURL(const Value: string);
+    procedure ParseParamsFromQuery(const Query: string);
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    property URL: string read FURL write FURL;
+    property URL: string read FURL write SetURL;
     property Method: TMethod read FMethod write FMethod;
     property Headers: TDictionary<string, string> read FHeaders;
+    property Params: TDictionary<string, string> read FParams;
     property Body: TBody read FBody write FBody;
     property Curl: string read GetCurl write SetCurl;
     property BodyContent: string read GetBodyContent write SetBodyContent;
+    function GetURLWithParams(const BaseUrl: string = ''): string;
   end;
 
   TJSONResponse = class
@@ -71,7 +76,8 @@ var
 implementation
 
 uses
-  System.Character;
+  System.Character,
+  System.NetEncoding;
 
 function MethodToCurlOption(const AMethod: TMethod): string;
 begin
@@ -91,6 +97,7 @@ constructor THttpRequest.Create;
 begin
   inherited Create;
   FHeaders := TDictionary<string, string>.Create;
+  FParams := TDictionary<string, string>.Create;
   FMethod := mGET;
   FBody := THttpBody.Create;
 end;
@@ -99,6 +106,7 @@ destructor THttpRequest.Destroy;
 begin
   FBody.Free;
   FHeaders.Free;
+  FParams.Free;
   inherited;
 end;
 
@@ -118,13 +126,15 @@ var
   Builder: TStringBuilder;
   HeaderPair: TPair<string, string>;
   BodyString: string;
+  EffectiveUrl: string;
 begin
   Builder := TStringBuilder.Create;
   try
     Builder.Append('curl ');
     Builder.Append('--request ').Append(MethodToCurlOption(FMethod)).Append(' ');
-    if not FURL.IsEmpty then
-      Builder.Append('''').Append(FURL).Append('''');
+    EffectiveUrl := GetURLWithParams;
+    if not EffectiveUrl.IsEmpty then
+      Builder.Append('''').Append(EffectiveUrl).Append('''');
 
     for HeaderPair in FHeaders do
     begin
@@ -242,6 +252,7 @@ var
 begin
   FHeaders.Clear;
   FMethod := mGET;
+  FParams.Clear;
   FURL := '';
   SetBodyContent('');
 
@@ -300,16 +311,21 @@ begin
         end;
         Continue;
       end
+      else if Token = '\' then
+      begin
+        Inc(I);
+        Continue;
+      end
       else if Token.StartsWith('http://', True) or Token.StartsWith('https://', True) then
       begin
-        FURL := NormalizeToken(Token);
+        SetURL(NormalizeToken(Token));
         Inc(I);
         Continue;
       end
       else
       begin
         if FURL.IsEmpty then
-          FURL := NormalizeToken(Token);
+          SetURL(NormalizeToken(Token));
         Inc(I);
       end;
     end;
@@ -330,6 +346,97 @@ begin
     FMethod := mDELETE
   else
     FMethod := mGET;
+end;
+
+procedure THttpRequest.ParseParamsFromQuery(const Query: string);
+var
+  Parts: TArray<string>;
+  Part: string;
+  Key: string;
+  Value: string;
+  EqPos: Integer;
+begin
+  if Query.IsEmpty then
+    Exit;
+
+  Parts := Query.Split(['&']);
+  for Part in Parts do
+  begin
+    if Part.IsEmpty then
+      Continue;
+
+    EqPos := Part.IndexOf('=');
+    if EqPos > -1 then
+    begin
+      Key := Part.Substring(0, EqPos);
+      Value := Part.Substring(EqPos + 1);
+    end
+    else
+    begin
+      Key := Part;
+      Value := '';
+    end;
+
+    Key := TNetEncoding.URL.Decode(Key);
+    Value := TNetEncoding.URL.Decode(Value);
+
+    if not Key.IsEmpty then
+      FParams.AddOrSetValue(Key, Value);
+  end;
+end;
+
+function THttpRequest.GetURLWithParams(const BaseUrl: string): string;
+var
+  ResultUrl: string;
+  Pair: TPair<string, string>;
+  Separator: string;
+begin
+  if BaseUrl.IsEmpty then
+    ResultUrl := FURL
+  else
+    ResultUrl := BaseUrl;
+
+  if FParams.Count = 0 then
+    Exit(ResultUrl);
+
+  if ResultUrl.Contains('?') then
+    Separator := '&'
+  else
+    Separator := '?';
+
+  for Pair in FParams do
+  begin
+    ResultUrl := ResultUrl + Separator + TNetEncoding.URL.Encode(Pair.Key) + '=' + TNetEncoding.URL.Encode(Pair.Value);
+    Separator := '&';
+  end;
+
+  Result := ResultUrl;
+end;
+
+procedure THttpRequest.SetURL(const Value: string);
+var
+  TrimmedValue: string;
+  QueryPos: Integer;
+  Query: string;
+begin
+  TrimmedValue := Value.Trim;
+  FParams.Clear;
+
+  if TrimmedValue.IsEmpty then
+  begin
+    FURL := '';
+    Exit;
+  end;
+
+  QueryPos := TrimmedValue.IndexOf('?');
+  if QueryPos > -1 then
+  begin
+    Query := TrimmedValue.Substring(QueryPos + 1);
+    FURL := TrimmedValue.Substring(0, QueryPos);
+    ParseParamsFromQuery(Query);
+  end
+  else
+    FURL := TrimmedValue;
 end;
 
 { THttpBroker }
@@ -374,7 +481,7 @@ var
   Protocol: string;
 begin
   if Req.URL.StartsWith('http://', True) or Req.URL.StartsWith('https://', True) then
-    Exit(Req.URL);
+    Exit(Req.GetURLWithParams);
 
   if FAddr.IsEmpty then
     raise EInvalidOpException.Create('Server address is not specified');
@@ -391,6 +498,8 @@ begin
     Result := Format('%s%s:%d%s', [Protocol, FAddr, FPort, Path])
   else
     Result := Format('%s%s%s', [Protocol, FAddr, Path]);
+
+  Result := Req.GetURLWithParams(Result);
 end;
 
 function THttpBroker.Request(Req: THttpRequest; Res: TJSONResponse): Integer;
