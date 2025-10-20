@@ -129,10 +129,6 @@
         <DCCReference Include="..\Logging\TextFileLoggerUnit.pas"/>
         <DCCReference Include="..\Common\ConstsUnit.pas"/>
         <DCCReference Include="..\Common\FuncUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskSourceUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
@@ -150,13 +146,9 @@
         <DCCReference Include="..\EntityClasses\dataserver\DsGroupUnit.pas"/>
         <DCCReference Include="..\EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskTypesUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\DataserieUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\BindingUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\QueueSettingsUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\StringUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\SmallRuleUnit.pas"/>
         <DCCReference Include="..\EntityClasses\datacomm\ProfileUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\ConnectionSettingsUnit.pas"/>
@@ -166,8 +158,18 @@
         <DCCReference Include="..\EntityClasses\signals\LogUnit.pas"/>
         <DCCReference Include="..\EntityClasses\links\S3SettingsUnit.pas"/>
         <DCCReference Include="..\Common\KeyValUnit.pas"/>
-        <DCCReference Include="..\EntityClasses\Common\TaskSettingsUnit.pas"/>
         <DCCReference Include="..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\ConditionUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\EntityUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\FilterUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\GeoTypeUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\GUIDListUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\StringListUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\StringUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskSettingsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskSourceUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskTypesUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\Common\TaskUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -12,7 +12,7 @@ uses
 type
   /// <summary>
   ///   Настройки воспроизведения профиля маршрутизатора.
-  /// </summary>
+  /// </summary>                                                                                                          и
   TProfilePlay = class(TFieldSet)
   private
     FFta: TStringArray;

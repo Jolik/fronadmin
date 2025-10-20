@@ -40,10 +40,6 @@ uses
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
-  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
-  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
-  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
-  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
@@ -61,13 +57,9 @@ uses
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
-  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
-  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
-  StringUnit in '..\EntityClasses\Common\StringUnit.pas',
-  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
   ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
@@ -77,8 +69,18 @@ uses
   LogUnit in '..\EntityClasses\signals\LogUnit.pas',
   S3SettingsUnit in '..\EntityClasses\links\S3SettingsUnit.pas',
   KeyValUnit in '..\Common\KeyValUnit.pas',
+  SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas',
+  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
+  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
+  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
+  GeoTypeUnit in '..\EntityClasses\Common\GeoTypeUnit.pas',
+  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
+  StringListUnit in '..\EntityClasses\Common\StringListUnit.pas',
+  StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   TaskSettingsUnit in '..\EntityClasses\Common\TaskSettingsUnit.pas',
-  SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas';
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
+  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas';
 
 procedure ListSummaryTaskTypes();
 var
@@ -681,7 +683,7 @@ begin
   end;
 end;
 
-procedure ListProfiles();
+(* !!!procedure ListProfiles();
 var
   LinksBroker: TLinksBroker;
   ProfilesBroker: TProfilesBroker;
@@ -799,7 +801,7 @@ begin
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
-end;
+end;                *)
 
 procedure ListRouterSource();
 var
