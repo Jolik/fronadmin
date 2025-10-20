@@ -4,7 +4,11 @@ program BrokerTestProj;
 
 uses
   System.SysUtils,
-  HttpClientUnit in '..\HttpClasses\HttpClientUnit.pas';
+  HttpClientUnit in '..\..\HttpClasses\HttpClientUnit.pas',
+  EntityUnit in '..\..\EntityClasses\Common\EntityUnit.pas',
+  FuncUnit in '..\..\Common\FuncUnit.pas',
+  LoggingUnit in '..\..\Logging\LoggingUnit.pas',
+  TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas';
 
 procedure ExecuteRequest;
 var
@@ -19,11 +23,15 @@ begin
 
     StatusCode := HttpClient.Request(Request, Response);
 
+    Writeln('-----------------------------------------------------------------');
     Writeln('Request CURL:');
     Writeln(Request.Curl);
     Writeln;
+    Writeln('-----------------------------------------------------------------');
     Writeln(Format('Response (HTTP %d):', [StatusCode]));
     Writeln(Response.Response);
+    Writeln('-----------------------------------------------------------------');
+    Readln;
   finally
     Request.Free;
     Response.Free;
