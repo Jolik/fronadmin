@@ -9,7 +9,7 @@ const
   constURLSummaryBasePath = '/summary/api/v2';
 
 const
-  constURLDSProcessBasePath = '/dsprocessor/api/v2';
+  constURLDSProcessBasePath = '/dsprocessor/api/v1';
 
 const
   constURLMonitoringBasePath = '/dsmonitoring/api/v1';
