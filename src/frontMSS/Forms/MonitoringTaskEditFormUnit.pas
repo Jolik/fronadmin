@@ -89,7 +89,7 @@ begin
     inherited SetEntity(AEntity);
 
     ///  выводим название модуля
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(MonitoringTask.Module) <> -1, cbModule.Items.IndexOf(MonitoringTask.Module), cbModule.Items.Count - 1);
+    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(MonitoringTask.Module) <> -1, cbModule.Items.IndexOf(MonitoringTask.Module), 0);
 
   except
     Log('TMonitoringTaskEditForm.SetEntity error', lrtError);
