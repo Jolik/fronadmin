@@ -154,78 +154,6 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Text = ''
       TabOrder = 5
     end
-    object lCustomMeteo: TUniLabel
-      Left = 24
-      Top = 280
-      Width = 75
-      Height = 13
-      Hint = ''
-      Caption = 'Custom.Meteo'
-      TabOrder = 17
-    end
-    object cbCustomMeteo: TUniCheckBox
-      Left = 160
-      Top = 276
-      Width = 97
-      Height = 21
-      Hint = ''
-      Caption = #1044#1072
-      TabOrder = 6
-    end
-    object lCustomAnyTime: TUniLabel
-      Left = 24
-      Top = 312
-      Width = 85
-      Height = 13
-      Hint = ''
-      Caption = 'Custom.AnyTime'
-      TabOrder = 18
-    end
-    object teCustomAnyTime: TUniEdit
-      Left = 160
-      Top = 308
-      Width = 120
-      Height = 21
-      Hint = ''
-      Text = ''
-      TabOrder = 7
-    end
-    object lCustomSeparate: TUniLabel
-      Left = 24
-      Top = 344
-      Width = 87
-      Height = 13
-      Hint = ''
-      Caption = 'Custom.Separate'
-      TabOrder = 19
-    end
-    object cbCustomSeparate: TUniCheckBox
-      Left = 160
-      Top = 340
-      Width = 97
-      Height = 21
-      Hint = ''
-      Caption = #1044#1072
-      TabOrder = 8
-    end
-    object lExcludeWeek: TUniLabel
-      Left = 24
-      Top = 376
-      Width = 68
-      Height = 13
-      Hint = ''
-      Caption = 'ExcludeWeek'
-      TabOrder = 20
-    end
-    object teExcludeWeek: TUniEdit
-      Left = 160
-      Top = 372
-      Width = 200
-      Height = 21
-      Hint = ''
-      Text = ''
-      TabOrder = 9
-    end
     object cbModule: TUniComboBox
       Left = 160
       Top = 108
@@ -241,6 +169,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
         'SummaryUnknown')
       ItemIndex = 4
       TabOrder = 21
+      OnChange = cbModuleChange
       IconItems = <>
     end
   end
@@ -253,6 +182,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     ParentColor = False
     Align = alRight
     TabOrder = 4
+    Visible = False
   end
   object pnSources: TUniContainerPanel
     Left = 497
