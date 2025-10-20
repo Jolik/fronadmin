@@ -47,6 +47,7 @@ uses
 function TProfilesFrame.Apply: boolean;
 begin
 
+  result := true;
 end;
 
 

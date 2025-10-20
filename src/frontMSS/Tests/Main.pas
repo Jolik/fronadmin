@@ -262,7 +262,7 @@ end;
 
 procedure TMainForm.btnLinkSettingsClick(Sender: TObject);
 const
-  lid = '718e95d1-b9dc-47c1-afb5-430eb47174e3';
+  lid = '7d49e630-2a30-49e7-8c7b-5e97b8c9270c';
   //lid = '9c7d3aaa-4197-4582-afae-19ef8e87cb51';
 var
   LinksBroker : TLinksBroker;

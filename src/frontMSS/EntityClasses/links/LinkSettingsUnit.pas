@@ -53,7 +53,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     property Connections: TConnectionSettingsList read FConnections write FConnections;
-    property QueueSettings: TQueueSettings read FQueueSettings write FQueueSettings;
+    property Queue: TQueueSettings read FQueueSettings write FQueueSettings;
     property Atype: string read FType write FType;
     property ProtocolVer: string read FProtocolVer write FProtocolVer;
     property AckCount: integer read FAckCount write FAckCount;

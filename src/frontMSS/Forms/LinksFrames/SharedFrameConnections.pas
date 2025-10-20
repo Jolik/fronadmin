@@ -23,6 +23,7 @@ type
     FrameCertKey: TFrameTextInput;
     FrameCertCA: TFrameTextInput;
     FrameConnectionKey: TFrameTextInput;
+    FrameReplaceIP: TFrameBoolInput;
   private
     function GetHasConnectionKey: boolean;
     procedure SetHasConnectionKey(const Value: boolean);
@@ -51,6 +52,7 @@ begin
   conn.Addr := FrameAddr.GetDataStr();
   conn.Timeout := FrameTimeout.GetDataInt();
   conn.ConnectionKey := FrameConnectionKey.GetDataStr();
+  conn.ReplaceIP := FrameReplaceIP.GetData;
   var Secure: TSecure;
   Secure.Auth.Login := FrameLogin.GetDataStr();
   Secure.Auth.Password := FramePassword.GetDataStr();
@@ -88,6 +90,7 @@ begin
   FrameCertCA.SetData(conn.Secure.TLS.Certificates.CA);
   FrameCertKey.SetData(conn.Secure.TLS.Certificates.Key);
   FrameConnectionKey.SetData(conn.ConnectionKey);
+  FrameReplaceIP.SetData(conn.ReplaceIP);
 end;
 
 procedure TFrameConnections.SetHasConnectionKey(const Value: boolean);

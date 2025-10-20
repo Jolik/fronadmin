@@ -19,6 +19,10 @@ type
     FrameDir: TFrameTextInput;
     UniGroupBox2: TUniGroupBox;
     FramePostponeTimeout: TFrameTextInput;
+    FrameMaxPostponeMessages: TFrameTextInput;
+    FrameResendTimeoutSec: TFrameTextInput;
+    FrameHeartbeatDelay: TFrameTextInput;
+    FrameMaxFileSize: TFrameTextInput;
   private
     { Private declarations }
     FSettings: TOpenMCEPDataSettings;
@@ -56,15 +60,40 @@ begin
 end;
 
 
+
 procedure TOpenMCEPSettingEditFrame.SetLink(const Value: TLink);
 begin
   inherited;
   FSettings := DataSettings as TOpenMCEPDataSettings;
+
+  FrameAType.SetDataIndex(FComboIndex.ValueByKey(FSettings.Atype, 0));
+  FrameConnections1.SetData(FSettings.Connections);
+  FrameQueue1.SetData(FSettings.Queue);
+  FrameDir.SetData(FSettings.Dir.Path);
+  FramePostponeTimeout.SetData(FSettings.PostponeTimeout);
+  FrameMaxPostponeMessages.SetData(FSettings.MaxPostponeMessages);
+  FrameResendTimeoutSec.SetData(FSettings.ResendTimeoutSec);
+  FrameHeartbeatDelay.SetData(FSettings.HeartbeatDelay);
+  FrameMaxFileSize.SetData(FSettings.MaxFileSize);
 end;
 
 function TOpenMCEPSettingEditFrame.Apply: boolean;
 begin
+  result := inherited Apply;
+  if not result then
+    exit;
 
+  FSettings.Atype := FComboIndex.KeyByValue(FrameAType.GetDataIndex());
+  FrameConnections1.GetData(FSettings.Connections);
+  FrameQueue1.GetData(FSettings.Queue);
+  FSettings.Dir.Path := FrameDir.GetDataStr();
+  FSettings.PostponeTimeout  := FramePostponeTimeout.GetDataInt();
+  FSettings.MaxPostponeMessages := FrameMaxPostponeMessages.GetDataInt();
+  FSettings.ResendTimeoutSec := FrameResendTimeoutSec.GetDataInt();
+  FSettings.HeartbeatDelay := FrameHeartbeatDelay.GetDataInt();
+  FSettings.MaxFileSize  := FrameMaxFileSize.GetDataInt();
+
+  result := true;
 end;
 
 

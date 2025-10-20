@@ -40,12 +40,11 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
         end
       end
       inherited SettingsParentPanel: TUniPanel
-        Top = 22
         Width = 339
-        Height = 561
+        Height = 568
         ExplicitWidth = 339
         ExplicitHeight = 568
-        ScrollHeight = 561
+        ScrollHeight = 568
         ScrollWidth = 339
         inline FrameConnections1: TFrameConnections
           AlignWithMargins = True
@@ -69,7 +68,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
             Margins.Right = 10
             Margins.Bottom = 10
             ExplicitWidth = 333
-            ExplicitHeight = 82
+            ExplicitHeight = 109
             inherited FrameAddr: TFrameTextInput
               Width = 329
               ExplicitWidth = 329
@@ -197,7 +196,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
           Background.Picture.Data = {00}
-          ExplicitTop = 178
+          ExplicitTop = 175
           ExplicitWidth = 339
           ExplicitHeight = 66
           inherited FrameQid: TFrameTextInput
@@ -294,10 +293,9 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           Caption = #1053#1072#1089#1090#1088#1086#1081#1082#1080' '#1087#1088#1086#1090#1086#1082#1086#1083#1072' '
           Align = alTop
           TabOrder = 5
-          ExplicitTop = 244
           inline FrameAckCount: TFrameTextInput
             Left = 2
-            Top = 22
+            Top = 15
             Width = 335
             Height = 30
             Align = alTop
@@ -325,7 +323,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameAckTimeout: TFrameTextInput
             Left = 2
-            Top = 52
+            Top = 45
             Width = 335
             Height = 30
             Align = alTop
@@ -352,7 +350,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerByte: TFrameTextInput
             Left = 2
-            Top = 82
+            Top = 75
             Width = 335
             Height = 30
             Align = alTop
@@ -380,7 +378,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerCount: TFrameTextInput
             Left = 2
-            Top = 112
+            Top = 105
             Width = 335
             Height = 30
             Align = alTop
@@ -409,7 +407,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameTriggerSec: TFrameTextInput
             Left = 2
-            Top = 142
+            Top = 135
             Width = 335
             Height = 30
             Align = alTop
@@ -437,7 +435,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameConfirm: TFrameCombobox
             Left = 2
-            Top = 172
+            Top = 165
             Width = 335
             Height = 30
             Align = alTop
@@ -469,7 +467,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameBufferSize: TFrameTextInput
             Left = 2
-            Top = 202
+            Top = 195
             Width = 335
             Height = 30
             Align = alTop
@@ -498,7 +496,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameCompatibility: TFrameCombobox
             Left = 2
-            Top = 232
+            Top = 225
             Width = 335
             Height = 30
             Align = alTop
@@ -530,7 +528,7 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
           end
           inline FrameRR: TFrameBoolInput
             Left = 2
-            Top = 262
+            Top = 255
             Width = 335
             Height = 30
             Align = alTop
@@ -561,6 +559,14 @@ inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
     ExplicitLeft = 351
     ExplicitWidth = 332
     ExplicitHeight = 657
+    inherited ProfilesPanel: TUniPanel
+      Width = 328
+      Height = 640
+      ExplicitWidth = 328
+      ExplicitHeight = 640
+      ScrollHeight = 640
+      ScrollWidth = 328
+    end
   end
   inherited UniSplitter1: TUniSplitter
     Left = 345

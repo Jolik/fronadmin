@@ -307,6 +307,76 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\DirDownSettingEditFrameUnit.pas">
+            <Form>DirDownSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameSchedule.pas">
+            <Form>FrameSchedule</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SharedFrameS3.pas">
+            <Form>FrameS3</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\DirUpSettingEditFrameUnit.pas">
+            <Form>DirUpSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\FTPCliUpLinkSettingEditFrameUnit.pas">
+            <Form>FTPCliUpLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\FTPCliDownLinkSettingEditFrameUnit.pas">
+            <Form>FtpCliDownLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\Pop3CliDownLinkSettingEditFrameUnit.pas">
+            <Form>Pop3CliDownLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SMTPClieUpLinkSettingEditFrameUnit.pas">
+            <Form>SMTPClieUpLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\FTPServerDownLinkSettingEditFrameUnit.pas">
+            <Form>FTPServerDownLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\FTPSrvUpLinkSettingEditFrameUnit.pas">
+            <Form>FTPSrvUpLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas">
+            <Form>SMTPSrvDownLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas">
+            <Form>HTTPCliDownLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas">
+            <Form>SebaSGSLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas">
+            <Form>SebaCSDLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

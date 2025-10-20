@@ -15,6 +15,7 @@ type
   private
     FPath: string;
     FDepth: integer;
+    FQuota: integer;
 
   public
     ///  устанавливаем поля с другого объекта
@@ -27,6 +28,7 @@ type
 
     property Path: string read FPath write FPath;
     property Depth: integer read FDepth write FDepth;
+    property Quota: integer read FQuota write FQuota;
    end;
 
 
@@ -46,6 +48,7 @@ begin
   var src := ASource as TDirSettings;
   Path := src.Path;
   Depth := src.Depth;
+  Quota := src.Quota;
   Result := true;
 end;
 
@@ -53,12 +56,16 @@ procedure TDirSettings.Parse(src: TJSONObject; const APropertyNames: TArray<stri
 begin
   Path := GetValueStrDef(src, 'path', '');
   Depth := GetValueIntDef(src, 'depth', 0);
+  Quota := GetValueIntDef(src, 'quota', 0);
 end;
 
 procedure TDirSettings.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
 begin
   dst.AddPair('path', Path);
-  dst.AddPair('depth', Depth);
+  if Depth > 0 then
+    dst.AddPair('depth', Depth);
+  if Quota > 0 then
+    dst.AddPair('quota', Quota);
 end;
 
 
