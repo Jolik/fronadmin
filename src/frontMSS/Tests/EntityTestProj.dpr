@@ -28,11 +28,13 @@ uses
   BindingsBrokerUnit in '..\APIClasses\BindingsBrokerUnit.pas',
   DsGroupsBrokerUnit in '..\APIClasses\DsGroupsBrokerUnit.pas',
   RouterSourceBrokerUnit in '..\APIClasses\RouterSourceBrokerUnit.pas',
+  DSProcessorTasksBrokerUnit in '..\APIClasses\DSProcessorTasksBrokerUnit.pas',
   StripTasksBrokerUnit in '..\APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in '..\APIClasses\SummaryTasksBrokerUnit.pas',
   TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   TasksBrokerUnit in '..\APIClasses\TasksBrokerUnit.pas',
   TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
+  DSProcessorTaskSourceBrokerUnit in '..\APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
   StripTaskSourceBrokerUnit in '..\APIClasses\StripTaskSourceBrokerUnit.pas',
   SummaryTaskSourcesBrokerUnit in '..\APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   MonitoringTaskSourceBrokerUnit in '..\APIClasses\MonitoringTaskSourceBrokerUnit.pas',
@@ -40,10 +42,6 @@ uses
   TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
   ConstsUnit in '..\Common\ConstsUnit.pas',
   FuncUnit in '..\Common\FuncUnit.pas',
-  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
-  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
-  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
-  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
   LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
@@ -59,15 +57,12 @@ uses
   ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
   SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
+  DSProcessorTaskUnit in '..\EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
   StripTaskUnit in '..\EntityClasses\strips\StripTaskUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
-  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
   QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
-  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
-  StringUnit in '..\EntityClasses\Common\StringUnit.pas',
-  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
   SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
   ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
   ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
@@ -77,10 +72,19 @@ uses
   LogUnit in '..\EntityClasses\signals\LogUnit.pas',
   S3SettingsUnit in '..\EntityClasses\links\S3SettingsUnit.pas',
   KeyValUnit in '..\Common\KeyValUnit.pas',
+  SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas',
+  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
+  EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
+  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
+  GeoTypeUnit in '..\EntityClasses\Common\GeoTypeUnit.pas',
+  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas',
+  StringListUnit in '..\EntityClasses\Common\StringListUnit.pas',
+  StringUnit in '..\EntityClasses\Common\StringUnit.pas',
   TaskSettingsUnit in '..\EntityClasses\Common\TaskSettingsUnit.pas',
-  SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas';
+  TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
+  TaskTypesUnit in '..\EntityClasses\Common\TaskTypesUnit.pas',
+  TaskUnit in '..\EntityClasses\Common\TaskUnit.pas';
 
-procedure ListSummaryTasks();
 procedure ListSummaryTaskTypes();
 var
   TaskTypesBroker: TTaskTypesBroker;
@@ -250,6 +254,95 @@ begin
   end;
 end;
 
+procedure ListDSProcessorTasks();
+var
+  DSProcessorTasksBroker: TDSProcessorTasksBroker;
+  DSProcessorTaskList: TEntityList;
+  DSProcessorTaskEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    DSProcessorTasksBroker := TDSProcessorTasksBroker.Create;
+    try
+      DSProcessorTaskList := nil;
+      try
+        DSProcessorTaskList := DSProcessorTasksBroker.List(PageCount);
+
+        Writeln('---------- DSProcessor Tasks List ----------');
+
+        if Assigned(DSProcessorTaskList) then
+        begin
+          var FirstDSProcessorTask: TDSProcessorTask := nil;
+
+          if DSProcessorTaskList.Count > 0 then
+            FirstDSProcessorTask := DSProcessorTaskList.Items[0] as TDSProcessorTask;
+
+          for DSProcessorTaskEntity in DSProcessorTaskList do
+          begin
+            var DSProcessorTask := DSProcessorTaskEntity as TDSProcessorTask;
+            Writeln(Format('Class: %s | Address: %p', [DSProcessorTask.ClassName, Pointer(DSProcessorTask)]));
+            Writeln('Tid: ' + DSProcessorTask.Tid);
+            Writeln('Name: ' + DSProcessorTask.Name);
+            Writeln('Module: ' + DSProcessorTask.Module);
+            Writeln('Enabled: ' + BoolToStr(DSProcessorTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := DSProcessorTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstDSProcessorTask) then
+          begin
+            Writeln('---------- DSProcessor Task Info ----------');
+            Writeln('Requesting info for: ' + FirstDSProcessorTask.Tid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := DSProcessorTasksBroker.Info(FirstDSProcessorTask.Tid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoTask := InfoEntity as TDSProcessorTask;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoTask.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('DSProcessor tasks list is empty.');
+
+      finally
+        DSProcessorTaskList.Free;
+      end;
+    finally
+      DSProcessorTasksBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListStripTaskSources();
 var
   StripTasksBroker: TStripTasksBroker;
@@ -387,6 +480,151 @@ begin
       end;
     finally
       StripTaskSourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
+procedure ListDSProcessorTaskSources();
+var
+  DSProcessorTasksBroker: TDSProcessorTasksBroker;
+  DSProcessorTaskSourcesBroker: TDSProcessorTaskSourcesBroker;
+  DSProcessorTaskList: TEntityList;
+  DSProcessorTaskEntity: TEntity;
+  TaskSourceList: TEntityList;
+  TaskSourceEntity: TEntity;
+  DSProcessorTaskPageCount: Integer;
+  TaskSourcePageCount: Integer;
+  FirstDSProcessorTaskTid: string;
+begin
+  try
+    DSProcessorTasksBroker := TDSProcessorTasksBroker.Create;
+    try
+      DSProcessorTaskList := nil;
+      FirstDSProcessorTaskTid := '';
+      try
+        DSProcessorTaskList := DSProcessorTasksBroker.List(DSProcessorTaskPageCount);
+
+        Writeln('---------- DSProcessor Tasks List ----------');
+
+        if Assigned(DSProcessorTaskList) and (DSProcessorTaskList.Count > 0) then
+        begin
+          for DSProcessorTaskEntity in DSProcessorTaskList do
+          begin
+            var DSProcessorTask := DSProcessorTaskEntity as TDSProcessorTask;
+            Writeln(Format('Class: %s | Address: %p', [DSProcessorTask.ClassName, Pointer(DSProcessorTask)]));
+            Writeln('Tid: ' + DSProcessorTask.Tid);
+            Writeln('Name: ' + DSProcessorTask.Name);
+            Writeln('Enabled: ' + BoolToStr(DSProcessorTask.Enabled, True));
+
+            Writeln('As JSON:');
+            var TaskJson := DSProcessorTask.Serialize();
+            try
+              if TaskJson <> nil then
+                Writeln(TaskJson.Format);
+            finally
+              TaskJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          FirstDSProcessorTaskTid := (DSProcessorTaskList.Items[0] as TDSProcessorTask).Tid;
+        end
+        else
+          Writeln('DSProcessor tasks list is empty.');
+
+      finally
+        DSProcessorTaskList.Free;
+      end;
+    finally
+      DSProcessorTasksBroker.Free;
+    end;
+
+    if FirstDSProcessorTaskTid = '' then
+    begin
+      Writeln('No DSProcessor task available to request DSProcessor task sources.');
+      Exit;
+    end;
+
+    DSProcessorTaskSourcesBroker := TDSProcessorTaskSourcesBroker.Create;
+    try
+      DSProcessorTaskSourcesBroker.AddPath := '/' + FirstDSProcessorTaskTid;
+
+      TaskSourceList := nil;
+      try
+        TaskSourceList := DSProcessorTaskSourcesBroker.List(TaskSourcePageCount);
+
+        Writeln('---------- DSProcessor Task Sources List ----------');
+
+        if Assigned(TaskSourceList) then
+        begin
+          var FirstSource: TTaskSource := nil;
+
+          if TaskSourceList.Count > 0 then
+            FirstSource := TaskSourceList.Items[0] as TTaskSource;
+
+          for TaskSourceEntity in TaskSourceList do
+          begin
+            var Source := TaskSourceEntity as TTaskSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('Enabled: ' + BoolToStr(Source.Enabled, True));
+            Writeln('Index: ' + Source.StationIndex);
+
+            Writeln('As JSON:');
+            var SourceJson := Source.Serialize();
+            try
+              if SourceJson <> nil then
+                Writeln(SourceJson.Format);
+            finally
+              SourceJson.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- DSProcessor Task Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := DSProcessorTaskSourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TTaskSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('DSProcessor task sources list is empty.');
+
+      finally
+        TaskSourceList.Free;
+      end;
+    finally
+      DSProcessorTaskSourcesBroker.Free;
     end;
   except
     on E: Exception do
@@ -682,7 +920,7 @@ begin
   end;
 end;
 
-procedure ListProfiles();
+(* !!!procedure ListProfiles();
 var
   LinksBroker: TLinksBroker;
   ProfilesBroker: TProfilesBroker;
@@ -800,7 +1038,7 @@ begin
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
   end;
-end;
+end;                *)
 
 procedure ListRouterSource();
 var
@@ -1878,6 +2116,8 @@ begin
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
 //    ListSummaryTasks();
+    ListDSProcessorTasks();
+    ListDSProcessorTaskSources();
 //    ListStripTaskSources();
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();

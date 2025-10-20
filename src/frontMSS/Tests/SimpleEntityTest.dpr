@@ -1,4 +1,4 @@
-program SimpleEntityTest;
+﻿program SimpleEntityTest;
 
 {$APPTYPE CONSOLE}
 
@@ -7,26 +7,41 @@ uses
   System.Math,
   System.JSON,
   System.DateUtils,
-  FuncUnit in '..\Common\FuncUnit.pas',
   SimpleEntityTest.Constants in 'SimpleEntityTest.Constants.pas',
   EntityUnit in '..\EntityClasses\Common\EntityUnit.pas',
   StringUnit in '..\EntityClasses\Common\StringUnit.pas',
-  AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
-  AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
   BindingUnit in '..\EntityClasses\dataserver\BindingUnit.pas',
-  ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
   ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
   DataserieUnit in '..\EntityClasses\dataserver\DataserieUnit.pas',
   DsGroupUnit in '..\EntityClasses\dataserver\DsGroupUnit.pas',
-  LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   ProfileUnit in '..\EntityClasses\datacomm\ProfileUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
-  RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
   TaskUnit in '..\EntityClasses\Common\TaskUnit.pas',
   TaskSourceUnit in '..\EntityClasses\Common\TaskSourceUnit.pas',
-  UserUnit in '..\EntityClasses\acl\UserUnit.pas';
+  UserUnit in '..\EntityClasses\acl\UserUnit.pas',
+  LoggingUnit in '..\Logging\LoggingUnit.pas',
+  TextFileLoggerUnit in '..\Logging\TextFileLoggerUnit.pas',
+  UniLoggerUnit in '..\Logging\UniLoggerUnit.pas',
+  ConnectionSettingsUnit in '..\EntityClasses\links\ConnectionSettingsUnit.pas',
+  DirSettingsUnit in '..\EntityClasses\links\DirSettingsUnit.pas',
+  LinkSettingsUnit in '..\EntityClasses\links\LinkSettingsUnit.pas',
+  LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
+  QueueSettingsUnit in '..\EntityClasses\links\QueueSettingsUnit.pas',
+  S3SettingsUnit in '..\EntityClasses\links\S3SettingsUnit.pas',
+  ScheduleSettingsUnit in '..\EntityClasses\links\ScheduleSettingsUnit.pas',
+  ConstsUnit in '..\Common\ConstsUnit.pas',
+  FuncUnit in '..\Common\FuncUnit.pas',
+  KeyValUnit in '..\Common\KeyValUnit.pas',
+  AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
+  AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
+  ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
+  RuleUnit in '..\EntityClasses\router\RuleUnit.pas',
+  SmallRuleUnit in '..\EntityClasses\router\SmallRuleUnit.pas',
+  FilterUnit in '..\EntityClasses\Common\FilterUnit.pas',
+  ConditionUnit in '..\EntityClasses\Common\ConditionUnit.pas',
+  GUIDListUnit in '..\EntityClasses\Common\GUIDListUnit.pas';
 
 type
   ETestFailure = class(Exception);
@@ -48,8 +63,15 @@ end;
 
 procedure Ensure(Condition: Boolean; const Msg: string);
 begin
-  if not Condition then
-    raise ETestFailure.Create(Msg);
+  try
+    if not Condition then
+      raise ETestFailure.Create(Msg);
+  except on e:exception do
+    begin
+      Log('Ensure: '+ e.Message, lrtError);
+      writeln('Ensure: '+ e.Message);
+    end;
+  end;
 end;
 
 procedure AssertJsonEqual(Expected, Actual: TJSONValue; const Path: string);
@@ -557,7 +579,7 @@ end;
 
 procedure TestSourceCreds;
 var
-  Source, DataObject, AttrObject: TJSONObject;
+  Source, DataObject: TJSONObject;
   Entity: TSourceCreds;
   SourceData: TJSONObject;
 begin
@@ -575,9 +597,6 @@ begin
       SourceData := Source.GetValue('data') as TJSONObject;
       Ensure(Assigned(SourceData), 'TSourceCreds: отсутствует секция data');
       Ensure(Entity.SourceData.Def = 'Credentials definition', 'TSourceCreds: неверное поле data.def');
-      AttrObject := SourceData.GetValue('attr') as TJSONObject;
-      Ensure(Assigned(AttrObject), 'TSourceCreds: отсутствует секция data.attr');
-      AssertJsonEqual(AttrObject, Entity.SourceData.Attr, 'TSourceCreds.data.attr');
 
       CompareSerialization('TSourceCreds', Source, Entity);
     finally

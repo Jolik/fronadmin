@@ -1,0 +1,2 @@
+inherited SummarySynopTaskCustomSettingsEditFrame: TSummarySynopTaskCustomSettingsEditFrame
+end

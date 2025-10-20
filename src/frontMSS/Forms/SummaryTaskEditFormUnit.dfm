@@ -1,26 +1,50 @@
 inherited SummaryTaskEditForm: TSummaryTaskEditForm
+  ClientWidth = 1349
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080'...'
+  ExplicitLeft = 4
+  ExplicitTop = 4
+  ExplicitWidth = 1365
+  ExplicitHeight = 557
   TextHeight = 15
+  inherited pnBottom: TUniContainerPanel
+    Width = 1349
+    ExplicitTop = 443
+    ExplicitWidth = 811
+    inherited btnOk: TUniButton
+      Left = 1190
+      ExplicitLeft = 652
+    end
+    inherited btnCancel: TUniButton
+      Left = 1271
+      ExplicitLeft = 733
+    end
+  end
   inherited pnCaption: TUniContainerPanel
+    Width = 1349
+    ExplicitWidth = 811
     inherited teCaption: TUniEdit
       Left = 84
-      Width = 732
+      Width = 1262
       ExplicitLeft = 84
-      ExplicitWidth = 732
+      ExplicitWidth = 724
     end
   end
   inherited pnName: TUniContainerPanel
+    Width = 1349
+    ExplicitWidth = 811
     inherited teName: TUniEdit
       Left = 84
-      Width = 732
+      Width = 1262
       ExplicitLeft = 84
-      ExplicitWidth = 732
+      ExplicitWidth = 724
     end
   end
   inherited pnClient: TUniContainerPanel
-    ExplicitTop = 53
+    Width = 497
+    Align = alLeft
+    ExplicitWidth = 497
     ScrollHeight = 414
-    ScrollWidth = 819
+    ScrollWidth = 497
     object lTid: TUniLabel
       Left = 24
       Top = 16
@@ -219,5 +243,28 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       TabOrder = 21
       IconItems = <>
     end
+  end
+  object pnCustomSettings: TUniContainerPanel
+    Left = 984
+    Top = 54
+    Width = 365
+    Height = 414
+    Hint = ''
+    ParentColor = False
+    Align = alRight
+    TabOrder = 4
+  end
+  object pnSources: TUniContainerPanel
+    Left = 497
+    Top = 54
+    Width = 487
+    Height = 414
+    Hint = ''
+    ParentColor = False
+    Align = alClient
+    TabOrder = 5
+    ExplicitLeft = 0
+    ExplicitTop = 0
+    ExplicitWidth = 365
   end
 end

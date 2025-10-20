@@ -1,17 +1,14 @@
-unit SharedFrameTextInput;
+unit SummarySEBATaskCustomSettingsEditFrameUnit;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame, uniEdit, uniGUIBaseClasses, uniPanel;
+  uniGUIClasses, uniGUIFrame, ParentTaskCustomSettingsEditFrameUnit;
 
 type
-  TFrameTextInput = class(TUniFrame)
-    PanelTextInput: TUniPanel;
-    Edit: TUniEdit;
-    PanelText: TUniPanel;
+  TSummarySEBATaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
   private
     { Private declarations }
   public

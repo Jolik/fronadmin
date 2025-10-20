@@ -1,0 +1,2 @@
+inherited SummarySEBATaskCustomSettingsEditFrame: TSummarySEBATaskCustomSettingsEditFrame
+end

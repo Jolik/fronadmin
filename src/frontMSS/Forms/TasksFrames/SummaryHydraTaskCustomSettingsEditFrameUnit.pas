@@ -1,18 +1,14 @@
-unit SharedPanelBoolInput;
+unit SummaryHydraTaskCustomSettingsEditFrameUnit;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame, ParentFrameUnit, uniGUIBaseClasses, uniPanel,
-  uniCheckBox;
+  uniGUIClasses, uniGUIFrame, ParentTaskCustomSettingsEditFrameUnit;
 
 type
-  TParentFrame1 = class(TParentFrame)
-    PanelBoolInput: TUniPanel;
-    PanelText: TUniPanel;
-    CheckBoxInput: TUniCheckBox;
+  TSummaryHydraTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
   private
     { Private declarations }
   public

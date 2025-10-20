@@ -1,4 +1,4 @@
-unit MainHttpModuleUnit;
+п»їunit MainHttpModuleUnit;
 
 interface
 
@@ -7,8 +7,8 @@ uses
   IdBaseComponent, IdComponent, IdIOHandler, IdIOHandlerSocket;
 
 const
-  API_BASE_URL = 'http://dcc5.modext.ru:8088';
-  X_TICKET = 'ST-test';
+  API_BASE_URL = 'http://213.167.42.170:8088';
+  X_TICKET = 'ST-Test';
   User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 YaBrowser/25.8.0.0 Safari/537.36';
 
 type
@@ -16,8 +16,6 @@ type
     FIdHTTP: TIdHTTP;
 
   private
-    FRequestStream: TStringStream;
-
     procedure InitializeHTTPClient();
 
     function Post(AURL: string; const ASourceFile: TStream = nil): string;
@@ -29,7 +27,7 @@ type
 
   end;
 
-/// глобальные функции
+/// ГЈГ«Г®ГЎГ Г«ГјГ­Г»ГҐ ГґГіГ­ГЄГ¶ГЁГЁ
 function POST(AURL: string; const ASourceFile: TStream = nil): string;
 function GET(AURL: string): string;
 
@@ -39,17 +37,18 @@ var
   ///  global cllass thhp client
   MainHttpModule: TMainHttpModule;
 
-/// глобальная функция POST
+/// ГЈГ«Г®ГЎГ Г«ГјГ­Г Гї ГґГіГ­ГЄГ¶ГЁГї POST
 function POST(AURL: string; const ASourceFile: TStream = nil): string;
 begin
   Result := MainHttpModule.Post(API_BASE_URL + AURL, ASourceFile);
 end;
 
-/// глобальная функция POST
+/// ГЈГ«Г®ГЎГ Г«ГјГ­Г Гї ГґГіГ­ГЄГ¶ГЁГї POST
 function GET(AURL: string): string;
 begin
   Result := MainHttpModule.Get(API_BASE_URL + AURL);
 end;
+
 
 procedure TMainHttpModule.InitializeHTTPClient();
 begin
@@ -60,7 +59,7 @@ begin
   FIdHTTP.Request.Accept := 'application/json, text/plain, */*';
 
   FIdHTTP.Request.CustomHeaders.Clear;
-  FIdHTTP.Request.CustomHeaders.AddValue('X-Ticket', 'ST-Test');
+  FIdHTTP.Request.CustomHeaders.AddValue('X-Ticket', X_TICKET);
 
   FIdHTTP.ConnectTimeout := 5000;
   FIdHTTP.ReadTimeout := 10000;
@@ -83,7 +82,7 @@ end;
 
 function TMainHttpModule.Post(AURL: string; const ASourceFile: TStream = nil): string;
 begin
-  ///  если параметров не передали, то значит POST без тела
+  ///  ГҐГ±Г«ГЁ ГЇГ Г°Г Г¬ГҐГІГ°Г®Гў Г­ГҐ ГЇГҐГ°ГҐГ¤Г Г«ГЁ, ГІГ® Г§Г­Г Г·ГЁГІ POST ГЎГҐГ§ ГІГҐГ«Г 
   if ASourceFile = nil then
     Result := FIdHTTP.Post(AURL, '')
   else
@@ -103,4 +102,3 @@ finalization
   MainHttpModule.Free;
 
 end.
-

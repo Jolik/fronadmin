@@ -1,15 +1,14 @@
-unit SharedFrameCustom;
+unit SummarySynopTaskCustomSettingsEditFrameUnit;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame, ParentFrameUnit, uniGUIBaseClasses, uniGroupBox;
+  uniGUIClasses, uniGUIFrame, ParentTaskCustomSettingsEditFrameUnit;
 
 type
-  TFrameCustom = class(TParentFrame)
-    UniGroupBox1: TUniGroupBox;
+  TSummarySynopTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
   private
     { Private declarations }
   public

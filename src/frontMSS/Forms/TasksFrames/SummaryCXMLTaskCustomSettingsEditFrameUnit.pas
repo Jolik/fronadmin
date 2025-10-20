@@ -1,18 +1,14 @@
-unit SharedFrameBoolInput;
+unit SummaryCXMLTaskCustomSettingsEditFrameUnit;
 
 interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIFrame, ParentFrameUnit, uniGUIBaseClasses, uniPanel,
-  uniCheckBox;
+  uniGUIClasses, uniGUIFrame, ParentTaskCustomSettingsEditFrameUnit;
 
 type
-  TFrameBoolInput = class(TParentFrame)
-    PanelBoolInput: TUniPanel;
-    PanelText: TUniPanel;
-    CheckBox: TUniCheckBox;
+  TSummaryCXMLTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)
   private
     { Private declarations }
   public

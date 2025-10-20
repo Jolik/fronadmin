@@ -222,6 +222,78 @@
         <DCCReference Include="Forms\SummaryTaskEditFormUnit.pas"/>
         <DCCReference Include="Forms\SummaryTasksFormUnit.pas"/>
         <DCCReference Include="APIClasses\EntityBrokerUnit.pas"/>
+        <DCCReference Include="Common\ConstsUnit.pas"/>
+        <DCCReference Include="Common\FuncUnit.pas"/>
+        <DCCReference Include="Common\KeyValUnit.pas"/>
+        <DCCReference Include="Forms\TasksFrames\ParentTaskCustomSettingsEditFrameUnit.pas">
+            <Form>ParentTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="EntityClasses\Common\ConditionUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\EntityUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\FilterUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\GeoTypeUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\GUIDListUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\StringListUnit.pas"/>
+        <DCCReference Include="EntityClasses\Common\StringUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskSourceUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskTypesUnit.pas"/>
+        <DCCReference Include="EntityClasses\tasks\TaskUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\ConnectionSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\DirSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\S3SettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas"/>
+        <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
+        <DCCReference Include="Forms\TasksFrames\SummaryCXMLTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummaryCXMLTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummarySynopTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummarySynopTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummaryHydraTaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummaryHydraTaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas">
+            <Form>SummarySEBATaskCustomSettingsEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="EntityClasses\datacomm\ProfileUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\RuleUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\SmallRuleUnit.pas"/>
+        <DCCReference Include="APIClasses\ProfilesBrokerUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\OpenMCEPSettingEditFrameUnit.pas">
+            <Form>OpenMCEPSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas">
+            <Form>ParentLinkSettingEditFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\LinksFrames\ProfileFrameUnit.pas">
+            <Form>ProfileFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\LinksFrames\ProfilesFrameUnit.pas">
+            <Form>ProfilesFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <DCCReference Include="Forms\LinksFrames\SharedFrameBoolInput.pas">
             <Form>FrameBoolInput</Form>
             <FormType>dfm</FormType>
@@ -247,44 +319,11 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="Forms\LinksFrames\ParentLinkSettingEditFrameUnit.pas">
-            <Form>ParentLinkSettingEditFrame</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniFrame</DesignClass>
-        </DCCReference>
         <DCCReference Include="Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas">
             <Form>SocketSpecialSettingEditFrame</Form>
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
-        <DCCReference Include="Common\ConstsUnit.pas"/>
-        <DCCReference Include="Common\FuncUnit.pas"/>
-        <DCCReference Include="Common\KeyValUnit.pas"/>
-        <DCCReference Include="Forms\TasksFrames\ParentTaskCustomSettingsEditFrameUnit.pas">
-            <Form>ParentTaskCustomSettingsEditFrame</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="EntityClasses\Common\ConditionUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\FilterUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\GeoTypeUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\GUIDListUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\StringListUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\StringUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskSourceUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskTypesUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\TaskUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\ConnectionSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\DirSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\LinkSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\LinkUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\QueueSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\S3SettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\links\ScheduleSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas"/>
-        <DCCReference Include="EntityClasses\summary\SummaryTaskUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
