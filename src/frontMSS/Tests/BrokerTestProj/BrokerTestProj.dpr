@@ -19,9 +19,9 @@ begin
   Request := THttpRequest.Create;
   Response := TJSONResponse.Create;
   try
-    Request.Curl := 'curl --location ''http://213.167.42.170:8088/summary/api/v2/tasks/list?flags=verbose&options=1'' \' +
-      sLineBreak +
-      '--header ''X-Ticket: ST-Test''';
+    Request.Curl := 'curl --location ''http://213.167.42.170:8088/summary/api/v2/tasks/list?flags=verbose&options=1'' --header ''X-Ticket: ST-Test''';
+
+//    Request.Curl := 'curl --location ''http://213.167.42.170:8088/dataserver/api/v2/sources/list?searchStr=%D0%9C%D0%98%D0%9D%D0%98%D0%9C%D0%90%D0%9A%D0%A1&searchBy=name'' --header ''X-Ticket: ST-Test''';
 
     StatusCode := HttpClient.Request(Request, Response);
 
