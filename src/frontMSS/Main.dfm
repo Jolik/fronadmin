@@ -14,7 +14,7 @@ object MainForm: TMainForm
   object btnStripTasks: TUniButton
     Left = 48
     Top = 104
-    Width = 75
+    Width = 150
     Height = 25
     Hint = ''
     Caption = 'Strip '#1047#1072#1076#1072#1095#1080
@@ -24,11 +24,21 @@ object MainForm: TMainForm
   object btnSummTask: TUniButton
     Left = 48
     Top = 152
-    Width = 75
+    Width = 150
     Height = 25
     Hint = ''
     Caption = 'Summary '#1047#1072#1076#1072#1095#1080
     TabOrder = 1
     OnClick = btnSummTaskClick
+  end
+  object btnMonitoringTasks: TUniButton
+    Left = 48
+    Top = 200
+    Width = 150
+    Height = 25
+    Hint = ''
+    Caption = 'Monitoring '#1047#1072#1076#1072#1095#1080
+    TabOrder = 2
+    OnClick = btnMonitoringTasksClick
   end
 end

@@ -89,7 +89,7 @@ begin
     inherited SetEntity(AEntity);
 
     ///  выводим название модуля
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
+    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), cbModule.Items.Count - 1);
 
   except
     Log('TStripTaskEditForm.SetEntity error', lrtError);

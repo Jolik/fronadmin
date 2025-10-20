@@ -1,42 +1,38 @@
 inherited SummaryTaskEditForm: TSummaryTaskEditForm
   ClientWidth = 1349
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080'...'
-  ExplicitLeft = 4
-  ExplicitTop = 4
   ExplicitWidth = 1365
-  ExplicitHeight = 557
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
     Width = 1349
-    ExplicitTop = 443
-    ExplicitWidth = 811
+    ExplicitWidth = 1349
     inherited btnOk: TUniButton
       Left = 1190
-      ExplicitLeft = 652
+      ExplicitLeft = 1190
     end
     inherited btnCancel: TUniButton
       Left = 1271
-      ExplicitLeft = 733
+      ExplicitLeft = 1271
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 811
+    ExplicitWidth = 1349
     inherited teCaption: TUniEdit
       Left = 84
       Width = 1262
       ExplicitLeft = 84
-      ExplicitWidth = 724
+      ExplicitWidth = 1262
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 811
+    ExplicitWidth = 1349
     inherited teName: TUniEdit
       Left = 84
       Width = 1262
       ExplicitLeft = 84
-      ExplicitWidth = 724
+      ExplicitWidth = 1262
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -175,7 +171,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object lCustomAnyTime: TUniLabel
       Left = 24
       Top = 312
-      Width = 85
+      Width = 84
       Height = 13
       Hint = ''
       Caption = 'Custom.AnyTime'
@@ -232,14 +228,13 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Width = 320
       Hint = ''
       Style = csDropDownList
-      Text = 'SummaryUnknown'
+      Text = 'SummarySynop'
       Items.Strings = (
         'SummarySynop'
         'SummaryHydra'
         'SummaryCXML'
-        'SummarySEBA'
-        'SummaryUnknown')
-      ItemIndex = 4
+        'SummarySEBA')
+      ItemIndex = 0
       TabOrder = 21
       IconItems = <>
     end
@@ -263,8 +258,5 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
-    ExplicitLeft = 0
-    ExplicitTop = 0
-    ExplicitWidth = 365
   end
 end

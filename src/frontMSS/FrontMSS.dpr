@@ -43,7 +43,9 @@ uses
   SummaryCXMTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummaryCXMTaskCustomSettingsEditFrameUnit.pas' {SummaryCXMTaskCustomSettingsEditFrame: TUniFrame},
   SummarySynopTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySynopTaskCustomSettingsEditFrameUnit.pas' {SummarySynopTaskCustomSettingsEditFrame: TUniFrame},
   SummaryHydraTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummaryHydraTaskCustomSettingsEditFrameUnit.pas' {SummaryHydraTaskCustomSettingsEditFrame: TUniFrame},
-  SummarySEBATaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas' {SummarySEBATaskCustomSettingsEditFrame: TUniFrame};
+  SummarySEBATaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas' {SummarySEBATaskCustomSettingsEditFrame: TUniFrame},
+  MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas' {MonitoringTaskEditForm: TUniForm},
+  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas' {MonitoringTasksForm: TUniForm};
 
 {$R *.res}
 
