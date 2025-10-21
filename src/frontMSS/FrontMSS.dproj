@@ -202,7 +202,6 @@
         <DCCReference Include="APIClasses\AliasesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
-        <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
         <DCCReference Include="EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\strips\StripTaskUnit.pas"/>
         <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
@@ -324,6 +323,9 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniFrame</DesignClass>
         </DCCReference>
+        <DCCReference Include="APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TaskSourcesBrokerUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

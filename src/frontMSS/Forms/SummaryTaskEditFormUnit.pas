@@ -6,14 +6,14 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
-  uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox, uniCheckListBox,
+  uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
   EntityUnit, SummaryTaskUnit, TaskSourceUnit, uniMultiItem, uniComboBox, Math,
   ParentTaskCustomSettingsEditFrameUnit,
   SummaryCXMLTaskCustomSettingsEditFrameUnit,
   SummarySEBATaskCustomSettingsEditFrameUnit,
   SummarySynopTaskCustomSettingsEditFrameUnit,
-  SummaryHydraTaskCustomSettingsEditFrameUnit;
+  SummaryHydraTaskCustomSettingsEditFrameUnit, uniListBox;
 
 type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
@@ -35,7 +35,8 @@ type
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;
-    lbTaskSources: TUniCheckListBox;
+    lbTaskSources: TUniListBox;
+    btnSourcesEdit: TUniButton;
     procedure cbModuleChange(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
@@ -98,7 +99,7 @@ begin
     begin
       var SourceObj := lbTaskSources.Items.Objects[I];
       if SourceObj is TTaskSource then
-        TTaskSource(SourceObj).Enabled := lbTaskSources.Checked[I];
+        TTaskSource(SourceObj).Enabled := lbTaskSources.Selected[I];
     end;
 
   var Settings := GetSummarySettings();
@@ -236,7 +237,7 @@ begin
 
     var Index := lbTaskSources.Items.AddObject(Source.Name, Source);
     if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
-      lbTaskSources.Checked[Index] := Source.Enabled;
+      lbTaskSources.Selected[Index] := Source.Enabled;
   end;
 end;
 
