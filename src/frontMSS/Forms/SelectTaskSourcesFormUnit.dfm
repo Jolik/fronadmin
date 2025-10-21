@@ -5,9 +5,9 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
   ClientWidth = 1398
   Caption = 'SelectTaskSourcesForm'
   OldCreateOrder = False
+  MonitoredKeys.Keys = <>
   OnCreate = UniFormCreate
   OnDestroy = UniFormDestroy
-  MonitoredKeys.Keys = <>
   TextHeight = 15
   object lbTaskSources: TUniListBox
     Left = 24
@@ -15,8 +15,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 417
     Height = 385
     Hint = ''
-    MultiSelect = True
     TabOrder = 0
+    MultiSelect = True
   end
   object lbAllSources: TUniListBox
     Left = 560
@@ -24,8 +24,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 385
     Height = 385
     Hint = ''
-    MultiSelect = True
     TabOrder = 1
+    MultiSelect = True
   end
   object btnAddSource: TUniButton
     Left = 464
@@ -33,7 +33,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 75
     Height = 25
     Hint = ''
-    Caption = 'Добавить >>'
+    Caption = #1056#8221#1056#1109#1056#177#1056#176#1056#1030#1056#1105#1057#8218#1057#1034' >>'
     TabOrder = 2
     OnClick = btnAddSourceClick
   end
@@ -44,8 +44,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Height = 30
     Hint = ''
     Caption = 'OK'
-    Default = True
     TabOrder = 3
+    Default = True
     OnClick = btnOkClick
   end
   object btnCancel: TUniButton
@@ -54,7 +54,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 120
     Height = 30
     Hint = ''
-    Caption = 'Отмена'
+    Caption = #1056#1115#1057#8218#1056#1112#1056#181#1056#1029#1056#176
     Cancel = True
     TabOrder = 4
     OnClick = btnCancelClick
@@ -65,19 +65,18 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 378
     Height = 622
     Hint = ''
-    ActivePage = tsTaskInfo
+    ActivePage = tsSourceInfo
     TabBarVisible = False
     Align = alRight
     TabOrder = 5
-    ExplicitLeft = 774
-    ExplicitTop = 29
-    ExplicitHeight = 513
-    object tsTaskInfo: TUniTabSheet
+    ExplicitLeft = 1012
+    ExplicitHeight = 597
+    object tsSourceInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitHeight = 510
-      object cpTaskInfo: TUniContainerPanel
+      ExplicitHeight = 569
+      object cpSourceInfo: TUniContainerPanel
         Left = 0
         Top = 0
         Width = 370
@@ -90,8 +89,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 510
-        object cpTaskInfoID: TUniContainerPanel
+        ExplicitHeight = 569
+        object cpSourceInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
           Top = 39
@@ -108,7 +107,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           TabOrder = 1
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          object lTaskInfoID: TUniLabel
+          object lSourceInfoID: TUniLabel
             AlignWithMargins = True
             Left = 5
             Top = 7
@@ -127,7 +126,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Font.Style = [fsBold]
             TabOrder = 1
           end
-          object lTaskInfoIDValue: TUniLabel
+          object lSourceInfoIDValue: TUniLabel
             AlignWithMargins = True
             Left = 115
             Top = 7
@@ -161,7 +160,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Color = clHighlight
           end
         end
-        object cpTaskInfoName: TUniContainerPanel
+        object cpSourceInfoName: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
           Top = 79
@@ -178,7 +177,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           TabOrder = 2
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          object lTaskInfoName: TUniLabel
+          object lSourceInfoName: TUniLabel
             AlignWithMargins = True
             Left = 5
             Top = 7
@@ -197,7 +196,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Font.Style = [fsBold]
             TabOrder = 1
           end
-          object lTaskInfoNameValue: TUniLabel
+          object lSourceInfoNameValue: TUniLabel
             AlignWithMargins = True
             Left = 115
             Top = 7
@@ -231,7 +230,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Color = clHighlight
           end
         end
-        object lTaskCaption: TUniLabel
+        object lSourceCaption: TUniLabel
           AlignWithMargins = True
           Left = 10
           Top = 10
@@ -243,7 +242,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           Margins.Right = 5
           Margins.Bottom = 10
           AutoSize = False
-          Caption = #1044#1077#1090#1072#1083#1080' '#1079#1072#1076#1072#1095#1080
+          Caption = #1048#1085#1092#1086#1088#1084#1072#1094#1080#1103' '#1086' '#1048#1089#1090#1086#1095#1085#1080#1082#1077
           Align = alTop
           ParentFont = False
           Font.Color = clGray
@@ -251,7 +250,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           Font.Style = [fsBold]
           TabOrder = 3
         end
-        object cpTaskInfoCreated: TUniContainerPanel
+        object cpSourceInfoCreated: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
           Top = 159
@@ -268,7 +267,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           TabOrder = 4
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          object lTaskInfoCreated: TUniLabel
+          object lSourceInfoCreated: TUniLabel
             AlignWithMargins = True
             Left = 5
             Top = 7
@@ -287,7 +286,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Font.Style = [fsBold]
             TabOrder = 1
           end
-          object lTaskInfoCreatedValue: TUniLabel
+          object lSourceInfoCreatedValue: TUniLabel
             AlignWithMargins = True
             Left = 115
             Top = 7
@@ -321,7 +320,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Color = clHighlight
           end
         end
-        object cpTaskInfoUpdated: TUniContainerPanel
+        object cpSourceInfoUpdated: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
           Top = 199
@@ -391,7 +390,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Color = clHighlight
           end
         end
-        object cpTaskInfoModule: TUniContainerPanel
+        object cpSourceInfoModule: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
           Top = 119
@@ -408,7 +407,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
           TabOrder = 6
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          object lTaskInfoModule: TUniLabel
+          object lSourceInfoModule: TUniLabel
             AlignWithMargins = True
             Left = 5
             Top = 7
@@ -427,7 +426,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
             Font.Style = [fsBold]
             TabOrder = 1
           end
-          object lTaskInfoModuleValue: TUniLabel
+          object lSourceInfoModuleValue: TUniLabel
             AlignWithMargins = True
             Left = 115
             Top = 7
