@@ -90,7 +90,8 @@ uses
   TaskSourcesBrokerUnit in 'APIClasses\TaskSourcesBrokerUnit.pas',
   DSProcessorTaskUnit in 'EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
   SelectTaskSourcesFormUnit in 'Forms\SelectTaskSourcesFormUnit.pas' {SelectTaskSourcesForm: TUniForm},
-  SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas';
+  SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
+  TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm};
 
 {$R *.res}
 

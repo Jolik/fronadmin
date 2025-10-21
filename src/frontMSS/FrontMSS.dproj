@@ -336,6 +336,11 @@
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
         <DCCReference Include="EntityClasses\dataserver\SourceUnit.pas"/>
+        <DCCReference Include="Forms\TasksParentFormUnit.pas">
+            <Form>TaskParentForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
