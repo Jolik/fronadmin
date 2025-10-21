@@ -8,9 +8,16 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
-  EntityUnit, SummaryTaskUnit, uniMultiItem, uniComboBox, Math;
+  EntityUnit, SummaryTaskUnit, uniMultiItem, uniComboBox, Math,
+  ParentTaskCustomSettingsEditFrameUnit,
+  SummaryCXMLTaskCustomSettingsEditFrameUnit,
+  SummarySEBATaskCustomSettingsEditFrameUnit,
+  SummarySynopTaskCustomSettingsEditFrameUnit,
+  SummaryHydraTaskCustomSettingsEditFrameUnit;
 
 type
+  TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
+
   TSummaryTaskEditForm = class(TParentEditForm)
     lModule: TUniLabel;
     teTid: TUniEdit;
@@ -24,22 +31,20 @@ type
     cbEnabled: TUniCheckBox;
     teLatePeriod: TUniEdit;
     lLatePeriod: TUniLabel;
-    cbCustomMeteo: TUniCheckBox;
-    lCustomMeteo: TUniLabel;
-    teCustomAnyTime: TUniEdit;
-    lCustomAnyTime: TUniLabel;
-    cbCustomSeparate: TUniCheckBox;
-    lCustomSeparate: TUniLabel;
-    teExcludeWeek: TUniEdit;
-    lExcludeWeek: TUniLabel;
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;
+    procedure cbModuleChange(Sender: TObject);
   private
+    FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;
     function GetSummarySettings: TSummaryTaskSettings;
+    procedure ClearCustomSettingsFrame;
+    procedure UpdateCustomSettingsFrame;
+    function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
+    function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
 (*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
     function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
@@ -69,11 +74,12 @@ end;
 
 { TSummaryTaskEditForm }
 
-function TSummaryTaskEditForm.Apply : boolean;
+function TSummaryTaskEditForm.Apply: boolean;
 begin
   Result := inherited Apply();
 
-  if not Result then exit;
+  if not Result then
+    Exit;
 
   SummaryTask.Tid := teTid.Text;
   SummaryTask.CompId := teCompId.Text;
@@ -84,19 +90,10 @@ begin
 
   var Settings := GetSummarySettings();
   if Assigned(Settings) then
-  begin
     Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
 
-(*!!!    var Custom := Settings.Custom;
-    Custom.Meteo := cbCustomMeteo.Checked;
-    Custom.AnyTime := StrToIntDef(teCustomAnyTime.Text, 0);
-    Custom.Separate := cbCustomSeparate.Checked;
-    Settings.Custom := Custom;
-
-    Settings.ExcludeWeek := ParseExcludeWeekText(teExcludeWeek.Text);  *)
-  end;
-
-  Result := true;
+  if Assigned(FCustomSettingsFrame) then
+    Result := FCustomSettingsFrame.Apply() and Result;
 end;
 
 function TSummaryTaskEditForm.DoCheck: Boolean;
@@ -134,6 +131,120 @@ begin
 
   Result := SummaryTask.Settings as TSummaryTaskSettings;
 end;
+
+procedure TSummaryTaskEditForm.ClearCustomSettingsFrame;
+begin
+  if Assigned(FCustomSettingsFrame) then
+  begin
+    FCustomSettingsFrame.Parent := nil;
+    FreeAndNil(FCustomSettingsFrame);
+  end;
+  pnCustomSettings.Visible := False;
+end;
+
+function TSummaryTaskEditForm.GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
+begin
+  case AType of
+    sttTaskSummaryCXML: Result := TSummaryCXMLTaskCustomSettingsEditFrame;
+    sttTaskSummarySEBA: Result := TSummarySEBATaskCustomSettingsEditFrame;
+    sttTaskSummarySynop: Result := TSummarySynopTaskCustomSettingsEditFrame;
+    sttTaskSummaryHydra: Result := TSummaryHydraTaskCustomSettingsEditFrame;
+  else
+    Result := nil;
+  end;
+end;
+
+function TSummaryTaskEditForm.GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
+begin
+  if SameText(AModule, 'SummaryCXML') then
+    Result := sttTaskSummaryCXML
+  else if SameText(AModule, 'SummarySEBA') then
+    Result := sttTaskSummarySEBA
+  else if SameText(AModule, 'SummarySynop') then
+    Result := sttTaskSummarySynop
+  else if SameText(AModule, 'SummaryHydra') then
+    Result := sttTaskSummaryHydra
+  else
+    Result := sttUnknown;
+end;
+
+procedure TSummaryTaskEditForm.UpdateCustomSettingsFrame;
+var
+  Settings: TSummaryTaskSettings;
+  FrameClass: TParentTaskCustomSettingsEditFrameClass;
+begin
+  Settings := GetSummarySettings();
+  if Settings = nil then
+  begin
+    ClearCustomSettingsFrame;
+    Exit;
+  end;
+
+  FrameClass := GetFrameClassByType(Settings.SummaryTaskType);
+
+  if FrameClass = nil then
+  begin
+    ClearCustomSettingsFrame;
+    Exit;
+  end;
+
+  if Assigned(FCustomSettingsFrame) and (FCustomSettingsFrame.ClassType <> FrameClass) then
+    ClearCustomSettingsFrame;
+
+  if not Assigned(FCustomSettingsFrame) then
+  begin
+    FCustomSettingsFrame := FrameClass.Create(Self);
+    FCustomSettingsFrame.Parent := pnCustomSettings;
+    FCustomSettingsFrame.Align := alClient;
+  end;
+
+  FCustomSettingsFrame.AssignTaskCustomSettings(Settings.TaskCustomSettings);
+  pnCustomSettings.Visible := True;
+end;
+
+procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
+var
+  Settings: TSummaryTaskSettings;
+  NewType: TSummaryTaskType;
+begin
+  //inherited;
+
+  Settings := GetSummarySettings();
+
+  if not Assigned(Settings) then
+  begin
+    ClearCustomSettingsFrame;
+    Exit;
+  end;
+
+  NewType := GetSummaryTaskTypeByModule(cbModule.Text);
+  if Settings.SummaryTaskType <> NewType then
+    Settings.SummaryTaskType := NewType;
+
+  UpdateCustomSettingsFrame;
+end;
+
+{procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
+var
+  Settings: TSummaryTaskSettings;
+  NewType: TSummaryTaskType;
+begin
+  Exit;
+
+  Settings := GetSummarySettings();
+
+  if not Assigned(Settings) then
+  begin
+    ClearCustomSettingsFrame;
+    Exit;
+  end;
+
+  NewType := GetSummaryTaskTypeByModule(cbModule.Text);
+  if Settings.SummaryTaskType <> NewType then
+    Settings.SummaryTaskType := NewType;
+
+  UpdateCustomSettingsFrame;
+end;}
 
 (* !!!! function TSummaryTaskEditForm.FormatExcludeWeek(
   const Values: TExcludeWeek): string;
@@ -182,6 +293,7 @@ end;    *)
 
 procedure TSummaryTaskEditForm.SetEntity(AEntity: TEntity);
 begin
+  ClearCustomSettingsFrame;
   ///        -   !
   if not (AEntity is TSummaryTask) then
   begin
@@ -202,27 +314,14 @@ begin
 
     var Settings := GetSummarySettings();
     if Assigned(Settings) then
-    begin
-      teLatePeriod.Text := IntToStr(Settings.LatePeriod);
-
-(* !!!      var Custom := Settings.Custom;
-      cbCustomMeteo.Checked := Custom.Meteo;
-      teCustomAnyTime.Text := IntToStr(Custom.AnyTime);
-      cbCustomSeparate.Checked := Custom.Separate;
-
-      teExcludeWeek.Text := FormatExcludeWeek(Settings.ExcludeWeek);*)
-    end
+      teLatePeriod.Text := IntToStr(Settings.LatePeriod)
     else
-    begin
       teLatePeriod.Text := '';
-      cbCustomMeteo.Checked := False;
-      teCustomAnyTime.Text := '';
-      cbCustomSeparate.Checked := False;
-      teExcludeWeek.Text := '';
-    end;
 
+    UpdateCustomSettingsFrame;
   except
     Log('TSummaryTaskEditForm.SetEntity error', lrtError);
+    ClearCustomSettingsFrame;
   end;
 end;
 
