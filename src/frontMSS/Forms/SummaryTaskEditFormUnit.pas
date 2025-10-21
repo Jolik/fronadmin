@@ -6,9 +6,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
-  uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
+  uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox, uniCheckListBox,
   LoggingUnit,
-  EntityUnit, SummaryTaskUnit, uniMultiItem, uniComboBox, Math,
+  EntityUnit, SummaryTaskUnit, TaskSourceUnit, uniMultiItem, uniComboBox, Math,
   ParentTaskCustomSettingsEditFrameUnit,
   SummaryCXMLTaskCustomSettingsEditFrameUnit,
   SummarySEBATaskCustomSettingsEditFrameUnit,
@@ -17,6 +17,7 @@ uses
 
 type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
+  TTaskSourcesList = TTaskSourceList;
 
   TSummaryTaskEditForm = class(TParentEditForm)
     lModule: TUniLabel;
@@ -34,9 +35,11 @@ type
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;
+    lbTaskSources: TUniCheckListBox;
     procedure cbModuleChange(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
+    FTaskSourcesList: TTaskSourcesList;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;
@@ -45,6 +48,7 @@ type
     procedure UpdateCustomSettingsFrame;
     function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
     function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
+    procedure SetTaskSourcesList(const Value: TTaskSourcesList);
 (*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
     function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
@@ -55,6 +59,7 @@ type
   public
     ///    FEntity     ""
     property SummaryTask : TSummaryTask read GetSummaryTask;
+    property TaskSourcesList: TTaskSourcesList read FTaskSourcesList write SetTaskSourcesList;
 
   end;
 
@@ -87,6 +92,14 @@ begin
   SummaryTask.Module := cbModule.Text;
   SummaryTask.Def := meDef.Lines.Text;
   SummaryTask.Enabled := cbEnabled.Checked;
+
+  if Assigned(FTaskSourcesList) and Assigned(lbTaskSources) then
+    for var I := 0 to lbTaskSources.Items.Count - 1 do
+    begin
+      var SourceObj := lbTaskSources.Items.Objects[I];
+      if SourceObj is TTaskSource then
+        TTaskSource(SourceObj).Enabled := lbTaskSources.Checked[I];
+    end;
 
   var Settings := GetSummarySettings();
   if Assigned(Settings) then
@@ -200,6 +213,31 @@ begin
 
   FCustomSettingsFrame.AssignTaskCustomSettings(Settings.TaskCustomSettings);
   pnCustomSettings.Visible := True;
+end;
+
+procedure TSummaryTaskEditForm.SetTaskSourcesList(
+  const Value: TTaskSourcesList);
+begin
+  FTaskSourcesList := Value;
+
+  if not Assigned(lbTaskSources) then
+    Exit;
+
+  lbTaskSources.Items.Clear;
+
+  if not Assigned(FTaskSourcesList) then
+    Exit;
+
+  for var I := 0 to FTaskSourcesList.Count - 1 do
+  begin
+    var Source := FTaskSourcesList.Items[I] as TTaskSource;
+    if not Assigned(Source) then
+      Continue;
+
+    var Index := lbTaskSources.Items.AddObject(Source.Name, Source);
+    if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
+      lbTaskSources.Checked[Index] := Source.Enabled;
+  end;
 end;
 
 procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
