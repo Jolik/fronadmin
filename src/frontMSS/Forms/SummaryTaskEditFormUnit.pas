@@ -38,9 +38,11 @@ type
     lbTaskSources: TUniListBox;
     btnSourcesEdit: TUniButton;
     procedure cbModuleChange(Sender: TObject);
+    procedure btnSourcesEditClick(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     FTaskSourcesList: TTaskSourcesList;
+    FTaskSourcesListOwned: Boolean;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;
@@ -50,6 +52,9 @@ type
     function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
     function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
     procedure SetTaskSourcesList(const Value: TTaskSourcesList);
+    procedure RefreshTaskSourcesList;
+    procedure AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
+    procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
 (*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
     function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
@@ -71,7 +76,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication;
+  MainModule, uniGUIApplication, SelectTaskSourcesFormUnit;
 
 function SummaryTaskEditForm: TSummaryTaskEditForm;
 begin
@@ -219,8 +224,22 @@ end;
 procedure TSummaryTaskEditForm.SetTaskSourcesList(
   const Value: TTaskSourcesList);
 begin
+  if FTaskSourcesListOwned and (FTaskSourcesList <> Value) then
+  begin
+    FreeAndNil(FTaskSourcesList);
+    FTaskSourcesListOwned := False;
+  end;
+
   FTaskSourcesList := Value;
 
+  if not Assigned(Value) then
+    FTaskSourcesListOwned := False;
+
+  RefreshTaskSourcesList;
+end;
+
+procedure TSummaryTaskEditForm.RefreshTaskSourcesList;
+begin
   if not Assigned(lbTaskSources) then
     Exit;
 
@@ -239,6 +258,76 @@ begin
     if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
       lbTaskSources.Selected[Index] := Source.Enabled;
   end;
+end;
+
+procedure TSummaryTaskEditForm.AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
+var
+  Source: TTaskSource;
+  NewSource: TTaskSource;
+  CreatedList: Boolean;
+begin
+  CreatedList := False;
+
+  if not Assigned(FTaskSourcesList) then
+  begin
+    FTaskSourcesList := TTaskSourcesList.Create(True);
+    CreatedList := True;
+  end;
+
+  if CreatedList then
+    FTaskSourcesListOwned := True;
+
+  FTaskSourcesList.Clear;
+
+  if Assigned(ASourceList) then
+  begin
+    for var I := 0 to ASourceList.Count - 1 do
+    begin
+      if not (ASourceList.Items[I] is TTaskSource) then
+        Continue;
+
+      Source := TTaskSource(ASourceList.Items[I]);
+      if not Assigned(Source) then
+        Continue;
+
+      NewSource := TTaskSource.Create;
+      try
+        NewSource.Assign(Source);
+        FTaskSourcesList.Add(NewSource);
+      except
+        NewSource.Free;
+        raise;
+      end;
+    end;
+  end;
+
+  RefreshTaskSourcesList;
+end;
+
+procedure TSummaryTaskEditForm.btnSourcesEditClick(Sender: TObject);
+var
+  SelectForm: TSelectTaskSourcesForm;
+begin
+  SelectForm := SelectTaskSourcesForm;
+  if not Assigned(SelectForm) then
+    Exit;
+
+  SelectForm.TaskSourceList := TaskSourcesList;
+
+  SelectForm.ShowModal(SourcesEditCallback);
+end;
+
+procedure TSummaryTaskEditForm.SourcesEditCallback(ASender: TComponent; AResult: Integer);
+var
+  SelectForm: TSelectTaskSourcesForm;
+begin
+  if not (ASender is TSelectTaskSourcesForm) then
+    Exit;
+
+  SelectForm := TSelectTaskSourcesForm(ASender);
+
+  if AResult = mrOk then
+    AssignTaskSourcesFrom(SelectForm.TaskSourceList);
 end;
 
 procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);

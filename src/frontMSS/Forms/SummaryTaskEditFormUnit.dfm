@@ -205,6 +205,7 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Height = 338
       Hint = ''
       Align = alBottom
+      MultiSelect = True
       TabOrder = 1
       ExplicitTop = 51
       ExplicitWidth = 479
@@ -212,11 +213,12 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     object btnSourcesEdit: TUniButton
       Left = 24
       Top = 16
-      Width = 75
+      Width = 120
       Height = 25
       Hint = ''
-      Caption = 'btnSourcesEdit'
+      Caption = 'Изменить источники'
       TabOrder = 2
+      OnClick = btnSourcesEditClick
     end
   end
 end
