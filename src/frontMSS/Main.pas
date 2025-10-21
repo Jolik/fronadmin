@@ -18,6 +18,7 @@ type
     btnRouterSources: TUniButton;
     btnAliases: TUniButton;
     btnAbonents: TUniButton;
+    btnDSProcessorTasks: TUniButton;
     procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
@@ -25,6 +26,7 @@ type
     procedure btnSummTaskClick(Sender: TObject);
     procedure btnRouterSourcesClick(Sender: TObject);
     procedure btnAliasesClick(Sender: TObject);
+    procedure btnDSProcessorTasksClick(Sender: TObject);
   private
   public
     { Public declarations }
@@ -41,7 +43,8 @@ uses
   MainModule,
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
   AliasesFormUnit, AbonentsFormUnit,
-  RouterSourcesFormUnit;
+  RouterSourcesFormUnit,
+  DSProcessorTasksFormUnit;
 
 function MainForm: TMainForm;
 begin
@@ -53,6 +56,11 @@ end;
 procedure TMainForm.btnChannelClick(Sender: TObject);
 begin
   ChannelsForm.Show();
+end;
+
+procedure TMainForm.btnDSProcessorTasksClick(Sender: TObject);
+begin
+  DSProcessorTasksForm.Show();
 end;
 
 procedure TMainForm.btnAbonentsClick(Sender: TObject);

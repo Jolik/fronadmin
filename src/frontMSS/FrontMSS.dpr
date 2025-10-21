@@ -30,7 +30,6 @@ uses
   AliasesBrokerUnit in 'APIClasses\AliasesBrokerUnit.pas',
   StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in 'APIClasses\SummaryTasksBrokerUnit.pas',
-  TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas',
   MonitoringTaskUnit in 'EntityClasses\monitoring\MonitoringTaskUnit.pas',
   StripTaskUnit in 'EntityClasses\strips\StripTaskUnit.pas',
   ChannelUnit in 'EntityClasses\router\ChannelUnit.pas',
@@ -85,7 +84,15 @@ uses
   SharedFrameConnections in 'Forms\LinksFrames\SharedFrameConnections.pas' {FrameConnections: TUniFrame},
   SharedFrameQueue in 'Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
   SharedFrameTextInput in 'Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
-  SocketSpecialSettingEditFrameUnit in 'Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame};
+  SocketSpecialSettingEditFrameUnit in 'Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
+  SummaryTaskSourcesBrokerUnit in 'APIClasses\SummaryTaskSourcesBrokerUnit.pas',
+  TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas',
+  TaskSourcesBrokerUnit in 'APIClasses\TaskSourcesBrokerUnit.pas',
+  DSProcessorTaskUnit in 'EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
+  SelectTaskSourcesFormUnit in 'Forms\SelectTaskSourcesFormUnit.pas' {SelectTaskSourcesForm: TUniForm},
+  SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
+  TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm},
+  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm};
 
 {$R *.res}
 

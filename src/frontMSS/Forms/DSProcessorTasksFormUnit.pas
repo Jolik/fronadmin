@@ -1,4 +1,4 @@
-﻿unit SummaryTasksFormUnit;
+unit DSProcessorTasksFormUnit;
 
 interface
 
@@ -12,10 +12,10 @@ uses
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
   ParentEditFormUnit,
-  SummaryTasksBrokerUnit, SummaryTaskSourcesBrokerUnit, TaskSourceUnit, uniPanel, uniLabel;
+  DSProcessorTasksBrokerUnit, DSProcessorTaskSourceBrokerUnit, TaskSourceUnit, uniPanel, uniLabel;
 
 type
-  TSummaryTasksForm = class(TListParentForm)
+  TDSProcessorTasksForm = class(TListParentForm)
     cpTaskInfoModule: TUniContainerPanel;
     lTaskInfoModule: TUniLabel;
     lTaskInfoModuleValue: TUniLabel;
@@ -25,63 +25,52 @@ type
     procedure UniFormDestroy(Sender: TObject);
     procedure dbgEntitySelectionChange(Sender: TObject);
   private
-    FSourceTaskBroker: TSummaryTaskSourcesBroker;
+    FSourceTaskBroker: TDSProcessorTaskSourcesBroker;
     FCurrentTaskSourcesList: TTaskSourceList;
-
   protected
-    ///
     procedure Refresh(const AId: String = ''); override;
-
-    ///
     function CreateBroker(): TEntityBroker; override;
-
-    ///
     function CreateEditForm(): TParentEditForm; override;
-
     procedure UpdateCallback(ASender: TComponent; AResult: Integer);
-
   public
 
   end;
 
-function SummaryTasksForm: TSummaryTasksForm;
+function DSProcessorTasksForm: TDSProcessorTasksForm;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit;
+  MainModule, uniGUIApplication, DSProcessorTaskEditFormUnit, DSProcessorTaskUnit, LoggingUnit;
 
-function SummaryTasksForm: TSummaryTasksForm;
+function DSProcessorTasksForm: TDSProcessorTasksForm;
 begin
-  Result := TSummaryTasksForm(UniMainModule.GetFormInstance(TSummaryTasksForm));
+  Result := TDSProcessorTasksForm(UniMainModule.GetFormInstance(TDSProcessorTasksForm));
 end;
 
-{ TSummaryTasksForm }
+{ TDSProcessorTasksForm }
 
-function TSummaryTasksForm.CreateBroker: TEntityBroker;
+function TDSProcessorTasksForm.CreateBroker: TEntityBroker;
 begin
-  ///   ""
-  Result := TSummaryTasksBroker.Create();
+  Result := TDSProcessorTasksBroker.Create();
 end;
 
-
-function TSummaryTasksForm.CreateEditForm: TParentEditForm;
+function TDSProcessorTasksForm.CreateEditForm: TParentEditForm;
 begin
-  ///   ""
-  Result := SummaryTaskEditForm();
+  Result := DSProcessorTaskEditForm();
 end;
 
-procedure TSummaryTasksForm.UniFormCreate(Sender: TObject);
+procedure TDSProcessorTasksForm.UniFormCreate(Sender: TObject);
 begin
   inherited;
 
-  FSourceTaskBroker := TSummaryTaskSourcesBroker.Create();
+  FSourceTaskBroker := TDSProcessorTaskSourcesBroker.Create();
   FCurrentTaskSourcesList := nil;
 end;
 
-procedure TSummaryTasksForm.UniFormDestroy(Sender: TObject);
+procedure TDSProcessorTasksForm.UniFormDestroy(Sender: TObject);
 begin
   FreeAndNil(FCurrentTaskSourcesList);
   FreeAndNil(FSourceTaskBroker);
@@ -89,34 +78,34 @@ begin
   inherited;
 end;
 
-procedure TSummaryTasksForm.btnUpdateClick(Sender: TObject);
+procedure TDSProcessorTasksForm.btnUpdateClick(Sender: TObject);
 var
-  SummaryTaskEntity: TEntity;
-  SummaryTask: TSummaryTask;
+  DSProcessorTaskEntity: TEntity;
+  DSProcessorTask: TDSProcessorTask;
   TaskSourcePageCount: Integer;
   EntityList: TEntityList;
   TaskSourceList: TTaskSourceList;
-  EditSummaryForm: TSummaryTaskEditForm;
+  EditDSProcessorForm: TDSProcessorTaskEditForm;
 begin
   PrepareEditForm;
 
   FId := FDMemTableEntity.FieldByName('Id').AsString;
 
-  SummaryTaskEntity := Broker.Info(FId);
-  EditForm.Entity := SummaryTaskEntity;
+  DSProcessorTaskEntity := Broker.Info(FId);
+  EditForm.Entity := DSProcessorTaskEntity;
 
   TaskSourceList := nil;
 
   if Assigned(FSourceTaskBroker) then
     FSourceTaskBroker.AddPath := '';
 
-  if Assigned(SummaryTaskEntity) and (SummaryTaskEntity is TSummaryTask) and Assigned(FSourceTaskBroker) then
+  if Assigned(DSProcessorTaskEntity) and (DSProcessorTaskEntity is TDSProcessorTask) and Assigned(FSourceTaskBroker) then
   begin
-    SummaryTask := SummaryTaskEntity as TSummaryTask;
+    DSProcessorTask := DSProcessorTaskEntity as TDSProcessorTask;
 
-    if SummaryTask.Tid <> '' then
+    if DSProcessorTask.Tid <> '' then
     begin
-      FSourceTaskBroker.AddPath := '/' + SummaryTask.Tid;
+      FSourceTaskBroker.AddPath := '/' + DSProcessorTask.Tid;
 
       EntityList := nil;
       try
@@ -124,7 +113,7 @@ begin
       except
         on E: Exception do
         begin
-          Log('TSummaryTasksForm.btnUpdateClick list error: ' + E.Message, lrtError);
+          Log('TDSProcessorTasksForm.btnUpdateClick list error: ' + E.Message, lrtError);
           EntityList := nil;
         end;
       end;
@@ -146,9 +135,9 @@ begin
     end;
   end;
 
-  EditSummaryForm := EditForm as TSummaryTaskEditForm;
-  if Assigned(EditSummaryForm) then
-    EditSummaryForm.TaskSourcesList := TaskSourceList;
+  EditDSProcessorForm := EditForm as TDSProcessorTaskEditForm;
+  if Assigned(EditDSProcessorForm) then
+    EditDSProcessorForm.TaskSourcesList := TaskSourceList;
 
   FreeAndNil(FCurrentTaskSourcesList);
   FCurrentTaskSourcesList := TaskSourceList;
@@ -158,10 +147,10 @@ begin
   except
     on E: Exception do
     begin
-      Log('TSummaryTasksForm.btnUpdateClick show modal error: ' + E.Message, lrtError);
+      Log('TDSProcessorTasksForm.btnUpdateClick show modal error: ' + E.Message, lrtError);
 
-      if Assigned(EditSummaryForm) then
-        EditSummaryForm.TaskSourcesList := nil;
+      if Assigned(EditDSProcessorForm) then
+        EditDSProcessorForm.TaskSourcesList := nil;
 
       FreeAndNil(FCurrentTaskSourcesList);
       raise;
@@ -169,11 +158,12 @@ begin
   end;
 end;
 
-procedure TSummaryTasksForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+procedure TDSProcessorTasksForm.UpdateCallback(ASender: TComponent;
+  AResult: Integer);
 var
   UpdateResult: Boolean;
-  SummaryTask: TSummaryTask;
-  SummaryForm: TSummaryTaskEditForm;
+  DSProcessorTask: TDSProcessorTask;
+  DSProcessorForm: TDSProcessorTaskEditForm;
 begin
   try
     if AResult = mrOk then
@@ -182,17 +172,17 @@ begin
       if not UpdateResult then
         Exit;
 
-      SummaryTask := nil;
-      if EditForm.Entity is TSummaryTask then
-        SummaryTask := TSummaryTask(EditForm.Entity);
+      DSProcessorTask := nil;
+      if EditForm.Entity is TDSProcessorTask then
+        DSProcessorTask := TDSProcessorTask(EditForm.Entity);
 
-      if Assigned(FSourceTaskBroker) and Assigned(FCurrentTaskSourcesList) and Assigned(SummaryTask) then
+      if Assigned(FSourceTaskBroker) and Assigned(FCurrentTaskSourcesList) and Assigned(DSProcessorTask) then
       begin
         FSourceTaskBroker.AddPath := '';
 
-        if SummaryTask.Tid <> '' then
+        if DSProcessorTask.Tid <> '' then
         begin
-          FSourceTaskBroker.AddPath := '/' + SummaryTask.Tid;
+          FSourceTaskBroker.AddPath := '/' + DSProcessorTask.Tid;
 
           for var I := 0 to FCurrentTaskSourcesList.Count - 1 do
           begin
@@ -204,7 +194,7 @@ begin
               FSourceTaskBroker.Update(Source);
             except
               on E: Exception do
-                Log('TSummaryTasksForm.UpdateCallback update source error: ' + E.Message, lrtError);
+                Log('TDSProcessorTasksForm.UpdateCallback update source error: ' + E.Message, lrtError);
             end;
           end;
         end;
@@ -218,33 +208,32 @@ begin
         FDMemTableEntity.Locate('Id', FId, []);
     end;
   finally
-    if EditForm is TSummaryTaskEditForm then
+    if EditForm is TDSProcessorTaskEditForm then
     begin
-      SummaryForm := TSummaryTaskEditForm(EditForm);
-      SummaryForm.TaskSourcesList := nil;
+      DSProcessorForm := TDSProcessorTaskEditForm(EditForm);
+      DSProcessorForm.TaskSourcesList := nil;
     end;
 
     FreeAndNil(FCurrentTaskSourcesList);
   end;
 end;
 
-procedure TSummaryTasksForm.dbgEntitySelectionChange(Sender: TObject);
+procedure TDSProcessorTasksForm.dbgEntitySelectionChange(Sender: TObject);
 var
-  LEntity : TSummaryTask;
-  LId     : string;
-  DT      : string;
+  LEntity: TDSProcessorTask;
+  LId: string;
+  DT: string;
 begin
   inherited;
 
   LId := FDMemTableEntity.FieldByName('Id').AsString;
-  ///  ïîëó÷àåì ïîëíóþ èíôîðìàöèþ î ñóùíîñòè îò áðîêåðà
-  LEntity := Broker.Info(LId) as TSummaryTask;
-  lTaskInfoModuleValue.Caption    := LEntity.Module;
+  LEntity := Broker.Info(LId) as TDSProcessorTask;
+  lTaskInfoModuleValue.Caption := LEntity.Module;
 end;
 
-procedure TSummaryTasksForm.Refresh(const AId: String = '');
+procedure TDSProcessorTasksForm.Refresh(const AId: String);
 begin
-  inherited Refresh(AId)
+  inherited Refresh(AId);
 end;
 
 end.

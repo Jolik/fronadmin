@@ -12,12 +12,14 @@ type
   TParentTaskCustomSettingsEditFrame = class(TUniFrame)
   private
     FTaskCustomSettings: TTaskCustomSettings;
-    procedure SetDataSettings(const Value: TTaskCustomSettings); virtual;
     procedure SetTaskCustomSettings(const Value: TTaskCustomSettings);
+  strict protected
+    procedure SetDataSettings(const Value: TTaskCustomSettings); virtual;
+    ///
+    property TaskCustomSettings: TTaskCustomSettings read FTaskCustomSettings;
   public
     function Apply: boolean; virtual;
-    ///  класс с настройками которе правит фрейм
-    property TaskCustomSettings: TTaskCustomSettings read FTaskCustomSettings write SetTaskCustomSettings;
+    procedure AssignTaskCustomSettings(const Value: TTaskCustomSettings);
 
   end;
 
@@ -31,7 +33,7 @@ implementation
 
 function TParentTaskCustomSettingsEditFrame.Apply: boolean;
 begin
-
+  Result := True;
 end;
 
 procedure TParentTaskCustomSettingsEditFrame.SetDataSettings(
@@ -44,6 +46,13 @@ procedure TParentTaskCustomSettingsEditFrame.SetTaskCustomSettings(
   const Value: TTaskCustomSettings);
 begin
   FTaskCustomSettings := Value;
+  SetDataSettings(Value);
+end;
+
+procedure TParentTaskCustomSettingsEditFrame.AssignTaskCustomSettings(
+  const Value: TTaskCustomSettings);
+begin
+  SetTaskCustomSettings(Value);
 end;
 
 end.
