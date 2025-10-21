@@ -5,6 +5,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
   ClientWidth = 1398
   Caption = 'SelectTaskSourcesForm'
   OldCreateOrder = False
+  OnCreate = UniFormCreate
+  OnDestroy = UniFormDestroy
   MonitoredKeys.Keys = <>
   TextHeight = 15
   object lbTaskSources: TUniListBox
@@ -13,6 +15,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 417
     Height = 385
     Hint = ''
+    MultiSelect = True
     TabOrder = 0
   end
   object lbAllSources: TUniListBox
@@ -21,7 +24,40 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Width = 385
     Height = 385
     Hint = ''
+    MultiSelect = True
     TabOrder = 1
+  end
+  object btnAddSource: TUniButton
+    Left = 464
+    Top = 240
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = 'Добавить >>'
+    TabOrder = 2
+    OnClick = btnAddSourceClick
+  end
+  object btnOk: TUniButton
+    Left = 24
+    Top = 470
+    Width = 120
+    Height = 30
+    Hint = ''
+    Caption = 'OK'
+    Default = True
+    TabOrder = 3
+    OnClick = btnOkClick
+  end
+  object btnCancel: TUniButton
+    Left = 160
+    Top = 470
+    Width = 120
+    Height = 30
+    Hint = ''
+    Caption = 'Отмена'
+    Cancel = True
+    TabOrder = 4
+    OnClick = btnCancelClick
   end
   object pcEntityInfo: TUniPageControl
     Left = 1020
@@ -32,7 +68,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     ActivePage = tsTaskInfo
     TabBarVisible = False
     Align = alRight
-    TabOrder = 2
+    TabOrder = 5
     ExplicitLeft = 774
     ExplicitTop = 29
     ExplicitHeight = 513
