@@ -2205,8 +2205,8 @@ begin
 //      ListRouterSource();
 //    ListSummaryTaskTypes();
 //    ListSummaryTasks();
-    ListDSProcessorTasks();
-    ListDSProcessorTaskSources();
+//    ListDSProcessorTasks();
+//    ListDSProcessorTaskSources();
 //    ListStripTaskSources();
 //    ListSummaryTaskSources();
 //    ListMonitoringTaskSources();
@@ -2214,7 +2214,7 @@ begin
 //      ListContexts();
 //      ListBindings();
 //      ListAbonents();
-//      ListSources();
+      ListSources();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();

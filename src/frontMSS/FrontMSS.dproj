@@ -330,6 +330,12 @@
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TaskSourcesBrokerUnit.pas"/>
         <DCCReference Include="EntityClasses\dsprocessor\DSProcessorTaskUnit.pas"/>
+        <DCCReference Include="Forms\SelectTaskSourcesFormUnit.pas">
+            <Form>SelectTaskSourcesForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="EntityClasses\dataserver\SourceUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
