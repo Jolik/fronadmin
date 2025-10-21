@@ -96,11 +96,14 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
+        <DCC_UnitSearchPath>C:\code\fronadmin\src\frontMSS\Forms\LinksFrames;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
-        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_UnitSearchPath>C:\code\fronadmin\src\frontMSS\Forms;C:\code\fronadmin\src\frontMSS\APIClasses;C:\code\fronadmin\src\frontMSS\EntityClasses\tasks;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -326,6 +329,7 @@
         <DCCReference Include="APIClasses\SummaryTaskSourcesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TaskSourcesBrokerUnit.pas"/>
+        <DCCReference Include="EntityClasses\dsprocessor\DSProcessorTaskUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -346,6 +350,10 @@
                 <Source>
                     <Source Name="MainSource">FrontMSS.dpr</Source>
                 </Source>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k370.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp370.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="5">
                 <DeployFile LocalName="Linux64\Debug\FrontDCC" Configuration="Debug" Class="ProjectOutput"/>

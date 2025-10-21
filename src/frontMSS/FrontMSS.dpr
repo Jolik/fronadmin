@@ -87,7 +87,8 @@ uses
   SocketSpecialSettingEditFrameUnit in 'Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
   SummaryTaskSourcesBrokerUnit in 'APIClasses\SummaryTaskSourcesBrokerUnit.pas',
   TasksBrokerUnit in 'APIClasses\TasksBrokerUnit.pas',
-  TaskSourcesBrokerUnit in 'APIClasses\TaskSourcesBrokerUnit.pas';
+  TaskSourcesBrokerUnit in 'APIClasses\TaskSourcesBrokerUnit.pas',
+  DSProcessorTaskUnit in 'EntityClasses\dsprocessor\DSProcessorTaskUnit.pas';
 
 {$R *.res}
 
