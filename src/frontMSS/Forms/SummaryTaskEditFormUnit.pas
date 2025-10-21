@@ -34,6 +34,7 @@ type
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;
+    procedure cbModuleChange(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     function Apply: boolean; override;
@@ -44,7 +45,6 @@ type
     procedure UpdateCustomSettingsFrame;
     function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
     function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
-    procedure cbModuleChange(Sender: TObject);
 (*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
     function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
@@ -207,7 +207,10 @@ var
   Settings: TSummaryTaskSettings;
   NewType: TSummaryTaskType;
 begin
+  //inherited;
+
   Settings := GetSummarySettings();
+
   if not Assigned(Settings) then
   begin
     ClearCustomSettingsFrame;
@@ -220,6 +223,28 @@ begin
 
   UpdateCustomSettingsFrame;
 end;
+
+{procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
+var
+  Settings: TSummaryTaskSettings;
+  NewType: TSummaryTaskType;
+begin
+  Exit;
+
+  Settings := GetSummarySettings();
+
+  if not Assigned(Settings) then
+  begin
+    ClearCustomSettingsFrame;
+    Exit;
+  end;
+
+  NewType := GetSummaryTaskTypeByModule(cbModule.Text);
+  if Settings.SummaryTaskType <> NewType then
+    Settings.SummaryTaskType := NewType;
+
+  UpdateCustomSettingsFrame;
+end;}
 
 (* !!!! function TSummaryTaskEditForm.FormatExcludeWeek(
   const Values: TExcludeWeek): string;
