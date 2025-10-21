@@ -189,5 +189,15 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
+    object lbTaskSources: TUniCheckListBox
+      Left = 0
+      Top = 0
+      Width = 487
+      Height = 414
+      Hint = ''
+      Align = alClient
+      TabOrder = 0
+      Items.Strings = ()
+    end
   end
 end
