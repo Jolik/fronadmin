@@ -185,8 +185,8 @@ end;
 
 procedure TProfileFrame.Clear;
 begin
-  PridFrame.Edit.Text := '';
-  DescriptionFrame.Edit.Text := '';
+  PridFrame.SetData('');
+  DescriptionFrame.SetData('');
   for var checkbox in FFTACheckboxes.Values do
     checkbox.Checked := false;
 end;

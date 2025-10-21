@@ -20,19 +20,19 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
           Left = 0
           Top = 30
           Width = 427
-          Height = 81
+          Height = 111
           Align = alTop
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 1
           Background.Picture.Data = {00}
           ExplicitTop = 30
           ExplicitWidth = 427
-          ExplicitHeight = 81
+          ExplicitHeight = 111
           inherited UniGroupBox1: TUniGroupBox
             Width = 427
-            Height = 81
+            Height = 111
             ExplicitWidth = 427
-            ExplicitHeight = 81
+            ExplicitHeight = 111
             inherited FrameAddr: TFrameTextInput
               Width = 423
               ExplicitWidth = 423
@@ -59,6 +59,7 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
             end
             inherited UniGroupBox3: TUniGroupBox
               Width = 403
+              ExplicitTop = 145
               ExplicitWidth = 403
               inherited FrameLogin: TFrameTextInput
                 Width = 399
@@ -87,6 +88,7 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
             end
             inherited UniGroupBox2: TUniGroupBox
               Width = 403
+              ExplicitTop = 249
               ExplicitWidth = 403
               inherited FrameTLSEnable: TFrameBoolInput
                 Width = 399
@@ -140,6 +142,10 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
             inherited FrameConnectionKey: TFrameTextInput
               Width = 423
               ExplicitWidth = 423
+              inherited PanelText: TUniPanel
+                ExplicitLeft = 0
+                ExplicitTop = 0
+              end
               inherited Edit: TUniEdit
                 Width = 252
                 ExplicitWidth = 252
@@ -149,18 +155,30 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
                 ExplicitLeft = 397
               end
             end
+            inherited FrameReplaceIP: TFrameBoolInput
+              Width = 423
+              ExplicitTop = 105
+              ExplicitWidth = 423
+              inherited PanelText: TUniPanel
+                ExplicitTop = 0
+              end
+              inherited CheckBox: TUniCheckBox
+                Width = 285
+                ExplicitWidth = 285
+              end
+            end
           end
         end
         inline FrameQueue1: TFrameQueue
           Left = 0
-          Top = 111
+          Top = 141
           Width = 427
           Height = 59
           Align = alTop
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 2
           Background.Picture.Data = {00}
-          ExplicitTop = 111
+          ExplicitTop = 141
           ExplicitWidth = 427
           inherited FrameQid: TFrameTextInput
             Width = 427
@@ -216,7 +234,7 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
         end
         inline FrameDir: TFrameTextInput
           Left = 0
-          Top = 170
+          Top = 200
           Width = 427
           Height = 30
           Align = alTop
@@ -225,7 +243,7 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
           Constraints.MinHeight = 30
           TabOrder = 4
           Background.Picture.Data = {00}
-          ExplicitTop = 170
+          ExplicitTop = 200
           ExplicitWidth = 427
           inherited PanelText: TUniPanel
             Caption = #1055#1072#1087#1082#1072' '#1074#1088#1077#1084'. '#1092#1072#1081#1083#1086#1074
@@ -243,7 +261,7 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
         object UniGroupBox2: TUniGroupBox
           AlignWithMargins = True
           Left = 3
-          Top = 203
+          Top = 233
           Width = 421
           Height = 191
           Hint = ''
@@ -277,6 +295,116 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
               ExplicitLeft = 391
             end
           end
+          inline FrameMaxPostponeMessages: TFrameTextInput
+            Left = 2
+            Top = 45
+            Width = 417
+            Height = 30
+            Align = alTop
+            Anchors = [akLeft, akTop, akRight]
+            Constraints.MaxHeight = 30
+            Constraints.MinHeight = 30
+            TabOrder = 2
+            Background.Picture.Data = {00}
+            ExplicitLeft = 2
+            ExplicitTop = 45
+            ExplicitWidth = 417
+            inherited PanelText: TUniPanel
+              Caption = #1052#1072#1082#1089'. '#1085#1077#1087#1086#1076#1090#1074'.'
+            end
+            inherited Edit: TUniEdit
+              Width = 246
+              InputType = 'number'
+              ExplicitWidth = 246
+            end
+            inherited PanelUnits: TUniPanel
+              Left = 391
+              Caption = #1096#1090
+              ExplicitLeft = 391
+            end
+          end
+          inline FrameResendTimeoutSec: TFrameTextInput
+            Left = 2
+            Top = 75
+            Width = 417
+            Height = 30
+            Align = alTop
+            Anchors = [akLeft, akTop, akRight]
+            Constraints.MaxHeight = 30
+            Constraints.MinHeight = 30
+            TabOrder = 3
+            Background.Picture.Data = {00}
+            ExplicitLeft = 2
+            ExplicitTop = 75
+            ExplicitWidth = 417
+            inherited PanelText: TUniPanel
+              Caption = #1055#1077#1088#1077#1086#1090#1087#1088#1072#1074#1082#1072' '#1095#1077#1088#1077#1079
+            end
+            inherited Edit: TUniEdit
+              Width = 246
+              InputType = 'number'
+              ExplicitWidth = 246
+            end
+            inherited PanelUnits: TUniPanel
+              Left = 391
+              ExplicitLeft = 391
+            end
+          end
+          inline FrameHeartbeatDelay: TFrameTextInput
+            Left = 2
+            Top = 105
+            Width = 417
+            Height = 30
+            Align = alTop
+            Anchors = [akLeft, akTop, akRight]
+            Constraints.MaxHeight = 30
+            Constraints.MinHeight = 30
+            TabOrder = 4
+            Background.Picture.Data = {00}
+            ExplicitLeft = 2
+            ExplicitTop = 105
+            ExplicitWidth = 417
+            inherited PanelText: TUniPanel
+              Caption = #1055#1072#1091#1079#1072' '#1084#1077#1078#1076#1091' RR'
+            end
+            inherited Edit: TUniEdit
+              Width = 246
+              InputType = 'number'
+              ExplicitWidth = 246
+            end
+            inherited PanelUnits: TUniPanel
+              Left = 391
+              ExplicitLeft = 391
+            end
+          end
+          inline FrameMaxFileSize: TFrameTextInput
+            Left = 2
+            Top = 135
+            Width = 417
+            Height = 30
+            Align = alTop
+            Anchors = [akLeft, akTop, akRight]
+            Constraints.MaxHeight = 30
+            Constraints.MinHeight = 30
+            TabOrder = 5
+            Background.Picture.Data = {00}
+            ExplicitLeft = 2
+            ExplicitTop = 135
+            ExplicitWidth = 417
+            inherited PanelText: TUniPanel
+              Caption = #1052#1072#1082#1089'. '#1088#1072#1079#1084#1077#1088' '#1092#1072#1081#1083#1072
+            end
+            inherited Edit: TUniEdit
+              Width = 246
+              InputType = 'number'
+              ExplicitWidth = 246
+            end
+            inherited PanelUnits: TUniPanel
+              Left = 391
+              Caption = #1073#1072#1081#1090
+              ExplicitLeft = 391
+            end
+          end
         end
       end
     end
@@ -284,6 +412,12 @@ inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
   inherited ProfilesGroupBox: TUniGroupBox
     Height = 574
     ExplicitHeight = 574
+    inherited ProfilesPanel: TUniPanel
+      Height = 557
+      ExplicitHeight = 557
+      ScrollHeight = 557
+      ScrollWidth = 323
+    end
   end
   inherited UniSplitter1: TUniSplitter
     Height = 574

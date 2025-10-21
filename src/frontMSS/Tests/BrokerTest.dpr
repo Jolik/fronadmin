@@ -94,7 +94,21 @@ uses
   SummaryTaskCustomSettingsUnit in '..\EntityClasses\summary\SummaryTaskCustomSettingsUnit.pas',
   SummaryTaskUnit in '..\EntityClasses\summary\SummaryTaskUnit.pas',
   ProfileFrameUnit in '..\Forms\LinksFrames\ProfileFrameUnit.pas' {ProfileFrame: TUniFrame},
-  ProfilesFrameUnit in '..\Forms\LinksFrames\ProfilesFrameUnit.pas' {ProfilesFrame: TUniFrame};
+  ProfilesFrameUnit in '..\Forms\LinksFrames\ProfilesFrameUnit.pas' {ProfilesFrame: TUniFrame},
+  DirDownSettingEditFrameUnit in '..\Forms\LinksFrames\DirDownSettingEditFrameUnit.pas' {DirDownSettingEditFrame: TUniFrame},
+  SharedFrameSchedule in '..\Forms\LinksFrames\SharedFrameSchedule.pas' {FrameSchedule: TUniFrame},
+  SharedFrameS3 in '..\Forms\LinksFrames\SharedFrameS3.pas' {FrameS3: TUniFrame},
+  DirUpSettingEditFrameUnit in '..\Forms\LinksFrames\DirUpSettingEditFrameUnit.pas' {DirUpSettingEditFrame: TUniFrame},
+  FTPCliUpLinkSettingEditFrameUnit in '..\Forms\LinksFrames\FTPCliUpLinkSettingEditFrameUnit.pas' {FTPCliUpLinkSettingEditFrame: TUniFrame},
+  FTPCliDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\FTPCliDownLinkSettingEditFrameUnit.pas' {FtpCliDownLinkSettingEditFrame: TUniFrame},
+  Pop3CliDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\Pop3CliDownLinkSettingEditFrameUnit.pas' {Pop3CliDownLinkSettingEditFrame: TUniFrame},
+  SMTPClieUpLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SMTPClieUpLinkSettingEditFrameUnit.pas' {SMTPClieUpLinkSettingEditFrame: TUniFrame},
+  FTPServerDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\FTPServerDownLinkSettingEditFrameUnit.pas' {FTPServerDownLinkSettingEditFrame: TUniFrame},
+  FTPSrvUpLinkSettingEditFrameUnit in '..\Forms\LinksFrames\FTPSrvUpLinkSettingEditFrameUnit.pas' {FTPSrvUpLinkSettingEditFrame: TUniFrame},
+  SMTPSrvDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas' {SMTPSrvDownLinkSettingEditFrame: TUniFrame},
+  HTTPCliDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas' {HTTPCliDownLinkSettingEditFrame: TUniFrame},
+  SebaSGSLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas' {SebaSGSLinkSettingEditFrame: TUniFrame},
+  SebaCSDLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas' {SebaCSDLinkSettingEditFrame: TUniFrame};
 
 {$R *.res}
 

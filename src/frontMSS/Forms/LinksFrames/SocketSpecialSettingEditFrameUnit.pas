@@ -84,26 +84,6 @@ begin
   FrameConnections1.HasConnectionKey := FrameProtocolVer.ComboBox.ItemIndex = 1;
 end;
 
-function TSocketSpecialSettingEditFrame.Apply: boolean;
-begin
-  inherited;
-  FrameConnections1.GetData(FSettings.Connections);
-  FrameQueue1.GetData(FSettings.QueueSettings);
-  FSettings.Atype := FComboIndex.KeyByValue(FrameAType.GetDataIndex());
-  FSettings.ProtocolVer := FrameProtocolVer.GetDataStr();
-  FSettings.AckCount := FrameAckCount.GetDataInt();
-  FSettings.AckTimeout := FrameAckTimeout.GetDataInt();
-  FSettings.InputTriggerSize := FrameTriggerByte.GetDataInt();
-  FSettings.InputTriggerTime := FrameTriggerSec.GetDataInt();
-  FSettings.InputTriggerCount := FrameTriggerCount.GetDataInt();
-  FSettings.MaxInputBufferSize := FrameBufferSize.GetDataInt();
-  FSettings.ConfirmationMode := FComboIndex.KeyByValue(FrameConfirm.GetDataIndex());
-  FSettings.Compatibility := FComboIndex.KeyByValue(FrameCompatibility.GetDataIndex());
-  FSettings.KeepAlive := FrameRR.GetData();
-  result := true;
-end;
-
-
 
 procedure TSocketSpecialSettingEditFrame.SetLink(const Value: TLink);
 begin
@@ -111,7 +91,7 @@ begin
   FSettings := DataSettings as TSocketSpecialDataSettings;
 
   FrameConnections1.SetData(FSettings.Connections);
-  FrameQueue1.SetData(FSettings.QueueSettings);
+  FrameQueue1.SetData(FSettings.Queue);
   FrameAType.SetDataIndex(FComboIndex.ValueByKey(FSettings.Atype, 0));
   FrameProtocolVer.SetDataIndex(FComboIndex.ValueByKey(FSettings.ProtocolVer, 0));
   FrameAckCount.SetData(FSettings.AckCount);
@@ -126,5 +106,27 @@ begin
 
   FrameProtocolVerComboBoxChange(nil);
 end;
+
+function TSocketSpecialSettingEditFrame.Apply: boolean;
+begin
+  result := inherited Apply;
+  if not result then
+    exit;
+  FrameConnections1.GetData(FSettings.Connections);
+  FrameQueue1.GetData(FSettings.Queue);
+  FSettings.Atype := FComboIndex.KeyByValue(FrameAType.GetDataIndex());
+  FSettings.ProtocolVer := FrameProtocolVer.GetDataStr();
+  FSettings.AckCount := FrameAckCount.GetDataInt();
+  FSettings.AckTimeout := FrameAckTimeout.GetDataInt();
+  FSettings.InputTriggerSize := FrameTriggerByte.GetDataInt();
+  FSettings.InputTriggerTime := FrameTriggerSec.GetDataInt();
+  FSettings.InputTriggerCount := FrameTriggerCount.GetDataInt();
+  FSettings.MaxInputBufferSize := FrameBufferSize.GetDataInt();
+  FSettings.ConfirmationMode := FComboIndex.KeyByValue(FrameConfirm.GetDataIndex());
+  FSettings.Compatibility := FComboIndex.KeyByValue(FrameCompatibility.GetDataIndex());
+  FSettings.KeepAlive := FrameRR.GetData();
+  result := true;
+end;
+
 
 end.
