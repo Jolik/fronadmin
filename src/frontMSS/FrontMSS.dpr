@@ -91,7 +91,8 @@ uses
   DSProcessorTaskUnit in 'EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
   SelectTaskSourcesFormUnit in 'Forms\SelectTaskSourcesFormUnit.pas' {SelectTaskSourcesForm: TUniForm},
   SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
-  TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm};
+  TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm},
+  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm};
 
 {$R *.res}
 
