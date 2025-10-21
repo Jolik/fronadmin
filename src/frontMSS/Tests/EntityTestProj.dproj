@@ -111,6 +111,7 @@
         <DCCReference Include="..\APIClasses\RulesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SourceCredsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\SourcesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\ContextsBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\ContextTypesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\SourceTypesBrokerUnit.pas"/>
@@ -142,6 +143,7 @@
         <DCCReference Include="..\EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="..\EntityClasses\acl\UserUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceCredsUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\dataserver\SourceUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\ContextUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\ContextTypeUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dataserver\SourceTypeUnit.pas"/>

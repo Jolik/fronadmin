@@ -22,6 +22,7 @@ uses
   RulesBrokerUnit in '..\APIClasses\RulesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
   SourceCredsBrokerUnit in '..\APIClasses\SourceCredsBrokerUnit.pas',
+  SourcesBrokerUnit in '..\APIClasses\SourcesBrokerUnit.pas',
   ContextsBrokerUnit in '..\APIClasses\ContextsBrokerUnit.pas',
   ContextTypesBrokerUnit in '..\APIClasses\ContextTypesBrokerUnit.pas',
   SourceTypesBrokerUnit in '..\APIClasses\SourceTypesBrokerUnit.pas',
@@ -53,6 +54,7 @@ uses
   RouterSourceUnit in '..\EntityClasses\router\RouterSourceUnit.pas',
   UserUnit in '..\EntityClasses\acl\UserUnit.pas',
   SourceCredsUnit in '..\EntityClasses\dataserver\SourceCredsUnit.pas',
+  SourceUnit in '..\EntityClasses\dataserver\SourceUnit.pas',
   ContextUnit in '..\EntityClasses\dataserver\ContextUnit.pas',
   ContextTypeUnit in '..\EntityClasses\dataserver\ContextTypeUnit.pas',
   SourceTypeUnit in '..\EntityClasses\dataserver\SourceTypeUnit.pas',
@@ -1232,6 +1234,93 @@ begin
   end;
 end;
 
+procedure ListSources();
+var
+  SourcesBroker: TSourcesBroker;
+  SourceList: TEntityList;
+  SourceEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    SourcesBroker := TSourcesBroker.Create;
+    try
+      SourceList := nil;
+      try
+        SourceList := SourcesBroker.List(PageCount);
+
+        Writeln('---------- Sources List ----------');
+
+        if Assigned(SourceList) then
+        begin
+          var FirstSource: TSource := nil;
+
+          if SourceList.Count > 0 then
+            FirstSource := SourceList.Items[0] as TSource;
+
+          for SourceEntity in SourceList do
+          begin
+            var Source := SourceEntity as TSource;
+            Writeln(Format('Class: %s | Address: %p', [Source.ClassName, Pointer(Source)]));
+            Writeln('Sid: ' + Source.Sid);
+            Writeln('Name: ' + Source.Name);
+            Writeln('DepId: ' + Source.DepId);
+
+            Writeln('As JSON:');
+            var Json := Source.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstSource) then
+          begin
+            Writeln('---------- Source Info ----------');
+            Writeln('Requesting info for: ' + FirstSource.Sid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := SourcesBroker.Info(FirstSource.Sid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoSource := InfoEntity as TSource;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoSource.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Sources list is empty.');
+
+      finally
+        SourceList.Free;
+      end;
+    finally
+      SourcesBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListBindings();
 var
   BindingsBroker: TBindingsBroker;
@@ -2125,6 +2214,7 @@ begin
 //      ListContexts();
 //      ListBindings();
 //      ListAbonents();
+//      ListSources();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
