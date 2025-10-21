@@ -2,13 +2,13 @@ object ProfileFrame: TProfileFrame
   Left = 0
   Top = 0
   Width = 358
-  Height = 548
+  Height = 509
   TabOrder = 0
   object UniGroupBox1: TUniGroupBox
     Left = 0
     Top = 60
     Width = 358
-    Height = 262
+    Height = 221
     Hint = ''
     Caption = ' '#1055#1088#1072#1074#1080#1083#1086' '
     Align = alTop
@@ -24,7 +24,6 @@ object ProfileFrame: TProfileFrame
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel1'
-      ExplicitWidth = 321
       inline FrameRuleEnabled: TFrameBoolInput
         Left = 0
         Top = 0
@@ -36,13 +35,13 @@ object ProfileFrame: TProfileFrame
         Constraints.MinHeight = 30
         TabOrder = 1
         Background.Picture.Data = {00}
-        ExplicitLeft = 24
-        ExplicitTop = 16
+        ExplicitWidth = 354
         inherited PanelText: TUniPanel
           Caption = #1042#1082#1083#1102#1095#1077#1085#1086
         end
         inherited CheckBox: TUniCheckBox
           Width = 216
+          ExplicitWidth = 216
         end
       end
       inline FrameRulePosition: TFrameTextInput
@@ -56,18 +55,20 @@ object ProfileFrame: TProfileFrame
         Constraints.MinHeight = 30
         TabOrder = 2
         Background.Picture.Data = {00}
-        ExplicitLeft = 52
-        ExplicitTop = 48
+        ExplicitTop = 30
+        ExplicitWidth = 354
         inherited PanelText: TUniPanel
           Caption = #1055#1086#1079#1080#1094#1080#1103
         end
         inherited Edit: TUniEdit
           Width = 183
           InputType = 'number'
+          ExplicitWidth = 183
         end
         inherited PanelUnits: TUniPanel
           Left = 328
           Caption = ''
+          ExplicitLeft = 328
         end
       end
     end
@@ -75,60 +76,54 @@ object ProfileFrame: TProfileFrame
       Left = 2
       Top = 81
       Width = 354
-      Height = 179
+      Height = 138
       Hint = ''
       Align = alClient
       TabOrder = 2
       ShowCaption = False
       Caption = 'UniPanel2'
-      ExplicitHeight = 136
+      ExplicitHeight = 179
       object UniSplitter2: TUniSplitter
         Left = 139
         Top = 1
         Width = 6
-        Height = 177
+        Height = 136
         Hint = ''
         Align = alLeft
         ParentColor = False
         Color = clBtnFace
-        ExplicitLeft = 169
-        ExplicitTop = 4
-        ExplicitHeight = 134
+        ExplicitHeight = 177
       end
       object PanelConditions: TUniPanel
         Left = 145
         Top = 1
         Width = 208
-        Height = 177
+        Height = 136
         Hint = ''
         Align = alClient
         TabOrder = 2
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'PanelConditions'
-        ExplicitLeft = 232
-        ExplicitTop = 32
-        ExplicitWidth = 256
-        ExplicitHeight = 128
+        ExplicitHeight = 177
       end
       object UniPanel3: TUniPanel
         Left = 1
         Top = 1
         Width = 138
-        Height = 177
+        Height = 136
         Hint = ''
         Align = alLeft
         TabOrder = 3
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'UniPanel3'
-        ExplicitLeft = 7
-        ExplicitHeight = 134
+        ExplicitHeight = 177
         object RuleTreeView: TUniTreeView
           Left = 0
           Top = 25
           Width = 138
-          Height = 152
+          Height = 111
           Hint = ''
           Items.FontData = {0100000000}
           Align = alClient
@@ -136,8 +131,7 @@ object ProfileFrame: TProfileFrame
           Color = clWindow
           UseCheckBox = True
           OnChange = RuleTreeViewChange
-          ExplicitTop = 17
-          ExplicitHeight = 157
+          ExplicitHeight = 152
         end
         object UniPanel4: TUniPanel
           Left = 0
@@ -165,12 +159,11 @@ object ProfileFrame: TProfileFrame
             BorderStyle = ubsNone
             ShowCaption = False
             Caption = 'UniPanel5'
-            ExplicitLeft = 0
             object btnAddRules: TUniBitBtn
-              Left = 1
-              Top = 1
-              Width = 23
-              Height = 19
+              Left = 0
+              Top = 0
+              Width = 25
+              Height = 21
               Hint = ''
               Margins.Left = 0
               Margins.Top = 0
@@ -181,9 +174,6 @@ object ProfileFrame: TProfileFrame
               Align = alClient
               TabOrder = 1
               OnClick = btnAddRulesClick
-              ExplicitLeft = 5
-              ExplicitTop = 2
-              ExplicitWidth = 20
             end
           end
           object UniPanel6: TUniPanel
@@ -201,12 +191,11 @@ object ProfileFrame: TProfileFrame
             BorderStyle = ubsNone
             ShowCaption = False
             Caption = 'UniPanel5'
-            ExplicitLeft = 0
             object btnRemoveRules: TUniBitBtn
-              Left = 1
-              Top = 1
-              Width = 23
-              Height = 19
+              Left = 0
+              Top = 0
+              Width = 25
+              Height = 21
               Hint = ''
               Margins.Left = 0
               Margins.Top = 0
@@ -217,9 +206,6 @@ object ProfileFrame: TProfileFrame
               Align = alClient
               TabOrder = 1
               OnClick = btnRemoveRulesClick
-              ExplicitLeft = 5
-              ExplicitTop = 2
-              ExplicitWidth = 20
             end
           end
         end
@@ -228,7 +214,7 @@ object ProfileFrame: TProfileFrame
   end
   object UniSplitter1: TUniSplitter
     Left = 0
-    Top = 322
+    Top = 281
     Width = 358
     Height = 6
     Cursor = crVSplit
@@ -236,22 +222,19 @@ object ProfileFrame: TProfileFrame
     Align = alTop
     ParentColor = False
     Color = clBtnFace
-    ExplicitTop = 193
-    ExplicitWidth = 325
+    ExplicitTop = 322
   end
   object UniGroupBox2: TUniGroupBox
     Left = 0
-    Top = 328
+    Top = 287
     Width = 358
-    Height = 220
+    Height = 222
     Hint = ''
     Caption = ' '#1044#1077#1081#1089#1090#1074#1080#1103' '
     Align = alClient
     TabOrder = 2
-    ExplicitLeft = 56
-    ExplicitTop = 205
-    ExplicitWidth = 325
-    ExplicitHeight = 223
+    ExplicitTop = 328
+    ExplicitHeight = 220
     object FtaGroupBox: TUniGroupBox
       AlignWithMargins = True
       Left = 12
@@ -266,7 +249,6 @@ object ProfileFrame: TProfileFrame
       Caption = #1053#1072#1087#1088#1072#1074#1080#1090#1100' '#1074' FTA'
       Align = alTop
       TabOrder = 1
-      ExplicitWidth = 301
       object CheckBox_fta_XML: TUniCheckBox
         AlignWithMargins = True
         Left = 12
@@ -278,7 +260,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_XML'
         Align = alTop
         TabOrder = 1
-        ExplicitWidth = 284
       end
       object CheckBox_fta_JSON: TUniCheckBox
         AlignWithMargins = True
@@ -291,7 +272,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_JSON'
         Align = alTop
         TabOrder = 2
-        ExplicitWidth = 284
       end
       object CheckBox_fta_SIMPLE: TUniCheckBox
         AlignWithMargins = True
@@ -304,7 +284,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_SIMPLE'
         Align = alTop
         TabOrder = 3
-        ExplicitWidth = 284
       end
       object CheckBox_fta_GAO: TUniCheckBox
         AlignWithMargins = True
@@ -317,7 +296,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_GAO'
         Align = alTop
         TabOrder = 4
-        ExplicitWidth = 284
       end
       object CheckBox_fta_TLG: TUniCheckBox
         AlignWithMargins = True
@@ -330,7 +308,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_TLG'
         Align = alTop
         TabOrder = 5
-        ExplicitWidth = 284
       end
       object CheckBox_fta_TLF: TUniCheckBox
         AlignWithMargins = True
@@ -343,7 +320,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_TLF'
         Align = alTop
         TabOrder = 6
-        ExplicitWidth = 284
       end
       object CheckBox_fta_FILE: TUniCheckBox
         AlignWithMargins = True
@@ -356,7 +332,6 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_FILE'
         Align = alTop
         TabOrder = 7
-        ExplicitWidth = 284
       end
     end
   end
@@ -371,19 +346,19 @@ object ProfileFrame: TProfileFrame
     Constraints.MinHeight = 30
     TabOrder = 3
     Background.Picture.Data = {00}
-    ExplicitWidth = 325
+    ExplicitWidth = 358
     inherited PanelText: TUniPanel
       Caption = 'ID '#1087#1088#1086#1092#1080#1083#1103
     end
     inherited Edit: TUniEdit
       Width = 187
       ReadOnly = True
-      ExplicitWidth = 154
+      ExplicitWidth = 187
     end
     inherited PanelUnits: TUniPanel
       Left = 332
       Caption = ''
-      ExplicitLeft = 299
+      ExplicitLeft = 332
     end
   end
   inline DescriptionFrame: TFrameTextInput
@@ -398,18 +373,18 @@ object ProfileFrame: TProfileFrame
     TabOrder = 4
     Background.Picture.Data = {00}
     ExplicitTop = 30
-    ExplicitWidth = 325
+    ExplicitWidth = 358
     inherited PanelText: TUniPanel
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
     end
     inherited Edit: TUniEdit
       Width = 187
-      ExplicitWidth = 154
+      ExplicitWidth = 187
     end
     inherited PanelUnits: TUniPanel
       Left = 332
       Caption = ''
-      ExplicitLeft = 299
+      ExplicitLeft = 332
     end
   end
 end
