@@ -218,6 +218,20 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\DSProcessorTaskEditFormUnit.pas">
+            <Form>DSProcessorTaskEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\DSProcessorTasksFormUnit.pas">
+            <Form>DSProcessorTasksForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="EntityClasses\dsprocessor\DSProcessorTaskUnit.pas"/>
+        <DCCReference Include="APIClasses\DSProcessorTasksBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\DSProcessorTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TaskSourcesBrokerUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

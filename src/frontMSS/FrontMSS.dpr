@@ -45,7 +45,13 @@ uses
   SummaryHydraTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummaryHydraTaskCustomSettingsEditFrameUnit.pas' {SummaryHydraTaskCustomSettingsEditFrame: TUniFrame},
   SummarySEBATaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\SummarySEBATaskCustomSettingsEditFrameUnit.pas' {SummarySEBATaskCustomSettingsEditFrame: TUniFrame},
   MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas' {MonitoringTaskEditForm: TUniForm},
-  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas' {MonitoringTasksForm: TUniForm};
+  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas' {MonitoringTasksForm: TUniForm},
+  DSProcessorTaskEditFormUnit in 'Forms\DSProcessorTaskEditFormUnit.pas' {DSProcessorTaskEditForm: TUniForm},
+  DSProcessorTasksFormUnit in 'Forms\DSProcessorTasksFormUnit.pas' {DSProcessorTasksForm: TUniForm},
+  DSProcessorTaskUnit in 'EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
+  DSProcessorTasksBrokerUnit in 'APIClasses\DSProcessorTasksBrokerUnit.pas',
+  DSProcessorTaskSourceBrokerUnit in 'APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
+  TaskSourcesBrokerUnit in 'APIClasses\TaskSourcesBrokerUnit.pas';
 
 {$R *.res}
 

@@ -41,4 +41,14 @@ object MainForm: TMainForm
     TabOrder = 2
     OnClick = btnMonitoringTasksClick
   end
+  object btnDSProcessorTasks: TUniButton
+    Left = 48
+    Top = 250
+    Width = 150
+    Height = 25
+    Hint = ''
+    Caption = 'DSProcessor '#1047#1072#1076#1072#1095#1080
+    TabOrder = 3
+    OnClick = btnDSProcessorTasksClick
+  end
 end

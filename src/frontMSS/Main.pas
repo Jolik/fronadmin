@@ -14,9 +14,11 @@ type
     btnStripTasks: TUniButton;
     btnSummTask: TUniButton;
     btnMonitoringTasks: TUniButton;
+    btnDSProcessorTasks: TUniButton;
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnSummTaskClick(Sender: TObject);
     procedure btnMonitoringTasksClick(Sender: TObject);
+    procedure btnDSProcessorTasksClick(Sender: TObject);
   private
   public
     { Public declarations }
@@ -31,7 +33,8 @@ implementation
 uses
   uniGUIVars, uniGUIApplication,
   MainModule,
-  ParentFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, MonitoringTasksFormUnit;
+  ParentFormUnit, StripTasksFormUnit, SummaryTasksFormUnit,
+  MonitoringTasksFormUnit, DSProcessorTasksFormUnit;
 
 function MainForm: TMainForm;
 begin
@@ -48,6 +51,11 @@ end;
 procedure TMainForm.btnSummTaskClick(Sender: TObject);
 begin
   SummaryTasksForm.Show();
+end;
+
+procedure TMainForm.btnDSProcessorTasksClick(Sender: TObject);
+begin
+  DSProcessorTasksForm.Show();
 end;
 
 procedure TMainForm.btnMonitoringTasksClick(Sender: TObject);
