@@ -26,6 +26,8 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     Hint = ''
     TabOrder = 1
     MultiSelect = True
+    OnChange = lbAllSourcesChange
+    OnClick = lbAllSourcesClick
   end
   object btnAddSource: TUniButton
     Left = 464
