@@ -18,6 +18,8 @@ inherited MonitoringTaskEditForm: TMonitoringTaskEditForm
     end
   end
   inherited pnClient: TUniContainerPanel
+    ExplicitLeft = -3
+    ExplicitTop = 51
     ScrollHeight = 414
     ScrollWidth = 819
     object lModule: TUniLabel
@@ -35,13 +37,10 @@ inherited MonitoringTaskEditForm: TMonitoringTaskEditForm
       Width = 121
       Hint = ''
       Style = csDropDownList
-      Text = 'MonitoringUnknown'
+      Text = 'MonitoringSample'
       Items.Strings = (
-        'MonitoringSynop'
-        'MonitoringHydra'
-        'MonitoringXML'
-        'MonitoringUnknown')
-      ItemIndex = 3
+        'MonitoringSample')
+      ItemIndex = 0
       TabOrder = 2
       IconItems = <>
     end
