@@ -74,12 +74,6 @@ uses
   APIConst;
 
 const
-  constURLProfilesList = '/profiles/list';
-  constURLProfileInfo = '/profiles/%s';
-  constURLProfileNew = '/profiles/new';
-  constURLProfileUpdate = '/profiles/%s/update';
-  constURLProfileDelete = '/profiles/%s/remove';
-
   constURLProfileBaseSuffix = '/links';
 
 { TProfilesBroker }
@@ -117,7 +111,7 @@ begin
   try
     JSONResult := nil;
     try
-      var url := Format('%s/%s%s', [GetPath, FLid, constURLProfilesList]);
+      var url := Format('%s/%s/profiles/list', [GetPath, FLid]);
       ResStr := MainHttpModuleUnit.GET(url);
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
@@ -167,7 +161,7 @@ begin
     Exit;
 
   try
-    URL := Format('%s/%s/profiles/%s', [GetPath, FLid, AId ]);
+    URL := Format('%s/%s/profiles/%s', [GetPath, FLid, AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -204,7 +198,8 @@ var
 begin
   Result := False;
 
-  URL := GetPath + constURLProfileNew;
+  URL := Format('%s/%s/profiles/new', [GetPath, FLid]);
+
   JSONProfile := AEntity.Serialize();
 
   JSONRequestStream := TStringStream.Create(JSONProfile.ToJSON, TEncoding.UTF8);
@@ -229,7 +224,7 @@ begin
   if not (AEntity is TProfile) then
     Exit;
 
-  URL := Format(GetPath + constURLProfileUpdate, [(AEntity as TProfile).Id]);
+  URL := Format('%s/%s/profiles/%s/update', [GetPath, FLid, (AEntity as TProfile).Id ]);
 
   JSONProfile := AEntity.Serialize();
 
@@ -251,7 +246,7 @@ var
 begin
   Result := False;
 
-  URL := Format(GetPath + constURLProfileDelete, [AId]);
+  URL := Format('%s/%s/profiles/%s/remove', [GetPath, FLid, AId ]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

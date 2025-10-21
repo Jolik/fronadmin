@@ -17,7 +17,6 @@ uses
 
 type
   TMainForm = class(TUniForm)
-    ShowMemo: TUniMemo;
     sbTestButtons: TUniScrollBox;
     gbLinks: TUniGroupBox;
     btnLinskList: TUniButton;
@@ -41,6 +40,9 @@ type
     btnStripTasks: TUniButton;
     btnLinkSettings: TUniButton;
     btnSummaryTasks: TUniButton;
+    UniPanel1: TUniPanel;
+    ShowMemo: TUniMemo;
+    LogMemo: TUniMemo;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnStripTaskListClick(Sender: TObject);
@@ -60,6 +62,7 @@ type
     procedure btnStripTasksClick(Sender: TObject);
     procedure btnLinkSettingsClick(Sender: TObject);
     procedure btnSummaryTasksClick(Sender: TObject);
+    procedure UniFormShow(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -77,6 +80,7 @@ implementation
 uses
   uniGUIVars, MainModule, uniGUIApplication, StripTasksFormUnit, SummaryTasksFormUnit,
   LinkSettingsUnit, ParentLinkSettingEditFrameUnit, LinkEditFormUnit,
+  LoggingUnit, UniLoggerUnit,
   ParentEditFormUnit,
   OpenMCEPSettingEditFrameUnit,
   SocketSpecialSettingEditFrameUnit;
@@ -830,6 +834,13 @@ end;
 
 
 
+
+procedure TMainForm.UniFormShow(Sender: TObject);
+begin
+  if AppLogger = nil then
+    AppLogger := TUniLogger.Create(MainForm.LogMemo);
+end;
+
 procedure TMainForm.btnSummaryTaskRemoveClick(Sender: TObject);
 const
   tid = '352890ab-bd9c-404c-9626-3a0c314ed7ac';
@@ -860,5 +871,7 @@ end;
 
 initialization
   RegisterAppFormClass(TMainForm);
+
+
 
 end.

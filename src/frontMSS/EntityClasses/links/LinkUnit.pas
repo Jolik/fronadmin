@@ -6,6 +6,8 @@ uses
   System.Classes, System.JSON, System.Generics.Collections,
   LoggingUnit,
   EntityUnit,
+  FuncUnit,
+  KeyValUnit,
   LinkSettingsUnit;
 
 type
@@ -114,11 +116,17 @@ type
 
   end;
 
+var
+  // LinkType2Str строка типа линка = TLinkType
+  LinkType2Str: TKeyValue<TLinkType>;
+  // LinkConditionFields поля правил профиля в зависимости от типа линка
+  LinkConditionFields: TDictionary<TLinkType, TArray<string>>;
+
+
 implementation
 
 uses
-  System.SysUtils, 
-  FuncUnit, KeyValUnit;
+  System.SysUtils;
 
 const
   LidKey = 'lid';
@@ -133,9 +141,7 @@ const
   SnapshotKey = 'snapshot';
   SettingsKey = 'settings';
 
-var
-  // LinkType2Str строка = TLinkType
-  LinkType2Str: TKeyValue<TLinkType>;
+
 
 { TLink }
 
@@ -299,6 +305,7 @@ end;
 
 
 initialization
+  // строковый тип линка в TLinkType и наоборот
   LinkType2Str := TKeyValue<TLinkType>.Create;
   LinkType2Str.Add('DIR_DOWN', ltDirDown);
   LinkType2Str.Add('DIR_UP', ltDirUp);
@@ -313,9 +320,29 @@ initialization
   LinkType2Str.Add('SOCKET_SPECIAL', ltSocketSpecial);
   LinkType2Str.Add('HTTP_CLIENT_DOWN', ltHttpClientDown);
   LinkType2Str.Add('SEBA_SGS_CLIENT_DOWN', ltSebaSgsClientDown);
-  LinkType2Str.Add('SEBA_USR_CSD_CLIENT_DOWN', ltSebaUsrCsdClientDown);                      
+  LinkType2Str.Add('SEBA_USR_CSD_CLIENT_DOWN', ltSebaUsrCsdClientDown);
+
+  // возможные поля conditions[].field фильтров из профиля линка
+  LinkConditionFields := TDictionary<TLinkType, TArray<string>>.Create;
+  LinkConditionFields.Add( ltDirDown, ['path', 'dir', 'filename'] );
+  LinkConditionFields.Add( ltDirUp, []);
+  LinkConditionFields.Add( ltFtpClientDown, ['path', 'dir', 'filename']);
+  LinkConditionFields.Add( ltFtpClientUp, []);
+  LinkConditionFields.Add( ltFtpServerDown, ['path', 'dir', 'filename']);
+  LinkConditionFields.Add( ltFtpServerUp, []);
+  LinkConditionFields.Add( ltOpenMCEP, ['ip', 'headers']);
+  LinkConditionFields.Add( ltPop3ClientDown, ['from', 'to', 'subject']);
+  LinkConditionFields.Add( ltSmtpCliUp, []);
+  LinkConditionFields.Add( ltSmtpSrvDown,  ['from', 'to', 'subject']);
+  LinkConditionFields.Add( ltSocketSpecial, ['ip', 'ahd', 'filename']);
+  LinkConditionFields.Add( ltHttpClientDown, ['filename']);
+  LinkConditionFields.Add( ltSebaSgsClientDown, ['station']);
+  LinkConditionFields.Add( ltSebaUsrCsdClientDown, ['station']);
+
+
 
 finalization
   LinkType2Str.Free;
+  LinkConditionFields.Free;
 
 end.

@@ -108,7 +108,8 @@ uses
   SMTPSrvDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas' {SMTPSrvDownLinkSettingEditFrame: TUniFrame},
   HTTPCliDownLinkSettingEditFrameUnit in '..\Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas' {HTTPCliDownLinkSettingEditFrame: TUniFrame},
   SebaSGSLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas' {SebaSGSLinkSettingEditFrame: TUniFrame},
-  SebaCSDLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas' {SebaCSDLinkSettingEditFrame: TUniFrame};
+  SebaCSDLinkSettingEditFrameUnit in '..\Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas' {SebaCSDLinkSettingEditFrame: TUniFrame},
+  SharedFrameRuleConditionUnit in '..\Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame};
 
 {$R *.res}
 
