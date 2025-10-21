@@ -45,16 +45,22 @@ type
     procedure btnOkClick(Sender: TObject);
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
+    procedure lbAllSourcesClick(Sender: TObject);
+    procedure lbAllSourcesChange(Sender: TObject);
   private
     AllSourcesBroker: TSourcesBroker;
     AllSourceList: TSourceList;
     FTaskSourceList: TTaskSourceList;
+    FCurrentSourceSid: string;
     procedure AddSourceToTaskList(ASource: TSource);
     procedure LoadAllSources;
     procedure PopulateAllSources;
     procedure PopulateTaskSources;
     function TaskSourceExists(const ASid: string): Boolean;
     procedure SetTaskSourceList(const Value: TTaskSourceList);
+    procedure ClearSourceInfo;
+    procedure UpdateSelectedSourceInfo;
+    procedure UpdateSourceInfoDisplay(ASource: TSource);
   public
     property TaskSourceList: TTaskSourceList read FTaskSourceList write SetTaskSourceList;
   end;
@@ -92,6 +98,29 @@ begin
     NewSource.Free;
     raise;
   end;
+end;
+
+procedure TSelectTaskSourcesForm.ClearSourceInfo;
+begin
+  if Assigned(lSourceInfoIDValue) then
+    lSourceInfoIDValue.Caption := '';
+
+  if Assigned(lSourceInfoNameValue) then
+    lSourceInfoNameValue.Caption := '';
+
+  if Assigned(lSourceInfoModuleValue) then
+    lSourceInfoModuleValue.Caption := '';
+
+  if Assigned(lSourceInfoCreatedValue) then
+    lSourceInfoCreatedValue.Caption := '';
+
+  if Assigned(lTaskInfoUpdatedValue) then
+    lTaskInfoUpdatedValue.Caption := '';
+
+  if Assigned(tsSourceInfo) then
+    tsSourceInfo.TabVisible := False;
+
+  FCurrentSourceSid := '';
 end;
 
 procedure TSelectTaskSourcesForm.btnAddSourceClick(Sender: TObject);
@@ -138,6 +167,8 @@ var
   PageCount: Integer;
   EntityList: TEntityList;
 begin
+  ClearSourceInfo;
+
   if Assigned(lbAllSources) then
     lbAllSources.Items.Clear;
 
@@ -175,6 +206,16 @@ begin
   PopulateAllSources;
 end;
 
+procedure TSelectTaskSourcesForm.lbAllSourcesChange(Sender: TObject);
+begin
+  UpdateSelectedSourceInfo;
+end;
+
+procedure TSelectTaskSourcesForm.lbAllSourcesClick(Sender: TObject);
+begin
+  UpdateSelectedSourceInfo;
+end;
+
 procedure TSelectTaskSourcesForm.PopulateAllSources;
 var
   Source: TSource;
@@ -208,6 +249,8 @@ begin
   finally
     lbAllSources.Items.EndUpdate;
   end;
+
+  UpdateSelectedSourceInfo;
 end;
 
 procedure TSelectTaskSourcesForm.PopulateTaskSources;
@@ -295,6 +338,100 @@ begin
   PopulateTaskSources;
 end;
 
+procedure TSelectTaskSourcesForm.UpdateSelectedSourceInfo;
+var
+  SelectedSource: TSource;
+begin
+  SelectedSource := nil;
+
+  if Assigned(lbAllSources) then
+  begin
+    for var I := 0 to lbAllSources.Items.Count - 1 do
+      if lbAllSources.Selected[I] then
+        if lbAllSources.Items.Objects[I] is TSource then
+        begin
+          SelectedSource := TSource(lbAllSources.Items.Objects[I]);
+          Break;
+        end;
+
+    if not Assigned(SelectedSource) then
+      if (lbAllSources.ItemIndex >= 0) and (lbAllSources.ItemIndex < lbAllSources.Items.Count) then
+        if lbAllSources.Items.Objects[lbAllSources.ItemIndex] is TSource then
+          SelectedSource := TSource(lbAllSources.Items.Objects[lbAllSources.ItemIndex]);
+  end;
+
+  UpdateSourceInfoDisplay(SelectedSource);
+end;
+
+procedure TSelectTaskSourcesForm.UpdateSourceInfoDisplay(ASource: TSource);
+var
+  InfoEntity: TEntity;
+  InfoSource: TSource;
+  OwnsInfoSource: Boolean;
+  DateText: string;
+const
+  DateFormat = 'dd.mm.yyyy HH:nn';
+begin
+  if not Assigned(ASource) then
+  begin
+    ClearSourceInfo;
+    Exit;
+  end;
+
+  if SameText(FCurrentSourceSid, ASource.Sid) and tsSourceInfo.TabVisible then
+    Exit;
+
+  InfoEntity := nil;
+  InfoSource := ASource;
+  OwnsInfoSource := False;
+
+  if Assigned(AllSourcesBroker) then
+    try
+      InfoEntity := AllSourcesBroker.Info(ASource.Sid);
+      if InfoEntity is TSource then
+      begin
+        InfoSource := TSource(InfoEntity);
+        OwnsInfoSource := True;
+        InfoEntity := nil;
+      end
+      else
+        FreeAndNil(InfoEntity);
+    except
+      on E: Exception do
+      begin
+        Log('TSelectTaskSourcesForm.UpdateSourceInfoDisplay info error: ' + E.Message, lrtError);
+        FreeAndNil(InfoEntity);
+      end;
+    end;
+
+  lSourceInfoIDValue.Caption := InfoSource.Sid;
+  lSourceInfoNameValue.Caption := InfoSource.Name;
+  lSourceInfoModuleValue.Caption := InfoSource.Module;
+
+  if InfoSource.Created > 0 then
+  begin
+    DateTimeToString(DateText, DateFormat, InfoSource.Created);
+    lSourceInfoCreatedValue.Caption := DateText;
+  end
+  else
+    lSourceInfoCreatedValue.Caption := '';
+
+  if InfoSource.Updated > 0 then
+  begin
+    DateTimeToString(DateText, DateFormat, InfoSource.Updated);
+    lTaskInfoUpdatedValue.Caption := DateText;
+  end
+  else
+    lTaskInfoUpdatedValue.Caption := '';
+
+  tsSourceInfo.TabVisible := True;
+
+  FCurrentSourceSid := InfoSource.Sid;
+
+  if OwnsInfoSource then
+    InfoSource.Free;
+end;
+
 procedure TSelectTaskSourcesForm.UniFormCreate(Sender: TObject);
 begin
   FTaskSourceList := TTaskSourceList.Create(True);
@@ -303,6 +440,7 @@ begin
 
   LoadAllSources;
   PopulateTaskSources;
+  ClearSourceInfo;
 end;
 
 procedure TSelectTaskSourcesForm.UniFormDestroy(Sender: TObject);
