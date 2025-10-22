@@ -78,8 +78,8 @@ var
   RequestStream: TStringStream;
   ResStr: String;
   InfoObject: TJSONObject;
-  ItemsValue: TJSONValue;
   RequestObject: TJSONObject;
+
 begin
   Result := nil;
   APageCount := 0;
@@ -101,7 +101,7 @@ begin
 
       RequestStream := TStringStream.Create(RequestObject.ToJSON, TEncoding.UTF8);
       try
-        ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLHandlersList, RequestStream);
+        ResStr := MainHttpModuleUnit.GET(GetBasePath + constURLHandlersList);
         JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
         if not Assigned(JSONResult) then
           Exit;
@@ -118,15 +118,11 @@ begin
         ItemsArray := nil;
 
         if HandlersValue is TJSONArray then
-          ItemsArray := TJSONArray(HandlersValue)
-        else if HandlersValue is TJSONObject then
         begin
-          ItemsValue := TJSONObject(HandlersValue).GetValue('items');
-          if ItemsValue is TJSONArray then
-            ItemsArray := TJSONArray(ItemsValue);
+          ItemsArray := TJSONArray(HandlersValue);
+          Result := ListClassType.Create(ItemsArray);
         end;
 
-        Result := ListClassType.Create(ItemsArray);
 
       finally
         RequestStream.Free;
