@@ -51,8 +51,9 @@ type
   TJSONResponse = class
   private
     FResponse: string;
+    procedure SetResponse(const Value: string);
   public
-    property Response: string read FResponse write FResponse;
+    property Response: string read FResponse write SetResponse;
   end;
 
   THttpBroker = class
@@ -548,6 +549,13 @@ begin
 
   Res.Response := ResponseContent;
   Result := FHttpClient.ResponseCode;
+end;
+
+{ TJSONResponse }
+
+procedure TJSONResponse.SetResponse(const Value: string);
+begin
+  FResponse := Value;
 end;
 
 initialization
