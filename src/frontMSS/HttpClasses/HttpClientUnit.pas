@@ -14,7 +14,7 @@ uses
 type
   TMethod = (mGET, mPOST, mPUT, mDELETE);
 
-  THttpBody = class(TBody)
+  THttpReqBody = class(TFieldSet)
   private
     FRawContent: string;
   public
@@ -27,12 +27,12 @@ type
     FMethod: TMethod;
     FHeaders: TDictionary<string, string>;
     FParams: TDictionary<string, string>;
-    FBody: TBody;
+    FReqBody: TFieldSet;
     function GetCurl: string;
     procedure SetCurl(const Value: string);
     procedure SetMethodFromString(const Value: string);
-    function GetBodyContent: string;
-    procedure SetBodyContent(const Value: string);
+    function GetReqBodyContent: string;
+    procedure SetReqBodyContent(const Value: string);
     procedure SetURL(const Value: string);
     procedure ParseParamsFromQuery(const Query: string);
   public
@@ -42,9 +42,9 @@ type
     property Method: TMethod read FMethod write FMethod;
     property Headers: TDictionary<string, string> read FHeaders;
     property Params: TDictionary<string, string> read FParams;
-    property Body: TBody read FBody write FBody;
+    property ReqBody: TFieldSet read FReqBody write FReqBody;
     property Curl: string read GetCurl write SetCurl;
-    property BodyContent: string read GetBodyContent write SetBodyContent;
+    property ReqBodyContent: string read GetReqBodyContent write SetReqBodyContent;
     function GetURLWithParams(const BaseUrl: string = ''): string;
   end;
 
@@ -99,33 +99,33 @@ begin
   FHeaders := TDictionary<string, string>.Create;
   FParams := TDictionary<string, string>.Create;
   FMethod := mGET;
-  FBody := THttpBody.Create;
+  FReqBody := THttpReqBody.Create();
 end;
 
 destructor THttpRequest.Destroy;
 begin
-  FBody.Free;
+  FReqBody.Free;
   FHeaders.Free;
   FParams.Free;
   inherited;
 end;
 
-function THttpRequest.GetBodyContent: string;
+function THttpRequest.GetReqBodyContent: string;
 begin
-  if not Assigned(FBody) then
+  if not Assigned(FReqBody) then
     Exit('');
 
-  if FBody is THttpBody then
-    Result := THttpBody(FBody).RawContent
+  if FReqBody is THttpReqBody then
+    Result := THttpReqBody(FReqBody).RawContent
   else
-    Result := FBody.JSON;
+    Result := FReqBody.JSON;
 end;
 
 function THttpRequest.GetCurl: string;
 var
   Builder: TStringBuilder;
   HeaderPair: TPair<string, string>;
-  BodyString: string;
+  ReqBodyString: string;
   EffectiveUrl: string;
 begin
   Builder := TStringBuilder.Create;
@@ -142,11 +142,11 @@ begin
       Builder.Append('''').Append(HeaderPair.Key).Append(': ').Append(HeaderPair.Value).Append('''');
     end;
 
-    BodyString := GetBodyContent;
-    if not BodyString.IsEmpty then
+    ReqBodyString := GetReqBodyContent;
+    if not ReqBodyString.IsEmpty then
     begin
       Builder.Append(' --data-raw ');
-      Builder.Append('''').Append(BodyString).Append('''');
+      Builder.Append('''').Append(ReqBodyString).Append('''');
     end;
 
     Result := Builder.ToString.Trim;
@@ -155,15 +155,15 @@ begin
   end;
 end;
 
-procedure THttpRequest.SetBodyContent(const Value: string);
+procedure THttpRequest.SetReqBodyContent(const Value: string);
 var
   JsonValue: TJSONObject;
 begin
-  if not Assigned(FBody) then
-    FBody := THttpBody.Create;
+  if not Assigned(FReqBody) then
+    FReqBody := THttpReqBody.Create;
 
-  if FBody is THttpBody then
-    THttpBody(FBody).RawContent := Value
+  if FReqBody is THttpReqBody then
+    THttpReqBody(FReqBody).RawContent := Value
   else
   begin
     if Value.IsEmpty then
@@ -173,13 +173,13 @@ begin
       JsonValue := TJSONObject.ParseJSONValue(Value) as TJSONObject;
       try
         if Assigned(JsonValue) then
-          FBody.Parse(JsonValue);
+          FReqBody.Parse(JsonValue);
       finally
         JsonValue.Free;
       end;
     except
       on E: Exception do
-        raise EConvertError.CreateFmt('Failed to parse body JSON: %s', [E.Message]);
+        raise EConvertError.CreateFmt('Failed to parse ReqBody JSON: %s', [E.Message]);
     end;
   end;
 end;
@@ -254,7 +254,7 @@ begin
   FMethod := mGET;
   FParams.Clear;
   FURL := '';
-  SetBodyContent('');
+  SetReqBodyContent('');
 
   Tokens := TList<string>.Create;
   try
@@ -306,7 +306,7 @@ begin
         Inc(I);
         if I < Tokens.Count then
         begin
-          SetBodyContent(NormalizeToken(Tokens[I]));
+          SetReqBodyContent(NormalizeToken(Tokens[I]));
           Inc(I);
         end;
         Continue;
@@ -505,9 +505,9 @@ end;
 function THttpBroker.Request(Req: THttpRequest; Res: TJSONResponse): Integer;
 var
   Url: string;
-  BodyStream: TStringStream;
+  ReqBodyStream: TStringStream;
   ResponseContent: string;
-  BodyContent: string;
+  ReqBodyContent: string;
 begin
   if not Assigned(Req) then
     raise EArgumentNilException.Create('Request must not be nil');
@@ -517,27 +517,27 @@ begin
   Url := BuildURL(Req);
   ApplyHeaders(Req);
 
-  BodyContent := Req.BodyContent;
+  ReqBodyContent := Req.ReqBodyContent;
 
   case Req.Method of
     mGET:
       ResponseContent := FHttpClient.Get(Url);
     mPOST:
       begin
-        BodyStream := TStringStream.Create(BodyContent, TEncoding.UTF8);
+        ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
         try
-          ResponseContent := FHttpClient.Post(Url, BodyStream);
+          ResponseContent := FHttpClient.Post(Url, ReqBodyStream);
         finally
-          BodyStream.Free;
+          ReqBodyStream.Free;
         end;
       end;
     mPUT:
       begin
-        BodyStream := TStringStream.Create(BodyContent, TEncoding.UTF8);
+        ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
         try
-          ResponseContent := FHttpClient.Put(Url, BodyStream);
+          ResponseContent := FHttpClient.Put(Url, ReqBodyStream);
         finally
-          BodyStream.Free;
+          ReqBodyStream.Free;
         end;
       end;
     mDELETE:
