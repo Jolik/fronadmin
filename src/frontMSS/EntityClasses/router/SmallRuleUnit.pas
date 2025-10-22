@@ -23,6 +23,7 @@ type
     FChannels: TNamedStringListsObject;
     FIncFilters: TFilterList;
     FExcFilters: TFilterList;
+    FEnabled: boolean;
     procedure ResetCollections;
   public
     constructor Create; overload; override;
@@ -41,6 +42,7 @@ type
     property Channels: TNamedStringListsObject read FChannels;
     property IncFilters: TFilterList read FIncFilters;
     property ExcFilters: TFilterList read FExcFilters;
+    property Enabled: boolean read FEnabled write FEnabled;
   end;
 
 implementation
@@ -54,6 +56,7 @@ const
   ChannelsKey = 'channels';
   IncFiltersKey = 'incFilters';
   ExcFiltersKey = 'excFilters';
+  DisableKey = 'disable';
 
 { TSmallRule }
 
@@ -78,6 +81,7 @@ begin
   FPosition := SourceRule.Position;
   FPriority := SourceRule.Priority;
   FBreakRule := SourceRule.BreakRule;
+  FEnabled := SourceRule.Enabled;
 
   if not FHandlers.Assign(SourceRule.Handlers) then
     Exit;
@@ -129,6 +133,8 @@ begin
   FChannels := TNamedStringListsObject.Create;
   FIncFilters := TFilterList.Create;
   FExcFilters := TFilterList.Create;
+  FEnabled := true;
+
 
   ResetCollections;
 end;
@@ -168,6 +174,7 @@ begin
   FBreakRule := GetValueBool(src, BreakKey);
   FPosition := GetValueIntDef(src, PositionKey, 0);
   FPriority := GetValueIntDef(src, PriorityKey, 0);
+  FEnabled := not GetValueBool(src, DisableKey);
 
   Value := src.FindValue(HandlersKey);
   if Value is TJSONArray then
@@ -224,6 +231,8 @@ begin
   dst.AddPair(PositionKey, TJSONNumber.Create(FPosition));
   dst.AddPair(PriorityKey, TJSONNumber.Create(FPriority));
   dst.AddPair(BreakKey, TJSONBool.Create(FBreakRule));
+  if not FEnabled then
+    dst.AddPair(DisableKey, true);
 
   HandlersArray := TJSONArray.Create;
   try

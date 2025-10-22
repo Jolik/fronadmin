@@ -38,6 +38,7 @@ constructor TUniLogger.Create(Memo: TUniMemo);
 begin
   FLock := TCriticalSection.Create;
   FMemo := Memo;
+  FSeverity := lrtDebug;
 end;
 
 destructor TUniLogger.Destroy;
@@ -64,12 +65,23 @@ end;
 procedure TUniLogger.Log(const AText: String; AParams: array of const;
   AType: TLogRecordType);
 begin
-  var line := Format('%s [%s] %s', [
+  if AType < FSeverity then
+    exit;
+  var line := Format('%s [%s] %s',
+  [
     FormatDateTime('hh:nn:ss.zzz', Now),
     LogTypeToStr[AType],
     Format(AText, AParams)
   ]);
-  FMemo.Lines.Add(line);
+  try
+    FLock.Enter;
+    try
+      FMemo.Lines.Add(line);
+    finally
+      FLock.Leave;
+    end;
+  except
+  end;
 end;
 
 end.
