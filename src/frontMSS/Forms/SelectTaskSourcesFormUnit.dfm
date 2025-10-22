@@ -1,88 +1,63 @@
 object SelectTaskSourcesForm: TSelectTaskSourcesForm
   Left = 0
   Top = 0
-  ClientHeight = 622
-  ClientWidth = 1398
-  Caption = 'SelectTaskSourcesForm'
+  ClientHeight = 520
+  ClientWidth = 935
+  Caption = #1042#1099#1073#1086#1088' '#1080#1089#1090#1086#1095#1085#1080#1082#1086#1074' '#1079#1072#1076#1072#1095#1080
+  BorderStyle = bsSingle
   OldCreateOrder = False
   MonitoredKeys.Keys = <>
   OnCreate = UniFormCreate
   OnDestroy = UniFormDestroy
   TextHeight = 15
   object lbTaskSources: TUniListBox
-    Left = 24
-    Top = 64
-    Width = 417
-    Height = 385
+    Left = 5
+    Top = 5
+    Width = 250
+    Height = 460
     Hint = ''
     TabOrder = 0
     MultiSelect = True
   end
   object lbAllSources: TUniListBox
-    Left = 560
-    Top = 63
-    Width = 385
-    Height = 385
+    Left = 295
+    Top = 5
+    Width = 250
+    Height = 460
     Hint = ''
     TabOrder = 1
     MultiSelect = True
     OnChange = lbAllSourcesChange
     OnClick = lbAllSourcesClick
   end
-  object btnAddSource: TUniButton
-    Left = 464
-    Top = 240
-    Width = 75
-    Height = 25
-    Hint = ''
-    Caption = #1056#8221#1056#1109#1056#177#1056#176#1056#1030#1056#1105#1057#8218#1057#1034' >>'
-    TabOrder = 2
-    OnClick = btnAddSourceClick
-  end
-  object btnOk: TUniButton
-    Left = 24
-    Top = 470
-    Width = 120
-    Height = 30
-    Hint = ''
-    Caption = 'OK'
-    TabOrder = 3
-    Default = True
-    OnClick = btnOkClick
-  end
-  object btnCancel: TUniButton
-    Left = 160
-    Top = 470
-    Width = 120
-    Height = 30
-    Hint = ''
-    Caption = #1056#1115#1057#8218#1056#1112#1056#181#1056#1029#1056#176
-    Cancel = True
-    TabOrder = 4
-    OnClick = btnCancelClick
-  end
   object pcEntityInfo: TUniPageControl
-    Left = 1020
-    Top = 0
+    AlignWithMargins = True
+    Left = 552
+    Top = 5
     Width = 378
-    Height = 622
+    Height = 460
     Hint = ''
+    Margins.Left = 5
+    Margins.Top = 5
+    Margins.Right = 5
+    Margins.Bottom = 5
     ActivePage = tsSourceInfo
     TabBarVisible = False
     Align = alRight
-    TabOrder = 5
-    ExplicitLeft = 1012
-    ExplicitHeight = 597
+    TabOrder = 2
+    ExplicitLeft = 699
+    ExplicitTop = 0
+    ExplicitHeight = 572
     object tsSourceInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitHeight = 569
+      ExplicitHeight = 544
       object cpSourceInfo: TUniContainerPanel
         Left = 0
         Top = 0
         Width = 370
-        Height = 594
+        Height = 432
         Hint = ''
         Margins.Right = 0
         ParentColor = False
@@ -91,7 +66,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 569
+        ExplicitHeight = 544
         object cpSourceInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -464,5 +439,73 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
         end
       end
     end
+  end
+  object pnBottom: TUniContainerPanel
+    Left = 0
+    Top = 470
+    Width = 935
+    Height = 50
+    Hint = ''
+    ParentColor = False
+    Align = alBottom
+    TabOrder = 3
+    ExplicitTop = 572
+    ExplicitWidth = 1077
+    object btnOk: TUniButton
+      AlignWithMargins = True
+      Left = 776
+      Top = 12
+      Width = 75
+      Height = 26
+      Hint = ''
+      Margins.Top = 12
+      Margins.Bottom = 12
+      Caption = #1054#1050
+      Align = alRight
+      TabOrder = 1
+      OnClick = btnOkClick
+      ExplicitLeft = 918
+    end
+    object btnCancel: TUniButton
+      AlignWithMargins = True
+      Left = 857
+      Top = 12
+      Width = 75
+      Height = 26
+      Hint = ''
+      Margins.Top = 12
+      Margins.Bottom = 12
+      Caption = #1054#1090#1084#1077#1085#1072
+      Align = alRight
+      TabOrder = 2
+      OnClick = btnCancelClick
+      ExplicitLeft = 999
+    end
+  end
+  object btnAddSource: TUniButton
+    Left = 260
+    Top = 5
+    Width = 30
+    Height = 30
+    Hint = ''
+    Caption = ''
+    TabOrder = 4
+    ImageIndex = 0
+    IconAlign = iaCenter
+    IconCls = 'arrow_left'
+    OnClick = btnAddSourceClick
+  end
+  object btnRemoveSource: TUniButton
+    Left = 260
+    Top = 40
+    Width = 30
+    Height = 30
+    Hint = ''
+    Caption = ''
+    TabOrder = 5
+    ImageIndex = 1
+    IconAlign = iaCenter
+    IconCls = 'arrow_right'
+    OnClick = btnRemoveSourceClick
   end
 end
