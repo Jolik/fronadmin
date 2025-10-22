@@ -91,4 +91,14 @@ object MainForm: TMainForm
     TabOrder = 7
     OnClick = btnDSProcessorTasksClick
   end
+  object btnRules: TUniButton
+    Left = 40
+    Top = 488
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1055#1088#1072#1074#1080#1083#1072
+    TabOrder = 8
+    OnClick = btnRulesClick
+  end
 end
