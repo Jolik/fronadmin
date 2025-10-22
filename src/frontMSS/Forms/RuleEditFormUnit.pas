@@ -9,7 +9,7 @@ uses
   uniGUIBaseClasses, uniPanel, uniMemo, uniScrollBox, uniCheckBox,
   System.Generics.Collections,
   LoggingUnit,
-  EntityUnit, RuleUnit;
+  EntityUnit, FilterUnit, RuleUnit;
 
 type
   TFilterListKind = (fkInclude, fkExclude);
@@ -63,8 +63,9 @@ implementation
 uses
   System.JSON,
   MainModule, uniGUIApplication, ConstsUnit,
-  SmallRuleUnit, FilterUnit;
+  SmallRuleUnit;
 
+type
   TFilterEditorItem = class
   private
     FKind: TFilterListKind;
@@ -156,7 +157,7 @@ begin
   FMemo.Margins.Right := 8;
   FMemo.Margins.Bottom := 8;
   FMemo.Align := alClient;
-  FMemo.ScrollBars := ssVertical;
+//!!!  FMemo.ScrollBars := ssVertical;
 
   FPanel.SendToBack;
 
@@ -287,7 +288,7 @@ begin
   SmallRule.Handlers.ClearStrings;
   for Handler in meHandlers.Lines do
   begin
-    Handler := Trim(Handler);
+//!!!    Handler := Trim(Handler);
     if Handler <> '' then
       SmallRule.Handlers.AddString(Handler);
   end;
@@ -315,7 +316,6 @@ begin
     finally
       ChannelsValue.Free;
     end;
-  end
   end;
 
   SmallRule.IncFilters.Clear;

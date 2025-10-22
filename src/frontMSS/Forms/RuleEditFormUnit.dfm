@@ -18,11 +18,12 @@ inherited RuleEditForm: TRuleEditForm
     end
   end
   inherited pnClient: TUniContainerPanel
-    ExplicitTop = 54
+    ScrollHeight = 504
+    ScrollWidth = 819
     object lRuid: TUniLabel
       Left = 40
       Top = 32
-      Width = 28
+      Width = 26
       Height = 13
       Hint = ''
       Caption = 'RUID'
@@ -39,7 +40,7 @@ inherited RuleEditForm: TRuleEditForm
     object lPosition: TUniLabel
       Left = 40
       Top = 72
-      Width = 50
+      Width = 47
       Height = 13
       Hint = ''
       Caption = #1055#1086#1079#1080#1094#1080#1103
@@ -56,7 +57,7 @@ inherited RuleEditForm: TRuleEditForm
     object lPriority: TUniLabel
       Left = 40
       Top = 112
-      Width = 52
+      Width = 59
       Height = 13
       Hint = ''
       Caption = #1055#1088#1080#1086#1088#1080#1090#1077#1090
@@ -91,7 +92,7 @@ inherited RuleEditForm: TRuleEditForm
     object lHandlers: TUniLabel
       Left = 40
       Top = 152
-      Width = 74
+      Width = 75
       Height = 13
       Hint = ''
       Caption = #1054#1073#1088#1072#1073#1086#1090#1095#1080#1082#1080
@@ -110,7 +111,7 @@ inherited RuleEditForm: TRuleEditForm
     object lChannels: TUniLabel
       Left = 312
       Top = 152
-      Width = 43
+      Width = 39
       Height = 13
       Hint = ''
       Caption = #1050#1072#1085#1072#1083#1099
@@ -129,7 +130,7 @@ inherited RuleEditForm: TRuleEditForm
     object lIncFilters: TUniLabel
       Left = 40
       Top = 280
-      Width = 105
+      Width = 109
       Height = 13
       Hint = ''
       Caption = #1060#1080#1083#1100#1090#1088#1099' '#1074#1082#1083#1102#1095#1077#1085#1080#1103
@@ -156,7 +157,7 @@ inherited RuleEditForm: TRuleEditForm
     object lExcFilters: TUniLabel
       Left = 344
       Top = 280
-      Width = 114
+      Width = 115
       Height = 13
       Hint = ''
       Caption = #1060#1080#1083#1100#1090#1088#1099' '#1080#1089#1082#1083#1102#1095#1077#1085#1080#1103

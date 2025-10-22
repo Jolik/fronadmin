@@ -52,7 +52,6 @@ uses
   ParentTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\ParentTaskCustomSettingsEditFrameUnit.pas' {ParentTaskCustomSettingsEditFrame: TUniFrame},
   ConditionUnit in 'EntityClasses\Common\ConditionUnit.pas',
   EntityUnit in 'EntityClasses\Common\EntityUnit.pas',
-  FilterUnit in 'EntityClasses\Common\FilterUnit.pas',
   GeoTypeUnit in 'EntityClasses\Common\GeoTypeUnit.pas',
   GUIDListUnit in 'EntityClasses\Common\GUIDListUnit.pas',
   StringListUnit in 'EntityClasses\Common\StringListUnit.pas',
@@ -95,7 +94,8 @@ uses
   SelectTaskSourcesFormUnit in 'Forms\SelectTaskSourcesFormUnit.pas' {SelectTaskSourcesForm: TUniForm},
   SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
   TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm},
-  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm};
+  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm},
+  FilterUnit in 'EntityClasses\Common\FilterUnit.pas';
 
 {$R *.res}
 
