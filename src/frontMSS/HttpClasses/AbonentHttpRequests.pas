@@ -11,6 +11,18 @@ uses
 
 type
   /// <summary>
+  ///   Helper field set that stores the identifier of the newly created abonent.
+  /// </summary>
+  TAbonentNewResult = class(TFieldSet)
+  private
+    FAbid: string;
+  public
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    property Abid: string read FAbid write FAbid;
+  end;
+
+  /// <summary>
   ///   Request body for abonent list requests.
   /// </summary>
   TAbonentReqListBody = class(THttpReqBody)
@@ -60,6 +72,37 @@ type
   end;
 
   /// <summary>
+  ///   Request body for abonent creation requests.
+  /// </summary>
+  TAbonentReqNewBody = class(THttpReqBody)
+  private
+    FAbonent: TAbonent;
+    procedure SetAbonent(const Value: TAbonent);
+  protected
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure UpdateRawContent;
+    property Abonent: TAbonent read FAbonent write SetAbonent;
+  end;
+
+  /// <summary>
+  ///   Response wrapper that parses abonent creation payloads.
+  /// </summary>
+  TAbonentNewResponse = class(TJSONResponse)
+  private
+    FAbonentNewRes: TAbonentNewResult;
+  protected
+    procedure SetResponse(const Value: string); override;
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+    property AbonentNewRes: TAbonentNewResult read FAbonentNewRes;
+  end;
+
+  /// <summary>
   ///   HTTP request descriptor for /abonents/list endpoint.
   /// </summary>
   TAbonentReqList = class(THttpRequest)
@@ -72,6 +115,19 @@ type
     property Body: TAbonentReqListBody read GetBody;
   end;
 
+  /// <summary>
+  ///   HTTP request descriptor for /abonents/new endpoint.
+  /// </summary>
+  TAbonentReqNew = class(THttpRequest)
+  private
+    function GetBody: TAbonentReqNewBody;
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+    property Body: TAbonentReqNewBody read GetBody;
+  end;
+
 implementation
 
 uses
@@ -80,6 +136,34 @@ uses
 const
   PageSizeKey = 'pagesize';
   DefaultPageSize = 50;
+
+  AbidKey = 'abid';
+
+{ TAbonentNewResult }
+
+procedure TAbonentNewResult.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Value: TJSONValue;
+begin
+  FAbid := '';
+
+  if not Assigned(src) then
+    Exit;
+
+  Value := src.Values[AbidKey];
+  if Value is TJSONString then
+    FAbid := TJSONString(Value).Value
+  else if Assigned(Value) then
+    FAbid := Value.ToString;
+end;
+
+procedure TAbonentNewResult.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  dst.AddPair(AbidKey, TJSONString.Create(FAbid));
+end;
 
 { TAbonentReqListBody }
 
@@ -316,6 +400,159 @@ function TAbonentReqList.GetBody: TAbonentReqListBody;
 begin
   if ReqBody is TAbonentReqListBody then
     Result := TAbonentReqListBody(ReqBody)
+  else
+    Result := nil;
+end;
+
+{ TAbonentReqNewBody }
+
+constructor TAbonentReqNewBody.Create;
+begin
+  inherited Create;
+  FAbonent := TAbonent.Create;
+end;
+
+destructor TAbonentReqNewBody.Destroy;
+begin
+  FAbonent.Free;
+  inherited;
+end;
+
+procedure TAbonentReqNewBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Parse(src, APropertyNames);
+
+  if not Assigned(FAbonent) then
+    FAbonent := TAbonent.Create;
+
+  if Assigned(src) then
+    FAbonent.Parse(src, APropertyNames);
+end;
+
+procedure TAbonentReqNewBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  inherited Serialize(dst, APropertyNames);
+
+  if Assigned(FAbonent) then
+    FAbonent.Serialize(dst, APropertyNames);
+end;
+
+procedure TAbonentReqNewBody.SetAbonent(const Value: TAbonent);
+var
+  Payload: TJSONObject;
+begin
+  if not Assigned(Value) then
+  begin
+    FreeAndNil(FAbonent);
+    RawContent := '';
+    Exit;
+  end;
+
+  if not Assigned(FAbonent) then
+    FAbonent := TAbonent.Create;
+
+  if not FAbonent.Assign(Value) then
+  begin
+    Payload := Value.Serialize;
+    try
+      FAbonent.Parse(Payload);
+    finally
+      Payload.Free;
+    end;
+  end;
+
+  UpdateRawContent;
+end;
+
+procedure TAbonentReqNewBody.UpdateRawContent;
+var
+  Payload: TJSONObject;
+begin
+  Payload := TJSONObject.Create;
+  try
+    Serialize(Payload);
+    RawContent := Payload.Format;
+  finally
+    Payload.Free;
+  end;
+end;
+
+{ TAbonentNewResponse }
+
+constructor TAbonentNewResponse.Create;
+begin
+  inherited Create;
+  FAbonentNewRes := TAbonentNewResult.Create;
+end;
+
+destructor TAbonentNewResponse.Destroy;
+begin
+  FAbonentNewRes.Free;
+  inherited;
+end;
+
+procedure TAbonentNewResponse.SetResponse(const Value: string);
+var
+  JSONResult: TJSONObject;
+  ResponseObject: TJSONObject;
+begin
+  inherited SetResponse(Value);
+
+  if not Assigned(FAbonentNewRes) then
+    FAbonentNewRes := TAbonentNewResult.Create
+  else
+    FAbonentNewRes.Abid := '';
+
+  if Value.Trim.IsEmpty then
+    Exit;
+
+  JSONResult := nil;
+  try
+    try
+      JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+      if not Assigned(JSONResult) then
+        Exit;
+
+      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      if not Assigned(ResponseObject) then
+        Exit;
+
+      FAbonentNewRes.Parse(ResponseObject);
+    except
+      on E: Exception do
+      begin
+        Log('TAbonentNewResponse.SetResponse ' + E.Message, lrtError);
+        FAbonentNewRes.Abid := '';
+      end;
+    end;
+  finally
+    JSONResult.Free;
+  end;
+end;
+
+{ TAbonentReqNew }
+
+class function TAbonentReqNew.BodyClassType: TFieldSetClass;
+begin
+  Result := TAbonentReqNewBody;
+end;
+
+constructor TAbonentReqNew.Create;
+begin
+  inherited Create;
+  Method := mPOST;
+  URL := '/router/api/v2/abonents/new';
+  Headers.AddOrSetValue('Content-Type', 'application/json');
+  Headers.AddOrSetValue('Accept', 'application/json');
+end;
+
+function TAbonentReqNew.GetBody: TAbonentReqNewBody;
+begin
+  if ReqBody is TAbonentReqNewBody then
+    Result := TAbonentReqNewBody(ReqBody)
   else
     Result := nil;
 end;
