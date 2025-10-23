@@ -52,7 +52,7 @@ type
     procedure SetResponse(const Value: string); override;
   public
     // Creates the response wrapper and prepares the abonent placeholder.
-    constructor Create; override;
+    constructor Create;
     // Ensures the abonent instance is released together with the response wrapper.
     destructor Destroy; override;
     // Provides read-only access to the parsed abonent entity.
