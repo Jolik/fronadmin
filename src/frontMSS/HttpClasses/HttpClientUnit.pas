@@ -28,6 +28,8 @@ type
     FHeaders: TDictionary<string, string>;
     FParams: TDictionary<string, string>;
     FReqBody: TFieldSet;
+    // Stores a single dynamic path segment that should be appended to the URL during execution.
+    FAddPath: string;
     function GetCurl: string;
     procedure SetCurl(const Value: string);
     procedure SetMethodFromString(const Value: string);
@@ -35,6 +37,7 @@ type
     procedure SetReqBodyContent(const Value: string);
     procedure SetURL(const Value: string);
     procedure ParseParamsFromQuery(const Query: string);
+    procedure SetAddPath(const Value: string);
   protected
     class function BodyClassType: TFieldSetClass; virtual;
   public
@@ -47,6 +50,8 @@ type
     property ReqBody: TFieldSet read FReqBody write FReqBody;
     property Curl: string read GetCurl write SetCurl;
     property ReqBodyContent: string read GetReqBodyContent write SetReqBodyContent;
+    // Allows callers to append additional URL segments (e.g., resource identifiers) in a safe way.
+    property AddPath: string read FAddPath write SetAddPath;
     function GetURLWithParams(const BaseUrl: string = ''): string;
   end;
 
@@ -100,9 +105,13 @@ end;
 constructor THttpRequest.Create;
 begin
   inherited Create;
+  // Maintain dedicated dictionaries to keep headers and query parameters separated and typed.
   FHeaders := TDictionary<string, string>.Create;
   FParams := TDictionary<string, string>.Create;
+  // Default to GET which is the most common HTTP method for broker requests.
   FMethod := mGET;
+  // Initialize without a trailing segment; callers can assign AddPath later per request.
+  FAddPath := '';
   if BodyClassType <> nil then
     FReqBody := BodyClassType.Create
   else
@@ -199,6 +208,12 @@ begin
   end;
 end;
 
+procedure THttpRequest.SetAddPath(const Value: string);
+begin
+  // Store a trimmed copy of the segment to avoid issues with accidental leading/trailing spaces.
+  FAddPath := Value.Trim;
+end;
+
 procedure TJSONResponse.SetResponse(const Value: string);
 begin
   FResponse := Value;
@@ -274,6 +289,8 @@ begin
   FMethod := mGET;
   FParams.Clear;
   FURL := '';
+  // Reset AddPath to ensure subsequent requests constructed from the curl string start clean.
+  FAddPath := '';
   SetReqBodyContent('');
 
   Tokens := TList<string>.Create;
@@ -410,22 +427,56 @@ var
   ResultUrl: string;
   Pair: TPair<string, string>;
   Separator: string;
+
+  function AppendPathSegment(const BasePath, Segment: string): string;
+  var
+    NormalizedSegment: string;
+    AdjustedBase: string;
+  begin
+    // Skip concatenation when the provided segment is empty after trimming.
+    if Segment.Trim.IsEmpty then
+      Exit(BasePath);
+
+    NormalizedSegment := Segment.Trim;
+
+    // Strip leading slashes from the segment to keep path concatenation predictable.
+    while (NormalizedSegment.Length > 0) and (NormalizedSegment.Chars[0] = '/') do
+      NormalizedSegment := NormalizedSegment.Substring(1);
+
+    // Remove any trailing slash from the base to prevent duplicated separators.
+    AdjustedBase := BasePath.TrimRight(['/']);
+
+    if AdjustedBase.IsEmpty then
+      Result := '/' + NormalizedSegment
+    else
+      Result := AdjustedBase + '/' + NormalizedSegment;
+  end;
 begin
   if BaseUrl.IsEmpty then
+    // When no base is provided, use the raw URL assigned to the request.
     ResultUrl := FURL
   else
+    // Otherwise start with the externally supplied base (e.g., fully qualified URL).
     ResultUrl := BaseUrl;
 
+  if not FAddPath.Trim.IsEmpty then
+    // AppendPathSegment is responsible for inserting the necessary slash separator.
+    ResultUrl := AppendPathSegment(ResultUrl, FAddPath);
+
   if FParams.Count = 0 then
+    // Early exit when the request does not contain any query parameters.
     Exit(ResultUrl);
 
   if ResultUrl.Contains('?') then
+    // Preserve existing query string by continuing with ampersand.
     Separator := '&'
   else
+    // Start a new query string.
     Separator := '?';
 
   for Pair in FParams do
   begin
+    // Encode both key and value to ensure special characters are transferred correctly.
     ResultUrl := ResultUrl + Separator + TNetEncoding.URL.Encode(Pair.Key) + '=' + TNetEncoding.URL.Encode(Pair.Value);
     Separator := '&';
   end;
