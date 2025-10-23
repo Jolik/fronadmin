@@ -727,7 +727,7 @@ constructor TAbonentReqRemove.Create;
 begin
   inherited Create;
   Method := mPOST;
-  URL := '/router/api/v2/rou';
+  URL := '/router/api/v2/abonents';
   Headers.AddOrSetValue('Content-Type', 'application/json');
   Headers.AddOrSetValue('Accept', 'application/json');
 end;
