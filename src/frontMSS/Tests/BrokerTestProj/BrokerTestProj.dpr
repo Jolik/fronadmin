@@ -96,11 +96,11 @@ begin
         UpdateRequest.Body.Caption := 'Automatically updated abonent caption';
 
         UpdateRequest.Body.Channels.Clear;
-        UpdateRequest.Body.Channels.Add('lch1');
-        UpdateRequest.Body.Channels.Add('mitra');
+//!!!        UpdateRequest.Body.Channels.Add('lch1');
+//!!!        UpdateRequest.Body.Channels.Add('mitra');
 
         UpdateRequest.Body.Attr.Clear;
-        UpdateRequest.Body.Attr.AddPair('name', 'TTAAii');
+        UpdateRequest.Body.Attr.AddPair('name', 'NewName');
         UpdateRequest.Body.Attr.AddPair('email', Format('updated+%s@sample.com', [Copy(CreatedAbonentId, 1, 4)]));
 
         UpdateRequest.Body.UpdateRawContent;

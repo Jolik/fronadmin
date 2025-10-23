@@ -75,7 +75,7 @@ type
   /// <summary>
   ///   Request body for abonent creation requests.
   /// </summary>
-  TAbonentReqNewBody = class(THttpReqBody)
+  TAbonentReqNewUpdateBody = class(THttpReqBody)
   private
     FName: string;
     FCaption: string;
@@ -131,12 +131,12 @@ type
   /// </summary>
   TAbonentReqNew = class(THttpRequest)
   private
-    function GetBody: TAbonentReqNewBody;
+    function GetBody: TAbonentReqNewUpdateBody;
   protected
     class function BodyClassType: TFieldSetClass; override;
   public
     constructor Create; override;
-    property Body: TAbonentReqNewBody read GetBody;
+    property Body: TAbonentReqNewUpdateBody read GetBody;
   end;
 
   /// <summary>
@@ -145,7 +145,7 @@ type
   TAbonentReqUpdate = class(THttpRequest)
   private
     FAbonentId: string;
-    function GetBody: TAbonentReqNewBody;
+    function GetBody: TAbonentReqNewUpdateBody;
     procedure SetAbonentId(const Value: string);
   protected
     class function BodyClassType: TFieldSetClass; override;
@@ -156,7 +156,7 @@ type
     ///   the required "/:abid/update" suffix to the request URL via AddPath.
     /// </summary>
     property AbonentId: string read FAbonentId write SetAbonentId;
-    property Body: TAbonentReqNewBody read GetBody;
+    property Body: TAbonentReqNewUpdateBody read GetBody;
   end;
 
 implementation
@@ -439,9 +439,9 @@ begin
     Result := nil;
 end;
 
-{ TAbonentReqNewBody }
+{ TAbonentReqNewUpdateBody }
 
-constructor TAbonentReqNewBody.Create;
+constructor TAbonentReqNewUpdateBody.Create;
 begin
   inherited Create;
   FChannels := TStringArray.Create;
@@ -452,14 +452,14 @@ begin
   UpdateRawContent;
 end;
 
-destructor TAbonentReqNewBody.Destroy;
+destructor TAbonentReqNewUpdateBody.Destroy;
 begin
   FAttr.Free;
   FChannels.Free;
   inherited;
 end;
 
-procedure TAbonentReqNewBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TAbonentReqNewUpdateBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
   Value: TJSONValue;
 begin
@@ -511,7 +511,7 @@ begin
   UpdateRawContent;
 end;
 
-procedure TAbonentReqNewBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TAbonentReqNewUpdateBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 var
   ChannelsArray: TJSONArray;
   AttrObject: TJSONObject;
@@ -548,7 +548,7 @@ begin
   end;
 end;
 
-procedure TAbonentReqNewBody.SetName(const Value: string);
+procedure TAbonentReqNewUpdateBody.SetName(const Value: string);
 begin
   if FName <> Value then
   begin
@@ -557,7 +557,7 @@ begin
   end;
 end;
 
-procedure TAbonentReqNewBody.SetCaption(const Value: string);
+procedure TAbonentReqNewUpdateBody.SetCaption(const Value: string);
 begin
   if FCaption <> Value then
   begin
@@ -566,7 +566,7 @@ begin
   end;
 end;
 
-procedure TAbonentReqNewBody.SetAbid(const Value: string);
+procedure TAbonentReqNewUpdateBody.SetAbid(const Value: string);
 begin
   if FAbid <> Value then
   begin
@@ -575,7 +575,7 @@ begin
   end;
 end;
 
-procedure TAbonentReqNewBody.UpdateRawContent;
+procedure TAbonentReqNewUpdateBody.UpdateRawContent;
 var
   Payload: TJSONObject;
 begin
@@ -645,7 +645,7 @@ end;
 
 class function TAbonentReqNew.BodyClassType: TFieldSetClass;
 begin
-  Result := TAbonentReqNewBody;
+  Result := TAbonentReqNewUpdateBody;
 end;
 
 constructor TAbonentReqNew.Create;
@@ -657,10 +657,10 @@ begin
   Headers.AddOrSetValue('Accept', 'application/json');
 end;
 
-function TAbonentReqNew.GetBody: TAbonentReqNewBody;
+function TAbonentReqNew.GetBody: TAbonentReqNewUpdateBody;
 begin
-  if ReqBody is TAbonentReqNewBody then
-    Result := TAbonentReqNewBody(ReqBody)
+  if ReqBody is TAbonentReqNewUpdateBody then
+    Result := TAbonentReqNewUpdateBody(ReqBody)
   else
     Result := nil;
 end;
@@ -669,7 +669,7 @@ end;
 
 class function TAbonentReqUpdate.BodyClassType: TFieldSetClass;
 begin
-  Result := TAbonentReqNewBody;
+  Result := TAbonentReqNewUpdateBody;
 end;
 
 constructor TAbonentReqUpdate.Create;
@@ -681,10 +681,10 @@ begin
   Headers.AddOrSetValue('Accept', 'application/json');
 end;
 
-function TAbonentReqUpdate.GetBody: TAbonentReqNewBody;
+function TAbonentReqUpdate.GetBody: TAbonentReqNewUpdateBody;
 begin
-  if ReqBody is TAbonentReqNewBody then
-    Result := TAbonentReqNewBody(ReqBody)
+  if ReqBody is TAbonentReqNewUpdateBody then
+    Result := TAbonentReqNewUpdateBody(ReqBody)
   else
     Result := nil;
 end;
