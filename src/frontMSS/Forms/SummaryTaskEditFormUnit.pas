@@ -9,6 +9,7 @@ uses
   uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
   EntityUnit, SummaryTaskUnit, TaskSourceUnit, uniMultiItem, uniComboBox, Math,
+  TaskEditParentFormUnit,
   ParentTaskCustomSettingsEditFrameUnit,
   SummaryCXMLTaskCustomSettingsEditFrameUnit,
   SummarySEBATaskCustomSettingsEditFrameUnit,
@@ -19,30 +20,10 @@ type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
   TTaskSourcesList = TTaskSourceList;
 
-  TSummaryTaskEditForm = class(TParentEditForm)
-    lModule: TUniLabel;
-    teTid: TUniEdit;
-    lTid: TUniLabel;
-    teCompId: TUniEdit;
-    lCompId: TUniLabel;
-    teDepId: TUniEdit;
-    lDepId: TUniLabel;
-    meDef: TUniMemo;
-    lDef: TUniLabel;
-    cbEnabled: TUniCheckBox;
-    teLatePeriod: TUniEdit;
-    lLatePeriod: TUniLabel;
-    cbModule: TUniComboBox;
-    pnCustomSettings: TUniContainerPanel;
-    pnSources: TUniContainerPanel;
-    lbTaskSources: TUniListBox;
-    btnSourcesEdit: TUniButton;
+  TSummaryTaskEditForm = class(TTaskEditParentForm)
     procedure cbModuleChange(Sender: TObject);
-    procedure btnSourcesEditClick(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
-    FTaskSourcesList: TTaskSourcesList;
-    FTaskSourcesListOwned: Boolean;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;
@@ -51,10 +32,7 @@ type
     procedure UpdateCustomSettingsFrame;
     function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
     function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
-    procedure SetTaskSourcesList(const Value: TTaskSourcesList);
-    procedure RefreshTaskSourcesList;
-    procedure AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
-    procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
+//    procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
 (*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
     function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
 
@@ -65,7 +43,6 @@ type
   public
     ///    FEntity     ""
     property SummaryTask : TSummaryTask read GetSummaryTask;
-    property TaskSourcesList: TTaskSourcesList read FTaskSourcesList write SetTaskSourcesList;
 
   end;
 
@@ -92,21 +69,6 @@ begin
   if not Result then
     Exit;
 
-  SummaryTask.Tid := teTid.Text;
-  SummaryTask.CompId := teCompId.Text;
-  SummaryTask.DepId := teDepId.Text;
-  SummaryTask.Module := cbModule.Text;
-  SummaryTask.Def := meDef.Lines.Text;
-  SummaryTask.Enabled := cbEnabled.Checked;
-
-  if Assigned(FTaskSourcesList) and Assigned(lbTaskSources) then
-    for var I := 0 to lbTaskSources.Items.Count - 1 do
-    begin
-      var SourceObj := lbTaskSources.Items.Objects[I];
-      if SourceObj is TTaskSource then
-        TTaskSource(SourceObj).Enabled := lbTaskSources.Selected[I];
-    end;
-
   var Settings := GetSummarySettings();
   if Assigned(Settings) then
     Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
@@ -117,7 +79,7 @@ end;
 
 function TSummaryTaskEditForm.DoCheck: Boolean;
 begin
-  Result := inherited DoCheck();
+  Result := inherited;
 end;
 
  ///    FEntity     ""
@@ -221,121 +183,12 @@ begin
   pnCustomSettings.Visible := True;
 end;
 
-procedure TSummaryTaskEditForm.SetTaskSourcesList(
-  const Value: TTaskSourcesList);
-begin
-  if FTaskSourcesListOwned and (FTaskSourcesList <> Value) then
-  begin
-    FreeAndNil(FTaskSourcesList);
-    FTaskSourcesListOwned := False;
-  end;
-
-  FTaskSourcesList := Value;
-
-  if not Assigned(Value) then
-    FTaskSourcesListOwned := False;
-
-  RefreshTaskSourcesList;
-end;
-
-procedure TSummaryTaskEditForm.RefreshTaskSourcesList;
-begin
-  if not Assigned(lbTaskSources) then
-    Exit;
-
-  lbTaskSources.Items.Clear;
-
-  if not Assigned(FTaskSourcesList) then
-    Exit;
-
-  for var I := 0 to FTaskSourcesList.Count - 1 do
-  begin
-    var Source := FTaskSourcesList.Items[I] as TTaskSource;
-    if not Assigned(Source) then
-      Continue;
-
-    var Index := lbTaskSources.Items.AddObject(Source.Name, Source);
-    if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
-      lbTaskSources.Selected[Index] := Source.Enabled;
-  end;
-end;
-
-procedure TSummaryTaskEditForm.AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
-var
-  Source: TTaskSource;
-  NewSource: TTaskSource;
-  CreatedList: Boolean;
-begin
-  CreatedList := False;
-
-  if not Assigned(FTaskSourcesList) then
-  begin
-    FTaskSourcesList := TTaskSourcesList.Create(True);
-    CreatedList := True;
-  end;
-
-  if CreatedList then
-    FTaskSourcesListOwned := True;
-
-  FTaskSourcesList.Clear;
-
-  if Assigned(ASourceList) then
-  begin
-    for var I := 0 to ASourceList.Count - 1 do
-    begin
-      if not (ASourceList.Items[I] is TTaskSource) then
-        Continue;
-
-      Source := TTaskSource(ASourceList.Items[I]);
-      if not Assigned(Source) then
-        Continue;
-
-      NewSource := TTaskSource.Create;
-      try
-        NewSource.Assign(Source);
-        FTaskSourcesList.Add(NewSource);
-      except
-        NewSource.Free;
-        raise;
-      end;
-    end;
-  end;
-
-  RefreshTaskSourcesList;
-end;
-
-procedure TSummaryTaskEditForm.btnSourcesEditClick(Sender: TObject);
-var
-  SelectForm: TSelectTaskSourcesForm;
-begin
-  SelectForm := SelectTaskSourcesForm;
-  if not Assigned(SelectForm) then
-    Exit;
-
-  SelectForm.TaskSourceList := TaskSourcesList;
-
-  SelectForm.ShowModal(SourcesEditCallback);
-end;
-
-procedure TSummaryTaskEditForm.SourcesEditCallback(ASender: TComponent; AResult: Integer);
-var
-  SelectForm: TSelectTaskSourcesForm;
-begin
-  if not (ASender is TSelectTaskSourcesForm) then
-    Exit;
-
-  SelectForm := TSelectTaskSourcesForm(ASender);
-
-  if AResult = mrOk then
-    AssignTaskSourcesFrom(SelectForm.TaskSourceList);
-end;
-
 procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
 var
   Settings: TSummaryTaskSettings;
   NewType: TSummaryTaskType;
 begin
-  //inherited;
+  inherited;
 
   Settings := GetSummarySettings();
 
@@ -431,14 +284,6 @@ begin
 
   try
     inherited SetEntity(AEntity);
-
-    ///
-    teTid.Text         := SummaryTask.Tid;
-    teCompId.Text      := SummaryTask.CompId;
-    teDepId.Text       := SummaryTask.DepId;
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(SummaryTask.Module) <> -1, cbModule.Items.IndexOf(SummaryTask.Module), 4);
-    meDef.Lines.Text   := SummaryTask.Def;
-    cbEnabled.Checked  := SummaryTask.Enabled;
 
     var Settings := GetSummarySettings();
     if Assigned(Settings) then

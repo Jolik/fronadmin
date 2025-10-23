@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniMultiItem, uniListBox,
   uniPanel, uniLabel, uniPageControl, uniButton,
-  TaskSourceUnit, SourceUnit, SourcesBrokerUnit;
+  TaskSourceUnit, SourceUnit, TaskSourcesBrokerUnit;
 
 type
   TSelectTaskSourcesForm = class(TUniForm)
@@ -48,7 +48,7 @@ type
     procedure lbAllSourcesClick(Sender: TObject);
     procedure lbAllSourcesChange(Sender: TObject);
   private
-    AllSourcesBroker: TSourcesBroker;
+    AllSourcesBroker: TTaskSourcesBroker;
     AllSourceList: TSourceList;
     FTaskSourceList: TTaskSourceList;
     FCurrentSourceSid: string;
@@ -61,11 +61,13 @@ type
     procedure ClearSourceInfo;
     procedure UpdateSelectedSourceInfo;
     procedure UpdateSourceInfoDisplay(ASource: TSource);
+  protected
+    function CreateTaskSourcesBroker(): TTaskSourcesBroker; virtual;
   public
     property TaskSourceList: TTaskSourceList read FTaskSourceList write SetTaskSourceList;
   end;
 
-function SelectTaskSourcesForm: TSelectTaskSourcesForm;
+function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesBroker = nil): TSelectTaskSourcesForm;
 
 implementation
 
@@ -74,9 +76,13 @@ implementation
 uses
   MainModule, uniGUIApplication, LoggingUnit, EntityUnit;
 
-function SelectTaskSourcesForm: TSelectTaskSourcesForm;
+function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesBroker = nil): TSelectTaskSourcesForm;
 begin
   Result := TSelectTaskSourcesForm(UniMainModule.GetFormInstance(TSelectTaskSourcesForm));
+  if taskSourceBroker=nil then
+    taskSourceBroker:= Result.CreateTaskSourcesBroker();
+
+  Result.AllSourcesBroker:= taskSourceBroker;
 end;
 
 procedure TSelectTaskSourcesForm.AddSourceToTaskList(ASource: TSource);
@@ -121,6 +127,11 @@ begin
     tsSourceInfo.TabVisible := False;
 
   FCurrentSourceSid := '';
+end;
+
+function TSelectTaskSourcesForm.CreateTaskSourcesBroker: TTaskSourcesBroker;
+begin
+  Result := TTaskSourcesBroker.Create();
 end;
 
 procedure TSelectTaskSourcesForm.btnAddSourceClick(Sender: TObject);
@@ -436,7 +447,6 @@ procedure TSelectTaskSourcesForm.UniFormCreate(Sender: TObject);
 begin
   FTaskSourceList := TTaskSourceList.Create(True);
   AllSourceList := nil;
-  AllSourcesBroker := TSourcesBroker.Create;
 
   LoadAllSources;
   PopulateTaskSources;

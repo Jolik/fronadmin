@@ -1,4 +1,4 @@
-unit DSProcessorTaskEditFormUnit;
+unit MonitoringTaskEditFormUnit;
 
 interface
 
@@ -8,27 +8,27 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniCheckBox,
   uniGUIBaseClasses, uniPanel, uniMemo,
   LoggingUnit,   TasksParentFormUnit, TaskEditParentFormUnit,
-  EntityUnit, DSProcessorTaskUnit, TaskSourceUnit, uniListBox, uniComboBox,
+  EntityUnit, MonitoringTaskUnit, TaskSourceUnit, uniListBox, uniComboBox,
   uniMultiItem, uniButton;
 
 type
   TTaskSourcesList = TTaskSourceList;
 
-  TDSProcessorTaskEditForm = class(TTaskEditParentForm)
+  TMonitoringTaskEditForm = class(TTaskEditParentForm)
 
   private
     FTaskSourcesList: TTaskSourcesList;
     function Apply: Boolean; override;
     function DoCheck: Boolean; override;
-    function GetDSProcessorTask: TDSProcessorTask;
+    function GetMonitoringTask: TMonitoringTask;
   protected
     procedure SetEntity(AEntity: TEntity); override;
   public
-    property DSProcessorTask: TDSProcessorTask read GetDSProcessorTask;
+    property MonitoringTask: TMonitoringTask read GetMonitoringTask;
     property TaskSourcesList: TTaskSourcesList read FTaskSourcesList write SetTaskSourcesList;
   end;
 
-function DSProcessorTaskEditForm: TDSProcessorTaskEditForm;
+function MonitoringTaskEditForm: TMonitoringTaskEditForm;
 
 implementation
 
@@ -37,37 +37,37 @@ implementation
 uses
   MainModule, uniGUIApplication;
 
-function DSProcessorTaskEditForm: TDSProcessorTaskEditForm;
+function MonitoringTaskEditForm: TMonitoringTaskEditForm;
 begin
-  Result := TDSProcessorTaskEditForm(UniMainModule.GetFormInstance(TDSProcessorTaskEditForm));
+  Result := TMonitoringTaskEditForm(UniMainModule.GetFormInstance(TMonitoringTaskEditForm));
 end;
 
-{ TDSProcessorTaskEditForm }
+{ TMonitoringTaskEditForm }
 
-function TDSProcessorTaskEditForm.Apply: Boolean;
+function TMonitoringTaskEditForm.Apply: Boolean;
 begin
   Result := inherited Apply();
 end;
 
-function TDSProcessorTaskEditForm.DoCheck: Boolean;
+function TMonitoringTaskEditForm.DoCheck: Boolean;
 begin
   Result := inherited DoCheck();
 end;
 
-function TDSProcessorTaskEditForm.GetDSProcessorTask: TDSProcessorTask;
+function TMonitoringTaskEditForm.GetMonitoringTask: TMonitoringTask;
 begin
   Result := nil;
 
-  if not (FEntity is TDSProcessorTask) then
+  if not (FEntity is TMonitoringTask) then
   begin
-    Log('TDSProcessorTaskEditForm.GetDSProcessorTask invalid entity type', lrtError);
+    Log('TMonitoringTaskEditForm.GetMonitoringTask invalid entity type', lrtError);
     Exit;
   end;
 
-  Result := FEntity as TDSProcessorTask;
+  Result := FEntity as TMonitoringTask;
 end;
 
-procedure TDSProcessorTaskEditForm.SetEntity(AEntity: TEntity);
+procedure TMonitoringTaskEditForm.SetEntity(AEntity: TEntity);
 begin
   inherited SetEntity(AEntity);
  

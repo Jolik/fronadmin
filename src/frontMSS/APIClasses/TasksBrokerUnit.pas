@@ -1,4 +1,4 @@
-unit TasksBrokerUnit;
+п»їunit TasksBrokerUnit;
 
 interface
 
@@ -9,45 +9,48 @@ uses
   EntityUnit, TaskUnit, EntityBrokerUnit;
 
 type
-  ///  брокер для API tasks
+  ///  Р±СЂРѕРєРµСЂ РґР»СЏ API tasks
   TTasksBroker = class (TEntityBroker)
   private
   protected
-    ///  метод возвращает конкретный тип сущности с которым работает брокер
-    ///  потомки должны переопределить его, потому что он у всех разный
+    FCompid:string;
+    FDeptid:string;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї СЃСѓС‰РЅРѕСЃС‚Рё СЃ РєРѕС‚РѕСЂС‹Рј СЂР°Р±РѕС‚Р°РµС‚ Р±СЂРѕРєРµСЂ
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
     class function ClassType: TEntityClass; override;
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
     class function ListClassType: TEntityListClass; override;
 
   public
-    /// возвращает список Задач
-    ///  в случае ошибки возвращается nil
+    /// РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє Р—Р°РґР°С‡
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
     function List(
       out APageCount: Integer;
-      const APage: Integer = 0;
+      const APage: Integer = 1;
       const APageSize: Integer = 50;
       const ASearchStr: String = '';
       const ASearchBy: String = '';
       const AOrder: String = 'name';
       const AOrderDir: String = 'asc'): TEntityList; override;
 
-    ///  создает нужный класс сущности
-    ///  в случае ошибки возвращается nil
+    ///  СЃРѕР·РґР°РµС‚ РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
     function CreateNew(): TEntity; override;
-    ///  создает на сервере новый класс сущности
-    ///  в случае ошибки возвращается false
+    ///  СЃРѕР·РґР°РµС‚ РЅР° СЃРµСЂРІРµСЂРµ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
     function New(AEntity: TEntity): Boolean; override;
-    ///  выдает информацию о сущности с сервера по идентификатору
-    ///  в случае ошибки возвращается nil
+    ///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР° РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
     function Info(AId: String): TEntity; overload; override;
-    ///  обновить параметры сущности на сервере
-    ///  в случае ошибки возвращается false
+    ///  РѕР±РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ СЃСѓС‰РЅРѕСЃС‚Рё РЅР° СЃРµСЂРІРµСЂРµ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
     function Update(AEntity: TEntity): Boolean; override;
-    ///  удалить сущность на сервере по идентификатору
-    ///  в случае ошибки возвращается false
+    ///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
     function Remove(AId: String): Boolean; overload; override;
 
+    constructor Create(compid,deptid:string);
   end;
 
 implementation
@@ -65,11 +68,11 @@ const
 
 { TTasksBroker }
 
-/// возвращает список задач
-///  в случае ошибки возвращается nil
+/// РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє Р·Р°РґР°С‡
+///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
 function TTasksBroker.List(
   out APageCount: Integer;
-  const APage: Integer = 0;
+  const APage: Integer = 1;
   const APageSize: Integer = 50;
   const ASearchStr: String = '';
   const ASearchBy: String = '';
@@ -77,20 +80,43 @@ function TTasksBroker.List(
   const AOrderDir: String = 'asc'): TEntityList;
 
   function CreateJSONRequest: TJSONObject;
+  var
+    jArr: TJSONArray;
   begin
     Result := TJSONObject.Create;
     Result.AddPair('page', APage);
     Result.AddPair('pagesize', APageSize);
-    Result.AddPair('searchStr', ASearchStr);
-    Result.AddPair('searchBy', ASearchBy);
-    Result.AddPair('order', AOrder);
+    if ASearchBy <> '' then begin
+       Result.AddPair('searchBy', ASearchBy);
+    if ASearchStr <> '' then
+      Result.AddPair('searchStr', ASearchStr);
+    end;
+    if AOrder<>'' then
+    begin
+      jArr := TJSONArray.Create;
+      jArr.Add(AOrder);
+      Result.AddPair('order', jArr);
+    end;
     Result.AddPair('orderDir', AOrderDir);
+    if FDeptid <> '' then
+    begin
+      jArr := TJSONArray.Create;
+      jArr.Add(FDeptid);
+      Result.AddPair('deptid', jArr);
+    end;
+    if FCompid <> '' then
+    begin
+      jArr := TJSONArray.Create;
+      jArr.Add(FCompid);
+      Result.AddPair('compid', jArr);
+    end;
   end;
 
 var
   JSONResult: TJSONObject;
-  ResponseObject: TJSONObject;
+  ResponseObject, RequestObj: TJSONObject;
   TaskArray: TJSONArray;
+  JSONRequestStream :TStringStream;
   ResStr: String;
 
 begin
@@ -101,13 +127,15 @@ begin
 
     JSONResult := TJSONObject.Create;
     try
-      ///  делаем запрос
-      ResStr := MainHttpModuleUnit.GET(GetBasePath + constURLTaskGetList);
-      ///  парсим результат
+      RequestObj := CreateJSONRequest;
+      JSONRequestStream := TStringStream.Create(RequestObj.ToJSON, TEncoding.UTF8);
+      ///  РґРµР»Р°РµРј Р·Р°РїСЂРѕСЃ
+      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLTaskGetList, JSONRequestStream);
+      ///  РїР°СЂСЃРёРј СЂРµР·СѓР»СЊС‚Р°С‚
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      ///  объект - ответ
+      ///  РѕР±СЉРµРєС‚ - РѕС‚РІРµС‚
       ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-      ///  список линков
+      ///  СЃРїРёСЃРѕРє Р»РёРЅРєРѕРІ
       TaskArray := ResponseObject.GetValue('tasks') as TJSONArray;
 
       Result := ListClassType.Create(TaskArray);
@@ -134,13 +162,21 @@ begin
   Result := TTaskList;
 end;
 
+constructor TTasksBroker.Create(compid, deptid: string);
+begin
+  inherited Create;
+  FCompid:= compid;
+  FDeptid:= deptid;
+end;
+
+
 function TTasksBroker.CreateNew: TEntity;
 begin
   Result := ClassType.Create();
 end;
 
-///  выдает информацию о сущности с сервера по идентификатору
-///  в случае ошибки возвращается nil
+///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР° РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
 function TTasksBroker.Info(AId: String): TEntity;
 var
   URL: String;
@@ -162,7 +198,7 @@ begin
     JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
 
 (*
-    в ответ приходит такой JSON
+    РІ РѕС‚РІРµС‚ РїСЂРёС…РѕРґРёС‚ С‚Р°РєРѕР№ JSON
 
 {
     "response": {
@@ -184,18 +220,18 @@ begin
     }
 }
 
-см. тут http://dev.modext.ru:8929/dcc7/main/-/blob/main/API//tasks.md?ref_type=heads#22-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%83%D0%BA%D0%B0%D0%B7%D0%B0%D0%BD%D0%BD%D0%BE%D0%BC%D1%83-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8E
+СЃРј. С‚СѓС‚ http://dev.modext.ru:8929/dcc7/main/-/blob/main/API//tasks.md?ref_type=heads#22-%D0%B8%D0%BD%D1%84%D0%BE%D1%80%D0%BC%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE-%D1%83%D0%BA%D0%B0%D0%B7%D0%B0%D0%BD%D0%BD%D0%BE%D0%BC%D1%83-%D0%B7%D0%B0%D0%B4%D0%B0%D0%BD%D0%B8%D1%8E
 
 *)
 
     try
-      ///  находим JSON класс response
+      ///  РЅР°С…РѕРґРёРј JSON РєР»Р°СЃСЃ response
       var ResponseObject := JSONResult.GetValue('response') as TJSONObject;
 
-      ///  находим JSON класс task
+      ///  РЅР°С…РѕРґРёРј JSON РєР»Р°СЃСЃ task
       var TaskObject := ResponseObject.GetValue('task') as TJSONObject;
 
-      ///  парсим JSON класс task
+      ///  РїР°СЂСЃРёРј JSON РєР»Р°СЃСЃ task
       Result := ClassType.Create(TaskObject);
 
     finally
@@ -212,8 +248,8 @@ begin
 
 end;
 
-///  создает на сервере новый класс сущности
-///  в случае ошибки возвращается false
+///  СЃРѕР·РґР°РµС‚ РЅР° СЃРµСЂРІРµСЂРµ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
 function TTasksBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
@@ -222,9 +258,9 @@ var
   ResStr: String;
 
 begin
-  ///  строим запрос
+  ///  СЃС‚СЂРѕРёРј Р·Р°РїСЂРѕСЃ
   URL := GetBasePath + constURLTaskNew;
-  ///  получаем из сущности JSON
+  ///  РїРѕР»СѓС‡Р°РµРј РёР· СЃСѓС‰РЅРѕСЃС‚Рё JSON
   JSONTask := AEntity.Serialize();
 
 //  JSONRequest := FuncUnit.ExtractJSONProperties(JSONTask, ['name', 'caption','tasks','attr']);
@@ -233,8 +269,8 @@ begin
   try
     ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
-    ////  !!! обрабатываем ответ
-    ///  пока возвращаем всегда true
+    ////  !!! РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕС‚РІРµС‚
+    ///  РїРѕРєР° РІРѕР·РІСЂР°С‰Р°РµРј РІСЃРµРіРґР° true
     Result := true;
 
   finally
@@ -245,8 +281,8 @@ begin
 
 end;
 
-///  обновить параметры сущности на сервере
-///  в случае ошибки возвращается false
+///  РѕР±РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ СЃСѓС‰РЅРѕСЃС‚Рё РЅР° СЃРµСЂРІРµСЂРµ
+///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
 function TTasksBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
@@ -255,14 +291,14 @@ var
   ResStr: String;
 
 begin
-  ///  если пытаются передать не наш класс то не делаем ничего!
+  ///  РµСЃР»Рё РїС‹С‚Р°СЋС‚СЃСЏ РїРµСЂРµРґР°С‚СЊ РЅРµ РЅР°С€ РєР»Р°СЃСЃ С‚Рѕ РЅРµ РґРµР»Р°РµРј РЅРёС‡РµРіРѕ!
   if not (AEntity is TTask) then
     exit;
 
-  ///  строим запрос
+  ///  СЃС‚СЂРѕРёРј Р·Р°РїСЂРѕСЃ
   URL := Format(GetBasePath + constURLTaskUpdate, [(AEntity as TTask).TId]);
 
-  ///  получаем из сущности JSON
+  ///  РїРѕР»СѓС‡Р°РµРј РёР· СЃСѓС‰РЅРѕСЃС‚Рё JSON
   JSONTask := AEntity.Serialize();
 
 //  JSONRequest := FuncUnit.ExtractJSONProperties(JSONTask, ['name', 'caption','tasks','attr']);
@@ -271,8 +307,8 @@ begin
   try
     ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
-    ////  !!! обрабатываем ответ
-    ///  пока возвращаем всегда true
+    ////  !!! РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕС‚РІРµС‚
+    ///  РїРѕРєР° РІРѕР·РІСЂР°С‰Р°РµРј РІСЃРµРіРґР° true
     Result := true;
 
   finally
@@ -283,8 +319,8 @@ begin
 
 end;
 
-///  удалить сущность на сервере по идентификатору
-///  в случае ошибки возвращается false
+///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
 function TTasksBroker.Remove(AId: String): Boolean;
 var
   URL: String;

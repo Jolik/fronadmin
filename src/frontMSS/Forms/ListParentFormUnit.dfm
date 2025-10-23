@@ -1,5 +1,7 @@
 inherited ListParentForm: TListParentForm
   Caption = 'ListParentForm'
+  ExplicitWidth = 1176
+  ExplicitHeight = 606
   TextHeight = 15
   object tbEntity: TUniToolBar
     Left = 0
@@ -10,6 +12,7 @@ inherited ListParentForm: TListParentForm
     TabOrder = 0
     ParentColor = False
     Color = clBtnFace
+    ExplicitWidth = 1158
     object btnNew: TUniToolButton
       AlignWithMargins = True
       Left = 3
@@ -94,6 +97,8 @@ inherited ListParentForm: TListParentForm
     Align = alRight
     ParentColor = False
     Color = clBtnFace
+    ExplicitLeft = 774
+    ExplicitHeight = 530
   end
   object pcEntityInfo: TUniPageControl
     Left = 782
@@ -105,14 +110,13 @@ inherited ListParentForm: TListParentForm
     TabBarVisible = False
     Align = alRight
     TabOrder = 3
+    ExplicitLeft = 780
+    ExplicitHeight = 530
     object tsTaskInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 378
-      ExplicitHeight = 538
+      ExplicitHeight = 502
       object cpTaskInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -126,7 +130,7 @@ inherited ListParentForm: TListParentForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitLeft = 2
+        ExplicitHeight = 502
         object cpTaskInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -162,8 +166,6 @@ inherited ListParentForm: TListParentForm
             ParentFont = False
             Font.Style = [fsBold]
             TabOrder = 1
-            ExplicitTop = 5
-            ExplicitHeight = 13
           end
           object lTaskInfoIDValue: TUniLabel
             AlignWithMargins = True
@@ -181,10 +183,6 @@ inherited ListParentForm: TListParentForm
             Align = alClient
             ParentFont = False
             TabOrder = 2
-            ExplicitLeft = 109
-            ExplicitTop = 3
-            ExplicitWidth = 258
-            ExplicitHeight = 15
           end
           object pSeparator1: TUniPanel
             AlignWithMargins = True
@@ -201,7 +199,6 @@ inherited ListParentForm: TListParentForm
             TabOrder = 3
             Caption = ''
             Color = clHighlight
-            ExplicitTop = 33
           end
         end
         object cpTaskInfoName: TUniContainerPanel
@@ -239,9 +236,6 @@ inherited ListParentForm: TListParentForm
             ParentFont = False
             Font.Style = [fsBold]
             TabOrder = 1
-            ExplicitLeft = 3
-            ExplicitTop = 3
-            ExplicitHeight = 15
           end
           object lTaskInfoNameValue: TUniLabel
             AlignWithMargins = True
@@ -259,10 +253,6 @@ inherited ListParentForm: TListParentForm
             Align = alClient
             ParentFont = False
             TabOrder = 2
-            ExplicitLeft = 109
-            ExplicitTop = 3
-            ExplicitWidth = 258
-            ExplicitHeight = 15
           end
           object pSeparator2: TUniPanel
             AlignWithMargins = True
@@ -279,7 +269,6 @@ inherited ListParentForm: TListParentForm
             TabOrder = 3
             Caption = ''
             Color = clHighlight
-            ExplicitTop = 33
           end
         end
         object lTaskCaption: TUniLabel
@@ -301,8 +290,6 @@ inherited ListParentForm: TListParentForm
           Font.Height = -13
           Font.Style = [fsBold]
           TabOrder = 3
-          ExplicitLeft = 3
-          ExplicitTop = -4
         end
         object cpTaskInfoCreated: TUniContainerPanel
           AlignWithMargins = True
@@ -321,8 +308,6 @@ inherited ListParentForm: TListParentForm
           TabOrder = 4
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          ExplicitLeft = -2
-          ExplicitTop = 227
           object lTaskInfoCreated: TUniLabel
             AlignWithMargins = True
             Left = 5
@@ -393,8 +378,6 @@ inherited ListParentForm: TListParentForm
           TabOrder = 5
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          ExplicitLeft = 6
-          ExplicitTop = 245
           object lTaskInfoUpdated: TUniLabel
             AlignWithMargins = True
             Left = 5

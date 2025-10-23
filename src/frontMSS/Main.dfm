@@ -10,6 +10,8 @@ object MainForm: TMainForm
   MonitoredKeys.Keys = <>
   Movable = False
   PageMode = True
+  OnCreate = UniFormCreate
+  OnDestroy = UniFormDestroy
   TextHeight = 15
   object btnAliases: TUniButton
     Left = 40
@@ -53,7 +55,7 @@ object MainForm: TMainForm
   end
   object btnSummTask: TUniButton
     Left = 40
-    Top = 392
+    Top = 383
     Width = 75
     Height = 25
     Hint = ''
@@ -83,7 +85,7 @@ object MainForm: TMainForm
   end
   object btnDSProcessorTasks: TUniButton
     Left = 40
-    Top = 448
+    Top = 464
     Width = 75
     Height = 25
     Hint = ''
@@ -93,12 +95,60 @@ object MainForm: TMainForm
   end
   object btnRules: TUniButton
     Left = 40
-    Top = 488
+    Top = 504
     Width = 75
     Height = 25
     Hint = ''
     Caption = #1055#1088#1072#1074#1080#1083#1072
     TabOrder = 8
     OnClick = btnRulesClick
+  end
+  object UniButton1: TUniButton
+    Left = 40
+    Top = 423
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = 'Monitoring '#1047#1072#1076#1072#1095#1080
+    TabOrder = 9
+    OnClick = UniButton1Click
+  end
+  object cbCurDept: TUniComboBox
+    Left = 304
+    Top = 44
+    Width = 145
+    Hint = ''
+    Style = csDropDownList
+    Text = ''
+    TabOrder = 10
+    IconItems = <>
+  end
+  object UniLabel1: TUniLabel
+    Left = 227
+    Top = 47
+    Width = 71
+    Height = 13
+    Hint = ''
+    Caption = #1044#1077#1087#1072#1088#1090#1072#1084#1077#1085#1090
+    TabOrder = 11
+  end
+  object cbCurComp: TUniComboBox
+    Left = 304
+    Top = 19
+    Width = 145
+    Hint = ''
+    Text = ''
+    TabOrder = 12
+    IconItems = <>
+    OnChange = cbCurCompChange
+  end
+  object UniLabel2: TUniLabel
+    Left = 227
+    Top = 25
+    Width = 54
+    Height = 13
+    Hint = ''
+    Caption = #1050#1086#1084#1087#1072#1085#1080#1103
+    TabOrder = 13
   end
 end

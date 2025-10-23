@@ -60,7 +60,7 @@ type
     ///  в случае ошибки возвращается nil
     function List(
       out APageCount: Integer;
-      const APage: Integer = 0;
+      const APage: Integer = 1;
       const APageSize: Integer = 50;
       const ASearchStr: String = '';
       const ASearchBy: String = '';

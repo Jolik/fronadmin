@@ -12,6 +12,7 @@ type
   ///    API Task Sources
   TTaskSourcesBroker = class(TEntityBroker)
   protected
+    FServicePath: string;
     ///      API
     function GetServicePath: string; virtual;
     ///      API
@@ -24,6 +25,8 @@ type
     class function ListClassType: TEntityListClass; override;
 
   public
+    constructor Create(servicePath: string='');
+
     ///
     ///      nil
     function List(
@@ -77,7 +80,7 @@ end;
 
 function TTaskSourcesBroker.GetBasePath: string;
 begin
-  Result := GetServicePath + constURLTaskSourceBaseSuffix;
+  Result := FServicePath + constURLTaskSourceBaseSuffix;
 end;
 
 class function TTaskSourcesBroker.ClassType: TEntityClass;
@@ -131,6 +134,15 @@ begin
       FreeAndNil(Result);
     end;
   end;
+end;
+
+constructor TTaskSourcesBroker.Create(servicePath: string);
+begin
+  inherited Create;
+  if servicePath='' then
+    servicePath:=  GetServicePath();
+  FServicePath:= servicePath;
+
 end;
 
 function TTaskSourcesBroker.CreateNew: TEntity;

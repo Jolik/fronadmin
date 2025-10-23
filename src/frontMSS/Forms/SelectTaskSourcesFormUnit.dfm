@@ -71,13 +71,13 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     TabBarVisible = False
     Align = alRight
     TabOrder = 5
-    ExplicitLeft = 1012
-    ExplicitHeight = 597
+    ExplicitLeft = 1018
+    ExplicitHeight = 614
     object tsSourceInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitHeight = 569
+      ExplicitHeight = 586
       object cpSourceInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -91,7 +91,7 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 569
+        ExplicitHeight = 586
         object cpSourceInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10

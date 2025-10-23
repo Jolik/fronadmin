@@ -22,37 +22,39 @@ type
     lName: TUniLabel;
     teName: TUniEdit;
     pnClient: TUniContainerPanel;
+
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure UniFormShow(Sender: TObject);
 
   private
 
   protected
     /// класс который редактируется
     FEntity: TEntity;
-
+    FIsEdit: boolean;
     ///  функция применяет
     function Apply : boolean; virtual;
     /// функция проверяет все параметртры и если ок, то выдает true
     function DoCheck: Boolean; virtual;
-
     /// класс который редактируется
     procedure SetEntity(AEntity : TEntity); virtual;
 
   public
     ///  класс который редактирует форма
+    property IsEdit: boolean read FIsEdit write FIsEdit;
     property Entity: TEntity read FEntity write SetEntity;
 
   end;
 
-function ParentEditForm: TParentEditForm;
+function ParentEditForm(editMode: boolean): TParentEditForm;
 
 implementation
 
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication;
+  MainModule, uniGUIApplication, StrUtils;
 
 resourcestring
   rsCaptionAdd = 'Создать...';
@@ -94,6 +96,11 @@ begin
   teCaption.Text := AEntity.Caption;
 end;
 
+procedure TParentEditForm.UniFormShow(Sender: TObject);
+begin
+  Caption:= ifThen(FIsEdit,rsCaptionEdit, rsCaptionAdd)
+end;
+
 function TParentEditForm.Apply : boolean;
 begin
   FEntity.Name := teName.Text;
@@ -111,9 +118,11 @@ begin
     Result := True;
 end;
 
-function ParentEditForm: TParentEditForm;
+
+function ParentEditForm(editMode: boolean): TParentEditForm;
 begin
   Result := TParentEditForm(UniMainModule.GetFormInstance(TParentEditForm));
+  Result.FIsEdit:= editMode;
 end;
 
 end.

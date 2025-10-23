@@ -81,7 +81,7 @@ var
   //LId : string;
 
 begin
-  PrepareEditForm;
+  PrepareEditForm(true);
 
   ///  получаем информацию о выбранном элементе в гриде
   ///  !!!  LId :=

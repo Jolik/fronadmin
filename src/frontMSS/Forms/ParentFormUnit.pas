@@ -42,7 +42,7 @@ type
     ///  форма дл€ редактировани€ сущности - потомок должен создать и вернуть
     ///  ссылку на нужную форму в наследуемой функции CreateEditForm
     property EditForm: TParentEditForm read FEditForm;
-    procedure PrepareEditForm;
+    procedure PrepareEditForm(isEditMode:boolean=false);
   end;
 
 function ParentForm: TParentForm;
@@ -135,9 +135,10 @@ begin
 // надо удал€ть или не нужнќ? FreeAndNil(EditForm);
 end;
 
-procedure TParentForm.PrepareEditForm;
+procedure TParentForm.PrepareEditForm(isEditMode:boolean=false);
 begin
   FEditForm := CreateEditForm();
+  FEditForm.IsEdit:= isEditMode;
 end;
 
 function ParentForm: TParentForm;

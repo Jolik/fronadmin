@@ -1,4 +1,4 @@
-inherited SummaryTaskEditForm: TSummaryTaskEditForm
+inherited MonitoringTaskEditForm: TMonitoringTaskEditForm
   TextHeight = 15
   inherited pnClient: TUniContainerPanel
     ScrollHeight = 414

@@ -11,11 +11,11 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit,
-  ParentEditFormUnit,
+  ParentEditFormUnit, TasksParentFormUnit,
   StripTasksBrokerUnit, uniPanel, uniLabel;
 
 type
-  TStripTasksForm = class(TListParentForm)
+  TStripTasksForm = class(TTaskParentForm)
     cpTaskInfoModule: TUniContainerPanel;
     lTaskInfoModule: TUniLabel;
     lTaskInfoModuleValue: TUniLabel;
@@ -55,7 +55,7 @@ end;
 function TStripTasksForm.CreateBroker: TEntityBroker;
 begin
   ///  создаем "наш" брокер для Задач
-  Result := TStripTasksBroker.Create();
+  Result := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 end;
 
 
