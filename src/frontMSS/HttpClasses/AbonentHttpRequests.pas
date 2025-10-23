@@ -139,6 +139,26 @@ type
     property Body: TAbonentReqNewBody read GetBody;
   end;
 
+  /// <summary>
+  ///   HTTP request descriptor for /abonents/:abid/update endpoint.
+  /// </summary>
+  TAbonentReqUpdate = class(THttpRequest)
+  private
+    FAbonentId: string;
+    function GetBody: TAbonentReqNewBody;
+    procedure SetAbonentId(const Value: string);
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+    /// <summary>
+    ///   Identifier of the abonent being updated. Assigning the value appends
+    ///   the required "/:abid/update" suffix to the request URL via AddPath.
+    /// </summary>
+    property AbonentId: string read FAbonentId write SetAbonentId;
+    property Body: TAbonentReqNewBody read GetBody;
+  end;
+
 implementation
 
 uses
@@ -643,6 +663,46 @@ begin
     Result := TAbonentReqNewBody(ReqBody)
   else
     Result := nil;
+end;
+
+{ TAbonentReqUpdate }
+
+class function TAbonentReqUpdate.BodyClassType: TFieldSetClass;
+begin
+  Result := TAbonentReqNewBody;
+end;
+
+constructor TAbonentReqUpdate.Create;
+begin
+  inherited Create;
+  Method := mPOST;
+  URL := '/router/api/v2/abonents';
+  Headers.AddOrSetValue('Content-Type', 'application/json');
+  Headers.AddOrSetValue('Accept', 'application/json');
+end;
+
+function TAbonentReqUpdate.GetBody: TAbonentReqNewBody;
+begin
+  if ReqBody is TAbonentReqNewBody then
+    Result := TAbonentReqNewBody(ReqBody)
+  else
+    Result := nil;
+end;
+
+procedure TAbonentReqUpdate.SetAbonentId(const Value: string);
+var
+  Normalized: string;
+begin
+  Normalized := Value.Trim;
+  if FAbonentId = Normalized then
+    Exit;
+
+  FAbonentId := Normalized;
+
+  if FAbonentId.IsEmpty then
+    AddPath := ''
+  else
+    AddPath := Format('%s/update', [FAbonentId]);
 end;
 
 end.
