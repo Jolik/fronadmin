@@ -18,10 +18,6 @@ object ProfilesFrame: TProfilesFrame
     BorderStyle = ubsNone
     ShowCaption = False
     Caption = 'profilePanel'
-    ExplicitLeft = 24
-    ExplicitTop = 24
-    ExplicitWidth = 350
-    ExplicitHeight = 306
     ScrollHeight = 238
     ScrollWidth = 286
   end
@@ -38,11 +34,9 @@ object ProfilesFrame: TProfilesFrame
     BorderStyle = ubsSingle
     ShowCaption = False
     Caption = 'UniPanel3'
-    ExplicitTop = 8
-    ExplicitWidth = 350
     object btnRemoveProfile: TUniBitBtn
       AlignWithMargins = True
-      Left = 261
+      Left = 264
       Top = 3
       Width = 25
       Height = 24
@@ -50,13 +44,14 @@ object ProfilesFrame: TProfilesFrame
       ShowHint = True
       ParentShowHint = False
       Caption = '-'
-      Align = alLeft
+      Align = alRight
       TabOrder = 1
       OnClick = btnRemoveProfileClick
+      ExplicitLeft = 261
     end
     object btnAddProfile: TUniBitBtn
       AlignWithMargins = True
-      Left = 230
+      Left = 233
       Top = 3
       Width = 25
       Height = 24
@@ -64,25 +59,27 @@ object ProfilesFrame: TProfilesFrame
       ShowHint = True
       ParentShowHint = False
       Caption = '+'
-      Align = alLeft
+      Align = alRight
       TabOrder = 2
       OnClick = btnAddProfileClick
+      ExplicitLeft = 230
     end
     object profilesComboBox: TUniComboBox
       AlignWithMargins = True
       Left = 10
       Top = 3
-      Width = 207
+      Width = 210
       Height = 24
       Hint = ''
       Margins.Left = 10
       Margins.Right = 10
       Style = csOwnerDrawFixed
       Text = ''
-      Align = alLeft
+      Align = alClient
       TabOrder = 3
       IconItems = <>
       OnSelect = profilesComboBoxSelect
+      ExplicitWidth = 207
     end
   end
   object UniPanel1: TUniPanel
@@ -98,8 +95,6 @@ object ProfilesFrame: TProfilesFrame
     BorderStyle = ubsNone
     ShowCaption = False
     Caption = 'UniPanel1'
-    ExplicitTop = 372
-    ExplicitWidth = 325
     object BitBtnSaveProfile: TUniBitBtn
       AlignWithMargins = True
       Left = 203
@@ -107,10 +102,10 @@ object ProfilesFrame: TProfilesFrame
       Width = 86
       Height = 24
       Hint = ''
-      Caption = ''
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       Align = alRight
       TabOrder = 1
-      ExplicitLeft = 261
+      OnClick = BitBtnSaveProfileClick
     end
   end
 end

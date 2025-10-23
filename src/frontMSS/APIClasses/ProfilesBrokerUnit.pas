@@ -204,6 +204,8 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONProfile.ToJSON, TEncoding.UTF8);
   try
+Log(JSONRequestStream.DataString);
+//exit;
     ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
     Result := True;
   finally

@@ -86,12 +86,12 @@ constructor TProfileFrame.Create(AOwner: TComponent);
 begin
   inherited;
   FFTACheckboxes := TKeyValue<TUniCheckbox>.Create;
-  FFTACheckboxes.Add('fta_XML', CheckBox_fta_FILE);
-  FFTACheckboxes.Add('fta_JSON', CheckBox_fta_FILE);
-  FFTACheckboxes.Add('fta_SIMPLE', CheckBox_fta_FILE);
-  FFTACheckboxes.Add('fta_GAO', CheckBox_fta_FILE);
-  FFTACheckboxes.Add('fta_TLG', CheckBox_fta_FILE);
-  FFTACheckboxes.Add('fta_TLF', CheckBox_fta_FILE);
+  FFTACheckboxes.Add('fta_XML', CheckBox_fta_XML);
+  FFTACheckboxes.Add('fta_JSON', CheckBox_fta_JSON);
+  FFTACheckboxes.Add('fta_SIMPLE', CheckBox_fta_SIMPLE);
+  FFTACheckboxes.Add('fta_GAO', CheckBox_fta_GAO);
+  FFTACheckboxes.Add('fta_TLG', CheckBox_fta_TLG);
+  FFTACheckboxes.Add('fta_TLF', CheckBox_fta_TLF);
   FFTACheckboxes.Add('fta_FILE', CheckBox_fta_FILE);
 end;
 
@@ -135,7 +135,9 @@ begin
   for var cb in FFTACheckboxes.Values do
     if cb.Checked then
       FProfile.ProfileBody.Play.FTA.Add( FFTACheckboxes.KeyByValue(cb) );
-
+  FProfile.Description := DescriptionFrame.Edit.Text;
+  if not  dst.Assign(FProfile) then
+    exit;
 end;
 
 
