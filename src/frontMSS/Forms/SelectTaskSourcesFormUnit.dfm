@@ -52,6 +52,9 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 256
       ExplicitHeight = 544
       object cpSourceInfo: TUniContainerPanel
         Left = 0

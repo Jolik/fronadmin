@@ -93,11 +93,11 @@ begin
   RulesForm.Show();
 end;
 
-procedure TMainForm.btnHandlersClick(Sender: TObject);
-begin
-  HandlersForm.Show();
-end;
-
+//procedure TMainForm.btnHandlersClick(Sender: TObject);
+//begin
+//  HandlersForm.Show();
+//end;
+//
 procedure TMainForm.btnAbonentsClick(Sender: TObject);
 begin
   AbonentsForm.Show();
