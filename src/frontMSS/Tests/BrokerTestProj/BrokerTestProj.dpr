@@ -21,15 +21,56 @@ var
   ListResponse: TAbonentListResponse;
   InfoRequest: THttpRequest;
   InfoResponse: TAbonentInfoResponse;
+  NewRequest: TAbonentReqNew;
+  NewResponse: TAbonentNewResponse;
   StatusCode: Integer;
   Abonent: TAbonent;
   ChannelsText: string;
+  NewAbonentId: string;
 begin
   ListRequest := TAbonentReqList.Create;
   ListResponse := TAbonentListResponse.Create;
   InfoRequest := THttpRequest.Create;
   InfoResponse := TAbonentInfoResponse.Create;
+  NewRequest := TAbonentReqNew.Create;
+  NewResponse := TAbonentNewResponse.Create;
   try
+    // Compose and send a sample request that demonstrates abonent creation through the broker.
+    NewRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+
+    if Assigned(NewRequest.Body) then
+    begin
+      NewAbonentId := TGUID.NewGuid.ToString.Replace('{', '').Replace('}', '');
+
+      with NewRequest.Body do
+      begin
+        Abid := NewAbonentId;
+        Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
+        Caption := 'Automatically created abonent for broker demo';
+
+        Channels.Clear;
+        Channels.Add('lch1');
+        Channels.Add('mitra');
+
+        Attr.Clear;
+        Attr.AddPair('name', 'TTAAii');
+        Attr.AddPair('email', Format('first+%s@sample.com', [Copy(NewAbonentId, 1, 4)]));
+
+        UpdateRawContent;
+      end;
+    end;
+
+    StatusCode := HttpClient.Request(NewRequest, NewResponse);
+
+    Writeln('-----------------------------------------------------------------');
+    Writeln('Create request URL: ' + NewRequest.GetURLWithParams);
+    Writeln(Format('Create request body: %s', [NewRequest.ReqBodyContent]));
+    Writeln(Format('Create response (HTTP %d):', [StatusCode]));
+    if Assigned(NewResponse.AbonentNewRes) and not NewResponse.AbonentNewRes.Abid.IsEmpty then
+      Writeln('Created abonent ID: ' + NewResponse.AbonentNewRes.Abid)
+    else
+      Writeln('Abonent identifier was not returned in the response.');
+
     // Authorize list request with a test ticket used across broker integration tests.
     ListRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
 
@@ -91,6 +132,8 @@ begin
     Writeln('-----------------------------------------------------------------');
     Readln;
   finally
+    NewResponse.Free;
+    NewRequest.Free;
     InfoResponse.Free;
     InfoRequest.Free;
     ListResponse.Free;
