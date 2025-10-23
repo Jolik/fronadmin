@@ -28,6 +28,7 @@ uses
 function UniServerModule: TUniServerModule;
 begin
   Result := TUniServerModule(UniGUIServerInstance);
+  Result.SetTcpPort(8080);
 end;
 
 procedure TUniServerModule.FirstInit;

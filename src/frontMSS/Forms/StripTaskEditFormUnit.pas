@@ -1,4 +1,4 @@
-unit StripTaskEditFormUnit;
+п»їunit StripTaskEditFormUnit;
 
 interface
 
@@ -7,24 +7,21 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel,
-  LoggingUnit,
-  EntityUnit, StripTaskUnit, uniMultiItem, uniComboBox, Math;
+  LoggingUnit,  TaskEditParentFormUnit,
+  EntityUnit, StripTaskUnit, uniMultiItem, uniComboBox, Math, uniListBox,
+  uniCheckBox, uniMemo;
 
 type
-  TStripTaskEditForm = class(TParentEditForm)
-    lModule: TUniLabel;
-    cbModule: TUniComboBox;
+  TStripTaskEditForm = class(TTaskEditParentForm)
   private
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetStripTask: TStripTask;
 
   protected
-    /// класс который редактируется
     procedure SetEntity(AEntity : TEntity); override;
 
   public
-    ///  ссылка на FEntity с приведением типа к "нашему"
     property StripTask : TStripTask read GetStripTask;
 
   end;
@@ -51,7 +48,7 @@ begin
 
   if not Result then Exit;
 
-  StripTask.Module := cbModule.Text;
+//  StripTask.Module := cbModule.Text;
 
   Result := true;
 end;
@@ -61,24 +58,22 @@ begin
   Result := inherited DoCheck();
 end;
 
- ///  ссылка на FEntity с приведением типа к "нашему"
 function TStripTaskEditForm.GetStripTask: TStripTask;
 begin
   Result := nil;
-  ///  если это объект не нашего типа - возвращаем nil!
   if not (FEntity is TStripTask) then
   begin
     Log('TStripTaskEditForm.GetStripTas error in FEntity type', lrtError);
     exit;
   end;
 
-  ///  если тип совпадает то возвращаем ссылку на FEntity как на TStripTask
+  ///  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ FEntity пїЅпїЅпїЅ пїЅпїЅ TStripTask
   Result := Entity as TStripTask;
 end;
 
 procedure TStripTaskEditForm.SetEntity(AEntity: TEntity);
 begin
-  ///  если это объект не нашего типа - не делаем ничего!
+  ///  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ - пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ!
   if not (AEntity is TStripTask) then
   begin
     Log('TStripTaskEditForm.SetEntity error in AEntity type', lrtError);
@@ -88,8 +83,8 @@ begin
   try
     inherited SetEntity(AEntity);
 
-    ///  выводим название модуля
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
+    ///  пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
+//    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
 
   except
     Log('TStripTaskEditForm.SetEntity error', lrtError);

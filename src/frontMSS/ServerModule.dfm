@@ -13,7 +13,7 @@ object UniServerModule: TUniServerModule
   SSL.SSLOptions.VerifyDepth = 0
   ConnectionFailureRecovery.ErrorMessage = 'Connection Error'
   ConnectionFailureRecovery.RetryMessage = 'Retrying...'
-  Height = 263
-  Width = 376
-  PixelsPerInch = 168
+  Height = 188
+  Width = 269
+  PixelsPerInch = 120
 end

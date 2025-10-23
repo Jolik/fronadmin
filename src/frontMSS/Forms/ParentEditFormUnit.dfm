@@ -4,6 +4,7 @@ object ParentEditForm: TParentEditForm
   ClientHeight = 518
   ClientWidth = 819
   Caption = 'ParentEditForm'
+  OnShow = UniFormShow
   OldCreateOrder = False
   MonitoredKeys.Keys = <>
   TextHeight = 15
@@ -71,9 +72,9 @@ object ParentEditForm: TParentEditForm
     end
     object teCaption: TUniEdit
       AlignWithMargins = True
-      Left = 78
+      Left = 80
       Top = 3
-      Width = 738
+      Width = 736
       Height = 21
       Hint = ''
       Text = ''
@@ -109,9 +110,9 @@ object ParentEditForm: TParentEditForm
     end
     object teName: TUniEdit
       AlignWithMargins = True
-      Left = 78
+      Left = 80
       Top = 3
-      Width = 738
+      Width = 736
       Height = 21
       Hint = ''
       Text = ''

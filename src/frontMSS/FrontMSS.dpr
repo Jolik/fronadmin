@@ -1,5 +1,9 @@
 program FrontMSS;
 
+
+
+
+
 uses
   Forms,
   ServerModule in 'ServerModule.pas' {UniServerModule: TUniGUIServerModule},
@@ -99,7 +103,19 @@ uses
   SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
   TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm},
   TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm},
-  FilterUnit in 'EntityClasses\Common\FilterUnit.pas';
+  FilterUnit in 'EntityClasses\Common\FilterUnit.pas',
+  common in 'Common\common.pas',
+  CompanyUnit in 'EntityClasses\acl\CompanyUnit.pas',
+  DepartmentUnit in 'EntityClasses\acl\DepartmentUnit.pas',
+  UserUnit in 'EntityClasses\acl\UserUnit.pas',
+  CompanyBrokerUnit in 'APIClasses\CompanyBrokerUnit.pas',
+  DepartmentBrokerUnit in 'APIClasses\DepartmentBrokerUnit.pas',
+  DSProcessorTaskEditFormUnit in 'Forms\DSProcessorTaskEditFormUnit.pas',
+  DSProcessorTasksFormUnit in 'Forms\DSProcessorTasksFormUnit.pas',
+  DSProcessorTasksBrokerUnit in 'APIClasses\DSProcessorTasksBrokerUnit.pas',
+  DSProcessorTaskSourceBrokerUnit in 'APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
+  MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas',
+  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas';
 
 {$R *.res}
 

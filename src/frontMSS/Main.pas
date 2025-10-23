@@ -7,7 +7,8 @@ uses
   Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniGUIBaseClasses, uniLabel,
-  uniButton, uniSplitter, uniPageControl, uniTreeView, uniTreeMenu;
+  uniButton, uniSplitter, uniPageControl, uniTreeView, uniTreeMenu, CompanyBrokerUnit, DepartmentBrokerUnit,
+  uniMultiItem, uniComboBox, EntityUnit;
 
 type
   TMainForm = class(TUniForm)
@@ -20,7 +21,11 @@ type
     btnAbonents: TUniButton;
     btnDSProcessorTasks: TUniButton;
     btnRules: TUniButton;
-    btnHandlers: TUniButton;
+    UniButton1: TUniButton;
+    cbCurDept: TUniComboBox;
+    UniLabel1: TUniLabel;
+    cbCurComp: TUniComboBox;
+    UniLabel2: TUniLabel;
     procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
@@ -30,8 +35,18 @@ type
     procedure btnAliasesClick(Sender: TObject);
     procedure btnDSProcessorTasksClick(Sender: TObject);
     procedure btnRulesClick(Sender: TObject);
-    procedure btnHandlersClick(Sender: TObject);
+    procedure UniButton1Click(Sender: TObject);
+    procedure UniFormCreate(Sender: TObject);
+    procedure UniFormDestroy(Sender: TObject);
+    procedure cbCurCompChange(Sender: TObject);
   private
+    FDeps: TEntityList;
+    FComps: TEntityList;
+    FCompanyBroker : TCompanyBroker;
+    FDepartmentBroker: TDepartmentBroker;
+    function GetCompid:string;
+    function GetDeptid:string;
+    procedure UpdateDeptList;
   public
     { Public declarations }
   end;
@@ -48,13 +63,17 @@ uses
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
   AliasesFormUnit, AbonentsFormUnit,
   RouterSourcesFormUnit,
+  TasksParentFormUnit,
+  CompanyUnit,
+  DepartmentUnit,
   DSProcessorTasksFormUnit,
-  RulesFormUnit,
-  HandlersFormUnit;
+  MonitoringTasksFormUnit,
+  RulesFormUnit;
 
 function MainForm: TMainForm;
 begin
   Result := TMainForm(UniMainModule.GetFormInstance(TMainForm));
+
 end;
 
 {  TMainForm  }
@@ -66,7 +85,7 @@ end;
 
 procedure TMainForm.btnDSProcessorTasksClick(Sender: TObject);
 begin
-  DSProcessorTasksForm.Show();
+ DSProcessorTasksForm.Show();
 end;
 
 procedure TMainForm.btnRulesClick(Sender: TObject);
@@ -107,6 +126,74 @@ end;
 procedure TMainForm.btnSummTaskClick(Sender: TObject);
 begin
   SummaryTasksForm.Show();
+end;
+
+procedure TMainForm.cbCurCompChange(Sender: TObject);
+begin
+  UpdateDeptList;
+end;
+
+function TMainForm.GetCompid: string;
+begin
+  if cbCurComp.ItemIndex <> -1 then
+    Result:= (cbCurComp.Items.Objects[cbCurComp.ItemIndex] as TCompany).Id;
+end;
+
+function TMainForm.GetDeptid: string;
+begin
+  if cbCurDept.ItemIndex <> -1 then
+    Result:= (cbCurDept.Items.Objects[cbCurDept.ItemIndex] as TDepartment).Id;
+end;
+
+procedure TMainForm.UniButton1Click(Sender: TObject);
+begin
+ MonitoringTasksForm.Show();
+end;
+
+procedure TMainForm.UniFormCreate(Sender: TObject);
+var
+  ind, page: integer;
+begin
+  FCompanyBroker := TCompanyBroker.Create();
+  FDepartmentBroker:= TDepartmentBroker.Create();
+  FComps:= FCompanyBroker.List(page);
+  FDeps:= FDepartmentBroker.List(page);
+  for var comp in FComps do
+     cbCurComp.Items.AddObject((comp as TCompany).Index,comp);
+  if cbCurComp.Items.Count = 0 then
+    exit;
+  ind:= cbCurComp.Items.IndexOf('SYSTEM');
+  if ind = -1  then
+    ind := 0;
+  cbCurComp.ItemIndex:= ind;
+  UpdateDeptList;
+  UniMainModule.CompID:= GetCompid;
+
+
+end;
+
+procedure TMainForm.UniFormDestroy(Sender: TObject);
+begin
+  FreeAndNil(FCompanyBroker);
+  FreeAndNil(FDepartmentBroker);
+end;
+
+procedure TMainForm.UpdateDeptList;
+var
+  compid: string;
+  ind: integer;
+begin
+  cbCurDept.Items.Clear;
+  compid:=GetCompid;
+  if compid='' then exit;
+
+  for var dep in FDeps do
+  if compid=dep.CompId then
+    cbCurDept.Items.AddObject(dep.Name,dep);
+  ind:= cbCurDept.Items.IndexOf('SYSTEM');
+  if ind <> -1  then
+    cbCurDept.ItemIndex:= ind;
+  UniMainModule.DeptID:= GetDeptid;
 end;
 
 initialization
