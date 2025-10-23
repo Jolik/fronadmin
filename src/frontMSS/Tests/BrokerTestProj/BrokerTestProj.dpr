@@ -23,10 +23,14 @@ var
   InfoResponse: TAbonentInfoResponse;
   NewRequest: TAbonentReqNew;
   NewResponse: TAbonentNewResponse;
+  UpdateRequest: TAbonentReqUpdate;
+  UpdateResponse: TJSONResponse;
   StatusCode: Integer;
   Abonent: TAbonent;
   ChannelsText: string;
   NewAbonentId: string;
+  CreatedAbonentId: string;
+  CreatedAbonentName: string;
 begin
   ListRequest := TAbonentReqList.Create;
   ListResponse := TAbonentListResponse.Create;
@@ -34,9 +38,13 @@ begin
   InfoResponse := TAbonentInfoResponse.Create;
   NewRequest := TAbonentReqNew.Create;
   NewResponse := TAbonentNewResponse.Create;
+  UpdateRequest := TAbonentReqUpdate.Create;
+  UpdateResponse := TJSONResponse.Create;
   try
     // Compose and send a sample request that demonstrates abonent creation through the broker.
     NewRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+
+    CreatedAbonentName := '';
 
     if Assigned(NewRequest.Body) then
     begin
@@ -47,6 +55,7 @@ begin
 //!!!        Abid := NewAbonentId;
         Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
         Caption := 'Automatically created abonent for broker demo';
+        CreatedAbonentName := Name;
 
         Channels.Clear;
 //!!!        Channels.Add('lch1');
@@ -66,10 +75,53 @@ begin
     Writeln('Create request URL: ' + NewRequest.GetURLWithParams);
     Writeln(Format('Create request body: %s', [NewRequest.ReqBodyContent]));
     Writeln(Format('Create response (HTTP %d):', [StatusCode]));
+    CreatedAbonentId := '';
     if Assigned(NewResponse.AbonentNewRes) and not NewResponse.AbonentNewRes.Abid.IsEmpty then
-      Writeln('Created abonent ID: ' + NewResponse.AbonentNewRes.Abid)
+    begin
+      Writeln('Created abonent ID: ' + NewResponse.AbonentNewRes.Abid);
+      CreatedAbonentId := NewResponse.AbonentNewRes.Abid;
+    end
     else
       Writeln('Abonent identifier was not returned in the response.');
+
+    // Prepare request for abonent update only if we have an identifier to target.
+    if not CreatedAbonentId.Trim.IsEmpty then
+    begin
+      UpdateRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+      UpdateRequest.AbonentId := CreatedAbonentId;
+
+      if Assigned(UpdateRequest.Body) then
+      begin
+        UpdateRequest.Body.Name := CreatedAbonentName;
+        UpdateRequest.Body.Caption := 'Automatically updated abonent caption';
+
+        UpdateRequest.Body.Channels.Clear;
+        UpdateRequest.Body.Channels.Add('lch1');
+        UpdateRequest.Body.Channels.Add('mitra');
+
+        UpdateRequest.Body.Attr.Clear;
+        UpdateRequest.Body.Attr.AddPair('name', 'TTAAii');
+        UpdateRequest.Body.Attr.AddPair('email', Format('updated+%s@sample.com', [Copy(CreatedAbonentId, 1, 4)]));
+
+        UpdateRequest.Body.UpdateRawContent;
+      end;
+
+      StatusCode := HttpClient.Request(UpdateRequest, UpdateResponse);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Update request URL: ' + UpdateRequest.GetURLWithParams);
+      Writeln(Format('Update request body: %s', [UpdateRequest.ReqBodyContent]));
+      Writeln(Format('Update response (HTTP %d):', [StatusCode]));
+      if UpdateResponse.Response.Trim.IsEmpty then
+        Writeln('(empty response body)')
+      else
+        Writeln(UpdateResponse.Response);
+    end
+    else
+    begin
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Skipping update request because abonent identifier is unavailable.');
+    end;
 
     // Authorize list request with a test ticket used across broker integration tests.
     ListRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
@@ -134,6 +186,8 @@ begin
   finally
     NewResponse.Free;
     NewRequest.Free;
+    UpdateResponse.Free;
+    UpdateRequest.Free;
     InfoResponse.Free;
     InfoRequest.Free;
     ListResponse.Free;
