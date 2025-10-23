@@ -44,13 +44,13 @@ begin
 
       with NewRequest.Body do
       begin
-        Abid := NewAbonentId;
+//!!!        Abid := NewAbonentId;
         Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
         Caption := 'Automatically created abonent for broker demo';
 
         Channels.Clear;
-        Channels.Add('lch1');
-        Channels.Add('mitra');
+//!!!        Channels.Add('lch1');
+//!!!        Channels.Add('mitra');
 
         Attr.Clear;
         Attr.AddPair('name', 'TTAAii');
