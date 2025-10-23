@@ -29,7 +29,9 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="..\..\HttpClasses\HttpClientUnit.pas"/>
+        <DCCReference Include="..\..\HttpClasses\AbonentHttpRequests.pas"/>
         <DCCReference Include="..\..\EntityClasses\Common\EntityUnit.pas"/>
+        <DCCReference Include="..\..\EntityClasses\router\AbonentUnit.pas"/>
         <DCCReference Include="..\..\Common\FuncUnit.pas"/>
         <DCCReference Include="..\..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\..\Logging\TextFileLoggerUnit.pas"/>
