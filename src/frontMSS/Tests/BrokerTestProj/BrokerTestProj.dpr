@@ -4,11 +4,14 @@ program BrokerTestProj;
 
 uses
   System.SysUtils,
+  System.Generics.Collections,
   HttpClientUnit in '..\..\HttpClasses\HttpClientUnit.pas',
   EntityUnit in '..\..\EntityClasses\Common\EntityUnit.pas',
   FuncUnit in '..\..\Common\FuncUnit.pas',
   LoggingUnit in '..\..\Logging\LoggingUnit.pas',
-  TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas';
+  TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas',
+  AbonentHttpRequests in '..\..\HttpClasses\AbonentHttpRequests.pas',
+  AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas';
 
 procedure ExecuteRequest;
 var
@@ -40,12 +43,43 @@ begin
   end;
 end;
 
+procedure TestAbonentListRequest;
+var
+  Request: TAbonentReqList;
+  Response: TAbonentListResponse;
+  StatusCode: Integer;
+  Abonent: TAbonent;
+begin
+  Request := TAbonentReqList.Create;
+  Response := TAbonentListResponse.Create;
+  try
+    Request.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+
+    StatusCode := HttpClient.Request(Request, Response);
+
+    Writeln('-----------------------------------------------------------------');
+    Writeln('Request URL: ' + Request.GetURLWithParams);
+    Writeln('Request Body: ' + Request.ReqBodyContent);
+    Writeln('-----------------------------------------------------------------');
+    Writeln(Format('Response (HTTP %d):', [StatusCode]));
+    Writeln(Format('Abonent records: %d', [Response.AbonentList.Count]));
+    for Abonent in Response.AbonentList do
+      Writeln(Format(' - %s (%s)', [Abonent.Name, Abonent.Abid]));
+    Writeln('-----------------------------------------------------------------');
+    Readln;
+  finally
+    Request.Free;
+    Response.Free;
+  end;
+end;
+
 begin
   try
     HttpClient.Addr := '213.167.42.170';
     HttpClient.Port := 8088;
 
-    ExecuteRequest;
+    //ExecuteRequest;
+    TestAbonentListRequest;
   except
     on E: Exception do
       Writeln(E.ClassName + ': ' + E.Message);
