@@ -7,6 +7,7 @@ uses
   System.JSON,
   EntityUnit,
   HttpClientUnit,
+  StringListUnit,
   AbonentUnit;
 
 type
@@ -76,8 +77,14 @@ type
   /// </summary>
   TAbonentReqNewBody = class(THttpReqBody)
   private
-    FAbonent: TAbonent;
-    procedure SetAbonent(const Value: TAbonent);
+    FName: string;
+    FCaption: string;
+    FAbid: string;
+    FChannels: TStringArray;
+    FAttr: TKeyValueStringList;
+    procedure SetName(const Value: string);
+    procedure SetCaption(const Value: string);
+    procedure SetAbid(const Value: string);
   protected
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -85,7 +92,11 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure UpdateRawContent;
-    property Abonent: TAbonent read FAbonent write SetAbonent;
+    property Name: string read FName write SetName;
+    property Caption: string read FCaption write SetCaption;
+    property Abid: string read FAbid write SetAbid;
+    property Channels: TStringArray read FChannels;
+    property Attr: TKeyValueStringList read FAttr;
   end;
 
   /// <summary>
@@ -138,6 +149,10 @@ const
   DefaultPageSize = 50;
 
   AbidKey = 'abid';
+  NameKey = 'name';
+  CaptionKey = 'caption';
+  ChannelsKey = 'channels';
+  AttrKey = 'attr';
 
 { TAbonentNewResult }
 
@@ -409,62 +424,135 @@ end;
 constructor TAbonentReqNewBody.Create;
 begin
   inherited Create;
-  FAbonent := TAbonent.Create;
+  FChannels := TStringArray.Create;
+  FAttr := TKeyValueStringList.Create;
+  FName := '';
+  FCaption := '';
+  FAbid := '';
+  UpdateRawContent;
 end;
 
 destructor TAbonentReqNewBody.Destroy;
 begin
-  FAbonent.Free;
+  FAttr.Free;
+  FChannels.Free;
   inherited;
 end;
 
 procedure TAbonentReqNewBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Value: TJSONValue;
 begin
   inherited Parse(src, APropertyNames);
 
-  if not Assigned(FAbonent) then
-    FAbonent := TAbonent.Create;
+  FName := '';
+  FCaption := '';
+  FAbid := '';
+
+  if not Assigned(FChannels) then
+    FChannels := TStringArray.Create
+  else
+    FChannels.Clear;
+
+  if not Assigned(FAttr) then
+    FAttr := TKeyValueStringList.Create
+  else
+    FAttr.Clear;
 
   if Assigned(src) then
-    FAbonent.Parse(src, APropertyNames);
+  begin
+    Value := src.Values[NameKey];
+    if Value is TJSONString then
+      FName := TJSONString(Value).Value
+    else if Assigned(Value) then
+      FName := Value.ToString;
+
+    Value := src.Values[CaptionKey];
+    if Value is TJSONString then
+      FCaption := TJSONString(Value).Value
+    else if Assigned(Value) then
+      FCaption := Value.ToString;
+
+    Value := src.Values[AbidKey];
+    if Value is TJSONString then
+      FAbid := TJSONString(Value).Value
+    else if Assigned(Value) then
+      FAbid := Value.ToString;
+
+    Value := src.Values[ChannelsKey];
+    if Value is TJSONArray then
+      FChannels.Parse(TJSONArray(Value));
+
+    Value := src.Values[AttrKey];
+    if Value is TJSONObject then
+      FAttr.Parse(TJSONObject(Value));
+  end;
+
+  UpdateRawContent;
 end;
 
 procedure TAbonentReqNewBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  ChannelsArray: TJSONArray;
+  AttrObject: TJSONObject;
 begin
   if not Assigned(dst) then
     Exit;
 
   inherited Serialize(dst, APropertyNames);
 
-  if Assigned(FAbonent) then
-    FAbonent.Serialize(dst, APropertyNames);
+  dst.AddPair(NameKey, FName);
+  dst.AddPair(CaptionKey, FCaption);
+
+  if not FAbid.IsEmpty then
+    dst.AddPair(AbidKey, FAbid);
+
+  ChannelsArray := TJSONArray.Create;
+  try
+    if Assigned(FChannels) then
+      FChannels.Serialize(ChannelsArray);
+    dst.AddPair(ChannelsKey, ChannelsArray);
+    ChannelsArray := nil;
+  finally
+    ChannelsArray.Free;
+  end;
+
+  AttrObject := TJSONObject.Create;
+  try
+    if Assigned(FAttr) then
+      FAttr.Serialize(AttrObject);
+    dst.AddPair(AttrKey, AttrObject);
+    AttrObject := nil;
+  finally
+    AttrObject.Free;
+  end;
 end;
 
-procedure TAbonentReqNewBody.SetAbonent(const Value: TAbonent);
-var
-  Payload: TJSONObject;
+procedure TAbonentReqNewBody.SetName(const Value: string);
 begin
-  if not Assigned(Value) then
+  if FName <> Value then
   begin
-    FreeAndNil(FAbonent);
-    RawContent := '';
-    Exit;
+    FName := Value;
+    UpdateRawContent;
   end;
+end;
 
-  if not Assigned(FAbonent) then
-    FAbonent := TAbonent.Create;
-
-  if not FAbonent.Assign(Value) then
+procedure TAbonentReqNewBody.SetCaption(const Value: string);
+begin
+  if FCaption <> Value then
   begin
-    Payload := Value.Serialize;
-    try
-      FAbonent.Parse(Payload);
-    finally
-      Payload.Free;
-    end;
+    FCaption := Value;
+    UpdateRawContent;
   end;
+end;
 
-  UpdateRawContent;
+procedure TAbonentReqNewBody.SetAbid(const Value: string);
+begin
+  if FAbid <> Value then
+  begin
+    FAbid := Value;
+    UpdateRawContent;
+  end;
 end;
 
 procedure TAbonentReqNewBody.UpdateRawContent;

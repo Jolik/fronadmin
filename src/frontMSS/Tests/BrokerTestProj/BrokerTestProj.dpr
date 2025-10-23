@@ -42,22 +42,22 @@ begin
     begin
       NewAbonentId := TGUID.NewGuid.ToString.Replace('{', '').Replace('}', '');
 
-      with NewRequest.Body.Abonent do
+      with NewRequest.Body do
       begin
         Abid := NewAbonentId;
         Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
         Caption := 'Automatically created abonent for broker demo';
 
-        Channels.ClearStrings;
-        Channels.AddString('lch1');
-        Channels.AddString('mitra');
+        Channels.Clear;
+        Channels.Add('lch1');
+        Channels.Add('mitra');
 
         Attr.Clear;
-        Attr.SetValue('name', 'TTAAii');
-        Attr.SetValue('email', Format('first+%s@sample.com', [Copy(NewAbonentId, 1, 4)]));
-      end;
+        Attr.AddPair('name', 'TTAAii');
+        Attr.AddPair('email', Format('first+%s@sample.com', [Copy(NewAbonentId, 1, 4)]));
 
-      NewRequest.Body.UpdateRawContent;
+        UpdateRawContent;
+      end;
     end;
 
     StatusCode := HttpClient.Request(NewRequest, NewResponse);
