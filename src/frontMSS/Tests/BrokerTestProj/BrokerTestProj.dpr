@@ -25,6 +25,8 @@ var
   NewResponse: TAbonentNewResponse;
   UpdateRequest: TAbonentReqUpdate;
   UpdateResponse: TJSONResponse;
+  RemoveRequest: TAbonentReqRemove;
+  RemoveResponse: TJSONResponse;
   StatusCode: Integer;
   Abonent: TAbonent;
   ChannelsText: string;
@@ -40,7 +42,14 @@ begin
   NewResponse := TAbonentNewResponse.Create;
   UpdateRequest := TAbonentReqUpdate.Create;
   UpdateResponse := TJSONResponse.Create;
+  RemoveRequest := TAbonentReqRemove.Create;
+  RemoveResponse := TJSONResponse.Create;
   try
+    InfoRequest.URL := '/router/api/v2/abonents';
+    InfoRequest.Method := mGET;
+    InfoRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+    InfoRequest.Headers.AddOrSetValue('Accept', 'application/json');
+
     // Compose and send a sample request that demonstrates abonent creation through the broker.
     NewRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
 
@@ -116,6 +125,42 @@ begin
         Writeln('(empty response body)')
       else
         Writeln(UpdateResponse.Response);
+
+      // Request abonent information after creation and update to display the final state.
+      InfoRequest.AddPath := CreatedAbonentId;
+      StatusCode := HttpClient.Request(InfoRequest, InfoResponse);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
+      Writeln(Format('Info response (HTTP %d):', [StatusCode]));
+
+      if Assigned(InfoResponse.Abonent) then
+      begin
+        ChannelsText := string.Join(', ', InfoResponse.Abonent.Channels.ToStringArray);
+        if ChannelsText.IsEmpty then
+          ChannelsText := '(no channels)';
+
+        Writeln('Details for created abonent after update:');
+        Writeln(Format('Abonent: %s (%s)', [InfoResponse.Abonent.Name, InfoResponse.Abonent.Abid]));
+        Writeln('Caption: ' + InfoResponse.Abonent.Caption);
+        Writeln('Channels: ' + ChannelsText);
+      end
+      else
+        Writeln('Abonent details were not returned in the response.');
+
+      // Remove the abonent created for the test to keep the environment clean.
+      RemoveRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
+      RemoveRequest.AbonentId := CreatedAbonentId;
+
+      StatusCode := HttpClient.Request(RemoveRequest, RemoveResponse);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Remove request URL: ' + RemoveRequest.GetURLWithParams);
+      Writeln(Format('Remove response (HTTP %d):', [StatusCode]));
+      if RemoveResponse.Response.Trim.IsEmpty then
+        Writeln('(empty response body)')
+      else
+        Writeln(RemoveResponse.Response);
     end
     else
     begin
@@ -146,8 +191,6 @@ begin
       Writeln(Format('First abonent: %s (%s)', [Abonent.Name, Abonent.Abid]));
 
       // Prepare a generic GET request that will be reused for the abonent info endpoint.
-      InfoRequest.URL := '/router/api/v2/abonents';
-      InfoRequest.Method := mGET;
       InfoRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
       InfoRequest.Headers.AddOrSetValue('Accept', 'application/json');
       // AddPath holds the abonent identifier required by the API route `/api/v2/abonents/:abid`.
@@ -188,6 +231,8 @@ begin
     NewRequest.Free;
     UpdateResponse.Free;
     UpdateRequest.Free;
+    RemoveResponse.Free;
+    RemoveRequest.Free;
     InfoResponse.Free;
     InfoRequest.Free;
     ListResponse.Free;

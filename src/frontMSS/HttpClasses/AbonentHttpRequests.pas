@@ -159,6 +159,22 @@ type
     property Body: TAbonentReqNewUpdateBody read GetBody;
   end;
 
+  /// <summary>
+  ///   HTTP request descriptor for /rou/:abid/remove endpoint.
+  /// </summary>
+  TAbonentReqRemove = class(THttpRequest)
+  private
+    FAbonentId: string;
+    procedure SetAbonentId(const Value: string);
+  public
+    constructor Create; override;
+    /// <summary>
+    ///   Identifier of the abonent being removed. Assigning the value appends
+    ///   the required "/:abid/remove" suffix to the request URL via AddPath.
+    /// </summary>
+    property AbonentId: string read FAbonentId write SetAbonentId;
+  end;
+
 implementation
 
 uses
@@ -703,6 +719,33 @@ begin
     AddPath := ''
   else
     AddPath := Format('%s/update', [FAbonentId]);
+end;
+
+{ TAbonentReqRemove }
+
+constructor TAbonentReqRemove.Create;
+begin
+  inherited Create;
+  Method := mPOST;
+  URL := '/router/api/v2/rou';
+  Headers.AddOrSetValue('Content-Type', 'application/json');
+  Headers.AddOrSetValue('Accept', 'application/json');
+end;
+
+procedure TAbonentReqRemove.SetAbonentId(const Value: string);
+var
+  Normalized: string;
+begin
+  Normalized := Value.Trim;
+  if FAbonentId = Normalized then
+    Exit;
+
+  FAbonentId := Normalized;
+
+  if FAbonentId.IsEmpty then
+    AddPath := ''
+  else
+    AddPath := Format('%s/remove', [FAbonentId]);
 end;
 
 end.
