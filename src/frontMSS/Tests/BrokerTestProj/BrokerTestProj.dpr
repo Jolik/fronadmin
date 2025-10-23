@@ -11,7 +11,9 @@ uses
   LoggingUnit in '..\..\Logging\LoggingUnit.pas',
   TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas',
   AbonentHttpRequests in '..\..\HttpClasses\AbonentHttpRequests.pas',
-  AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas';
+  AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas',
+  StringListUnit in '..\..\EntityClasses\Common\StringListUnit.pas',
+  StringUnit in '..\..\EntityClasses\Common\StringUnit.pas';
 
 procedure ExecuteRequest;
 var
@@ -48,23 +50,40 @@ var
   Request: TAbonentReqList;
   Response: TAbonentListResponse;
   StatusCode: Integer;
-  Abonent: TAbonent;
+  Abonent: TEntity;
+  ChannelsText: string;
 begin
   Request := TAbonentReqList.Create;
   Response := TAbonentListResponse.Create;
   try
     Request.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
 
+    if Assigned(Request.Body) then
+      Request.Body.PageSize := 5;
+
     StatusCode := HttpClient.Request(Request, Response);
 
     Writeln('-----------------------------------------------------------------');
     Writeln('Request URL: ' + Request.GetURLWithParams);
-    Writeln('Request Body: ' + Request.ReqBodyContent);
+    Writeln(Format('Request Body: %s', [Request.ReqBodyContent]));
+    if Assigned(Request.Body) then
+      Writeln(Format('Requested page size: %d', [Request.Body.PageSize]));
     Writeln('-----------------------------------------------------------------');
     Writeln(Format('Response (HTTP %d):', [StatusCode]));
     Writeln(Format('Abonent records: %d', [Response.AbonentList.Count]));
-    for Abonent in Response.AbonentList do
-      Writeln(Format(' - %s (%s)', [Abonent.Name, Abonent.Abid]));
+    if Response.AbonentList.Count = 0 then
+      Writeln(' - No abonents returned in the response')
+    else
+      for Abonent in Response.AbonentList do
+      begin
+        ChannelsText := string.Join(', ', TAbonent(Abonent).Channels.ToStringArray);
+        if ChannelsText.IsEmpty then
+          ChannelsText := '(no channels)';
+
+        Writeln(Format(' - %s (%s)', [Abonent.Name, TAbonent(Abonent).Abid]));
+        Writeln(Format('   Caption: %s', [Abonent.Caption]));
+        Writeln('   Channels: ' + ChannelsText);
+      end;
     Writeln('-----------------------------------------------------------------');
     Readln;
   finally

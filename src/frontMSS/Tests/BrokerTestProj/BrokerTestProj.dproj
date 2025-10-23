@@ -35,6 +35,10 @@
         <DCCReference Include="..\..\Common\FuncUnit.pas"/>
         <DCCReference Include="..\..\Logging\LoggingUnit.pas"/>
         <DCCReference Include="..\..\Logging\TextFileLoggerUnit.pas"/>
+        <DCCReference Include="..\..\HttpClasses\AbonentHttpRequests.pas"/>
+        <DCCReference Include="..\..\EntityClasses\router\AbonentUnit.pas"/>
+        <DCCReference Include="..\..\EntityClasses\Common\StringListUnit.pas"/>
+        <DCCReference Include="..\..\EntityClasses\Common\StringUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

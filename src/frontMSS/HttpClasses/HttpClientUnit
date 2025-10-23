@@ -14,9 +14,6 @@ uses
 type
   TMethod = (mGET, mPOST, mPUT, mDELETE);
 
-  // Class reference to any TBody descendant
-  THttpReqBodyClass = class of THttpReqBody;
-
   THttpReqBody = class(TFieldSet)
   private
     FRawContent: string;
@@ -39,14 +36,7 @@ type
     procedure SetURL(const Value: string);
     procedure ParseParamsFromQuery(const Query: string);
   protected
-<<<<<<< Updated upstream
     class function BodyClassType: TFieldSetClass; virtual;
-=======
-    ///  Returns the specific Body object type
-    ///  Descendants must override because their types differ
-    class function BodyClassType: THttpReqBodyClass; virtual;
-
->>>>>>> Stashed changes
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -63,16 +53,8 @@ type
   TJSONResponse = class
   private
     FResponse: string;
-<<<<<<< Updated upstream
-<<<<<<< HEAD
-    procedure SetResponse(const Value: string);
-=======
   protected
     procedure SetResponse(const Value: string); virtual;
->>>>>>> bfd2d7988127a032eaac10eb4dfe2f8f77a34656
-=======
-    procedure SetResponse(const Value: string); virtual;
->>>>>>> Stashed changes
   public
     property Response: string read FResponse write SetResponse;
   end;
@@ -114,11 +96,6 @@ begin
 end;
 
 { THttpRequest }
-
-class function THttpRequest.BodyClassType: THttpReqBodyClass;
-begin
-  Result := THttpReqBodyClass;
-end;
 
 constructor THttpRequest.Create;
 begin
@@ -195,27 +172,30 @@ var
   JsonValue: TJSONObject;
 begin
   if not Assigned(FReqBody) then
-    FReqBody := THttpReqBody.Create;
+  begin
+    if BodyClassType <> nil then
+      FReqBody := BodyClassType.Create
+    else
+      FReqBody := THttpReqBody.Create;
+  end;
 
   if FReqBody is THttpReqBody then
-    THttpReqBody(FReqBody).RawContent := Value
-  else
-  begin
-    if Value.IsEmpty then
-      Exit;
+    THttpReqBody(FReqBody).RawContent := Value;
 
+  if Value.IsEmpty then
+    Exit;
+
+  try
+    JsonValue := TJSONObject.ParseJSONValue(Value) as TJSONObject;
     try
-      JsonValue := TJSONObject.ParseJSONValue(Value) as TJSONObject;
-      try
-        if Assigned(JsonValue) then
-          FReqBody.Parse(JsonValue);
-      finally
-        JsonValue.Free;
-      end;
-    except
-      on E: Exception do
-        raise EConvertError.CreateFmt('Failed to parse ReqBody JSON: %s', [E.Message]);
+      if Assigned(JsonValue) then
+        FReqBody.Parse(JsonValue);
+    finally
+      JsonValue.Free;
     end;
+  except
+    on E: Exception do
+      raise EConvertError.CreateFmt('Failed to parse ReqBody JSON: %s', [E.Message]);
   end;
 end;
 
@@ -588,13 +568,6 @@ begin
 
   Res.Response := ResponseContent;
   Result := FHttpClient.ResponseCode;
-end;
-
-{ TJSONResponse }
-
-procedure TJSONResponse.SetResponse(const Value: string);
-begin
-  FResponse := Value;
 end;
 
 initialization
