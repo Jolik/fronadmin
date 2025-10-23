@@ -166,33 +166,35 @@ begin
 
   JSONResult := nil;
   try
-    JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
-    if not Assigned(JSONResult) then
-      Exit;
+    try
+      JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+      if not Assigned(JSONResult) then
+        Exit;
 
-    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-    if not Assigned(ResponseObject) then
-      Exit;
+      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      if not Assigned(ResponseObject) then
+        Exit;
 
-    AbonentsValue := ResponseObject.GetValue('abonents');
-    ItemsArray := nil;
+      AbonentsValue := ResponseObject.GetValue('abonents');
+      ItemsArray := nil;
 
-    if AbonentsValue is TJSONArray then
-      ItemsArray := TJSONArray(AbonentsValue)
-    else if AbonentsValue is TJSONObject then
-    begin
-      ItemsValue := TJSONObject(AbonentsValue).GetValue('items');
-      if ItemsValue is TJSONArray then
-        ItemsArray := TJSONArray(ItemsValue);
-    end;
+      if AbonentsValue is TJSONArray then
+        ItemsArray := TJSONArray(AbonentsValue)
+      else if AbonentsValue is TJSONObject then
+      begin
+        ItemsValue := TJSONObject(AbonentsValue).GetValue('items');
+        if ItemsValue is TJSONArray then
+          ItemsArray := TJSONArray(ItemsValue);
+      end;
 
-    if Assigned(ItemsArray) then
-      FAbonentList.ParseList(ItemsArray);
-  except
-    on E: Exception do
-    begin
-      Log('TAbonentListResponse.SetResponse ' + E.Message, lrtError);
-      FAbonentList.Clear;
+      if Assigned(ItemsArray) then
+        FAbonentList.ParseList(ItemsArray);
+    except
+      on E: Exception do
+      begin
+        Log('TAbonentListResponse.SetResponse ' + E.Message, lrtError);
+        FAbonentList.Clear;
+      end;
     end;
   finally
     JSONResult.Free;
