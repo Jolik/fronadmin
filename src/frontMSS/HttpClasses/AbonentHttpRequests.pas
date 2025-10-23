@@ -41,6 +41,25 @@ type
   end;
 
   /// <summary>
+  ///   Response wrapper that parses abonent info payloads.
+  /// </summary>
+  TAbonentInfoResponse = class(TJSONResponse)
+  private
+    // FAbonent holds the parsed abonent entity extracted from the response payload.
+    FAbonent: TAbonent;
+  protected
+    // Overrides TJSONResponse.SetResponse to deserialize abonent details from JSON.
+    procedure SetResponse(const Value: string); override;
+  public
+    // Creates the response wrapper and prepares the abonent placeholder.
+    constructor Create; override;
+    // Ensures the abonent instance is released together with the response wrapper.
+    destructor Destroy; override;
+    // Provides read-only access to the parsed abonent entity.
+    property Abonent: TAbonent read FAbonent;
+  end;
+
+  /// <summary>
   ///   HTTP request descriptor for /abonents/list endpoint.
   /// </summary>
   TAbonentReqList = class(THttpRequest)
@@ -137,11 +156,13 @@ end;
 constructor TAbonentListResponse.Create;
 begin
   inherited Create;
+  // Pre-create the abonent list to simplify parsing logic and avoid repeated nil checks.
   FAbonentList := TAbonentList.Create;
 end;
 
 destructor TAbonentListResponse.Destroy;
 begin
+  // Release the list together with the response wrapper to keep ownership clear.
   FAbonentList.Free;
   inherited;
 end;
@@ -156,25 +177,30 @@ var
 begin
   inherited SetResponse(Value);
 
+  // Prepare the list to hold fresh data for every response processed by this instance.
   if not Assigned(FAbonentList) then
     FAbonentList := TAbonentList.Create
   else
     FAbonentList.Clear;
 
+  // Abort parsing when the backend responded with an empty payload.
   if Value.Trim.IsEmpty then
     Exit;
 
   JSONResult := nil;
   try
     try
+      // Deserialize the root JSON document returned by the API.
       JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
       if not Assigned(JSONResult) then
         Exit;
 
+      // Extract the `response` container which holds the actual abonent data.
       ResponseObject := JSONResult.GetValue('response') as TJSONObject;
       if not Assigned(ResponseObject) then
         Exit;
 
+      // API responses might return either an array or an object with an `items` array.
       AbonentsValue := ResponseObject.GetValue('abonents');
       ItemsArray := nil;
 
@@ -182,21 +208,88 @@ begin
         ItemsArray := TJSONArray(AbonentsValue)
       else if AbonentsValue is TJSONObject then
       begin
+        // Handle the wrapped format by drilling into the `items` property.
         ItemsValue := TJSONObject(AbonentsValue).GetValue('items');
         if ItemsValue is TJSONArray then
           ItemsArray := TJSONArray(ItemsValue);
       end;
 
       if Assigned(ItemsArray) then
+        // Delegate the heavy lifting to the entity list parser which maps fields automatically.
         FAbonentList.ParseList(ItemsArray);
     except
       on E: Exception do
       begin
+        // Emit a log entry for diagnostics and clear partially parsed data.
         Log('TAbonentListResponse.SetResponse ' + E.Message, lrtError);
         FAbonentList.Clear;
       end;
     end;
   finally
+    // Clean up temporary JSON structures regardless of parsing success.
+    JSONResult.Free;
+  end;
+end;
+
+{ TAbonentInfoResponse }
+
+constructor TAbonentInfoResponse.Create;
+begin
+  inherited Create;
+  // Abonent details are populated lazily during SetResponse, hence initialize with nil.
+  FAbonent := nil;
+end;
+
+destructor TAbonentInfoResponse.Destroy;
+begin
+  // Explicitly free the abonent object to avoid leaks when the response wrapper is destroyed.
+  FAbonent.Free;
+  inherited;
+end;
+
+procedure TAbonentInfoResponse.SetResponse(const Value: string);
+var
+  JSONResult: TJSONObject;
+  ResponseObject: TJSONObject;
+  AbonentValue: TJSONValue;
+begin
+  inherited SetResponse(Value);
+
+  // Reset previously parsed abonent before attempting to deserialize a new payload.
+  FreeAndNil(FAbonent);
+
+  // Guard clause: nothing to parse when the server returned an empty body.
+  if Value.Trim.IsEmpty then
+    Exit;
+
+  JSONResult := nil;
+  try
+    try
+      // Parse the root JSON document received from the server.
+      JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+      if not Assigned(JSONResult) then
+        Exit;
+
+      // According to API docs, abonent data is located inside the "response" object.
+      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      if not Assigned(ResponseObject) then
+        Exit;
+
+      // Extract the abonent object itself. It can be absent when the identifier is unknown.
+      AbonentValue := ResponseObject.GetValue('abonent');
+      if AbonentValue is TJSONObject then
+        // Delegate entity parsing to TAbonent, which already encapsulates field mapping logic.
+        FAbonent := TAbonent.Create(TJSONObject(AbonentValue));
+    except
+      on E: Exception do
+      begin
+        // Log parsing issues for diagnostics and leave the response in a predictable state.
+        Log('TAbonentInfoResponse.SetResponse ' + E.Message, lrtError);
+        FreeAndNil(FAbonent);
+      end;
+    end;
+  finally
+    // Always release the temporary JSON DOM objects to avoid memory leaks.
     JSONResult.Free;
   end;
 end;
