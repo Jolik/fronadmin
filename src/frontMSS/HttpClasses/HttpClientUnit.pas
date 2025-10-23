@@ -14,7 +14,7 @@ uses
 type
   TMethod = (mGET, mPOST, mPUT, mDELETE);
 
-  THttpBody = class(TBody)
+  THttpReqBody = class(TFieldSet)
   private
     FRawContent: string;
   public
@@ -27,14 +27,19 @@ type
     FMethod: TMethod;
     FHeaders: TDictionary<string, string>;
     FParams: TDictionary<string, string>;
-    FBody: TBody;
+    FReqBody: TFieldSet;
+    // Stores a single dynamic path segment that should be appended to the URL during execution.
+    FAddPath: string;
     function GetCurl: string;
     procedure SetCurl(const Value: string);
     procedure SetMethodFromString(const Value: string);
-    function GetBodyContent: string;
-    procedure SetBodyContent(const Value: string);
+    function GetReqBodyContent: string;
+    procedure SetReqBodyContent(const Value: string);
     procedure SetURL(const Value: string);
     procedure ParseParamsFromQuery(const Query: string);
+    procedure SetAddPath(const Value: string);
+  protected
+    class function BodyClassType: TFieldSetClass; virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -42,17 +47,21 @@ type
     property Method: TMethod read FMethod write FMethod;
     property Headers: TDictionary<string, string> read FHeaders;
     property Params: TDictionary<string, string> read FParams;
-    property Body: TBody read FBody write FBody;
+    property ReqBody: TFieldSet read FReqBody write FReqBody;
     property Curl: string read GetCurl write SetCurl;
-    property BodyContent: string read GetBodyContent write SetBodyContent;
+    property ReqBodyContent: string read GetReqBodyContent write SetReqBodyContent;
+    // Allows callers to append additional URL segments (e.g., resource identifiers) in a safe way.
+    property AddPath: string read FAddPath write SetAddPath;
     function GetURLWithParams(const BaseUrl: string = ''): string;
   end;
 
   TJSONResponse = class
   private
     FResponse: string;
+  protected
+    procedure SetResponse(const Value: string); virtual;
   public
-    property Response: string read FResponse write FResponse;
+    property Response: string read FResponse write SetResponse;
   end;
 
   THttpBroker = class
@@ -96,36 +105,48 @@ end;
 constructor THttpRequest.Create;
 begin
   inherited Create;
+  // Maintain dedicated dictionaries to keep headers and query parameters separated and typed.
   FHeaders := TDictionary<string, string>.Create;
   FParams := TDictionary<string, string>.Create;
+  // Default to GET which is the most common HTTP method for broker requests.
   FMethod := mGET;
-  FBody := THttpBody.Create;
+  // Initialize without a trailing segment; callers can assign AddPath later per request.
+  FAddPath := '';
+  if BodyClassType <> nil then
+    FReqBody := BodyClassType.Create
+  else
+    FReqBody := THttpReqBody.Create();
 end;
 
 destructor THttpRequest.Destroy;
 begin
-  FBody.Free;
+  FReqBody.Free;
   FHeaders.Free;
   FParams.Free;
   inherited;
 end;
 
-function THttpRequest.GetBodyContent: string;
+class function THttpRequest.BodyClassType: TFieldSetClass;
 begin
-  if not Assigned(FBody) then
+  Result := THttpReqBody;
+end;
+
+function THttpRequest.GetReqBodyContent: string;
+begin
+  if not Assigned(FReqBody) then
     Exit('');
 
-  if FBody is THttpBody then
-    Result := THttpBody(FBody).RawContent
+  if FReqBody is THttpReqBody then
+    Result := THttpReqBody(FReqBody).RawContent
   else
-    Result := FBody.JSON;
+    Result := FReqBody.JSON;
 end;
 
 function THttpRequest.GetCurl: string;
 var
   Builder: TStringBuilder;
   HeaderPair: TPair<string, string>;
-  BodyString: string;
+  ReqBodyString: string;
   EffectiveUrl: string;
 begin
   Builder := TStringBuilder.Create;
@@ -142,11 +163,11 @@ begin
       Builder.Append('''').Append(HeaderPair.Key).Append(': ').Append(HeaderPair.Value).Append('''');
     end;
 
-    BodyString := GetBodyContent;
-    if not BodyString.IsEmpty then
+    ReqBodyString := GetReqBodyContent;
+    if not ReqBodyString.IsEmpty then
     begin
       Builder.Append(' --data-raw ');
-      Builder.Append('''').Append(BodyString).Append('''');
+      Builder.Append('''').Append(ReqBodyString).Append('''');
     end;
 
     Result := Builder.ToString.Trim;
@@ -155,33 +176,47 @@ begin
   end;
 end;
 
-procedure THttpRequest.SetBodyContent(const Value: string);
+procedure THttpRequest.SetReqBodyContent(const Value: string);
 var
   JsonValue: TJSONObject;
 begin
-  if not Assigned(FBody) then
-    FBody := THttpBody.Create;
-
-  if FBody is THttpBody then
-    THttpBody(FBody).RawContent := Value
-  else
+  if not Assigned(FReqBody) then
   begin
-    if Value.IsEmpty then
-      Exit;
-
-    try
-      JsonValue := TJSONObject.ParseJSONValue(Value) as TJSONObject;
-      try
-        if Assigned(JsonValue) then
-          FBody.Parse(JsonValue);
-      finally
-        JsonValue.Free;
-      end;
-    except
-      on E: Exception do
-        raise EConvertError.CreateFmt('Failed to parse body JSON: %s', [E.Message]);
-    end;
+    if BodyClassType <> nil then
+      FReqBody := BodyClassType.Create
+    else
+      FReqBody := THttpReqBody.Create;
   end;
+
+  if FReqBody is THttpReqBody then
+    THttpReqBody(FReqBody).RawContent := Value;
+
+  if Value.IsEmpty then
+    Exit;
+
+  try
+    JsonValue := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+    try
+      if Assigned(JsonValue) then
+        FReqBody.Parse(JsonValue);
+    finally
+      JsonValue.Free;
+    end;
+  except
+    on E: Exception do
+      raise EConvertError.CreateFmt('Failed to parse ReqBody JSON: %s', [E.Message]);
+  end;
+end;
+
+procedure THttpRequest.SetAddPath(const Value: string);
+begin
+  // Store a trimmed copy of the segment to avoid issues with accidental leading/trailing spaces.
+  FAddPath := Value.Trim;
+end;
+
+procedure TJSONResponse.SetResponse(const Value: string);
+begin
+  FResponse := Value;
 end;
 
 procedure THttpRequest.SetCurl(const Value: string);
@@ -254,7 +289,9 @@ begin
   FMethod := mGET;
   FParams.Clear;
   FURL := '';
-  SetBodyContent('');
+  // Reset AddPath to ensure subsequent requests constructed from the curl string start clean.
+  FAddPath := '';
+  SetReqBodyContent('');
 
   Tokens := TList<string>.Create;
   try
@@ -306,7 +343,7 @@ begin
         Inc(I);
         if I < Tokens.Count then
         begin
-          SetBodyContent(NormalizeToken(Tokens[I]));
+          SetReqBodyContent(NormalizeToken(Tokens[I]));
           Inc(I);
         end;
         Continue;
@@ -390,22 +427,56 @@ var
   ResultUrl: string;
   Pair: TPair<string, string>;
   Separator: string;
+
+  function AppendPathSegment(const BasePath, Segment: string): string;
+  var
+    NormalizedSegment: string;
+    AdjustedBase: string;
+  begin
+    // Skip concatenation when the provided segment is empty after trimming.
+    if Segment.Trim.IsEmpty then
+      Exit(BasePath);
+
+    NormalizedSegment := Segment.Trim;
+
+    // Strip leading slashes from the segment to keep path concatenation predictable.
+    while (NormalizedSegment.Length > 0) and (NormalizedSegment.Chars[0] = '/') do
+      NormalizedSegment := NormalizedSegment.Substring(1);
+
+    // Remove any trailing slash from the base to prevent duplicated separators.
+    AdjustedBase := BasePath.TrimRight(['/']);
+
+    if AdjustedBase.IsEmpty then
+      Result := '/' + NormalizedSegment
+    else
+      Result := AdjustedBase + '/' + NormalizedSegment;
+  end;
 begin
   if BaseUrl.IsEmpty then
+    // When no base is provided, use the raw URL assigned to the request.
     ResultUrl := FURL
   else
+    // Otherwise start with the externally supplied base (e.g., fully qualified URL).
     ResultUrl := BaseUrl;
 
+  if not FAddPath.Trim.IsEmpty then
+    // AppendPathSegment is responsible for inserting the necessary slash separator.
+    ResultUrl := AppendPathSegment(ResultUrl, FAddPath);
+
   if FParams.Count = 0 then
+    // Early exit when the request does not contain any query parameters.
     Exit(ResultUrl);
 
   if ResultUrl.Contains('?') then
+    // Preserve existing query string by continuing with ampersand.
     Separator := '&'
   else
+    // Start a new query string.
     Separator := '?';
 
   for Pair in FParams do
   begin
+    // Encode both key and value to ensure special characters are transferred correctly.
     ResultUrl := ResultUrl + Separator + TNetEncoding.URL.Encode(Pair.Key) + '=' + TNetEncoding.URL.Encode(Pair.Value);
     Separator := '&';
   end;
@@ -505,9 +576,9 @@ end;
 function THttpBroker.Request(Req: THttpRequest; Res: TJSONResponse): Integer;
 var
   Url: string;
-  BodyStream: TStringStream;
+  ReqBodyStream: TStringStream;
   ResponseContent: string;
-  BodyContent: string;
+  ReqBodyContent: string;
 begin
   if not Assigned(Req) then
     raise EArgumentNilException.Create('Request must not be nil');
@@ -517,27 +588,27 @@ begin
   Url := BuildURL(Req);
   ApplyHeaders(Req);
 
-  BodyContent := Req.BodyContent;
+  ReqBodyContent := Req.ReqBodyContent;
 
   case Req.Method of
     mGET:
       ResponseContent := FHttpClient.Get(Url);
     mPOST:
       begin
-        BodyStream := TStringStream.Create(BodyContent, TEncoding.UTF8);
+        ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
         try
-          ResponseContent := FHttpClient.Post(Url, BodyStream);
+          ResponseContent := FHttpClient.Post(Url, ReqBodyStream);
         finally
-          BodyStream.Free;
+          ReqBodyStream.Free;
         end;
       end;
     mPUT:
       begin
-        BodyStream := TStringStream.Create(BodyContent, TEncoding.UTF8);
+        ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
         try
-          ResponseContent := FHttpClient.Put(Url, BodyStream);
+          ResponseContent := FHttpClient.Put(Url, ReqBodyStream);
         finally
-          BodyStream.Free;
+          ReqBodyStream.Free;
         end;
       end;
     mDELETE:
@@ -557,4 +628,3 @@ finalization
   HttpClient.Free;
 
 end.
-

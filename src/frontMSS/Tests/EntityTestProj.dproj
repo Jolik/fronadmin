@@ -100,6 +100,7 @@
         </DelphiCompile>
         <DCCReference Include="..\APIClasses\APIConst.pas"/>
         <DCCReference Include="..\APIClasses\ChannelsBrokerUnit.pas"/>
+        <DCCReference Include="..\APIClasses\HandlersBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\AbonensBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\LinksBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\ProfilesBrokerUnit.pas"/>
@@ -136,6 +137,7 @@
         <DCCReference Include="..\EntityClasses\links\LinkUnit.pas"/>
         <DCCReference Include="..\EntityClasses\monitoring\MonitoringTaskUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\ChannelUnit.pas"/>
+        <DCCReference Include="..\EntityClasses\router\HandlerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\AbonentUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="..\EntityClasses\router\AliasUnit.pas"/>

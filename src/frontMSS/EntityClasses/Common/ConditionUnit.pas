@@ -5,6 +5,7 @@ interface
 uses
   System.Generics.Collections, System.JSON,
   FuncUnit,
+  System.SysUtils,
   EntityUnit;
 
 type
@@ -19,6 +20,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
+    function Caption: string;
     property Field: string read FField write FField;
     property Text: string read FText write FText;
     property &Type: string read FType write FType;
@@ -61,6 +63,11 @@ begin
   Result := true;
 end;
 
+function TCondition.Caption: string;
+begin
+  result := Format('[%s %s %s]', [Field, &Type, Text])
+end;
+
 procedure TCondition.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   if not Assigned(src) then
@@ -95,8 +102,8 @@ begin
   if (Index < 0) or (Index >= Count) then
     Exit;
 
-  if Items[Index] is TCondition then
-    Result := TCondition(Items[Index]);
+  if inherited Items[Index] is TCondition then
+    Result := TCondition(inherited Items[Index]);
 end;
 
 class function TConditionList.ItemClassType: TFieldSetClass;
@@ -115,10 +122,10 @@ begin
   if not (Value is TCondition) then
     Exit;
 
-  if Assigned(Items[Index]) then
-    Items[Index].Free;
+  if Assigned(inherited Items[Index]) then
+    inherited Items[Index].Free;
 
-  Items[Index] := Value;
+  inherited Items[Index] := Value;
 end;
 
 end.

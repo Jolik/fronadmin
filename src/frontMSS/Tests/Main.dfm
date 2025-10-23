@@ -4,22 +4,10 @@ object MainForm: TMainForm
   ClientHeight = 500
   ClientWidth = 700
   Caption = 'MainForm'
+  OnShow = UniFormShow
   OldCreateOrder = False
   MonitoredKeys.Keys = <>
   TextHeight = 15
-  object ShowMemo: TUniMemo
-    AlignWithMargins = True
-    Left = 169
-    Top = 3
-    Width = 528
-    Height = 494
-    Hint = ''
-    ScrollBars = ssBoth
-    Align = alClient
-    TabOrder = 0
-    ExplicitWidth = 526
-    ExplicitHeight = 486
-  end
   object sbTestButtons: TUniScrollBox
     AlignWithMargins = True
     Left = 3
@@ -28,7 +16,7 @@ object MainForm: TMainForm
     Height = 494
     Hint = ''
     Align = alLeft
-    TabOrder = 1
+    TabOrder = 0
     ScrollDirection = sdVertical
     ExplicitHeight = 486
     ScrollHeight = 654
@@ -378,6 +366,49 @@ object MainForm: TMainForm
         TabOrder = 7
         OnClick = btnSummaryTasksClick
       end
+    end
+  end
+  object UniPanel1: TUniPanel
+    Left = 166
+    Top = 0
+    Width = 534
+    Height = 500
+    Hint = ''
+    Align = alClient
+    TabOrder = 1
+    Caption = 'UniPanel1'
+    ExplicitLeft = 232
+    ExplicitTop = 328
+    ExplicitWidth = 256
+    ExplicitHeight = 128
+    object ShowMemo: TUniMemo
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 526
+      Height = 403
+      Hint = ''
+      ScrollBars = ssBoth
+      Align = alClient
+      TabOrder = 1
+      ExplicitLeft = 3
+      ExplicitTop = 3
+      ExplicitHeight = 326
+    end
+    object LogMemo: TUniMemo
+      AlignWithMargins = True
+      Left = 4
+      Top = 413
+      Width = 526
+      Height = 83
+      Hint = ''
+      ScrollBars = ssBoth
+      Align = alBottom
+      ReadOnly = True
+      TabOrder = 2
+      ExplicitLeft = 1
+      ExplicitTop = 416
+      ExplicitWidth = 532
     end
   end
 end
