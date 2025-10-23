@@ -18,15 +18,21 @@ uses
   AliasesFormUnit in 'Forms\AliasesFormUnit.pas' {AliasesForm: TUniForm},
   AbonentEditFormUnit in 'Forms\AbonentEditFormUnit.pas' {AbonentEditForm: TUniForm},
   AbonentsFormUnit in 'Forms\AbonentsFormUnit.pas' {AbonentsForm: TUniForm},
+  HandlerEditFormUnit in 'Forms\HandlerEditFormUnit.pas' {HandlerEditForm: TUniForm},
+  HandlersFormUnit in 'Forms\HandlersFormUnit.pas' {HandlersForm: TUniForm},
   RouterSourceEditFormUnit in 'Forms\RouterSourceEditFormUnit.pas' {RouterSourceEditForm: TUniForm},
   RouterSourcesFormUnit in 'Forms\RouterSourcesFormUnit.pas' {RouterSourcesForm: TUniForm},
+  RuleEditFormUnit in 'Forms\RuleEditFormUnit.pas' {RuleEditForm: TUniForm},
+  RulesFormUnit in 'Forms\RulesFormUnit.pas' {RulesForm: TUniForm},
   APIConst in 'APIClasses\APIConst.pas',
   ChannelsBrokerUnit in 'APIClasses\ChannelsBrokerUnit.pas',
   LinksBrokerUnit in 'APIClasses\LinksBrokerUnit.pas',
   MonitoringTasksBrokerUnit in 'APIClasses\MonitoringTasksBrokerUnit.pas',
   QueuesBrokerUnit in 'APIClasses\QueuesBrokerUnit.pas',
   RouterSourceBrokerUnit in 'APIClasses\RouterSourceBrokerUnit.pas',
+  RulesBrokerUnit in 'APIClasses\RulesBrokerUnit.pas',
   AbonentsBrokerUnit in 'APIClasses\AbonentsBrokerUnit.pas',
+  HandlersBrokerUnit in 'APIClasses\HandlersBrokerUnit.pas',
   AliasesBrokerUnit in 'APIClasses\AliasesBrokerUnit.pas',
   StripTasksBrokerUnit in 'APIClasses\StripTasksBrokerUnit.pas',
   SummaryTasksBrokerUnit in 'APIClasses\SummaryTasksBrokerUnit.pas',
@@ -35,6 +41,7 @@ uses
   ChannelUnit in 'EntityClasses\router\ChannelUnit.pas',
   AliasUnit in 'EntityClasses\router\AliasUnit.pas',
   AbonentUnit in 'EntityClasses\router\AbonentUnit.pas',
+  HandlerUnit in 'EntityClasses\router\HandlerUnit.pas',
   QueueUnit in 'EntityClasses\router\QueueUnit.pas',
   RouterSourceUnit in 'EntityClasses\router\RouterSourceUnit.pas',
   MainHttpModuleUnit in 'APIClasses\MainHttpModuleUnit.pas',
@@ -49,7 +56,6 @@ uses
   ParentTaskCustomSettingsEditFrameUnit in 'Forms\TasksFrames\ParentTaskCustomSettingsEditFrameUnit.pas' {ParentTaskCustomSettingsEditFrame: TUniFrame},
   ConditionUnit in 'EntityClasses\Common\ConditionUnit.pas',
   EntityUnit in 'EntityClasses\Common\EntityUnit.pas',
-  FilterUnit in 'EntityClasses\Common\FilterUnit.pas',
   GeoTypeUnit in 'EntityClasses\Common\GeoTypeUnit.pas',
   GUIDListUnit in 'EntityClasses\Common\GUIDListUnit.pas',
   StringListUnit in 'EntityClasses\Common\StringListUnit.pas',
@@ -92,7 +98,8 @@ uses
   SelectTaskSourcesFormUnit in 'Forms\SelectTaskSourcesFormUnit.pas' {SelectTaskSourcesForm: TUniForm},
   SourceUnit in 'EntityClasses\dataserver\SourceUnit.pas',
   TasksParentFormUnit in 'Forms\TasksParentFormUnit.pas' {TaskParentForm: TUniForm},
-  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm};
+  TaskEditParentFormUnit in 'Forms\TaskEditParentFormUnit.pas' {TaskEditParentForm: TUniForm},
+  FilterUnit in 'EntityClasses\Common\FilterUnit.pas';
 
 {$R *.res}
 

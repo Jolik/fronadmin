@@ -187,6 +187,16 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\HandlerEditFormUnit.pas">
+            <Form>HandlerEditForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\HandlersFormUnit.pas">
+            <Form>HandlersForm</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="Forms\RouterSourceEditFormUnit.pas">
             <Form>RouterSourceEditForm</Form>
             <DesignClass>TUniForm</DesignClass>
@@ -195,13 +205,23 @@
             <Form>RouterSourcesForm</Form>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\RuleEditFormUnit.pas">
+            <Form>RuleEditForm</Form>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\RulesFormUnit.pas">
+            <Form>RulesForm</Form>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="APIClasses\APIConst.pas"/>
         <DCCReference Include="APIClasses\ChannelsBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\LinksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\MonitoringTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\QueuesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\RouterSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\RulesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\AbonentsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\HandlersBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\AliasesBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\StripTasksBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SummaryTasksBrokerUnit.pas"/>
@@ -210,6 +230,7 @@
         <DCCReference Include="EntityClasses\router\ChannelUnit.pas"/>
         <DCCReference Include="EntityClasses\router\AliasUnit.pas"/>
         <DCCReference Include="EntityClasses\router\AbonentUnit.pas"/>
+        <DCCReference Include="EntityClasses\router\HandlerUnit.pas"/>
         <DCCReference Include="EntityClasses\router\QueueUnit.pas"/>
         <DCCReference Include="EntityClasses\router\RouterSourceUnit.pas"/>
         <DCCReference Include="APIClasses\MainHttpModuleUnit.pas"/>
@@ -234,7 +255,6 @@
         </DCCReference>
         <DCCReference Include="EntityClasses\Common\ConditionUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\EntityUnit.pas"/>
-        <DCCReference Include="EntityClasses\Common\FilterUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\GeoTypeUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\GUIDListUnit.pas"/>
         <DCCReference Include="EntityClasses\Common\StringListUnit.pas"/>
@@ -346,6 +366,7 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="EntityClasses\Common\FilterUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
