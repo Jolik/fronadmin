@@ -21,6 +21,7 @@ type
     procedure profilesComboBoxSelect(Sender: TObject);
     procedure btnRemoveProfileClick(Sender: TObject);
     procedure btnAddProfileClick(Sender: TObject);
+    procedure BitBtnSaveProfileClick(Sender: TObject);
   private
     FProfiles: TProfileList;
     FLink: TLink;
@@ -30,6 +31,7 @@ type
     procedure LoadList;
     function DeleteProfile(prid: string): boolean;
     function LoadProfile(prid: string): boolean;
+    function SaveProfile(): boolean;
     procedure CreateProfile();
     procedure DrawProfiles;
     procedure SetLink(const Value: TLink);
@@ -63,6 +65,7 @@ begin
   FBroker.Free;
   inherited;
 end;
+
 
 
 procedure TProfilesFrame.SetLink(const Value: TLink);
@@ -108,6 +111,8 @@ begin
 end;
 
 
+
+
 procedure TProfilesFrame.btnAddProfileClick(Sender: TObject);
 begin
   profilesComboBox.ItemIndex := -1;
@@ -129,7 +134,10 @@ begin
   DrawProfiles;
 end;
 
-
+procedure TProfilesFrame.BitBtnSaveProfileClick(Sender: TObject);
+begin
+  SaveProfile;
+end;
 
 procedure TProfilesFrame.Clear;
 begin
@@ -180,9 +188,39 @@ begin
   FProfileFrame := TProfileFrame.Create(Self);
   FProfileFrame.Parent := profilePanel;
   FProfileFrame.SetData(p);
+  FProfileFrame.SetLink(FLink);
   BitBtnSaveProfile.Visible := true;
   BitBtnSaveProfile.Caption := 'Создать';
 end;
+
+
+
+function TProfilesFrame.SaveProfile(): boolean;
+const
+  updString: array[boolean] of string = ('обновлён','сохранён');
+begin
+  result := false;
+  if FProfileFrame = nil then
+    exit;
+  var profile := TProfile.Create;
+  FProfileFrame.GetData(profile);
+  try
+    if profile.IsNew then
+      result := FBroker.New(profile)
+    else
+      result := FBroker.Update(profile);
+    if result then
+    begin
+      Log('Профиль %s %s', [profile.id, updString[profile.IsNew]]);
+      Clear;
+      LoadList;
+      DrawProfiles;
+    end;
+  except on e: exception do begin
+    Log('TProfileFrame.SaveProfile ' + e.Message, lrtError);
+  end; end;
+end;
+
 
 
 procedure TProfilesFrame.DrawProfiles;

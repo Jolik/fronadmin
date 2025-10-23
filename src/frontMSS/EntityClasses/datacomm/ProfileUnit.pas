@@ -65,6 +65,8 @@ type
     property Description: string read FDescription write FDescription;
     property ProfileBody: TProfileBody read GetProfileBody;
 
+    // IsNew флаг для внутрифронтового использования
+    // означает что этого профиля ешё нет в ACL
     property IsNew: boolean read FIsNew write FIsNew;
   end;
 
@@ -272,6 +274,7 @@ begin
   SourceProfile := TProfile(ASource);
 
   FDescription := SourceProfile.Description;
+  FIsNew := SourceProfile.IsNew;
 
   Result := True;
 end;

@@ -2,13 +2,13 @@ object ProfileFrame: TProfileFrame
   Left = 0
   Top = 0
   Width = 358
-  Height = 509
+  Height = 521
   TabOrder = 0
   object UniGroupBox1: TUniGroupBox
     Left = 0
     Top = 60
     Width = 358
-    Height = 221
+    Height = 239
     Hint = ''
     Caption = ' '#1055#1088#1072#1074#1080#1083#1086' '
     Align = alTop
@@ -76,54 +76,50 @@ object ProfileFrame: TProfileFrame
       Left = 2
       Top = 81
       Width = 354
-      Height = 138
+      Height = 156
       Hint = ''
       Align = alClient
       TabOrder = 2
       ShowCaption = False
       Caption = 'UniPanel2'
-      ExplicitHeight = 179
       object UniSplitter2: TUniSplitter
-        Left = 139
+        Left = 169
         Top = 1
         Width = 6
-        Height = 136
+        Height = 154
         Hint = ''
         Align = alLeft
         ParentColor = False
         Color = clBtnFace
-        ExplicitHeight = 177
       end
       object PanelConditions: TUniPanel
-        Left = 145
+        Left = 175
         Top = 1
-        Width = 208
-        Height = 136
+        Width = 178
+        Height = 154
         Hint = ''
         Align = alClient
         TabOrder = 2
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'PanelConditions'
-        ExplicitHeight = 177
       end
       object UniPanel3: TUniPanel
         Left = 1
         Top = 1
-        Width = 138
-        Height = 136
+        Width = 168
+        Height = 154
         Hint = ''
         Align = alLeft
         TabOrder = 3
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'UniPanel3'
-        ExplicitHeight = 177
         object RuleTreeView: TUniTreeView
           Left = 0
           Top = 25
-          Width = 138
-          Height = 111
+          Width = 168
+          Height = 129
           Hint = ''
           Items.FontData = {0100000000}
           Align = alClient
@@ -131,12 +127,11 @@ object ProfileFrame: TProfileFrame
           Color = clWindow
           UseCheckBox = True
           OnChange = RuleTreeViewChange
-          ExplicitHeight = 152
         end
         object UniPanel4: TUniPanel
           Left = 0
           Top = 0
-          Width = 138
+          Width = 168
           Height = 25
           Hint = ''
           Align = alTop
@@ -214,7 +209,7 @@ object ProfileFrame: TProfileFrame
   end
   object UniSplitter1: TUniSplitter
     Left = 0
-    Top = 281
+    Top = 299
     Width = 358
     Height = 6
     Cursor = crVSplit
@@ -222,19 +217,16 @@ object ProfileFrame: TProfileFrame
     Align = alTop
     ParentColor = False
     Color = clBtnFace
-    ExplicitTop = 322
   end
   object UniGroupBox2: TUniGroupBox
     Left = 0
-    Top = 287
+    Top = 305
     Width = 358
-    Height = 222
+    Height = 216
     Hint = ''
     Caption = ' '#1044#1077#1081#1089#1090#1074#1080#1103' '
     Align = alClient
     TabOrder = 2
-    ExplicitTop = 328
-    ExplicitHeight = 220
     object FtaGroupBox: TUniGroupBox
       AlignWithMargins = True
       Left = 12
