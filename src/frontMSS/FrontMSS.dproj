@@ -367,6 +367,7 @@
         <DCCReference Include="APIClasses\DSProcessorTaskSourceBrokerUnit.pas"/>
         <DCCReference Include="Forms\MonitoringTaskEditFormUnit.pas"/>
         <DCCReference Include="Forms\MonitoringTasksFormUnit.pas"/>
+        <DCCReference Include="APIClasses\MonitoringTaskSourceBrokerUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

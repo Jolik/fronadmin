@@ -16,10 +16,10 @@ uses
 
 type
   TStripTasksForm = class(TTaskParentForm)
-    cpTaskInfoModule: TUniContainerPanel;
-    lTaskInfoModule: TUniLabel;
-    lTaskInfoModuleValue: TUniLabel;
-    pSeparator5: TUniPanel;
+//    cpTaskInfoModule: TUniContainerPanel;
+//    lTaskInfoModule: TUniLabel;
+//    lTaskInfoModuleValue: TUniLabel;
+//    pSeparator5: TUniPanel;
     procedure dbgEntitySelectionChange(Sender: TObject);
   private
 

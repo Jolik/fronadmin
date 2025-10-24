@@ -111,7 +111,8 @@ uses
   DSProcessorTasksBrokerUnit in 'APIClasses\DSProcessorTasksBrokerUnit.pas',
   DSProcessorTaskSourceBrokerUnit in 'APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
   MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas',
-  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas';
+  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
+  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas';
 
 {$R *.res}
 
