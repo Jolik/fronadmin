@@ -115,7 +115,10 @@ uses
   DSProcessorTasksBrokerUnit in 'APIClasses\DSProcessorTasksBrokerUnit.pas',
   DSProcessorTaskSourceBrokerUnit in 'APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
   MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas',
-  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas';
+  MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
+  SourcesBrokerUnit in 'APIClasses\SourcesBrokerUnit.pas',
+  SharedFrameRuleConditionUnit in '\\ksandr-pc\МетеоКонтекст\Jolik\src\frontMSS\Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame},
+  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas';
 
 {$R *.res}
 
