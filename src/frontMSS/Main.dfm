@@ -15,7 +15,7 @@ object MainForm: TMainForm
   TextHeight = 15
   object btnAliases: TUniButton
     Left = 40
-    Top = 152
+    Top = 120
     Width = 75
     Height = 25
     Hint = ''
@@ -45,7 +45,7 @@ object MainForm: TMainForm
   end
   object btnLinks: TUniButton
     Left = 40
-    Top = 208
+    Top = 160
     Width = 75
     Height = 25
     Hint = ''
@@ -75,7 +75,7 @@ object MainForm: TMainForm
   end
   object btnAbonents: TUniButton
     Left = 40
-    Top = 96
+    Top = 80
     Width = 75
     Height = 25
     Hint = ''
@@ -150,5 +150,15 @@ object MainForm: TMainForm
     Hint = ''
     Caption = #1050#1086#1084#1087#1072#1085#1080#1103
     TabOrder = 13
+  end
+  object btnHandlers: TUniButton
+    Left = 40
+    Top = 200
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1054#1073#1088#1072#1073#1086#1090#1095#1080#1082#1080
+    TabOrder = 14
+    OnClick = btnHandlersClick
   end
 end

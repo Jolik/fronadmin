@@ -26,6 +26,7 @@ type
     UniLabel1: TUniLabel;
     cbCurComp: TUniComboBox;
     UniLabel2: TUniLabel;
+    btnHandlers: TUniButton;
     procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
@@ -39,6 +40,7 @@ type
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
     procedure cbCurCompChange(Sender: TObject);
+    procedure btnHandlersClick(Sender: TObject);
   private
     FDeps: TEntityList;
     FComps: TEntityList;
@@ -66,6 +68,7 @@ uses
   TasksParentFormUnit,
   CompanyUnit,
   DepartmentUnit,
+  HandlersFormUnit,
   DSProcessorTasksFormUnit,
   MonitoringTasksFormUnit,
   RulesFormUnit;

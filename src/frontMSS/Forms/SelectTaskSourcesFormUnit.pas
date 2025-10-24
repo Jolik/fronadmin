@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniMultiItem, uniListBox,
   uniPanel, uniLabel, uniPageControl, uniButton,
-  TaskSourceUnit, SourceUnit, SourcesBrokerUnit, uniImageList, uniBitBtn;
+  TaskSourceUnit, SourceUnit, TaskSourcesBrokerUnit, uniImageList, uniBitBtn;
 
 type
   TSelectTaskSourcesForm = class(TUniForm)

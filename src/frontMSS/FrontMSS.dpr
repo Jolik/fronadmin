@@ -4,6 +4,8 @@ program FrontMSS;
 
 
 
+
+
 uses
   Forms,
   ServerModule in 'ServerModule.pas' {UniServerModule: TUniGUIServerModule},
@@ -116,7 +118,43 @@ uses
   DSProcessorTaskSourceBrokerUnit in 'APIClasses\DSProcessorTaskSourceBrokerUnit.pas',
   MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas',
   MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
-  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas';
+  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas',
+  AbonensBrokerUnit in 'APIClasses\AbonensBrokerUnit.pas',
+  BindingsBrokerUnit in 'APIClasses\BindingsBrokerUnit.pas',
+  ContextsBrokerUnit in 'APIClasses\ContextsBrokerUnit.pas',
+  ContextTypesBrokerUnit in 'APIClasses\ContextTypesBrokerUnit.pas',
+  DsGroupsBrokerUnit in 'APIClasses\DsGroupsBrokerUnit.pas',
+  FieldSetBrokerUnit in 'APIClasses\FieldSetBrokerUnit.pas',
+  HttpRequestUnit in 'APIClasses\HttpRequestUnit.pas',
+  ParentBrokerUnit in 'APIClasses\ParentBrokerUnit.pas',
+  SourceCredsBrokerUnit in 'APIClasses\SourceCredsBrokerUnit.pas',
+  SourcesBrokerUnit in 'APIClasses\SourcesBrokerUnit.pas',
+  SourceTypesBrokerUnit in 'APIClasses\SourceTypesBrokerUnit.pas',
+  StripTaskSourceBrokerUnit in 'APIClasses\StripTaskSourceBrokerUnit.pas',
+  TaskTypesBrokerUnit in 'APIClasses\TaskTypesBrokerUnit.pas',
+  UsersBrokerUnit in 'APIClasses\UsersBrokerUnit.pas',
+  DirDownSettingEditFrameUnit in 'Forms\LinksFrames\DirDownSettingEditFrameUnit.pas',
+  DirUpSettingEditFrameUnit in 'Forms\LinksFrames\DirUpSettingEditFrameUnit.pas',
+  FTPCliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPCliDownLinkSettingEditFrameUnit.pas',
+  FTPCliUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPCliUpLinkSettingEditFrameUnit.pas',
+  FTPServerDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPServerDownLinkSettingEditFrameUnit.pas',
+  FTPSrvUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPSrvUpLinkSettingEditFrameUnit.pas',
+  HTTPCliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas',
+  Pop3CliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\Pop3CliDownLinkSettingEditFrameUnit.pas',
+  SebaCSDLinkSettingEditFrameUnit in 'Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas',
+  SebaSGSLinkSettingEditFrameUnit in 'Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas',
+  SharedFrameRuleConditionUnit in 'Forms\LinksFrames\SharedFrameRuleConditionUnit.pas',
+  SharedFrameS3 in 'Forms\LinksFrames\SharedFrameS3.pas',
+  SharedFrameSchedule in 'Forms\LinksFrames\SharedFrameSchedule.pas',
+  SMTPClieUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\SMTPClieUpLinkSettingEditFrameUnit.pas',
+  SMTPSrvDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas',
+  BindingUnit in 'EntityClasses\dataserver\BindingUnit.pas',
+  ContextTypeUnit in 'EntityClasses\dataserver\ContextTypeUnit.pas',
+  ContextUnit in 'EntityClasses\dataserver\ContextUnit.pas',
+  DataserieUnit in 'EntityClasses\dataserver\DataserieUnit.pas',
+  DsGroupUnit in 'EntityClasses\dataserver\DsGroupUnit.pas',
+  SourceCredsUnit in 'EntityClasses\dataserver\SourceCredsUnit.pas',
+  SourceTypeUnit in 'EntityClasses\dataserver\SourceTypeUnit.pas';
 
 {$R *.res}
 
