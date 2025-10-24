@@ -11,10 +11,11 @@ uses
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ChannelsBrokerUnit,
-  ParentEditFormUnit;
+  ParentEditFormUnit, uniLabel;
 
 type
   TChannelsForm = class(TListParentForm)
+    FDMemTableEntityService: TStringField;
   private
   protected
     ///  функция обновления компоннет на форме
@@ -37,7 +38,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, ChannelEditFormUnit;
+  MainModule, uniGUIApplication, ChannelEditFormUnit, EntityUnit, ChannelUnit;
 
 function ChannelsForm: TChannelsForm;
 begin
@@ -59,8 +60,43 @@ begin
 end;
 
 procedure TChannelsForm.Refresh(const AId: String = '');
+var
+  EntityList: TEntityList;
+  PageCount: Integer;
+
 begin
-  inherited Refresh(AId)
+  FDMemTableEntity.Active := True;
+  EntityList := Broker.List(PageCount);
+  try
+    FDMemTableEntity.EmptyDataSet;
+
+    if Assigned(EntityList) then
+      for var Entity in EntityList do
+      with Entity as TChannel do
+      begin
+        FDMemTableEntity.Append;
+        FDMemTableEntity.FieldByName('Id').AsString := Id;
+        FDMemTableEntity.FieldByName('Name').AsString := Name;
+        FDMemTableEntity.FieldByName('Service').AsString := Service.SvcID;
+        FDMemTableEntity.FieldByName('Caption').AsString := Entity.Caption;
+        FDMemTableEntity.FieldByName('Created').AsDateTime := Entity.Created;
+        FDMemTableEntity.FieldByName('Updated').AsDateTime := Entity.Updated;
+        FDMemTableEntity.Post;
+      end;
+
+    if FDMemTableEntity.IsEmpty then
+      tsTaskInfo.TabVisible := False
+    else
+      if AID.IsEmpty then
+        FDMemTableEntity.First
+      else
+        FDMemTableEntity.Locate('Id', AID, []);
+  finally
+    if Assigned(EntityList) then
+      EntityList.Free;
+end;
+
+
 end;
 
 end.

@@ -16,11 +16,7 @@ uses
 
 type
   TStripTasksForm = class(TTaskParentForm)
-//    cpTaskInfoModule: TUniContainerPanel;
-//    lTaskInfoModule: TUniLabel;
-//    lTaskInfoModuleValue: TUniLabel;
-//    pSeparator5: TUniPanel;
-    procedure dbgEntitySelectionChange(Sender: TObject);
+  procedure dbgEntitySelectionChange(Sender: TObject);
   private
 
   protected
@@ -33,6 +29,8 @@ type
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
 
+    function CreateTaskSourcesBroker(): TEntityBroker; override;
+
   public
 
   end;
@@ -44,7 +42,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit;
+  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit, StripTaskSourceBrokerUnit;
 
 function StripTasksForm: TStripTasksForm;
 begin
@@ -64,6 +62,13 @@ begin
   ///  создаем "нашу" форму редактирования для Задач
   Result := StripTaskEditForm();
 end;
+
+function TStripTasksForm.CreateTaskSourcesBroker: TEntityBroker;
+begin
+Result:= TStripTaskSourcesBroker.Create();
+end;
+
+
 
 procedure TStripTasksForm.dbgEntitySelectionChange(Sender: TObject);
 var

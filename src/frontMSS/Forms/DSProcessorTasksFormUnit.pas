@@ -16,19 +16,10 @@ uses
 
 type
   TDSProcessorTasksForm = class(TTaskParentForm)
-  private
-    FSourceTaskBroker: TDSProcessorTaskSourcesBroker;
-
   protected
-
     function CreateBroker(): TEntityBroker; override;
-
     function CreateTaskSourcesBroker(): TEntityBroker; override;
-
     function CreateEditForm(): TParentEditForm; override;
-
-//    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
-
   public
 
   end;
@@ -51,14 +42,12 @@ end;
 
 function TDSProcessorTasksForm.CreateBroker: TEntityBroker;
 begin
-  ///   ""
   Result := TDSProcessorTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 end;
 
 
 function TDSProcessorTasksForm.CreateEditForm: TParentEditForm;
 begin
-  ///   ""
   Result := DSProcessorTaskEditForm();
 end;
 
