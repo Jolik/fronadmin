@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniMultiItem, uniListBox,
   uniPanel, uniLabel, uniPageControl, uniButton,
-  TaskSourceUnit, SourceUnit, TaskSourcesBrokerUnit;
+  TaskSourceUnit, SourceUnit, SourcesBrokerUnit, uniImageList, uniBitBtn;
 
 type
   TSelectTaskSourcesForm = class(TUniForm)
@@ -37,9 +37,11 @@ type
     lSourceInfoModule: TUniLabel;
     lSourceInfoModuleValue: TUniLabel;
     pSeparator5: TUniPanel;
-    btnAddSource: TUniButton;
+    pnBottom: TUniContainerPanel;
     btnOk: TUniButton;
     btnCancel: TUniButton;
+    btnAddSource: TUniButton;
+    btnRemoveSource: TUniButton;
     procedure btnAddSourceClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
@@ -47,6 +49,7 @@ type
     procedure UniFormDestroy(Sender: TObject);
     procedure lbAllSourcesClick(Sender: TObject);
     procedure lbAllSourcesChange(Sender: TObject);
+    procedure btnRemoveSourceClick(Sender: TObject);
   private
     AllSourcesBroker: TTaskSourcesBroker;
     AllSourceList: TSourceList;
@@ -142,15 +145,15 @@ begin
 
   if Assigned(lbAllSources) then
   begin
-    for var I := 0 to lbAllSources.Items.Count - 1 do
-      if lbAllSources.Selected[I] then
-        if lbAllSources.Items.Objects[I] is TSource then
-        begin
-          AddSourceToTaskList(TSource(lbAllSources.Items.Objects[I]));
-          Added := True;
-        end;
+//    for var I := 0 to lbAllSources.Items.Count - 1 do
+//      if lbAllSources.Selected[I] then
+//        if lbAllSources.Items.Objects[I] is TSource then
+//        begin
+//          AddSourceToTaskList(TSource(lbAllSources.Items.Objects[I]));
+//          Added := True;
+//        end;
 
-    if not Added then
+//    if not Added then
       if (lbAllSources.ItemIndex >= 0) and (lbAllSources.ItemIndex < lbAllSources.Items.Count) then
         if lbAllSources.Items.Objects[lbAllSources.ItemIndex] is TSource then
         begin
@@ -171,6 +174,35 @@ end;
 procedure TSelectTaskSourcesForm.btnOkClick(Sender: TObject);
 begin
   ModalResult := mrOk;
+end;
+
+procedure TSelectTaskSourcesForm.btnRemoveSourceClick(Sender: TObject);
+var
+  Removed: boolean;
+begin
+  Removed := False;
+
+  if FTaskSourceList.IsEmpty or (lbTaskSources.Count = 0) then
+    Exit;
+
+  if not ((lbTaskSources.ItemIndex > -1) and (lbTaskSources.ItemIndex < lbTaskSources.Count)) then
+    Exit;
+
+  for var cnt := 0 to FTaskSourceList.Count - 1 do
+  begin
+    if not (FTaskSourceList.Items[cnt] is TTaskSource) then
+      Continue;
+
+    if (FTaskSourceList.Items[cnt] as TTaskSource).Name = (lbTaskSources.Items.Objects[lbTaskSources.ItemIndex] as TTaskSource).Name then
+    begin
+      FTaskSourceList.Delete(cnt);
+      Removed := True;
+      Break;
+    end;
+  end;
+
+  if Removed then
+    PopulateTaskSources;
 end;
 
 procedure TSelectTaskSourcesForm.LoadAllSources;
@@ -289,8 +321,8 @@ begin
         Continue;
 
       Index := lbTaskSources.Items.AddObject(Source.Name, Source);
-      if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
-        lbTaskSources.Selected[Index] := Source.Enabled;
+      //if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
+      //  lbTaskSources.Selected[Index] := Source.Enabled;
     end;
   finally
     lbTaskSources.Items.EndUpdate;

@@ -11,6 +11,7 @@ uses
   IdURI,
   APIConst in '..\APIClasses\APIConst.pas',
   ChannelsBrokerUnit in '..\APIClasses\ChannelsBrokerUnit.pas',
+  HandlersBrokerUnit in '..\APIClasses\HandlersBrokerUnit.pas',
   AbonensBrokerUnit in '..\APIClasses\AbonensBrokerUnit.pas',
   LinksBrokerUnit in '..\APIClasses\LinksBrokerUnit.pas',
   ProfilesBrokerUnit in '..\APIClasses\ProfilesBrokerUnit.pas',
@@ -47,6 +48,7 @@ uses
   LinkUnit in '..\EntityClasses\links\LinkUnit.pas',
   MonitoringTaskUnit in '..\EntityClasses\monitoring\MonitoringTaskUnit.pas',
   ChannelUnit in '..\EntityClasses\router\ChannelUnit.pas',
+  HandlerUnit in '..\EntityClasses\router\HandlerUnit.pas',
   AbonentUnit in '..\EntityClasses\router\AbonentUnit.pas',
   QueueUnit in '..\EntityClasses\router\QueueUnit.pas',
   AliasUnit in '..\EntityClasses\router\AliasUnit.pas',
@@ -1759,6 +1761,95 @@ begin
   end;
 end;
 
+procedure ListHandlers();
+var
+  HandlersBroker: THandlersBroker;
+  HandlerList: TEntityList;
+  HandlerEntity: TEntity;
+  PageCount: Integer;
+begin
+  try
+    HandlersBroker := THandlersBroker.Create;
+    try
+      HandlerList := nil;
+      try
+        HandlerList := HandlersBroker.List(PageCount);
+
+        Writeln('---------- Handlers List ----------');
+
+        if Assigned(HandlerList) then
+        begin
+          var FirstHandler: THandler := nil;
+
+          if HandlerList.Count > 0 then
+            FirstHandler := HandlerList.Items[0] as THandler;
+
+          for HandlerEntity in HandlerList do
+          begin
+            var Handler := HandlerEntity as THandler;
+            Writeln(Format('Class: %s | Address: %p', [Handler.ClassName, Pointer(Handler)]));
+            Writeln('Hid: ' + Handler.Hid);
+            Writeln('Name: ' + Handler.Name);
+            Writeln('Caption: ' + Handler.Caption);
+            Writeln('Svcid: ' + Handler.Svcid);
+            Writeln('Lid: ' + Handler.Lid);
+
+            Writeln('As JSON:');
+            var Json := Handler.Serialize();
+            try
+              if Json <> nil then
+                Writeln(Json.Format);
+            finally
+              Json.Free;
+            end;
+
+            Writeln('----------');
+          end;
+
+          if Assigned(FirstHandler) then
+          begin
+            Writeln('---------- Handler Info ----------');
+            Writeln('Requesting info for: ' + FirstHandler.Hid);
+
+            var InfoEntity: TEntity := nil;
+            try
+              InfoEntity := HandlersBroker.Info(FirstHandler.Hid);
+
+              if Assigned(InfoEntity) then
+              begin
+                var InfoHandler := InfoEntity as THandler;
+                Writeln('Info result as JSON:');
+                var InfoJson := InfoHandler.Serialize();
+                try
+                  if InfoJson <> nil then
+                    Writeln(InfoJson.Format);
+                finally
+                  InfoJson.Free;
+                end;
+              end
+              else
+                Writeln('Info request returned nil.');
+            finally
+              InfoEntity.Free;
+            end;
+            Writeln('----------');
+          end;
+        end
+        else
+          Writeln('Handlers list is empty.');
+
+      finally
+        HandlerList.Free;
+      end;
+    finally
+      HandlersBroker.Free;
+    end;
+  except
+    on E: Exception do
+      Writeln(E.ClassName, ': ', E.Message);
+  end;
+end;
+
 procedure ListRules();
 var
   RulesBroker: TRulesBroker;
@@ -2214,7 +2305,8 @@ begin
 //      ListContexts();
 //      ListBindings();
 //      ListAbonents();
-      ListSources();
+//      ListSources();
+      ListHandlers();
 //      ListAliases();
 //      ListRules();
 //      ListDsGroups();
