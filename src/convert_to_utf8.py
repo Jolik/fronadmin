@@ -1,17 +1,10 @@
 import os
 import chardet
 
-# Текущая папка как корень
 root = os.getcwd()
-
-# Какие расширения обрабатывать
 extensions = (".pas", ".dfm", ".dpr", ".inc", ".rc")
 
-# Счётчики
-total = 0
-converted = 0
-skipped = 0
-failed = 0
+total = converted = skipped = failed = 0
 
 print(f"🔍 Начинаю обход из: {root}\n")
 
@@ -31,14 +24,17 @@ def convert_file(filepath):
             failed += 1
             return
 
-        # Уже UTF → пропускаем
+        # Уже UTF? — пропускаем
         if enc.startswith("utf"):
             skipped += 1
             return
 
         text = raw.decode(enc)
-        with open(filepath, "w", encoding="utf-8-sig") as f:
+
+        # ВАЖНО: newline="" сохраняет исходные \r\n как есть, без добавления новых
+        with open(filepath, "w", encoding="utf-8-sig", newline="") as f:
             f.write(text)
+
         print(f"[+] Перекодирован: {filepath} ({enc} → UTF-8)")
         converted += 1
 

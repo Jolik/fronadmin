@@ -17,22 +17,11 @@ uses
 
 type
   TSummaryTasksForm = class(TTaskParentForm)
-//    procedure dbgEntitySelectionChange(Sender: TObject);
-  private
-    FSourceTaskBroker: TSummaryTaskSourcesBroker;
-
   protected
     ///
 //    procedure Refresh(const AId: String = ''); override;
-
-    ///
-
-    function CreateBroker(): TEntityBroker; override;
-
-    function CreateTaskSourcesBroker(): TEntityBroker; override;
-
+    function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
     function CreateEditForm(): TParentEditForm; override;
-
     function CreateRestBroker(): TRestBrokerBase; override;
 
 //    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
@@ -53,14 +42,6 @@ uses
 function SummaryTasksForm(): TSummaryTasksForm;
 begin
   Result := TSummaryTasksForm(UniMainModule.GetFormInstance(TSummaryTasksForm));
-end;
-
-{ TSummaryTasksForm }
-
-function TSummaryTasksForm.CreateBroker: TEntityBroker;
-begin
-  // Legacy broker not used
-  Result := nil;
 end;
 
 

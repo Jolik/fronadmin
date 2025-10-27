@@ -12,7 +12,10 @@ uses
   TaskSourcesRestBrokerUnit,
   ParentTaskCustomSettingsEditFrameUnit, SelectTaskSourcesFormUnit,
   TaskUnit,
-  uniListBox;
+  uniListBox,
+  Data.DB, FireDAC.Comp.Client, uniDBGrid, uniBasicGrid, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet;
 
 
 type
@@ -35,11 +38,22 @@ type
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;
-    lbTaskSources: TUniListBox;
-    btnSourcesEdit: TUniButton;
+    
+    gridSources: TUniDBGrid;
+    SourcesDS: TDataSource;
+    SourcesMem: TFDMemTable;
+    SourcesMemenabled: TBooleanField;
+    SourcesMemsid: TStringField;
+    SourcesMemname: TStringField;
+
     procedure btnSourcesEditClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
+//    procedure lbTaskSourcesClick(Sender: TObject);
   protected
+
+    FGrid: TUniDBGrid;
+    FSourcesMem: TFDMemTable;
+    FSourcesDS: TDataSource;
     FTaskSourcesBroker: TTaskSourcesRestBroker;
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     FTaskSourcesList: TTaskSourcesList;
@@ -51,12 +65,16 @@ type
     procedure ClearCustomSettingsFrame;
     procedure SetTaskSourcesList(const Value: TTaskSourcesList);
     procedure RefreshTaskSourcesList;
+//    procedure UpdateSourceItemsText;
     procedure AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
     procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
 
 
     function CreateTaskSourceEditForm(): TSelectTaskSourcesForm; virtual;
     procedure SetEntity(AEntity : TFieldSet); override;
+    procedure EnsureSourcesGrid;
+    procedure FillMemFromList;
+    procedure SyncListFromMem;
 
   public
     ///    FEntity     ""
@@ -72,7 +90,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, ConstsUnit, Common;
+  MainModule, uniGUIApplication, ConstsUnit, Common, StrUtils;
 
 function ParentTaskEditForm(taskSourceBroker: TTaskSourcesRestBroker): TTaskEditParentForm;
 begin
@@ -96,13 +114,8 @@ begin
   Task.Def := meDef.Lines.Text;
   Task.Enabled := cbEnabled.Checked;
 
-  if Assigned(FTaskSourcesList) and Assigned(lbTaskSources) then
-    for var I := 0 to lbTaskSources.Items.Count - 1 do
-    begin
-      var SourceObj := lbTaskSources.Items.Objects[I];
-      if SourceObj is TTaskSource then
-        TTaskSource(SourceObj).Enabled := lbTaskSources.Selected[I];
-    end;
+  // Sync Enabled flags from grid back to list
+  SyncListFromMem;
 
   if Assigned(FCustomSettingsFrame) then
     Result := FCustomSettingsFrame.Apply() and Result;
@@ -179,24 +192,12 @@ end;
 
 procedure TTaskEditParentForm.RefreshTaskSourcesList;
 begin
-  if not Assigned(lbTaskSources) then
-    Exit;
-
-  lbTaskSources.Items.Clear;
-
-  if not Assigned(FTaskSourcesList) then
-    Exit;
-
-  for var I := 0 to FTaskSourcesList.Count - 1 do
-  begin
-    var Source := FTaskSourcesList.Items[I] as TTaskSource;
-    if not Assigned(Source) then
-      Continue;
-
-    var Index := lbTaskSources.Items.AddObject(Source.Name, Source);
-    if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
-      lbTaskSources.Selected[Index] := Source.Enabled;
-  end;
+  EnsureSourcesGrid;
+  FillMemFromList;
+//  if Assigned(lbTaskSources) then
+//    lbTaskSources.Visible := False;
+  if Assigned(gridSources) then
+    gridSources.Visible := True;
 end;
 
 procedure TTaskEditParentForm.AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
@@ -206,13 +207,11 @@ var
   CreatedList: Boolean;
 begin
   CreatedList := False;
-
   if not Assigned(FTaskSourcesList) then
   begin
     FTaskSourcesList := TTaskSourcesList.Create(True);
     CreatedList := True;
   end;
-
   if CreatedList then
     FTaskSourcesListOwned := True;
 
@@ -272,6 +271,8 @@ end;
 procedure TTaskEditParentForm.UniFormShow(Sender: TObject);
 begin
   inherited;
+  EnsureSourcesGrid;
+  RefreshTaskSourcesList;
   teTid.Enabled:= not IsEdit;
   cbModule.Enabled:= not IsEdit;
 end;
@@ -302,5 +303,72 @@ begin
     ClearCustomSettingsFrame;
   end;
 end;
+
+procedure TTaskEditParentForm.EnsureSourcesGrid;
+begin
+  if Assigned(SourcesDS) and Assigned(SourcesMem) then
+    SourcesDS.DataSet := SourcesMem;
+  if Assigned(gridSources) then
+    gridSources.DataSource := SourcesDS;
+  if Assigned(SourcesMem) and (not SourcesMem.Active) then
+  begin
+    if SourcesMem.FieldDefs.Count = 0 then
+    begin
+      SourcesMem.FieldDefs.Add('enabled', ftBoolean);
+      SourcesMem.FieldDefs.Add('name', ftString, 255);
+      SourcesMem.FieldDefs.Add('sid', ftString, 120);
+    end;
+    SourcesMem.CreateDataSet;
+  end;
+end;
+
+procedure TTaskEditParentForm.FillMemFromList;
+begin
+  if not Assigned(SourcesMem) then Exit;
+  SourcesMem.DisableControls;
+  try
+    SourcesMem.EmptyDataSet;
+    if Assigned(FTaskSourcesList) then
+      for var I := 0 to FTaskSourcesList.Count - 1 do
+      begin
+        if not (FTaskSourcesList.Items[I] is TTaskSource) then
+          Continue;
+        var S := TTaskSource(FTaskSourcesList.Items[I]);
+        SourcesMem.Append;
+        SourcesMem.FieldByName('enabled').AsBoolean := S.Enabled;
+        SourcesMem.FieldByName('name').AsString := S.Name;
+        SourcesMem.FieldByName('sid').AsString := S.Sid;
+        SourcesMem.Post;
+      end;
+  finally
+    SourcesMem.EnableControls;
+  end;
+end;
+
+procedure TTaskEditParentForm.SyncListFromMem;
+begin
+  if not Assigned(FTaskSourcesList) or not Assigned(SourcesMem) then Exit;
+  SourcesMem.DisableControls;
+  try
+    SourcesMem.First;
+    while not SourcesMem.Eof do
+    begin
+      var Sid := SourcesMem.FieldByName('sid').AsString;
+      for var I := 0 to FTaskSourcesList.Count - 1 do
+        if (FTaskSourcesList.Items[I] is TTaskSource) and (TTaskSource(FTaskSourcesList.Items[I]).Sid = Sid) then
+        begin
+          TTaskSource(FTaskSourcesList.Items[I]).Enabled := SourcesMem.FieldByName('enabled').AsBoolean;
+          Break;
+        end;
+      SourcesMem.Next;
+    end;
+  finally
+    SourcesMem.EnableControls;
+  end;
+end;
+
+
+
+
 
 end.

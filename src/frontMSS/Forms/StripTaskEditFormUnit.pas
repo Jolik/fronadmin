@@ -1,4 +1,4 @@
-unit StripTaskEditFormUnit;
+﻿unit StripTaskEditFormUnit;
 
 interface
 
@@ -70,7 +70,7 @@ begin
   Result := Entity as TStripTask;
 end;
 
-procedure TStripTaskEditForm.SetEntity(AEntity: TEntity);
+procedure TStripTaskEditForm.SetEntity(AEntity: TFieldSet);
 begin
   if not (AEntity is TStripTask) then
   begin
@@ -80,8 +80,6 @@ begin
 
   try
     inherited SetEntity(AEntity);
-
-    ///  ������� �������� ������
 //    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
 
   except

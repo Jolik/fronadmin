@@ -10,22 +10,20 @@ uses
   TaskHttpRequests,
   TaskUnit;
 
-type
+ type
   TTasksRestBroker = class(TRestBrokerBase)
   public
-    // Базовый путь сервиса, который применится ко всем создаваемым запросам
     BasePath: string;
-    function List(AReq: TTaskReqList): TTaskListResponse;overload;
-    function List(AReq: TReqList): TListResponse;overload;override;
-    function Info(AReq: TTaskReqInfo): TTaskInfoResponse;overload;
-    function Info(AReq: TReqInfo): TEntityResponse;overload; override;
-    function New(AReq: TTaskReqNew): TTaskNewResponse;overload;
-    function New(AReq: TReqNew;AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
-    function Update(AReq: TTaskReqUpdate): TJSONResponse;overload;
-    function Update(AReq: TReqUpdate): TJSONResponse;overload; override;
-    function Remove(AReq: TTaskReqRemove): TJSONResponse;overload;
-    function Remove(AReq: TReqRemove): TJSONResponse;overload; override;
-    // Фабрики базовых запросов
+    function List(AReq: TTaskReqList): TTaskListResponse; overload;
+    function List(AReq: TReqList): TListResponse; overload; override;
+    function Info(AReq: TTaskReqInfo): TTaskInfoResponse; overload;
+    function Info(AReq: TReqInfo): TEntityResponse; overload; override;
+    function New(AReq: TTaskReqNew): TTaskNewResponse; overload;
+    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function Update(AReq: TTaskReqUpdate): TJSONResponse; overload;
+    function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
+    function Remove(AReq: TTaskReqRemove): TJSONResponse; overload;
+    function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
     function CreateReqList: TReqList; override;
     function CreateReqInfo: TReqInfo; override;
     function CreateReqNew: TReqNew; override;
@@ -37,11 +35,10 @@ implementation
 
 { TTasksRestBroker }
 
-
 function TTasksRestBroker.List(AReq: TReqList): TListResponse;
 begin
   Result := TTaskListResponse.Create;
-  Result := inherited List(AReq,Result);
+  Result := inherited List(AReq, Result);
 end;
 
 function TTasksRestBroker.List(AReq: TTaskReqList): TTaskListResponse;
@@ -49,18 +46,16 @@ begin
   Result := List(AReq as TReqList) as TTaskListResponse;
 end;
 
-
-function TTasksRestBroker.New(AReq: TReqNew;
-  AResp: TFieldSetResponse): TFieldSetResponse;
+function TTasksRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
 begin
   Result := TTaskNewResponse.Create;
-  Result := inherited New(AReq,Result);
+  Result := inherited New(AReq, Result);
 end;
 
 function TTasksRestBroker.New(AReq: TTaskReqNew): TTaskNewResponse;
 begin
   Result := TTaskNewResponse.Create;
-  New(AReq, Result);
+  New(AReq as TReqNew, Result);
 end;
 
 function TTasksRestBroker.Remove(AReq: TReqRemove): TJSONResponse;
@@ -125,3 +120,5 @@ begin
 end;
 
 end.
+
+

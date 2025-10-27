@@ -38,7 +38,7 @@ type
 
   protected
     ///
-    procedure SetEntity(AEntity : TEntity); override;
+    procedure SetEntity(AEntity : TFieldSet); override;
 
   public
     ///    FEntity     ""
@@ -272,7 +272,7 @@ begin
   end;
 end;    *)
 
-procedure TSummaryTaskEditForm.SetEntity(AEntity: TEntity);
+procedure TSummaryTaskEditForm.SetEntity(AEntity: TFieldSet);
 begin
   ClearCustomSettingsFrame;
   ///        -   !

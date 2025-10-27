@@ -31,7 +31,7 @@ type
     ///  функция для обновления компонент на форме
     procedure Refresh(const AId: String = ''); virtual; abstract;
 
-    // фабрика REST‑брокера (запросы создаёт брокер)
+    // фабрика REST брокера (запросы создаёт брокер)
     function CreateRestBroker(): TRestBrokerBase; virtual;
 
     ///  функция для создания нужной формы редактирования

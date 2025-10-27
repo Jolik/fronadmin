@@ -420,9 +420,6 @@
         <DCCReference Include="APIClasses\AbonentsRestBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TasksRestBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\UniversalRestBrokerUnit.pas"/>
-        <DCCReference Include="APIClasses\BrokerIntfUnit.pas">
-            <Form>$R *.res</Form>
-        </DCCReference>
         <DCCReference Include="HttpClasses\AbonentHttpRequests.pas"/>
         <DCCReference Include="HttpClasses\BaseRequests.pas"/>
         <DCCReference Include="HttpClasses\BaseResponses.pas"/>
@@ -435,6 +432,17 @@
         <DCCReference Include="APIClasses\RulesRestBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\TaskSourcesRestBrokerUnit.pas"/>
         <DCCReference Include="HttpClasses\TaskSourceHttpRequests.pas"/>
+        <DCCReference Include="APIClasses\HandlersRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\ProfilesRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\QueuesRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\RouterSourcesRestBrokerUnit.pas"/>
+        <DCCReference Include="HttpClasses\HandlerHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\ProfileHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\QueueHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\RouterSourceHttpRequests.pas"/>
+        <DCCReference Include="APIClasses\BrokerIntfUnit.pas"/>
+        <DCCReference Include="APIClasses\ChannelsRestBrokerUnit.pas"/>
+        <DCCReference Include="HttpClasses\ChannelHttpRequests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

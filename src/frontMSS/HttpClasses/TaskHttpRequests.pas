@@ -10,16 +10,15 @@ uses
   StringListUnit,
   BaseRequests,
   BaseResponses,
-  TaskUnit;
+  TaskUnit,
+  FuncUnit;
 
 type
-  // Тело запроса списка задач
   TTaskReqListBody = class(TReqListBody)
   protected
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
   end;
 
-  // Ответ: список задач
   TTaskListResponse = class(TListResponse)
   private
     function GetTaskList: TTaskList;
@@ -28,7 +27,6 @@ type
     property TaskList: TTaskList read GetTaskList;
   end;
 
-  // Ответ: одна задача
   TTaskInfoResponse = class(TEntityResponse)
   private
     function GetTask: TTask;
@@ -37,7 +35,6 @@ type
     property Task: TTask read GetTask;
   end;
 
-  // Create: response for new task
   TTaskNewResult = class(TFieldSet)
   private
     FTid: string;
@@ -55,7 +52,6 @@ type
     property TaskNewRes: TTaskNewResult read GetTaskNewRes;
   end;
 
-  // Запросы
   TTaskReqList = class(TReqList)
   protected
     class function BodyClassType: TFieldSetClass; override;
@@ -91,10 +87,47 @@ type
     procedure SetTaskId(const Value: string);
   end;
 
-implementation
+  TNewTaskSource = class(TFieldSet)
+  private
+    FSid: string;
+    FName: string;
+    FEnabled: Boolean;
+  public
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    property Sid: string read FSid write FSid;
+    property Name: string read FName write FName;
+    property Enabled: Boolean read FEnabled write FEnabled;
+  end;
 
-uses
-  APIConst, FuncUnit;
+  TNewTaskSourceList = class(TFieldSetList)
+  protected
+    class function ItemClassType: TFieldSetClass; override;
+  end;
+
+  TTaskNewBody = class(TTask)
+  private
+    FSources: TNewTaskSourceList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    property Sources: TNewTaskSourceList read FSources;
+  end;
+
+  TTaskUpdateBody = class(TTask)
+  private
+    FSources: TNewTaskSourceList;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    property Sources: TNewTaskSourceList read FSources;
+  end;
+
+implementation
 
 { TTaskListResponse }
 
@@ -140,7 +173,6 @@ var
   V: TJSONValue;
 begin
   inherited Parse(src, APropertyNames);
-  if not Assigned(src) then Exit;
   FTid := '';
   V := src.Values['tid'];
   if V is TJSONString then
@@ -184,7 +216,6 @@ var
   Arr: TJSONArray;
 begin
   inherited Serialize(dst, APropertyNames);
-  // Ensure default ordering for tasks only
   if dst.Values['order'] = nil then
   begin
     Arr := TJSONArray.Create;
@@ -209,11 +240,11 @@ begin
   Id := ATaskId;
 end;
 
-{ TTaskReqNew }
+{ New / Update / Remove requests }
 
 class function TTaskReqNew.BodyClassType: TFieldSetClass;
 begin
-  Result := TTask; // позволим сериализовать задачу напрямую
+  Result := TTaskNewBody;
 end;
 
 constructor TTaskReqNew.Create;
@@ -222,11 +253,9 @@ begin
   SetEndpoint('tasks/new');
 end;
 
-{ TTaskReqUpdate }
-
 class function TTaskReqUpdate.BodyClassType: TFieldSetClass;
 begin
-  Result := TTask;
+  Result := TTaskUpdateBody;
 end;
 
 constructor TTaskReqUpdate.Create;
@@ -240,8 +269,6 @@ begin
   Id := Value;
 end;
 
-{ TTaskReqRemove }
-
 constructor TTaskReqRemove.Create;
 begin
   inherited Create;
@@ -253,8 +280,130 @@ begin
   Id := Value;
 end;
 
+{ TNewTaskSource }
+
+procedure TNewTaskSource.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Parse(src, APropertyNames);
+  FSid := GetValueStrDef(src, 'sid', '');
+  FName := GetValueStrDef(src, 'name', '');
+  FEnabled := GetValueBool(src, 'enabled');
+end;
+
+procedure TNewTaskSource.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Serialize(dst, APropertyNames);
+  dst.AddPair('sid', FSid);
+  if not FName.IsEmpty then
+    dst.AddPair('name', FName);
+  dst.AddPair('enabled', FEnabled);
+end;
+
+class function TNewTaskSourceList.ItemClassType: TFieldSetClass;
+begin
+  Result := TNewTaskSource;
+end;
+
+{ TTaskNewBody }
+
+constructor TTaskNewBody.Create;
+begin
+  inherited Create;
+  FSources := TNewTaskSourceList.Create(True);
+end;
+
+destructor TTaskNewBody.Destroy;
+begin
+  FSources.Free;
+  inherited;
+end;
+
+procedure TTaskNewBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  V: TJSONValue;
+begin
+  Name := GetValueStrDef(src, 'name', '');
+  Def := GetValueStrDef(src, 'def', '');
+  Module := GetValueStrDef(src, 'module', '');
+  Enabled := GetValueBool(src, 'enabled');
+  V := src.FindValue('settings');
+  if (V is TJSONObject) and Assigned(Settings) then
+    Settings.Parse(TJSONObject(V));
+  V := src.FindValue('sources');
+  if (V is TJSONArray) then
+    FSources.ParseList(TJSONArray(V));
+end;
+
+procedure TTaskNewBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Arr: TJSONArray;
+begin
+  dst.AddPair('name', Name);
+  if not Def.IsEmpty then
+    dst.AddPair('def', Def);
+  dst.AddPair('module', Module);
+  dst.AddPair('enabled', Enabled);
+  if Assigned(Settings) then
+    dst.AddPair('settings', Settings.Serialize());
+  if not CompId.IsEmpty then dst.AddPair('compid', CompId);
+  if not DepId.IsEmpty then dst.AddPair('deptid', DepId);
+  if Assigned(FSources) and (FSources.Count > 0) then
+  begin
+    Arr := TJSONArray.Create;
+    FSources.SerializeList(Arr);
+    dst.AddPair('sources', Arr);
+  end;
+end;
+
+{ TTaskUpdateBody }
+
+constructor TTaskUpdateBody.Create;
+begin
+  inherited Create;
+  FSources := TNewTaskSourceList.Create(True);
+end;
+
+destructor TTaskUpdateBody.Destroy;
+begin
+  FSources.Free;
+  inherited;
+end;
+
+procedure TTaskUpdateBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  V: TJSONValue;
+begin
+  Name := GetValueStrDef(src, 'name', Name);
+  Def := GetValueStrDef(src, 'def', Def);
+  if src.FindValue('enabled') <> nil then
+    Enabled := GetValueBool(src, 'enabled');
+  V := src.FindValue('settings');
+  if (V is TJSONObject) and Assigned(Settings) then
+    Settings.Parse(TJSONObject(V));
+  V := src.FindValue('sources');
+  if (V is TJSONArray) then
+    FSources.ParseList(TJSONArray(V));
+end;
+
+procedure TTaskUpdateBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  Arr: TJSONArray;
+begin
+  if not Name.IsEmpty then
+    dst.AddPair('name', Name);
+  if not Def.IsEmpty then
+    dst.AddPair('def', Def);
+  dst.AddPair('enabled', Enabled);
+  if Assigned(Settings) then
+    dst.AddPair('settings', Settings.Serialize());
+  if Assigned(FSources) and (FSources.Count > 0) then
+  begin
+    Arr := TJSONArray.Create;
+    FSources.SerializeList(Arr);
+    dst.AddPair('sources', Arr);
+  end;
+end;
+
 end.
-
-
 
 
