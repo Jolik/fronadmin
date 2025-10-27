@@ -1,0 +1,92 @@
+procedure TParentForm.UpdateCallback(ASender: TComponent;
+  AResult: Integer);
+var
+  LId : string;
+  res : boolean;
+  ReqUpd: TReqUpdate;
+  JsonRes: TJSONResponse;
+
+begin
+  ///  если модальное окно закрылось через ОК
+  if AResult = mrOk then
+  begin
+    /// считываем из окна отредатикрованный класс сущности
+    ///  и пытаемся обновить на сервере
+    ///  если все ок, то в ответ вернется обноленный класс сущности
+    if Assigned(FRestBroker) then
+    begin
+      res := False;
+      ReqUpd := FRestBroker.CreateReqUpdate();
+      if Assigned(ReqUpd) then
+      begin
+        try
+          if Assigned(EditForm) and Assigned(EditForm.Entity) then
+            ReqUpd.Id := EditForm.Entity.Id;
+
+          if Assigned(ReqUpd.ReqBody) and (EditForm.Entity is TFieldSet) then
+            TFieldSet(ReqUpd.ReqBody).Assign(TFieldSet(EditForm.Entity));
+
+          JsonRes := FRestBroker.Update(ReqUpd);
+          try
+            if Assigned(JsonRes) and (JsonRes.StatusCode = 200) then
+              res := True
+            else
+            begin
+              if Assigned(JsonRes) then
+                MessageDlg(Format('Обновление не удалось. HTTP %d'#13#10'%s',
+                  [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil)
+              else
+                MessageDlg('Обновление не удалось: пустой ответ', TMsgDlgType.mtWarning, [mbOK], nil);
+              res := False;
+            end;
+          finally
+            JsonRes.Free;
+          end;
+        except
+          on E: Exception do
+            res := False;
+        end;
+      end
+      else
+        res := False;
+    end
+    else
+      res := Broker.Update(EditForm.Entity);
+    ///  если обновить на сервере не удалось, то сообщаем об этом
+    if not res then
+    begin
+/// !!!     ShowMessage()
+      exit;
+    end
+    else
+    begin
+      ///  если сущность на сервре создалась то
+      ///  обрабатываем результат
+      ///  обновляем таблицу с указанием новой сущности
+///!!!      Refresh(LEntity.Id);
+        Refresh();
+    end;
+  end;
+end;
+
+procedure TParentForm.UniFormCreate(Sender: TObject);
+begin
+  ///   создаем брокера
+  FBroker := CreateBroker();
+  FRestBroker := CreateRestBroker();
+  ///   создаем форму редактирования
+  /// 2025-10-16 Папков Александр. Тут не нужно создавать форму редактирования
+  /// Ее нужно создавать по месту применения
+  // FEditForm := CreateEditForm();
+end;
+
+procedure TParentForm.UniFormDestroy(Sender: TObject);
+begin
+  FreeAndNil(Broker);
+// надо удалять или не нужнО? FreeAndNil(EditForm);
+end;
+
+procedure TParentForm.PrepareEditForm(isEditMode:boolean=false);
+begin
+  FEditForm := CreateEditForm();
+  FEditForm.IsEdit:= isEditMode;

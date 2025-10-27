@@ -1,4 +1,4 @@
-﻿unit MonitoringTasksFormUnit;
+unit MonitoringTasksFormUnit;
 
 interface
 
@@ -12,8 +12,8 @@ uses
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
   ParentEditFormUnit,
-  TasksParentFormUnit,
-  MonitoringTasksBrokerUnit, MonitoringTaskSourceBrokerUnit, TaskSourceUnit, uniPanel, uniLabel;
+  TasksParentFormUnit, RestBrokerBaseUnit,
+  TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
   TMonitoringTasksForm = class(TTaskParentForm)
@@ -24,10 +24,10 @@ type
 
     function CreateBroker(): TEntityBroker; override;
 
-    function CreateTaskSourcesBroker(): TEntityBroker; override;
+    function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
 
     function CreateEditForm(): TParentEditForm; override;
-
+    function CreateRestBroker(): TRestBrokerBase; override;
 //    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
 
   public
@@ -41,7 +41,8 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, MonitoringTaskEditFormUnit, MonitoringTaskUnit, LoggingUnit, ParentFormUnit;
+  MainModule, uniGUIApplication, MonitoringTaskEditFormUnit, MonitoringTaskUnit, LoggingUnit, ParentFormUnit,
+  TasksRestBrokerUnit;
 
 function MonitoringTasksForm(): TMonitoringTasksForm;
 begin
@@ -52,8 +53,8 @@ end;
 
 function TMonitoringTasksForm.CreateBroker: TEntityBroker;
 begin
-  ///   ""
-  Result := TMonitoringTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
+  // Legacy broker not used
+  Result := nil;
 end;
 
 
@@ -63,9 +64,15 @@ begin
   Result := MonitoringTaskEditForm();
 end;
 
-function TMonitoringTasksForm.CreateTaskSourcesBroker: TEntityBroker;
+function TMonitoringTasksForm.CreateRestBroker: TRestBrokerBase;
 begin
-  Result:= TMonitoringTaskSourcesBroker.Create();
+  result:= inherited;
+  (result as TTasksRestBroker).BasePath:= APIConst.constURLMonitoringBasePath
+end;
+
+function TMonitoringTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
+begin
+  Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLMonitoringBasePath);
 end;
 
 end.

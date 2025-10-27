@@ -18,6 +18,8 @@ inherited RuleEditForm: TRuleEditForm
     end
   end
   inherited pnClient: TUniContainerPanel
+    ExplicitWidth = 821
+    ExplicitHeight = 414
     ScrollHeight = 504
     ScrollWidth = 819
     object lRuid: TUniLabel

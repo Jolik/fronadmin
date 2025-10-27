@@ -1,4 +1,4 @@
-unit SummaryTaskEditFormUnit;
+﻿unit SummaryTaskEditFormUnit;
 
 interface
 

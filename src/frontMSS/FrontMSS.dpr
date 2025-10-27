@@ -154,7 +154,24 @@ uses
   DataserieUnit in 'EntityClasses\dataserver\DataserieUnit.pas',
   DsGroupUnit in 'EntityClasses\dataserver\DsGroupUnit.pas',
   SourceCredsUnit in 'EntityClasses\dataserver\SourceCredsUnit.pas',
-  SourceTypeUnit in 'EntityClasses\dataserver\SourceTypeUnit.pas';
+  SourceTypeUnit in 'EntityClasses\dataserver\SourceTypeUnit.pas',
+  RestBrokerBaseUnit in 'APIClasses\RestBrokerBaseUnit.pas',
+  AbonentsRestBrokerUnit in 'APIClasses\AbonentsRestBrokerUnit.pas',
+  TasksRestBrokerUnit in 'APIClasses\TasksRestBrokerUnit.pas',
+  UniversalRestBrokerUnit in 'APIClasses\UniversalRestBrokerUnit.pas',
+  BrokerIntfUnit in 'APIClasses\BrokerIntfUnit.pas' {$R *.res},
+  AbonentHttpRequests in 'HttpClasses\AbonentHttpRequests.pas',
+  BaseRequests in 'HttpClasses\BaseRequests.pas',
+  BaseResponses in 'HttpClasses\BaseResponses.pas',
+  HttpClientUnit in 'HttpClasses\HttpClientUnit.pas',
+  TaskHttpRequests in 'HttpClasses\TaskHttpRequests.pas',
+  AliasesRestBrokerUnit in 'APIClasses\AliasesRestBrokerUnit.pas',
+  AliasHttpRequests in 'HttpClasses\AliasHttpRequests.pas',
+  SummaryTasksHttpRequests in 'HttpClasses\SummaryTasksHttpRequests.pas',
+  RuleHttpRequests in 'HttpClasses\RuleHttpRequests.pas',
+  RulesRestBrokerUnit in 'APIClasses\RulesRestBrokerUnit.pas',
+  TaskSourcesRestBrokerUnit in 'APIClasses\TaskSourcesRestBrokerUnit.pas',
+  TaskSourceHttpRequests in 'HttpClasses\TaskSourceHttpRequests.pas';
 
 {$R *.res}
 

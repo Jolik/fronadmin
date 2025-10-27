@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniMultiItem, uniListBox,
   uniPanel, uniLabel, uniPageControl, uniButton,
-  TaskSourceUnit, SourceUnit, TaskSourcesBrokerUnit, uniImageList, uniBitBtn;
+  TaskSourceUnit, SourceUnit, TaskSourcesRestBrokerUnit, TaskSourceHttpRequests, uniImageList, uniBitBtn;
 
 type
   TSelectTaskSourcesForm = class(TUniForm)
@@ -51,7 +51,7 @@ type
     procedure lbAllSourcesChange(Sender: TObject);
     procedure btnRemoveSourceClick(Sender: TObject);
   private
-    AllSourcesBroker: TTaskSourcesBroker;
+    AllSourcesBroker: TTaskSourcesRestBroker;
     AllSourceList: TSourceList;
     FTaskSourceList: TTaskSourceList;
     FCurrentSourceSid: string;
@@ -65,12 +65,12 @@ type
     procedure UpdateSelectedSourceInfo;
     procedure UpdateSourceInfoDisplay(ASource: TSource);
   protected
-    function CreateTaskSourcesBroker(): TTaskSourcesBroker; virtual;
+    function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; virtual;
   public
     property TaskSourceList: TTaskSourceList read FTaskSourceList write SetTaskSourceList;
   end;
 
-function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesBroker = nil): TSelectTaskSourcesForm;
+function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesRestBroker = nil): TSelectTaskSourcesForm;
 
 implementation
 
@@ -79,7 +79,7 @@ implementation
 uses
   MainModule, uniGUIApplication, LoggingUnit, EntityUnit;
 
-function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesBroker = nil): TSelectTaskSourcesForm;
+function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesRestBroker = nil): TSelectTaskSourcesForm;
 begin
   Result := TSelectTaskSourcesForm(UniMainModule.GetFormInstance(TSelectTaskSourcesForm));
   if taskSourceBroker=nil then
@@ -132,9 +132,9 @@ begin
   FCurrentSourceSid := '';
 end;
 
-function TSelectTaskSourcesForm.CreateTaskSourcesBroker: TTaskSourcesBroker;
+function TSelectTaskSourcesForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
 begin
-  Result := TTaskSourcesBroker.Create();
+  Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket);
 end;
 
 procedure TSelectTaskSourcesForm.btnAddSourceClick(Sender: TObject);
@@ -220,10 +220,16 @@ begin
 
   PageCount := 0;
   EntityList := nil;
-
   try
     try
-      EntityList := AllSourcesBroker.List(PageCount);
+      var Req := AllSourcesBroker.CreateReqList();
+      var Resp := AllSourcesBroker.List(Req);
+      try
+        if Assigned(Resp) then
+          EntityList := Resp.EntityList;
+      finally
+        Resp.Free;
+      end;
     except
       on E: Exception do
       begin
@@ -430,15 +436,18 @@ begin
 
   if Assigned(AllSourcesBroker) then
     try
-      InfoEntity := AllSourcesBroker.Info(ASource.Sid);
-      if InfoEntity is TSource then
-      begin
-        InfoSource := TSource(InfoEntity);
-        OwnsInfoSource := True;
-        InfoEntity := nil;
-      end
-      else
-        FreeAndNil(InfoEntity);
+      var Req := AllSourcesBroker.CreateReqInfo();
+      Req.Id := ASource.Sid;
+      var Resp := AllSourcesBroker.Info(Req);
+      try
+        if Assigned(Resp) and (Resp.Entity is TSource) then
+        begin
+          InfoSource := TSource(Resp.Entity);
+          OwnsInfoSource := True;
+        end;
+      finally
+        Resp.Free;
+      end;
     except
       on E: Exception do
       begin

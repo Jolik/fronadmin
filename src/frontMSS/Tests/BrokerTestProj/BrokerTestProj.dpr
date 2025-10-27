@@ -13,46 +13,40 @@ uses
   AbonentHttpRequests in '..\..\HttpClasses\AbonentHttpRequests.pas',
   AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas',
   StringListUnit in '..\..\EntityClasses\Common\StringListUnit.pas',
-  StringUnit in '..\..\EntityClasses\Common\StringUnit.pas';
+  StringUnit in '..\..\EntityClasses\Common\StringUnit.pas',
+  APIConst in '..\..\APIClasses\APIConst.pas',
+  AbonentsRestBrokerUnit in '..\..\APIClasses\AbonentsRestBrokerUnit.pas',
+  BaseRequests in '..\..\HttpClasses\BaseRequests.pas',
+  BaseResponses in '..\..\HttpClasses\BaseResponses.pas',
+  RestBrokerBaseUnit in '..\..\APIClasses\RestBrokerBaseUnit.pas',
+  UniversalRestBrokerUnit in '..\..\APIClasses\UniversalRestBrokerUnit.pas',
+  TasksRestBrokerUnit in '..\..\APIClasses\TasksRestBrokerUnit.pas',
+  TaskHttpRequests in '..\..\HttpClasses\TaskHttpRequests.pas',
+  BrokerIntfUnit in '..\..\APIClasses\BrokerIntfUnit.pas',
+  TaskUnit in '..\..\EntityClasses\tasks\TaskUnit.pas';
 
 procedure ExecuteRequest;
 var
+  Broker: TAbonentsRestBroker;
   ListRequest: TAbonentReqList;
   ListResponse: TAbonentListResponse;
-  InfoRequest: THttpRequest;
+  InfoRequest: TAbonentReqInfo;
   InfoResponse: TAbonentInfoResponse;
   NewRequest: TAbonentReqNew;
   NewResponse: TAbonentNewResponse;
   UpdateRequest: TAbonentReqUpdate;
   UpdateResponse: TJSONResponse;
   RemoveRequest: TAbonentReqRemove;
-  RemoveResponse: TJSONResponse;
-  StatusCode: Integer;
-  Abonent: TAbonent;
+  RemoveResponse: TJSONResponse;  Abonent: TAbonent;
   ChannelsText: string;
   NewAbonentId: string;
   CreatedAbonentId: string;
   CreatedAbonentName: string;
 begin
-  ListRequest := TAbonentReqList.Create;
-  ListResponse := TAbonentListResponse.Create;
-  InfoRequest := THttpRequest.Create;
-  InfoResponse := TAbonentInfoResponse.Create;
-  NewRequest := TAbonentReqNew.Create;
-  NewResponse := TAbonentNewResponse.Create;
-  UpdateRequest := TAbonentReqUpdate.Create;
-  UpdateResponse := TJSONResponse.Create;
-  RemoveRequest := TAbonentReqRemove.Create;
-  RemoveResponse := TJSONResponse.Create;
-  try
-    InfoRequest.URL := '/router/api/v2/abonents';
-    InfoRequest.Method := mGET;
-    InfoRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-    InfoRequest.Headers.AddOrSetValue('Accept', 'application/json');
-
+  Broker := TAbonentsRestBroker.Create('ST-Test');
+  ListRequest := TAbonentReqList.Create;  InfoRequest := TAbonentReqInfo.Create;  NewRequest := TAbonentReqNew.Create;  UpdateRequest := TAbonentReqUpdate.Create;  RemoveRequest := TAbonentReqRemove.Create;  try
+    // Подробный запрос абонента через специализированный класс
     // Compose and send a sample request that demonstrates abonent creation through the broker.
-    NewRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-
     CreatedAbonentName := '';
 
     if Assigned(NewRequest.Body) then
@@ -78,12 +72,12 @@ begin
       end;
     end;
 
-    StatusCode := HttpClient.Request(NewRequest, NewResponse);
+    NewResponse := Broker.New(NewRequest);
 
     Writeln('-----------------------------------------------------------------');
     Writeln('Create request URL: ' + NewRequest.GetURLWithParams);
     Writeln(Format('Create request body: %s', [NewRequest.ReqBodyContent]));
-    Writeln(Format('Create response (HTTP %d):', [StatusCode]));
+    Writeln('Create response:');
     CreatedAbonentId := '';
     if Assigned(NewResponse.AbonentNewRes) and not NewResponse.AbonentNewRes.Abid.IsEmpty then
     begin
@@ -95,9 +89,7 @@ begin
 
     // Prepare request for abonent update only if we have an identifier to target.
     if not CreatedAbonentId.Trim.IsEmpty then
-    begin
-      UpdateRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-      UpdateRequest.AbonentId := CreatedAbonentId;
+    begin      UpdateRequest.AbonentId := CreatedAbonentId;
 
       if Assigned(UpdateRequest.Body) then
       begin
@@ -115,24 +107,24 @@ begin
         UpdateRequest.Body.UpdateRawContent;
       end;
 
-      StatusCode := HttpClient.Request(UpdateRequest, UpdateResponse);
+      UpdateResponse := Broker.Update(UpdateRequest);
 
       Writeln('-----------------------------------------------------------------');
       Writeln('Update request URL: ' + UpdateRequest.GetURLWithParams);
       Writeln(Format('Update request body: %s', [UpdateRequest.ReqBodyContent]));
-      Writeln(Format('Update response (HTTP %d):', [StatusCode]));
+      Writeln('Update response:');
       if UpdateResponse.Response.Trim.IsEmpty then
         Writeln('(empty response body)')
       else
         Writeln(UpdateResponse.Response);
 
       // Request abonent information after creation and update to display the final state.
-      InfoRequest.AddPath := CreatedAbonentId;
-      StatusCode := HttpClient.Request(InfoRequest, InfoResponse);
+      InfoRequest.Id := CreatedAbonentId;
+      InfoResponse := Broker.Info(InfoRequest);
 
       Writeln('-----------------------------------------------------------------');
       Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
-      Writeln(Format('Info response (HTTP %d):', [StatusCode]));
+      Writeln('Info response:');
 
       if Assigned(InfoResponse.Abonent) then
       begin
@@ -149,14 +141,12 @@ begin
         Writeln('Abonent details were not returned in the response.');
 
       // Remove the abonent created for the test to keep the environment clean.
-      RemoveRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
       RemoveRequest.AbonentId := CreatedAbonentId;
-
-      StatusCode := HttpClient.Request(RemoveRequest, RemoveResponse);
+      RemoveResponse := Broker.Remove(RemoveRequest);
 
       Writeln('-----------------------------------------------------------------');
       Writeln('Remove request URL: ' + RemoveRequest.GetURLWithParams);
-      Writeln(Format('Remove response (HTTP %d):', [StatusCode]));
+      Writeln('Remove response:');
       if RemoveResponse.Response.Trim.IsEmpty then
         Writeln('(empty response body)')
       else
@@ -169,39 +159,31 @@ begin
     end;
 
     // Authorize list request with a test ticket used across broker integration tests.
-    ListRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-
     if Assigned(ListRequest.Body) then
       // Limit the number of returned abonents to keep the output concise for the sample run.
       ListRequest.Body.PageSize := 5;
 
     // Perform the initial request to retrieve a collection of abonents.
-    StatusCode := HttpClient.Request(ListRequest, ListResponse);
+    ListResponse := Broker.List(ListRequest);
 
     Writeln('-----------------------------------------------------------------');
     Writeln('List request URL: ' + ListRequest.GetURLWithParams);
     Writeln(Format('List request body: %s', [ListRequest.ReqBodyContent]));
-    Writeln(Format('List response (HTTP %d):', [StatusCode]));
+    Writeln('List response:');
     Writeln(Format('Abonent records: %d', [ListResponse.AbonentList.Count]));
 
     if ListResponse.AbonentList.Count > 0 then
     begin
       Abonent := TAbonent(ListResponse.AbonentList[0]);
       // Display basic information from the list response before requesting details.
-      Writeln(Format('First abonent: %s (%s)', [Abonent.Name, Abonent.Abid]));
-
-      // Prepare a generic GET request that will be reused for the abonent info endpoint.
-      InfoRequest.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-      InfoRequest.Headers.AddOrSetValue('Accept', 'application/json');
-      // AddPath holds the abonent identifier required by the API route `/api/v2/abonents/:abid`.
-      InfoRequest.AddPath := Abonent.Abid;
+      Writeln(Format('First abonent: %s (%s)', [Abonent.Name, Abonent.Abid]));      InfoRequest.Id := Abonent.Abid;
 
       // Execute the request to fetch detailed abonent information.
-      StatusCode := HttpClient.Request(InfoRequest, InfoResponse);
+      InfoResponse := Broker.Info(InfoRequest);
 
       Writeln('-----------------------------------------------------------------');
       Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
-      Writeln(Format('Info response (HTTP %d):', [StatusCode]));
+      Writeln('Info response:');
 
       if Assigned(InfoResponse.Abonent) then
       begin
@@ -237,29 +219,33 @@ begin
     InfoRequest.Free;
     ListResponse.Free;
     ListRequest.Free;
+    Broker.Free;
   end;
 end;
 
 
 procedure TestAbonentListRequest;
 var
+  Broker: TAbonentsRestBroker;
   Request: TAbonentReqList;
-  Response: TAbonentListResponse;
-  StatusCode: Integer;
-  Abonent: TEntity;
+  Response: TAbonentListResponse;  Abonent: TEntity;
   ChannelsText: string;
 begin
   Request := TAbonentReqList.Create;
   Response := TAbonentListResponse.Create;
   try
-    Request.Headers.AddOrSetValue('X-Ticket', 'ST-Test');
-
+    
     if Assigned(Request.Body) then
       // Narrow down the request payload to fetch a manageable amount of abonents for display.
       Request.Body.PageSize := 5;
 
     // Send the request to the HTTP broker and collect the resulting abonent list.
-    StatusCode := HttpClient.Request(Request, Response);
+    Broker := TAbonentsRestBroker.Create('ST-Test');
+    try
+      Response := Broker.List(Request);
+    finally
+      Broker.Free;
+    end;
 
     Writeln('-----------------------------------------------------------------');
     Writeln('Request URL: ' + Request.GetURLWithParams);
@@ -267,7 +253,7 @@ begin
     if Assigned(Request.Body) then
       Writeln(Format('Requested page size: %d', [Request.Body.PageSize]));
     Writeln('-----------------------------------------------------------------');
-    Writeln(Format('Response (HTTP %d):', [StatusCode]));
+    Writeln('Response:');
     Writeln(Format('Abonent records: %d', [Response.AbonentList.Count]));
     if Response.AbonentList.Count = 0 then
       Writeln(' - No abonents returned in the response')

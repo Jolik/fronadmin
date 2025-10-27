@@ -10,9 +10,11 @@ type
   private
     FCompID: string;
     FDeptID: string;
+    FXTicket: string;
   public
     property CompID: string read FCompID write FCompID;
     property DeptID: string read FDeptID write FDeptID;
+    property XTicket: string read FXTicket write FXTicket;
   end;
 
 function UniMainModule: TUniMainModule;

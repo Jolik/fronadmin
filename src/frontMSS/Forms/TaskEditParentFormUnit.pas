@@ -1,4 +1,4 @@
-unit TaskEditParentFormUnit;
+﻿unit TaskEditParentFormUnit;
 
 interface
 
@@ -9,7 +9,7 @@ uses
   uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
   EntityUnit, TaskSourceUnit, uniMultiItem, uniComboBox, Math,
-  TaskSourcesBrokerUnit,
+  TaskSourcesRestBrokerUnit,
   ParentTaskCustomSettingsEditFrameUnit, SelectTaskSourcesFormUnit,
   TaskUnit,
   uniListBox;
@@ -40,7 +40,7 @@ type
     procedure btnSourcesEditClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
   protected
-    FTaskSourcesBroker: TTaskSourcesBroker;
+    FTaskSourcesBroker: TTaskSourcesRestBroker;
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     FTaskSourcesList: TTaskSourcesList;
     FTaskSourcesListOwned: Boolean;
@@ -56,7 +56,7 @@ type
 
 
     function CreateTaskSourceEditForm(): TSelectTaskSourcesForm; virtual;
-    procedure SetEntity(AEntity : TEntity); override;
+    procedure SetEntity(AEntity : TFieldSet); override;
 
   public
     ///    FEntity     ""
@@ -65,7 +65,7 @@ type
 
   end;
 
-function ParentTaskEditForm(taskSourceBroker: TTaskSourcesBroker = nil): TTaskEditParentForm;
+function ParentTaskEditForm(taskSourceBroker: TTaskSourcesRestBroker = nil): TTaskEditParentForm;
 
 implementation
 
@@ -74,7 +74,7 @@ implementation
 uses
   MainModule, uniGUIApplication, ConstsUnit, Common;
 
-function ParentTaskEditForm(taskSourceBroker: TTaskSourcesBroker): TTaskEditParentForm;
+function ParentTaskEditForm(taskSourceBroker: TTaskSourcesRestBroker): TTaskEditParentForm;
 begin
   Result := TTaskEditParentForm(UniMainModule.GetFormInstance(TTaskEditParentForm));
   Result.FTaskSourcesBroker:= taskSourceBroker;
@@ -276,7 +276,7 @@ begin
   cbModule.Enabled:= not IsEdit;
 end;
 
-procedure TTaskEditParentForm.SetEntity(AEntity: TEntity);
+procedure TTaskEditParentForm.SetEntity(AEntity: TFieldSet);
 begin
   ClearCustomSettingsFrame;
   ///        -   !

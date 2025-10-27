@@ -58,10 +58,13 @@ type
   TJSONResponse = class
   private
     FResponse: string;
+    FStatusCode: Integer;
   protected
     procedure SetResponse(const Value: string); virtual;
   public
     property Response: string read FResponse write SetResponse;
+    // HTTP status code returned by the last request (e.g., 200, 404)
+    property StatusCode: Integer read FStatusCode write FStatusCode;
   end;
 
   THttpBroker = class
@@ -71,6 +74,7 @@ type
     FHttpClient: TIdHTTP;
     function BuildURL(const Req: THttpRequest): string;
     procedure ApplyHeaders(const Req: THttpRequest);
+    function DecodeResponse(AStream: TStream): string;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -517,6 +521,8 @@ begin
   inherited Create;
   FHttpClient := TIdHTTP.Create(nil);
   FHttpClient.HandleRedirects := True;
+  // Prefer UTF-8 for both request and response if server doesn't specify charset
+  FHttpClient.Request.AcceptCharSet := 'utf-8';
 end;
 
 destructor THttpBroker.Destroy;
@@ -573,12 +579,67 @@ begin
   Result := Req.GetURLWithParams(Result);
 end;
 
+function THttpBroker.DecodeResponse(AStream: TStream): string;
+  function GetEncodingFromCharset(const Charset: string): TEncoding;
+  var
+    CS: string;
+  begin
+    CS := Charset.Trim.ToLower;
+    if CS.IsEmpty then
+      Exit(nil);
+
+    if (CS = 'utf-8') or (CS = 'utf8') then
+      Exit(TEncoding.UTF8)
+    else if (CS = 'utf-16') or (CS = 'utf-16le') then
+      Exit(TEncoding.Unicode)
+    else if (CS = 'utf-16be') then
+      Exit(TEncoding.BigEndianUnicode)
+    else if (CS = 'windows-1251') or (CS = 'cp1251') or (CS = 'win-1251') or (CS = 'win1251') then
+      Exit(TEncoding.GetEncoding(1251))
+    else if (CS = 'iso-8859-1') or (CS = 'latin1') then
+      Exit(TEncoding.GetEncoding(28591));
+
+    try
+      Result := TEncoding.GetEncoding(CS);
+    except
+      Result := TEncoding.UTF8;
+    end;
+  end;
+var
+  Bytes: TBytes;
+  Enc: TEncoding;
+  Count: Integer;
+  CharSet: string;
+begin
+  if not Assigned(AStream) then
+    Exit('');
+
+  AStream.Position := 0;
+  SetLength(Bytes, AStream.Size);
+  if Length(Bytes) > 0 then
+    AStream.ReadBuffer(Pointer(Bytes)^, Length(Bytes));
+
+  CharSet := FHttpClient.Response.CharSet;
+  Enc := GetEncodingFromCharset(CharSet);
+
+  if Enc = nil then
+  begin
+    // Try to detect BOM; default to UTF-8
+    Enc := TEncoding.UTF8;
+    Count := TEncoding.GetBufferEncoding(Bytes, Enc);
+    // GetBufferEncoding returns number of BOM bytes; Enc is set to correct encoding
+  end;
+
+  Result := Enc.GetString(Bytes);
+end;
+
 function THttpBroker.Request(Req: THttpRequest; Res: TJSONResponse): Integer;
 var
   Url: string;
   ReqBodyStream: TStringStream;
   ResponseContent: string;
   ReqBodyContent: string;
+  RespStream: TMemoryStream;
 begin
   if not Assigned(Req) then
     raise EArgumentNilException.Create('Request must not be nil');
@@ -592,32 +653,59 @@ begin
 
   case Req.Method of
     mGET:
-      ResponseContent := FHttpClient.Get(Url);
+      begin
+        RespStream := TMemoryStream.Create;
+        try
+          FHttpClient.Get(Url, RespStream);
+          ResponseContent := DecodeResponse(RespStream);
+        finally
+          RespStream.Free;
+        end;
+      end;
     mPOST:
       begin
         ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
+        RespStream := TMemoryStream.Create;
         try
-          ResponseContent := FHttpClient.Post(Url, ReqBodyStream);
+          FHttpClient.Post(Url, ReqBodyStream, RespStream);
+          ResponseContent := DecodeResponse(RespStream);
         finally
+          RespStream.Free;
           ReqBodyStream.Free;
         end;
       end;
     mPUT:
       begin
         ReqBodyStream := TStringStream.Create(ReqBodyContent, TEncoding.UTF8);
+        RespStream := TMemoryStream.Create;
         try
-          ResponseContent := FHttpClient.Put(Url, ReqBodyStream);
+          FHttpClient.Put(Url, ReqBodyStream, RespStream);
+          ResponseContent := DecodeResponse(RespStream);
         finally
+          RespStream.Free;
           ReqBodyStream.Free;
         end;
       end;
     mDELETE:
-      ResponseContent := FHttpClient.Delete(Url);
+      begin
+        // no stream overload; rely on AcceptCharSet and server headers
+        ResponseContent := FHttpClient.Delete(Url);
+      end;
   else
-    ResponseContent := FHttpClient.Get(Url);
+    begin
+      RespStream := TMemoryStream.Create;
+      try
+        FHttpClient.Get(Url, RespStream);
+        ResponseContent := DecodeResponse(RespStream);
+      finally
+        RespStream.Free;
+      end;
+    end;
   end;
 
   Res.Response := ResponseContent;
+  // expose HTTP status via response object
+  Res.StatusCode := FHttpClient.ResponseCode;
   Result := FHttpClient.ResponseCode;
 end;
 

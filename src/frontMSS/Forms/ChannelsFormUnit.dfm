@@ -37,11 +37,6 @@ inherited ChannelsForm: TChannelsForm
         Width = 124
       end>
   end
-  inherited pcEntityInfo: TUniPageControl
-    inherited tsTaskInfo: TUniTabSheet
-      ExplicitHeight = 502
-    end
-  end
   inherited FDMemTableEntity: TFDMemTable
     Left = 368
     object FDMemTableEntityService: TStringField

@@ -11,14 +11,20 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ParentEditFormUnit,
-  RulesBrokerUnit, uniPanel, uniLabel;
+  uniPanel, uniLabel,
+  RestBrokerBaseUnit,
+  RulesRestBrokerUnit;
 
 type
   TRulesForm = class(TListParentForm)
+  private
+    procedure btnNewClick(Sender: TObject);
+    procedure btnUpdateClick(Sender: TObject);
   protected
     procedure Refresh(const AId: String = ''); override;
-    function CreateBroker(): TEntityBroker; override;
+    function CreateRestBroker(): TRestBrokerBase; override;
     function CreateEditForm(): TParentEditForm; override;
+    procedure UniFormCreate(Sender: TObject);
   end;
 
 function RulesForm: TRulesForm;
@@ -28,7 +34,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, RuleEditFormUnit;
+  MainModule, uniGUIApplication, RuleEditFormUnit, RuleUnit, EntityUnit;
 
 function RulesForm: TRulesForm;
 begin
@@ -36,11 +42,6 @@ begin
 end;
 
 { TRulesForm }
-
-function TRulesForm.CreateBroker: TEntityBroker;
-begin
-  Result := TRulesBroker.Create();
-end;
 
 function TRulesForm.CreateEditForm: TParentEditForm;
 begin
@@ -50,6 +51,51 @@ end;
 procedure TRulesForm.Refresh(const AId: String = '');
 begin
   inherited Refresh(AId)
+end;
+
+function TRulesForm.CreateRestBroker: TRestBrokerBase;
+begin
+  Result := TRulesRestBroker.Create(UniMainModule.XTicket);
+end;
+
+procedure TRulesForm.UniFormCreate(Sender: TObject);
+begin
+  inherited;
+  btnNew.OnClick := btnNewClick;
+  btnUpdate.OnClick := btnUpdateClick;
+end;
+
+procedure TRulesForm.btnNewClick(Sender: TObject);
+begin
+  PrepareEditForm;
+  EditForm.Entity := TRule.Create;
+  try
+    EditForm.ShowModal(NewCallback);
+  finally
+  end;
+end;
+
+procedure TRulesForm.btnUpdateClick(Sender: TObject);
+begin
+  PrepareEditForm(true);
+  FId := FDMemTableEntity.FieldByName('Id').AsString;
+
+  if Assigned(RestBroker) then
+  begin
+    var Req := RestBroker.CreateReqInfo();
+    Req.Id := FId;
+    var Resp := RestBroker.Info(Req);
+    try
+      EditForm.Entity := Resp.Entity as TEntity;
+    finally
+      Resp.Free;
+    end;
+  end;
+
+  try
+    EditForm.ShowModal(UpdateCallback);
+  finally
+  end;
 end;
 
 end.

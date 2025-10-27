@@ -379,6 +379,62 @@
         <DCCReference Include="APIClasses\DSProcessorTaskSourceBrokerUnit.pas"/>
         <DCCReference Include="Forms\MonitoringTaskEditFormUnit.pas"/>
         <DCCReference Include="Forms\MonitoringTasksFormUnit.pas"/>
+        <DCCReference Include="APIClasses\MonitoringTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\AbonensBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\BindingsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\ContextsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\ContextTypesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\DsGroupsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\FieldSetBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\HttpRequestUnit.pas"/>
+        <DCCReference Include="APIClasses\ParentBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SourceCredsBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SourcesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SourceTypesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\StripTaskSourceBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TaskTypesBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\UsersBrokerUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\DirDownSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\DirUpSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\FTPCliDownLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\FTPCliUpLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\FTPServerDownLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\FTPSrvUpLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\Pop3CliDownLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SharedFrameRuleConditionUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SharedFrameS3.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SharedFrameSchedule.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SMTPClieUpLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\BindingUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\ContextTypeUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\ContextUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\DataserieUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\DsGroupUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\SourceCredsUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\SourceTypeUnit.pas"/>
+        <DCCReference Include="APIClasses\RestBrokerBaseUnit.pas"/>
+        <DCCReference Include="APIClasses\AbonentsRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TasksRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\UniversalRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\BrokerIntfUnit.pas">
+            <Form>$R *.res</Form>
+        </DCCReference>
+        <DCCReference Include="HttpClasses\AbonentHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\BaseRequests.pas"/>
+        <DCCReference Include="HttpClasses\BaseResponses.pas"/>
+        <DCCReference Include="HttpClasses\HttpClientUnit.pas"/>
+        <DCCReference Include="HttpClasses\TaskHttpRequests.pas"/>
+        <DCCReference Include="APIClasses\AliasesRestBrokerUnit.pas"/>
+        <DCCReference Include="HttpClasses\AliasHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\SummaryTasksHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\RuleHttpRequests.pas"/>
+        <DCCReference Include="APIClasses\RulesRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\TaskSourcesRestBrokerUnit.pas"/>
+        <DCCReference Include="HttpClasses\TaskSourceHttpRequests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -404,12 +460,16 @@
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp370.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
-            <Deployment Version="5">
+            <Deployment Version="4">
                 <DeployFile LocalName="Linux64\Debug\FrontDCC" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug\FrontMSS.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win32\Debug\FrontMSS.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\FrontMSS.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>FrontMSS.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug\uniGUIforLinux.exe" Configuration="Debug" Class="ProjectOutput"/>
-                <DeployFile LocalName="Win64\Debug\FrontMSS.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win64\Debug\FrontMSS.exe" Configuration="Debug" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">
                     <Platform Name="iOSSimulator">
@@ -421,6 +481,16 @@
                     </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidClasses">
+                    <Platform Name="Android">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>classes</RemoteDir>
+                        <Operation>64</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="AndroidFileProvider">

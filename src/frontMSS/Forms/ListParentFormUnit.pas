@@ -7,13 +7,14 @@ uses
   Controls, Forms,
   System.Generics.Collections,
   uniGUITypes, uniGUIAbstractClasses,
-  uniGUIClasses, uniGUIForm, FireDAC.Stan. Intf,
+  uniGUIClasses, uniGUIForm, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityUnit, EntityBrokerUnit,
-  ParentFormUnit, ParentEditFormUnit, uniLabel, StrUtils;
+  ParentFormUnit, ParentEditFormUnit, uniLabel, StrUtils,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses, HttpClientUnit;
 
 type
   ///  базовая форма с таблицей-списком
@@ -62,6 +63,7 @@ type
     FID: string;
     procedure Refresh(const AId: String = ''); override;
     procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+    procedure OnInfoUpdated(AEntity: TEntity);virtual;
   end;
 
 function ListParentForm: TListParentForm;
@@ -87,10 +89,12 @@ begin
   ///  !!!  LId :=
   ///  пока берем первый элемент
   FId := FDMemTableEntity.FieldByName('Id').AsString;
-  ///  получаем полную информацию о сущности от брокера
-  LEntity := Broker.Info(FId);
+  var Req := RestBroker.CreateReqInfo();
+  Req.Id := FId;
+  var Resp := RestBroker.Info(Req);
   ///  устанавлаием сущность в окно редактирования
-  EditForm.Entity := LEntity;
+  EditForm.Entity := Resp.Entity;
+  EditForm.Id := FId;
 
   try
     EditForm.ShowModal(UpdateCallback);
@@ -104,18 +108,33 @@ procedure TListParentForm.dbgEntitySelectionChange(Sender: TObject);
 var
   LEntity : TEntity;
   LId     : string;
-  DT      : string;
 begin
   LId := FDMemTableEntity.FieldByName('Id').AsString;
-  ///  получаем полную информацию о сущности от брокера
-  LEntity := Broker.Info(LId);
-  lTaskInfoIDValue.Caption      := LEntity.ID;
-  lTaskInfoNameValue.Caption    := LEntity.Name;
-  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', LEntity.Created);
-  lTaskInfoCreatedValue.Caption := DT;
-  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', LEntity.Updated);
-  lTaskInfoUpdatedValue.Caption := DT;
+  if Assigned(RestBroker) then
+  begin
+    var Req := RestBroker.CreateReqInfo();
+    Req.Id := LId;
+    var Resp := RestBroker.Info(Req);
+    try
+      LEntity := Resp.Entity as TEntity;
+      if not Assigned(LEntity) then Exit;
+      OnInfoUpdated(LEntity);
+    finally
+      LEntity.Free
+    end;
+  end;
+end;
 
+procedure TListParentForm.OnInfoUpdated(AEntity: TEntity);
+var
+   DT      : string;
+begin
+  lTaskInfoIDValue.Caption      := AEntity.ID;
+  lTaskInfoNameValue.Caption    := AEntity.Name;
+  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', AEntity.Created);
+  lTaskInfoCreatedValue.Caption := DT;
+  DateTimeToString(DT, 'dd.mm.yyyy HH:nn', AEntity.Updated);
+  lTaskInfoUpdatedValue.Caption := DT;
   tsTaskInfo.TabVisible := True;
 end;
 
@@ -127,9 +146,9 @@ begin
   PrepareEditForm;
 
   ///  создаем класс сущности от брокера
-  LEntity := Broker.CreateNew();
+  var req := RestBroker.CreateReqNew();
   ///  устанавлаием сущность в окно редактирования
-  EditForm.Entity := LEntity;
+  EditForm.Entity := req.NewBody;
 
   try
     EditForm.ShowModal(NewCallback);
@@ -162,22 +181,41 @@ begin
   ///  пока берем первый элемент
   LId := FDMemTableEntity.FieldByName('Id').AsString;
   ///  получаем полную информацию о сущности от брокера
-  if MessageDlg('Удалить задачу?', mtConfirmation, mbYesNo) = mrYes then
-  begin
-    Broker.Remove(LId);
-
-    Refresh();
-  end;
+  MessageDlg('Удалить задачу?', mtConfirmation, [mbYes, mbNo],
+    procedure(Sender: TComponent; Res: Integer)
+    begin
+      if Res = mrYes then
+      begin
+        var R := RestBroker.CreateReqRemove();
+        if not Assigned(R) then
+          R := TReqRemove.Create;
+        R.Id := LId;
+        var JR := RestBroker.Remove(R);
+        JR.Free;
+        Refresh();
+      end;
+    end
+  );
 end;
 
 procedure TListParentForm.Refresh(const AId: String = '');
 var
   EntityList: TEntityList;
   PageCount: Integer;
+  Resp: TListResponse;
 
 begin
   FDMemTableEntity.Active := True;
-  EntityList := Broker.List(PageCount);
+  Resp := nil;
+  EntityList := nil;
+  if Assigned(RestBroker) then
+  begin
+    // Сначала пытаемся спросить у брокера фабрикой
+    var Req := RestBroker.CreateReqList();
+    Resp := RestBroker.List(Req);
+    if Assigned(Resp) then
+      EntityList := Resp.EntityList
+  end;
   try
     FDMemTableEntity.EmptyDataSet;
 
@@ -201,7 +239,9 @@ begin
       else
         FDMemTableEntity.Locate('Id', AID, []);
   finally
-    if Assigned(EntityList) then
+    if Assigned(Resp) then
+      Resp.Free
+    else if Assigned(EntityList) then
       EntityList.Free;
   end;
 end;
@@ -219,7 +259,6 @@ end;
 procedure TListParentForm.UniFormCreate(Sender: TObject);
 begin
   inherited;
-
   Refresh();
 end;
 
@@ -230,3 +269,4 @@ begin
 end;
 
 end.
+

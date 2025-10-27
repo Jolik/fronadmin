@@ -1,4 +1,4 @@
-unit ParentFormUnit;
+п»їunit ParentFormUnit;
 
 interface
 
@@ -6,43 +6,44 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm,
-  EntityUnit, EntityBrokerUnit,
-  ParentEditFormUnit;
+  EntityUnit,
+  ParentEditFormUnit,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses;
 
 type
-  ///  базовая форма с редактором и брокером
+  ///  Р±Р°Р·РѕРІР°СЏ С„РѕСЂРјР° СЃ СЂРµРґР°РєС‚РѕСЂРѕРј Рё Р±СЂРѕРєРµСЂРѕРј
   TParentForm = class(TUniForm)
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
   private
-    ///  брокер для доступа к API - потомок должен инициировать поле на функционального брокера
-    FBroker: TEntityBroker;
-    ///  форма для редактирования сущности - потом должен инициировать поле на функциональный класс
-    FEditForm : TParentEditForm;
+    ///  RESTвЂ‘Р±СЂРѕРєРµСЂ РґР»СЏ РґРѕСЃС‚СѓРїР° Рє API
+    FRestBroker: TRestBrokerBase;
+    ///  С„РѕСЂРјР° РґР»СЏ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ СЃСѓС‰РЅРѕСЃС‚Рё вЂ” РїРѕС‚РѕРјРѕРє РґРѕР»Р¶РµРЅ СЃРѕР·РґР°С‚СЊ С„СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Р№ РєР»Р°СЃСЃ
+    FEditForm: TParentEditForm;
 
   protected
     procedure NewCallback(ASender: TComponent; AResult: Integer);
     procedure UpdateCallback(ASender: TComponent; AResult: Integer);
 
-    ///  функция для обновления компонент на форме
+    ///  РІРµСЂРЅСѓС‚СЊ С‚РµРєСѓС‰РёР№ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ СЂРµРґР°РєС‚РёСЂСѓРµРјРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё
+    function GetCurrentEntityId: string; virtual;
+
+    ///  С„СѓРЅРєС†РёСЏ РґР»СЏ РѕР±РЅРѕРІР»РµРЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚ РЅР° С„РѕСЂРјРµ
     procedure Refresh(const AId: String = ''); virtual; abstract;
 
-    ///  функция для создания нужного брокера потомком
-    ///  поток должен переопределить функцию чтобы создавался нужный брокер
-    function CreateBroker(): TEntityBroker; virtual; abstract;
+    // С„Р°Р±СЂРёРєР° RESTвЂ‘Р±СЂРѕРєРµСЂР° (Р·Р°РїСЂРѕСЃС‹ СЃРѕР·РґР°С‘С‚ Р±СЂРѕРєРµСЂ)
+    function CreateRestBroker(): TRestBrokerBase; virtual;
 
-    ///  функиця для создания нужной формы редактирвоания
-    ///  поток должен переопределить функцию чтобы создавалась нужная форма редактирвоания
+    ///  С„СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅСѓР¶РЅРѕР№ С„РѕСЂРјС‹ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
     function CreateEditForm(): TParentEditForm; virtual; abstract;
 
   public
-    ///  брокер для доступа к API - потомок содать и вернуть ссылку на нужный брокер
-    ///  в наследуемой функции CreateBroker
-    property Broker: TEntityBroker read FBroker;
-    ///  форма для редактирования сущности - потомок должен создать и вернуть
-    ///  ссылку на нужную форму в наследуемой функции CreateEditForm
+    ///  РґРѕСЃС‚СѓРї Рє RESTвЂ‘Р±СЂРѕРєРµСЂСѓ Рё С„РѕСЂРјРµ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ
+    property RestBroker: TRestBrokerBase read FRestBroker;
     property EditForm: TParentEditForm read FEditForm;
-    procedure PrepareEditForm(isEditMode:boolean=false);
+
+    ///  СЃРѕР·РґР°С‚СЊ С„РѕСЂРјСѓ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ Рё Р·Р°РґР°С‚СЊ СЂРµР¶РёРј
+    procedure PrepareEditForm(isEditMode: boolean = false);
   end;
 
 function ParentForm: TParentForm;
@@ -52,93 +53,143 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication;
+  MainModule, uniGUIApplication, HttpClientUnit;
 
-{  TParentForm }
+{ TParentForm }
 
-procedure TParentForm.NewCallback(ASender: TComponent;
-  AResult: Integer);
+procedure TParentForm.NewCallback(ASender: TComponent; AResult: Integer);
 var
-  LId : string;
-  res : boolean;
-
+  res: boolean;
+  ReqNew: TReqNew;
+  JsonRes: TJSONResponse;
 begin
-  ///
-  ///  если модальное окно закрылось через ОК
-  if AResult = mrOk then
+  // РµСЃР»Рё РјРѕРґР°Р»СЊРЅРѕРµ РѕРєРЅРѕ Р·Р°РєСЂС‹Р»РѕСЃСЊ С‡РµСЂРµР· РћРљ
+  if AResult <> mrOk then
+    Exit;
+
+  if Assigned(FRestBroker) then
   begin
-    /// считываем из окна отредатикрованный класс сущности
-    ///  и пытаемся создать на сервере
-    ///  если все ок, то в ответ вернется созданный класс сущности
-    res := Broker.New(EditForm.Entity);
-    ///  если создать на сервере не удалось, то сообщаем об этом
-    if not res then
-    begin
-/// !!!     ShowMessage()
-      exit;
-    end
-    else
-    begin
-      ///  если сущность на сервере создалась то
-      ///  обрабатываем ответ
-      ///  обновляем таблицу с указанием новой сущности
-///!!!      Refresh(LEntity.Id);
-        Refresh();
+    res := False;
+    ReqNew := FRestBroker.CreateReqNew();
+    if not Assigned(EditForm) or not Assigned(EditForm.Entity) then
+      Exit;
+
+    ReqNew.ApplyBody(EditForm.Entity);
+    JsonRes := nil;
+    try
+      JsonRes := FRestBroker.New(ReqNew);
+      if not Assigned(JsonRes) then
+        Exit;
+
+      if JsonRes.StatusCode <> 201 then
+      begin
+        MessageDlg(Format('РЎРѕР·РґР°РЅРёРµ РЅРµ СѓРґР°Р»РѕСЃСЊ. HTTP %d'#13#10'%s',
+          [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil);
+        res := False;
+        Exit;
+      end
+      else
+        res := True;
+    finally
+      JsonRes.Free;
     end;
   end;
 end;
 
-procedure TParentForm.UpdateCallback(ASender: TComponent;
-  AResult: Integer);
+procedure TParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
 var
-  LId : string;
-  res : boolean;
-
+  res: boolean;
+  ReqUpd: TReqUpdate;
+  JsonRes: TJSONResponse;
+  LEditedId: string;
 begin
-  ///  если модальное окно закрылось через ОК
+  // РµСЃР»Рё РјРѕРґР°Р»СЊРЅРѕРµ РѕРєРЅРѕ Р·Р°РєСЂС‹Р»РѕСЃСЊ С‡РµСЂРµР· РћРљ
   if AResult = mrOk then
   begin
-    /// считываем из окна отредатикрованный класс сущности
-    ///  и пытаемся обновить на сервере
-    ///  если все ок, то в ответ вернется обноленный класс сущности
-    res := Broker.Update(EditForm.Entity);
-    ///  если обновить на сервере не удалось, то сообщаем об этом
-    if not res then
+    // СЃС‡РёС‚С‹РІР°РµРј РёР· РѕРєРЅР° РѕС‚СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ Рё РїС‹С‚Р°РµРјСЃСЏ РѕР±РЅРѕРІРёС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ
+    // РµСЃР»Рё РІСЃС‘ РѕРє, С‚Рѕ РІ РѕС‚РІРµС‚ РІРµСЂРЅС‘С‚СЃСЏ РѕР±РЅРѕРІР»С‘РЅРЅР°СЏ СЃСѓС‰РЅРѕСЃС‚СЊ
+    if Assigned(FRestBroker) then
     begin
-/// !!!     ShowMessage()
-      exit;
-    end
+      res := False;
+      ReqUpd := FRestBroker.CreateReqUpdate();
+      if Assigned(ReqUpd) then
+      begin
+        try
+          LEditedId := GetCurrentEntityId();
+          if not LEditedId.Trim.IsEmpty then
+            ReqUpd.Id := LEditedId;
+
+          if Assigned(ReqUpd.ReqBody) and Assigned(EditForm) and Assigned(EditForm.Entity) and (EditForm.Entity is TFieldSet) then
+            TFieldSet(ReqUpd.ReqBody).Assign(TFieldSet(EditForm.Entity));
+
+          JsonRes := FRestBroker.Update(ReqUpd);
+          try
+            if Assigned(JsonRes) and (JsonRes.StatusCode = 200) then
+              res := True
+            else
+            begin
+              if Assigned(JsonRes) then
+                MessageDlg(Format('РћР±РЅРѕРІР»РµРЅРёРµ РЅРµ СѓРґР°Р»РѕСЃСЊ. HTTP %d'#13#10'%s',
+                  [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil)
+              else
+                MessageDlg('РћР±РЅРѕРІР»РµРЅРёРµ РЅРµ СѓРґР°Р»РѕСЃСЊ: РїСѓСЃС‚РѕР№ РѕС‚РІРµС‚', TMsgDlgType.mtWarning, [mbOK], nil);
+              res := False;
+            end;
+          finally
+            JsonRes.Free;
+          end;
+        except
+          on E: Exception do
+            res := False;
+        end;
+      end
+      else
+        res := False;
+    end;
+
+    // РµСЃР»Рё РѕР±РЅРѕРІРёС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РЅРµ СѓРґР°Р»РѕСЃСЊ, С‚Рѕ СЃРѕРѕР±С‰Р°РµРј РѕР± СЌС‚РѕРј
+    if not res then
+      Exit
     else
     begin
-      ///  если сущность на сервре создалась то
-      ///  обрабатываем результат
-      ///  обновляем таблицу с указанием новой сущности
-///!!!      Refresh(LEntity.Id);
-        Refresh();
+      // РµСЃР»Рё СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РѕР±РЅРѕРІРёР»Р°СЃСЊ вЂ” РѕР±РЅРѕРІР»СЏРµРј С‚Р°Р±Р»РёС†Сѓ
+      Refresh();
     end;
+  end;
+end;
+
+function TParentForm.GetCurrentEntityId: string;
+begin
+  Result := '';
+  if Assigned(EditForm) then
+  begin
+    // РїСЂРµРґРїРѕС‡РёС‚Р°РµРј СЏРІРЅС‹Р№ Id, СЃРѕС…СЂР°РЅС‘РЅРЅС‹Р№ РІ С„РѕСЂРјРµ
+    if (EditForm is TParentEditForm) and not TParentEditForm(EditForm).Id.Trim.IsEmpty then
+      Exit(TParentEditForm(EditForm).Id);
+    // Р·Р°РїР°СЃРЅРѕР№ РІР°СЂРёР°РЅС‚ вЂ” Id РёР· СЃСѓС‰РЅРѕСЃС‚Рё, РµСЃР»Рё СЌС‚Рѕ TEntity
+    if Assigned(EditForm.Entity) and (EditForm.Entity is TEntity) then
+      Exit(TEntity(EditForm.Entity).Id);
   end;
 end;
 
 procedure TParentForm.UniFormCreate(Sender: TObject);
 begin
-  ///   создаем брокера
-  FBroker := CreateBroker();
-  ///   создаем форму редактирования
-  /// 2025-10-16 Папков Александр. Тут не нужно создавать форму редактирования
-  /// Ее нужно создавать по месту применения
+  // СЃРѕР·РґР°РµРј Р±СЂРѕРєРµСЂР°
+  FRestBroker := CreateRestBroker();
+  // С„РѕСЂРјСѓ СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ СЃРѕР·РґР°С‘Рј РїРѕ РјРµСЃС‚Сѓ РёСЃРїРѕР»СЊР·РѕРІР°РЅРёСЏ
   // FEditForm := CreateEditForm();
 end;
 
 procedure TParentForm.UniFormDestroy(Sender: TObject);
 begin
-  FreeAndNil(Broker);
-// надо удалять или не нужнО? FreeAndNil(EditForm);
+  FreeAndNil(FRestBroker);
+  // РЅСѓР¶РЅРѕ СѓРґР°Р»СЏС‚СЊ РёР»Рё РЅРµС‚? FreeAndNil(EditForm);
 end;
 
-procedure TParentForm.PrepareEditForm(isEditMode:boolean=false);
+procedure TParentForm.PrepareEditForm(isEditMode: boolean);
 begin
   FEditForm := CreateEditForm();
-  FEditForm.IsEdit:= isEditMode;
+  FEditForm.IsEdit := isEditMode;
 end;
 
 function ParentForm: TParentForm;
@@ -146,4 +197,12 @@ begin
   Result := TParentForm(UniMainModule.GetFormInstance(TParentForm));
 end;
 
+{ Default implementations for REST factories }
+
+function TParentForm.CreateRestBroker: TRestBrokerBase;
+begin
+  Result := nil;
+end;
+
 end.
+

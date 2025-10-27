@@ -11,8 +11,8 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit,
-  ParentEditFormUnit, TasksParentFormUnit,
-  StripTasksBrokerUnit, uniPanel, uniLabel;
+  ParentEditFormUnit, TasksParentFormUnit, RestBrokerBaseUnit, TasksRestBrokerUnit,
+  TaskSourcesRestBrokerUnit, uniPanel, uniLabel, APIConst;
 
 type
   TStripTasksForm = class(TTaskParentForm)
@@ -24,12 +24,11 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///  функция для создания нужного брокера потоком
-    function CreateBroker(): TEntityBroker; override;
-
+    function CreateRestBroker(): TRestBrokerBase; override;
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
 
-    function CreateTaskSourcesBroker(): TEntityBroker; override;
+    function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
 
   public
 
@@ -42,7 +41,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit, StripTaskSourceBrokerUnit;
+  MainModule, uniGUIApplication, StripTaskEditFormUnit, StripTaskUnit;
 
 function StripTasksForm: TStripTasksForm;
 begin
@@ -50,22 +49,21 @@ begin
 end;
 
 { TStripTasksForm }
-function TStripTasksForm.CreateBroker: TEntityBroker;
-begin
-  ///  создаем "наш" брокер для Задач
-  Result := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
-end;
-
-
 function TStripTasksForm.CreateEditForm: TParentEditForm;
 begin
   ///  создаем "нашу" форму редактирования для Задач
   Result := StripTaskEditForm();
 end;
 
-function TStripTasksForm.CreateTaskSourcesBroker: TEntityBroker;
+function TStripTasksForm.CreateRestBroker: TRestBrokerBase;
 begin
-Result:= TStripTaskSourcesBroker.Create();
+   result:= inherited;
+  (result as TTasksRestBroker).BasePath:=  APIConst.constURLStripBasePath;
+end;
+
+function TStripTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
+begin
+Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLStripBasePath);
 end;
 
 

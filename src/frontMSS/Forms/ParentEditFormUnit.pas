@@ -31,19 +31,21 @@ type
 
   protected
     /// класс который редактируется
-    FEntity: TEntity;
+    FEntity: TFieldSet;
     FIsEdit: boolean;
+    FId: string;
     ///  функция применяет
     function Apply : boolean; virtual;
     /// функция проверяет все параметртры и если ок, то выдает true
     function DoCheck: Boolean; virtual;
     /// класс который редактируется
-    procedure SetEntity(AEntity : TEntity); virtual;
+    procedure SetEntity(AEntity : TFieldSet); virtual;
 
   public
     ///  класс который редактирует форма
     property IsEdit: boolean read FIsEdit write FIsEdit;
-    property Entity: TEntity read FEntity write SetEntity;
+    property Entity: TFieldSet read FEntity write SetEntity;
+    property Id: string read FId write FId;
 
   end;
 
@@ -74,7 +76,7 @@ begin
       ModalResult := mrOk;
 end;
 
-procedure TParentEditForm.SetEntity(AEntity : TEntity);
+procedure TParentEditForm.SetEntity(AEntity : TFieldSet);
 begin
   if Assigned(FEntity) then
   begin
@@ -91,9 +93,6 @@ begin
   end;
 
   FEntity := AEntity;
-
-  teName.Text := AEntity.Name;
-  teCaption.Text := AEntity.Caption;
 end;
 
 procedure TParentEditForm.UniFormShow(Sender: TObject);
@@ -103,8 +102,6 @@ end;
 
 function TParentEditForm.Apply : boolean;
 begin
-  FEntity.Name := teName.Text;
-  FEntity.Caption := teCaption.Text;
 
   Result := true;
 end;
@@ -126,3 +123,5 @@ begin
 end;
 
 end.
+
+

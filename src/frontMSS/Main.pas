@@ -61,7 +61,7 @@ implementation
 
 uses
   uniGUIVars, uniGUIApplication,
-  MainModule,
+  MainModule, MainHttpModuleUnit,
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
   AliasesFormUnit, AbonentsFormUnit,
   RouterSourcesFormUnit,
@@ -71,6 +71,7 @@ uses
   HandlersFormUnit,
   DSProcessorTasksFormUnit,
   MonitoringTasksFormUnit,
+  HttpClientUnit,
   RulesFormUnit;
 
 function MainForm: TMainForm;
@@ -91,6 +92,11 @@ begin
  DSProcessorTasksForm.Show();
 end;
 
+procedure TMainForm.btnHandlersClick(Sender: TObject);
+begin
+  //
+end;
+
 procedure TMainForm.btnRulesClick(Sender: TObject);
 begin
   RulesForm.Show();
@@ -108,7 +114,7 @@ end;
 
 procedure TMainForm.btnAliasesClick(Sender: TObject);
 begin
-  AbonentsForm.Show();
+  AliasesForm.Show();
 end;
 
 procedure TMainForm.btnRouterSourcesClick(Sender: TObject);
@@ -157,6 +163,8 @@ procedure TMainForm.UniFormCreate(Sender: TObject);
 var
   ind, page: integer;
 begin
+  HttpClient.Addr :=  '213.167.42.170';
+  HttpClient.Port := 8088;
   FCompanyBroker := TCompanyBroker.Create();
   FDepartmentBroker:= TDepartmentBroker.Create();
   FComps:= FCompanyBroker.List(page);
@@ -171,6 +179,7 @@ begin
   cbCurComp.ItemIndex:= ind;
   UpdateDeptList;
   UniMainModule.CompID:= GetCompid;
+  UniMainModule.XTicket:= X_TICKET;
 
 
 end;

@@ -11,14 +11,14 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
-  ParentEditFormUnit, TasksParentFormUnit,
-  DSProcessorTasksBrokerUnit, DSProcessorTaskSourceBrokerUnit, TaskSourceUnit, uniPanel, uniLabel;
+  ParentEditFormUnit, TasksParentFormUnit,  RestBrokerBaseUnit, TasksRestBrokerUnit,
+  TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
   TDSProcessorTasksForm = class(TTaskParentForm)
   protected
-    function CreateBroker(): TEntityBroker; override;
-    function CreateTaskSourcesBroker(): TEntityBroker; override;
+    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
     function CreateEditForm(): TParentEditForm; override;
   public
 
@@ -40,20 +40,20 @@ end;
 
 { TDSProcessorTasksForm }
 
-function TDSProcessorTasksForm.CreateBroker: TEntityBroker;
-begin
-  Result := TDSProcessorTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
-end;
-
-
 function TDSProcessorTasksForm.CreateEditForm: TParentEditForm;
 begin
   Result := DSProcessorTaskEditForm();
 end;
 
-function TDSProcessorTasksForm.CreateTaskSourcesBroker: TEntityBroker;
+function TDSProcessorTasksForm.CreateRestBroker: TRestBrokerBase;
 begin
-  Result:= TDSProcessorTaskSourcesBroker.Create();
+   result:= inherited;
+  (result as TTasksRestBroker).BasePath:=  APIConst.constURLDSProcessBasePath
+end;
+
+function TDSProcessorTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
+begin
+  Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLDSProcessBasePath);
 end;
 
 end.

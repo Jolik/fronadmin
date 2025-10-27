@@ -1,0 +1,36 @@
+end;
+
+procedure TEntityResponse.SetResponse(const Value: string);
+var
+  JSONResult: TJSONObject;
+  RootObject: TJSONObject;
+  ItemObject: TJSONObject;
+begin
+  inherited SetResponse(Value);
+  FreeAndNil(FEntity);
+
+  if Value.Trim.IsEmpty then Exit;
+
+  JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+  try
+    if not Assigned(JSONResult) then Exit;
+
+    if FRootKey <> '' then
+      RootObject := JSONResult.GetValue(FRootKey) as TJSONObject
+    else
+      RootObject := JSONResult;
+
+    if not Assigned(RootObject) then Exit;
+
+    ItemObject := RootObject.GetValue(FItemKey) as TJSONObject;
+    if Assigned(ItemObject) then
+      FEntity := FEntityClass.Create(ItemObject)
+    else
+      FEntity := nil;
+  finally
+    JSONResult.Free;
+  end;
+end;
+
+end.
+

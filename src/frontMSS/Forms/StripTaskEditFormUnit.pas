@@ -1,4 +1,4 @@
-﻿unit StripTaskEditFormUnit;
+unit StripTaskEditFormUnit;
 
 interface
 
@@ -19,7 +19,7 @@ type
     function GetStripTask: TStripTask;
 
   protected
-    procedure SetEntity(AEntity : TEntity); override;
+    procedure SetEntity(AEntity : TFieldSet); override;
 
   public
     property StripTask : TStripTask read GetStripTask;
@@ -67,13 +67,11 @@ begin
     exit;
   end;
 
-  ///  ���� ��� ��������� �� ���������� ������ �� FEntity ��� �� TStripTask
   Result := Entity as TStripTask;
 end;
 
 procedure TStripTaskEditForm.SetEntity(AEntity: TEntity);
 begin
-  ///  ���� ��� ������ �� ������ ���� - �� ������ ������!
   if not (AEntity is TStripTask) then
   begin
     Log('TStripTaskEditForm.SetEntity error in AEntity type', lrtError);

@@ -11,13 +11,16 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ParentEditFormUnit,
-  AbonentsBrokerUnit;
+  AbonentsBrokerUnit,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses,
+  AbonentsRestBrokerUnit, uniPanel, uniLabel;
 
 type
   TAbonentsForm = class(TListParentForm)
   protected
     procedure Refresh(const AId: String = ''); override;
     function CreateBroker: TEntityBroker; override;
+    function CreateRestBroker: TRestBrokerBase; override;
     function CreateEditForm: TParentEditForm; override;
   end;
 
@@ -42,6 +45,11 @@ begin
   Result := TAbonentsBroker.Create;
 end;
 
+function TAbonentsForm.CreateRestBroker: TRestBrokerBase;
+begin
+  Result := TAbonentsRestBroker.Create;
+end;
+
 function TAbonentsForm.CreateEditForm: TParentEditForm;
 begin
   Result := AbonentEditForm();
@@ -51,6 +59,7 @@ procedure TAbonentsForm.Refresh(const AId: String);
 begin
   inherited Refresh(AId);
 end;
+
 
 end.
 

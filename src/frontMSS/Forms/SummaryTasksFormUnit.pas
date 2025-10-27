@@ -12,8 +12,8 @@ uses
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
   ParentEditFormUnit,
-  TasksParentFormUnit,
-  SummaryTasksBrokerUnit, SummaryTaskSourcesBrokerUnit, TaskSourceUnit, uniPanel, uniLabel;
+  TasksParentFormUnit, RestBrokerBaseUnit,
+  TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
   TSummaryTasksForm = class(TTaskParentForm)
@@ -33,6 +33,8 @@ type
 
     function CreateEditForm(): TParentEditForm; override;
 
+    function CreateRestBroker(): TRestBrokerBase; override;
+
 //    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
 
   public
@@ -46,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit, ParentFormUnit;
+  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit, ParentFormUnit, TasksRestBrokerUnit;
 
 function SummaryTasksForm(): TSummaryTasksForm;
 begin
@@ -57,20 +59,25 @@ end;
 
 function TSummaryTasksForm.CreateBroker: TEntityBroker;
 begin
-  ///   ""
-  Result := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
+  // Legacy broker not used
+  Result := nil;
 end;
 
 
 function TSummaryTasksForm.CreateEditForm: TParentEditForm;
 begin
-  ///   ""
   Result := SummaryTaskEditForm();
 end;
 
-function TSummaryTasksForm.CreateTaskSourcesBroker: TEntityBroker;
+function TSummaryTasksForm.CreateRestBroker: TRestBrokerBase;
 begin
-  Result:= TSummaryTaskSourcesBroker.Create();
+  result:= inherited;
+  (result as TTasksRestBroker).BasePath:=  APIConst.constURLSummaryBasePath
+end;
+
+function TSummaryTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
+begin
+  Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLSummaryBasePath);
 end;
 
 //procedure TSummaryTasksForm.btnUpdateClick(Sender: TObject);

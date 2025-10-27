@@ -48,7 +48,7 @@ type
     procedure AfterConstruction; override;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
-    procedure SetEntity(AEntity: TEntity); override;
+    procedure SetEntity(AEntity: TFieldSet); override;
   public
     destructor Destroy; override;
     property RuleEntity: TRule read GetRule;
@@ -438,7 +438,7 @@ begin
   Result := TRule(FEntity);
 end;
 
-procedure TRuleEditForm.SetEntity(AEntity: TEntity);
+procedure TRuleEditForm.SetEntity(AEntity: TFieldSet);
 var
   Rule: TRule;
   SmallRule: TSmallRule;
