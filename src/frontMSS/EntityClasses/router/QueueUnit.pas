@@ -1,120 +1,120 @@
-unit QueueUnit;
-
-interface
-
-uses
-  System.Classes, System.JSON, System.Generics.Collections,
-  EntityUnit;
-
-type
-  // TQueue настройки очереди. хранится в роутере
-  TQueue = class (TEntity)
-  private
-    FAllowPut: boolean;
-    FUid: string;
-    FDoubles: boolean;
-    function GetQid: string;
-    procedure SetQid(const Value: string);
-
-  protected
-    ///  потомок должен вернуть имя поля для идентификатора
-    function GetIdKey: string; override;
-
-  public
-    function Assign(ASource: TFieldSet): boolean; override;
-
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    // идентификатор очереди
-    property Qid: string read GetQid write SetQid;
-    property AllowPut: boolean read FAllowPut write FAllowPut;
-    property Uid: string read FUid write FUid;
-    property Doubles: boolean read FDoubles write FDoubles;
-
-  end;
-
-type
-  ///  список задач
-  TQueueList = class (TEntityList)
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ItemClassType: TEntityClass; override;
-
-  end;
-
-implementation
-
-uses
-  System.SysUtils,
-  FuncUnit;
-
-const
-  QidKey = 'qid';
-  UidKey = 'uid';
-
-{ TQueue }
-
-function TQueue.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := false;
-
-  if not inherited Assign(ASource) then
-    exit;
-
-  if not (ASource is TQueue) then
-    exit;
-
-  var src := ASource as TQueue;
-
-  AllowPut := src.AllowPut;
-  Uid := src.Uid;
-  Doubles := src.Doubles;
-
-  Result := true;
-end;
-
-function TQueue.GetQid: string;
-begin
-  Result := Id;
-end;
-
-procedure TQueue.SetQid(const Value: string);
-begin
-  Id := Value;
-end;
-
-///  метод возвращает наименование ключа идентификатора который используется
-///  для данной сущности (у каждого он может быть свой)
-function TQueue.GetIdKey: string;
-begin
-  ///  имя поля идентификатора Lid
-  Result := QidKey;
-end;
-
-procedure TQueue.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
-begin
-  inherited Parse(src);
-
-  ///  читаем поле Uid
-  Uid := GetValueStrDef(src, UidKey, '');
-
-end;
-
-procedure TQueue.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
-
-begin
-  inherited Serialize(dst);
-
-  dst.AddPair(UidKey, Uid);
-end;
-
-{ TQueueList }
-
-class function TQueueList.ItemClassType: TEntityClass;
-begin
-  Result := TQueue;
-end;
-
-end.
+п»їunit QueueUnit;
+
+interface
+
+uses
+  System.Classes, System.JSON, System.Generics.Collections,
+  EntityUnit;
+
+type
+  // TQueue РЅР°СЃС‚СЂРѕР№РєРё РѕС‡РµСЂРµРґРё. С…СЂР°РЅРёС‚СЃв‚¬ РІ СЂРѕСѓС‚РµСЂРµ
+  TQueue = class (TEntity)
+  private
+    FAllowPut: boolean;
+    FUid: string;
+    FDoubles: boolean;
+    function GetQid: string;
+    procedure SetQid(const Value: string);
+
+  protected
+    ///  РїРѕС‚РѕРјРѕРє РґРѕР»Р¶РµРЅ РІРµСЂРЅСѓС‚СЊ РёРјв‚¬ РїРѕР»в‚¬ РґР»в‚¬ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
+    function GetIdKey: string; override;
+
+  public
+    function Assign(ASource: TFieldSet): boolean; override;
+
+    // СЌС‚Рё С‚СЂРµР±СѓСЋС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЌРєР·РµРјРїР»в‚¬СЂР° РѕР±СЉРµРєС‚Р°. РЅР° РѕС€РёР±РєРё - СЌРєСЃРµС€Р°РЅ
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ РѕС‡РµСЂРµРґРё
+    property Qid: string read GetQid write SetQid;
+    property AllowPut: boolean read FAllowPut write FAllowPut;
+    property Uid: string read FUid write FUid;
+    property Doubles: boolean read FDoubles write FDoubles;
+
+  end;
+
+type
+  ///  СЃРїРёСЃРѕРє Р·Р°РґР°С‡
+  TQueueList = class (TEntityList)
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ItemClassType: TEntityClass; override;
+
+  end;
+
+implementation
+
+uses
+  System.SysUtils,
+  FuncUnit;
+
+const
+  QidKey = 'qid';
+  UidKey = 'uid';
+
+{ TQueue }
+
+function TQueue.Assign(ASource: TFieldSet): boolean;
+begin
+  Result := false;
+
+  if not inherited Assign(ASource) then
+    exit;
+
+  if not (ASource is TQueue) then
+    exit;
+
+  var src := ASource as TQueue;
+
+  AllowPut := src.AllowPut;
+  Uid := src.Uid;
+  Doubles := src.Doubles;
+
+  Result := true;
+end;
+
+function TQueue.GetQid: string;
+begin
+  Result := Id;
+end;
+
+procedure TQueue.SetQid(const Value: string);
+begin
+  Id := Value;
+end;
+
+///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°РёРјРµРЅРѕРІР°РЅРёРµ РєР»СЋС‡Р° РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РєРѕС‚РѕСЂС‹Р№ РёСЃРїРѕР»СЊР·СѓРµС‚СЃв‚¬
+///  РґР»в‚¬ РґР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё (Сѓ РєР°Р¶РґРѕРіРѕ РѕРЅ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРІРѕР№)
+function TQueue.GetIdKey: string;
+begin
+  ///  РёРјв‚¬ РїРѕР»в‚¬ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° Lid
+  Result := QidKey;
+end;
+
+procedure TQueue.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
+begin
+  inherited Parse(src);
+
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ Uid
+  Uid := GetValueStrDef(src, UidKey, '');
+
+end;
+
+procedure TQueue.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+
+begin
+  inherited Serialize(dst);
+
+  dst.AddPair(UidKey, Uid);
+end;
+
+{ TQueueList }
+
+class function TQueueList.ItemClassType: TEntityClass;
+begin
+  Result := TQueue;
+end;
+
+end.

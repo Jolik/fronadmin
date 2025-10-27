@@ -1,54 +1,54 @@
-unit MonitoringTasksBrokerUnit;
-
-interface
-
-uses
-  System.Generics.Collections, System.JSON,
-  LoggingUnit,
-  EntityUnit, MonitoringTaskUnit, TasksBrokerUnit;
-
-type
-  ///  брокер для API tasks
-  TMonitoringTasksBroker = class (TTasksBroker)
-  private
-  protected
-    ///  метод возвращает конкретный тип сущности с которым работает брокер
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ClassType: TEntityClass; override;
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TEntityListClass; override;
-
-  protected
-    ///  возвращает базовый путь до API
-    function GetBasePath: string; override;
-
-  public
-
-  end;
-
-implementation
-
-uses
-  System.SysUtils, System.Classes,
-  FuncUnit,
-  APIConst;
-
-{ TMonitoringTasksBroker }
-
-function TMonitoringTasksBroker.GetBasePath: string;
-begin
-  Result := constURLMonitoringBasePath;
-end;
-
-class function TMonitoringTasksBroker.ClassType: TEntityClass;
-begin
-  Result := TMonitoringTask;
-end;
-
-class function TMonitoringTasksBroker.ListClassType: TEntityListClass;
-begin
-  Result := TMonitoringTaskList;
-end;
-
-end.
+п»їunit MonitoringTasksBrokerUnit;
+
+interface
+
+uses
+  System.Generics.Collections, System.JSON,
+  LoggingUnit,
+  EntityUnit, MonitoringTaskUnit, TasksBrokerUnit;
+
+type
+  ///  Р±СЂРѕРєРµСЂ РґР»СЏ API tasks
+  TMonitoringTasksBroker = class (TTasksBroker)
+  private
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї СЃСѓС‰РЅРѕСЃС‚Рё СЃ РєРѕС‚РѕСЂС‹Рј СЂР°Р±РѕС‚Р°РµС‚ Р±СЂРѕРєРµСЂ
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ClassType: TEntityClass; override;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ListClassType: TEntityListClass; override;
+
+  protected
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ Р±Р°Р·РѕРІС‹Р№ РїСѓС‚СЊ РґРѕ API
+    function GetBasePath: string; override;
+
+  public
+
+  end;
+
+implementation
+
+uses
+  System.SysUtils, System.Classes,
+  FuncUnit,
+  APIConst;
+
+{ TMonitoringTasksBroker }
+
+function TMonitoringTasksBroker.GetBasePath: string;
+begin
+  Result := constURLMonitoringBasePath;
+end;
+
+class function TMonitoringTasksBroker.ClassType: TEntityClass;
+begin
+  Result := TMonitoringTask;
+end;
+
+class function TMonitoringTasksBroker.ListClassType: TEntityListClass;
+begin
+  Result := TMonitoringTaskList;
+end;
+
+end.

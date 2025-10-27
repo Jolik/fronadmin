@@ -1,3 +1,3 @@
-inherited StripTasksForm: TStripTasksForm
-  TextHeight = 15
-end
+﻿inherited StripTasksForm: TStripTasksForm
+  TextHeight = 15
+end

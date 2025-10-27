@@ -1,62 +1,62 @@
-unit FieldSetBrokerUnit;
-
-interface
-
-uses
-  System.Generics.Collections,
-  EntityUnit;
-
-type
-  // Класс-ссылка на брокер TFieldSetBroker
-  TFieldSetBrokerClass = class of TFieldSetBroker;
-
-  ///  базовый брокер для вызовов API
-  TFieldSetBroker = class(TObject)
-  private
-  protected
-    ///  метод возвращает конкретный тип сущности с которым работает брокер
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ClassType: TFieldSetClass; virtual;
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TFieldSetListClass; virtual;
-
-    ///  возвращает базовый путь до API
-    function BaseUrlPath: string; virtual; abstract;
-
-  public
-    ///  возвращает список сущностей
-    ///  в случае ошибки возвращается nil
-    function List(
-      out APageCount: Integer;
-      const APage: Integer = 0;
-      const APageSize: Integer = 50;
-      const ASearchStr: String = '';
-      const ASearchBy: String = '';
-      const AOrder: String = 'name';
-      const AOrderDir: String = 'asc'): TFieldSetList; virtual; abstract;
-
-    ///  создает нужный класс сущности
-    ///  в случае ошибки возвращается nil
-    function CreateNew(): TFieldSet; virtual; abstract;
-    ///  создает на сервере новый класс сущности
-    ///  в случае успеха возвращается true
-    function New(AFieldSet: TFieldSet): boolean; virtual; abstract;
-
-  end;
-
-implementation
-
-{ TFieldSetBroker }
-
-class function TFieldSetBroker.ClassType: TFieldSetClass;
-begin
-  Result := TFieldSet;
-end;
-
-class function TFieldSetBroker.ListClassType: TFieldSetListClass;
-begin
-  Result := TFieldSetList;
-end;
-
-end.
+п»їunit FieldSetBrokerUnit;
+
+interface
+
+uses
+  System.Generics.Collections,
+  EntityUnit;
+
+type
+  // РљР»Р°СЃСЃ-СЃСЃС‹Р»РєР° РЅР° Р±СЂРѕРєРµСЂ TFieldSetBroker
+  TFieldSetBrokerClass = class of TFieldSetBroker;
+
+  ///  Р±Р°Р·РѕРІС‹Р№ Р±СЂРѕРєРµСЂ РґР»СЏ РІС‹Р·РѕРІРѕРІ API
+  TFieldSetBroker = class(TObject)
+  private
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї СЃСѓС‰РЅРѕСЃС‚Рё СЃ РєРѕС‚РѕСЂС‹Рј СЂР°Р±РѕС‚Р°РµС‚ Р±СЂРѕРєРµСЂ
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ClassType: TFieldSetClass; virtual;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ListClassType: TFieldSetListClass; virtual;
+
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ Р±Р°Р·РѕРІС‹Р№ РїСѓС‚СЊ РґРѕ API
+    function BaseUrlPath: string; virtual; abstract;
+
+  public
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє СЃСѓС‰РЅРѕСЃС‚РµР№
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function List(
+      out APageCount: Integer;
+      const APage: Integer = 0;
+      const APageSize: Integer = 50;
+      const ASearchStr: String = '';
+      const ASearchBy: String = '';
+      const AOrder: String = 'name';
+      const AOrderDir: String = 'asc'): TFieldSetList; virtual; abstract;
+
+    ///  СЃРѕР·РґР°РµС‚ РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function CreateNew(): TFieldSet; virtual; abstract;
+    ///  СЃРѕР·РґР°РµС‚ РЅР° СЃРµСЂРІРµСЂРµ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
+    function New(AFieldSet: TFieldSet): boolean; virtual; abstract;
+
+  end;
+
+implementation
+
+{ TFieldSetBroker }
+
+class function TFieldSetBroker.ClassType: TFieldSetClass;
+begin
+  Result := TFieldSet;
+end;
+
+class function TFieldSetBroker.ListClassType: TFieldSetListClass;
+begin
+  Result := TFieldSetList;
+end;
+
+end.

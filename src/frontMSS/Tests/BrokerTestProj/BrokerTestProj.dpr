@@ -1,292 +1,292 @@
-program BrokerTestProj;
-
-{$APPTYPE CONSOLE}
-
-uses
-  System.SysUtils,
-  System.Generics.Collections,
-  HttpClientUnit in '..\..\HttpClasses\HttpClientUnit.pas',
-  EntityUnit in '..\..\EntityClasses\Common\EntityUnit.pas',
-  FuncUnit in '..\..\Common\FuncUnit.pas',
-  LoggingUnit in '..\..\Logging\LoggingUnit.pas',
-  TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas',
-  AbonentHttpRequests in '..\..\HttpClasses\AbonentHttpRequests.pas',
-  AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas',
-  StringListUnit in '..\..\EntityClasses\Common\StringListUnit.pas',
-  StringUnit in '..\..\EntityClasses\Common\StringUnit.pas',
-  APIConst in '..\..\APIClasses\APIConst.pas',
-  AbonentsRestBrokerUnit in '..\..\APIClasses\AbonentsRestBrokerUnit.pas',
-  BaseRequests in '..\..\HttpClasses\BaseRequests.pas',
-  BaseResponses in '..\..\HttpClasses\BaseResponses.pas',
-  RestBrokerBaseUnit in '..\..\APIClasses\RestBrokerBaseUnit.pas',
-  UniversalRestBrokerUnit in '..\..\APIClasses\UniversalRestBrokerUnit.pas',
-  TasksRestBrokerUnit in '..\..\APIClasses\TasksRestBrokerUnit.pas',
-  TaskHttpRequests in '..\..\HttpClasses\TaskHttpRequests.pas',
-  BrokerIntfUnit in '..\..\APIClasses\BrokerIntfUnit.pas',
-  TaskUnit in '..\..\EntityClasses\tasks\TaskUnit.pas';
-
-procedure ExecuteRequest;
-var
-  Broker: TAbonentsRestBroker;
-  ListRequest: TAbonentReqList;
-  ListResponse: TAbonentListResponse;
-  InfoRequest: TAbonentReqInfo;
-  InfoResponse: TAbonentInfoResponse;
-  NewRequest: TAbonentReqNew;
-  NewResponse: TAbonentNewResponse;
-  UpdateRequest: TAbonentReqUpdate;
-  UpdateResponse: TJSONResponse;
-  RemoveRequest: TAbonentReqRemove;
-  RemoveResponse: TJSONResponse;  Abonent: TAbonent;
-  ChannelsText: string;
-  NewAbonentId: string;
-  CreatedAbonentId: string;
-  CreatedAbonentName: string;
-begin
-  Broker := TAbonentsRestBroker.Create('ST-Test');
-  ListRequest := TAbonentReqList.Create;  InfoRequest := TAbonentReqInfo.Create;  NewRequest := TAbonentReqNew.Create;  UpdateRequest := TAbonentReqUpdate.Create;  RemoveRequest := TAbonentReqRemove.Create;  try
-    // Ïîäðîáíûé çàïðîñ àáîíåíòà ÷åðåç ñïåöèàëèçèðîâàííûé êëàññ
-    // Compose and send a sample request that demonstrates abonent creation through the broker.
-    CreatedAbonentName := '';
-
-    if Assigned(NewRequest.Body) then
-    begin
-      NewAbonentId := TGUID.NewGuid.ToString.Replace('{', '').Replace('}', '');
-
-      with NewRequest.Body do
-      begin
-//!!!        Abid := NewAbonentId;
-        Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
-        Caption := 'Automatically created abonent for broker demo';
-        CreatedAbonentName := Name;
-
-        Channels.Clear;
-//!!!        Channels.Add('lch1');
-//!!!        Channels.Add('mitra');
-
-        Attr.Clear;
-        Attr.AddPair('name', 'TTAAii');
-        Attr.AddPair('email', Format('first+%s@sample.com', [Copy(NewAbonentId, 1, 4)]));
-
-        UpdateRawContent;
-      end;
-    end;
-
-    NewResponse := Broker.New(NewRequest);
-
-    Writeln('-----------------------------------------------------------------');
-    Writeln('Create request URL: ' + NewRequest.GetURLWithParams);
-    Writeln(Format('Create request body: %s', [NewRequest.ReqBodyContent]));
-    Writeln('Create response:');
-    CreatedAbonentId := '';
-    if Assigned(NewResponse.AbonentNewRes) and not NewResponse.AbonentNewRes.Abid.IsEmpty then
-    begin
-      Writeln('Created abonent ID: ' + NewResponse.AbonentNewRes.Abid);
-      CreatedAbonentId := NewResponse.AbonentNewRes.Abid;
-    end
-    else
-      Writeln('Abonent identifier was not returned in the response.');
-
-    // Prepare request for abonent update only if we have an identifier to target.
-    if not CreatedAbonentId.Trim.IsEmpty then
-    begin      UpdateRequest.AbonentId := CreatedAbonentId;
-
-      if Assigned(UpdateRequest.Body) then
-      begin
-        UpdateRequest.Body.Name := CreatedAbonentName;
-        UpdateRequest.Body.Caption := 'Automatically updated abonent caption';
-
-        UpdateRequest.Body.Channels.Clear;
-//!!!        UpdateRequest.Body.Channels.Add('lch1');
-//!!!        UpdateRequest.Body.Channels.Add('mitra');
-
-        UpdateRequest.Body.Attr.Clear;
-        UpdateRequest.Body.Attr.AddPair('name', 'NewName');
-        UpdateRequest.Body.Attr.AddPair('email', Format('updated+%s@sample.com', [Copy(CreatedAbonentId, 1, 4)]));
-
-        UpdateRequest.Body.UpdateRawContent;
-      end;
-
-      UpdateResponse := Broker.Update(UpdateRequest);
-
-      Writeln('-----------------------------------------------------------------');
-      Writeln('Update request URL: ' + UpdateRequest.GetURLWithParams);
-      Writeln(Format('Update request body: %s', [UpdateRequest.ReqBodyContent]));
-      Writeln('Update response:');
-      if UpdateResponse.Response.Trim.IsEmpty then
-        Writeln('(empty response body)')
-      else
-        Writeln(UpdateResponse.Response);
-
-      // Request abonent information after creation and update to display the final state.
-      InfoRequest.Id := CreatedAbonentId;
-      InfoResponse := Broker.Info(InfoRequest);
-
-      Writeln('-----------------------------------------------------------------');
-      Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
-      Writeln('Info response:');
-
-      if Assigned(InfoResponse.Abonent) then
-      begin
-        ChannelsText := string.Join(', ', InfoResponse.Abonent.Channels.ToStringArray);
-        if ChannelsText.IsEmpty then
-          ChannelsText := '(no channels)';
-
-        Writeln('Details for created abonent after update:');
-        Writeln(Format('Abonent: %s (%s)', [InfoResponse.Abonent.Name, InfoResponse.Abonent.Abid]));
-        Writeln('Caption: ' + InfoResponse.Abonent.Caption);
-        Writeln('Channels: ' + ChannelsText);
-      end
-      else
-        Writeln('Abonent details were not returned in the response.');
-
-      // Remove the abonent created for the test to keep the environment clean.
-      RemoveRequest.AbonentId := CreatedAbonentId;
-      RemoveResponse := Broker.Remove(RemoveRequest);
-
-      Writeln('-----------------------------------------------------------------');
-      Writeln('Remove request URL: ' + RemoveRequest.GetURLWithParams);
-      Writeln('Remove response:');
-      if RemoveResponse.Response.Trim.IsEmpty then
-        Writeln('(empty response body)')
-      else
-        Writeln(RemoveResponse.Response);
-    end
-    else
-    begin
-      Writeln('-----------------------------------------------------------------');
-      Writeln('Skipping update request because abonent identifier is unavailable.');
-    end;
-
-    // Authorize list request with a test ticket used across broker integration tests.
-    if Assigned(ListRequest.Body) then
-      // Limit the number of returned abonents to keep the output concise for the sample run.
-      ListRequest.Body.PageSize := 5;
-
-    // Perform the initial request to retrieve a collection of abonents.
-    ListResponse := Broker.List(ListRequest);
-
-    Writeln('-----------------------------------------------------------------');
-    Writeln('List request URL: ' + ListRequest.GetURLWithParams);
-    Writeln(Format('List request body: %s', [ListRequest.ReqBodyContent]));
-    Writeln('List response:');
-    Writeln(Format('Abonent records: %d', [ListResponse.AbonentList.Count]));
-
-    if ListResponse.AbonentList.Count > 0 then
-    begin
-      Abonent := TAbonent(ListResponse.AbonentList[0]);
-      // Display basic information from the list response before requesting details.
-      Writeln(Format('First abonent: %s (%s)', [Abonent.Name, Abonent.Abid]));      InfoRequest.Id := Abonent.Abid;
-
-      // Execute the request to fetch detailed abonent information.
-      InfoResponse := Broker.Info(InfoRequest);
-
-      Writeln('-----------------------------------------------------------------');
-      Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
-      Writeln('Info response:');
-
-      if Assigned(InfoResponse.Abonent) then
-      begin
-        // Compose a readable representation of channels returned for the abonent.
-        ChannelsText := string.Join(', ', InfoResponse.Abonent.Channels.ToStringArray);
-        if ChannelsText.IsEmpty then
-          ChannelsText := '(no channels)';
-
-        Writeln(Format('Abonent: %s (%s)', [InfoResponse.Abonent.Name, InfoResponse.Abonent.Abid]));
-        Writeln('Caption: ' + InfoResponse.Abonent.Caption);
-        // Print the resolved channel list so operators can verify provisioning information.
-        Writeln('Channels: ' + ChannelsText);
-      end
-      else
-        // Highlight that the response failed to include an abonent object, which often indicates
-        // a missing or incorrect identifier.
-        Writeln('Abonent details were not returned in the response.');
-    end
-    else
-      // Provide actionable message when the list request yields no records.
-      Writeln('No abonents returned in the list response.');
-
-    Writeln('-----------------------------------------------------------------');
-    Readln;
-  finally
-    NewResponse.Free;
-    NewRequest.Free;
-    UpdateResponse.Free;
-    UpdateRequest.Free;
-    RemoveResponse.Free;
-    RemoveRequest.Free;
-    InfoResponse.Free;
-    InfoRequest.Free;
-    ListResponse.Free;
-    ListRequest.Free;
-    Broker.Free;
-  end;
-end;
-
-
-procedure TestAbonentListRequest;
-var
-  Broker: TAbonentsRestBroker;
-  Request: TAbonentReqList;
-  Response: TAbonentListResponse;  Abonent: TEntity;
-  ChannelsText: string;
-begin
-  Request := TAbonentReqList.Create;
-  Response := TAbonentListResponse.Create;
-  try
-    
-    if Assigned(Request.Body) then
-      // Narrow down the request payload to fetch a manageable amount of abonents for display.
-      Request.Body.PageSize := 5;
-
-    // Send the request to the HTTP broker and collect the resulting abonent list.
-    Broker := TAbonentsRestBroker.Create('ST-Test');
-    try
-      Response := Broker.List(Request);
-    finally
-      Broker.Free;
-    end;
-
-    Writeln('-----------------------------------------------------------------');
-    Writeln('Request URL: ' + Request.GetURLWithParams);
-    Writeln(Format('Request Body: %s', [Request.ReqBodyContent]));
-    if Assigned(Request.Body) then
-      Writeln(Format('Requested page size: %d', [Request.Body.PageSize]));
-    Writeln('-----------------------------------------------------------------');
-    Writeln('Response:');
-    Writeln(Format('Abonent records: %d', [Response.AbonentList.Count]));
-    if Response.AbonentList.Count = 0 then
-      Writeln(' - No abonents returned in the response')
-    else
-      for Abonent in Response.AbonentList do
-      begin
-        // Convert abonent channels to a comma separated list for readability in the console.
-        ChannelsText := string.Join(', ', TAbonent(Abonent).Channels.ToStringArray);
-        if ChannelsText.IsEmpty then
-          ChannelsText := '(no channels)';
-
-        Writeln(Format(' - %s (%s)', [Abonent.Name, TAbonent(Abonent).Abid]));
-        Writeln(Format('   Caption: %s', [Abonent.Caption]));
-        // Output the channels for each abonent retrieved in the list response.
-        Writeln('   Channels: ' + ChannelsText);
-      end;
-    Writeln('-----------------------------------------------------------------');
-    Readln;
-  finally
-    Request.Free;
-    Response.Free;
-  end;
-end;
-
-begin
-  try
-    HttpClient.Addr := '213.167.42.170';
-    HttpClient.Port := 8088;
-
-    ExecuteRequest;
-    //TestAbonentListRequest;
-  except
-    on E: Exception do
-      Writeln(E.ClassName + ': ' + E.Message);
-  end;
-end.
+ï»¿program BrokerTestProj;
+
+{$APPTYPE CONSOLE}
+
+uses
+  System.SysUtils,
+  System.Generics.Collections,
+  HttpClientUnit in '..\..\HttpClasses\HttpClientUnit.pas',
+  EntityUnit in '..\..\EntityClasses\Common\EntityUnit.pas',
+  FuncUnit in '..\..\Common\FuncUnit.pas',
+  LoggingUnit in '..\..\Logging\LoggingUnit.pas',
+  TextFileLoggerUnit in '..\..\Logging\TextFileLoggerUnit.pas',
+  AbonentHttpRequests in '..\..\HttpClasses\AbonentHttpRequests.pas',
+  AbonentUnit in '..\..\EntityClasses\router\AbonentUnit.pas',
+  StringListUnit in '..\..\EntityClasses\Common\StringListUnit.pas',
+  StringUnit in '..\..\EntityClasses\Common\StringUnit.pas',
+  APIConst in '..\..\APIClasses\APIConst.pas',
+  AbonentsRestBrokerUnit in '..\..\APIClasses\AbonentsRestBrokerUnit.pas',
+  BaseRequests in '..\..\HttpClasses\BaseRequests.pas',
+  BaseResponses in '..\..\HttpClasses\BaseResponses.pas',
+  RestBrokerBaseUnit in '..\..\APIClasses\RestBrokerBaseUnit.pas',
+  UniversalRestBrokerUnit in '..\..\APIClasses\UniversalRestBrokerUnit.pas',
+  TasksRestBrokerUnit in '..\..\APIClasses\TasksRestBrokerUnit.pas',
+  TaskHttpRequests in '..\..\HttpClasses\TaskHttpRequests.pas',
+  BrokerIntfUnit in '..\..\APIClasses\BrokerIntfUnit.pas',
+  TaskUnit in '..\..\EntityClasses\tasks\TaskUnit.pas';
+
+procedure ExecuteRequest;
+var
+  Broker: TAbonentsRestBroker;
+  ListRequest: TAbonentReqList;
+  ListResponse: TAbonentListResponse;
+  InfoRequest: TAbonentReqInfo;
+  InfoResponse: TAbonentInfoResponse;
+  NewRequest: TAbonentReqNew;
+  NewResponse: TAbonentNewResponse;
+  UpdateRequest: TAbonentReqUpdate;
+  UpdateResponse: TJSONResponse;
+  RemoveRequest: TAbonentReqRemove;
+  RemoveResponse: TJSONResponse;  Abonent: TAbonent;
+  ChannelsText: string;
+  NewAbonentId: string;
+  CreatedAbonentId: string;
+  CreatedAbonentName: string;
+begin
+  Broker := TAbonentsRestBroker.Create('ST-Test');
+  ListRequest := TAbonentReqList.Create;  InfoRequest := TAbonentReqInfo.Create;  NewRequest := TAbonentReqNew.Create;  UpdateRequest := TAbonentReqUpdate.Create;  RemoveRequest := TAbonentReqRemove.Create;  try
+    // ÐŸÐ¾Ð´Ñ€Ð¾Ð±Ð½Ñ‹Ð¹ Ð·Ð°Ð¿Ñ€Ð¾Ñ Ð°Ð±Ð¾Ð½ÐµÐ½Ñ‚Ð° Ñ‡ÐµÑ€ÐµÐ· ÑÐ¿ÐµÑ†Ð¸Ð°Ð»Ð¸Ð·Ð¸Ñ€Ð¾Ð²Ð°Ð½Ð½Ñ‹Ð¹ ÐºÐ»Ð°ÑÑ
+    // Compose and send a sample request that demonstrates abonent creation through the broker.
+    CreatedAbonentName := '';
+
+    if Assigned(NewRequest.Body) then
+    begin
+      NewAbonentId := TGUID.NewGuid.ToString.Replace('{', '').Replace('}', '');
+
+      with NewRequest.Body do
+      begin
+//!!!        Abid := NewAbonentId;
+        Name := 'AutoTest_' + Copy(NewAbonentId, 1, 8);
+        Caption := 'Automatically created abonent for broker demo';
+        CreatedAbonentName := Name;
+
+        Channels.Clear;
+//!!!        Channels.Add('lch1');
+//!!!        Channels.Add('mitra');
+
+        Attr.Clear;
+        Attr.AddPair('name', 'TTAAii');
+        Attr.AddPair('email', Format('first+%s@sample.com', [Copy(NewAbonentId, 1, 4)]));
+
+        UpdateRawContent;
+      end;
+    end;
+
+    NewResponse := Broker.New(NewRequest);
+
+    Writeln('-----------------------------------------------------------------');
+    Writeln('Create request URL: ' + NewRequest.GetURLWithParams);
+    Writeln(Format('Create request body: %s', [NewRequest.ReqBodyContent]));
+    Writeln('Create response:');
+    CreatedAbonentId := '';
+    if Assigned(NewResponse.AbonentNewRes) and not NewResponse.AbonentNewRes.Abid.IsEmpty then
+    begin
+      Writeln('Created abonent ID: ' + NewResponse.AbonentNewRes.Abid);
+      CreatedAbonentId := NewResponse.AbonentNewRes.Abid;
+    end
+    else
+      Writeln('Abonent identifier was not returned in the response.');
+
+    // Prepare request for abonent update only if we have an identifier to target.
+    if not CreatedAbonentId.Trim.IsEmpty then
+    begin      UpdateRequest.AbonentId := CreatedAbonentId;
+
+      if Assigned(UpdateRequest.Body) then
+      begin
+        UpdateRequest.Body.Name := CreatedAbonentName;
+        UpdateRequest.Body.Caption := 'Automatically updated abonent caption';
+
+        UpdateRequest.Body.Channels.Clear;
+//!!!        UpdateRequest.Body.Channels.Add('lch1');
+//!!!        UpdateRequest.Body.Channels.Add('mitra');
+
+        UpdateRequest.Body.Attr.Clear;
+        UpdateRequest.Body.Attr.AddPair('name', 'NewName');
+        UpdateRequest.Body.Attr.AddPair('email', Format('updated+%s@sample.com', [Copy(CreatedAbonentId, 1, 4)]));
+
+        UpdateRequest.Body.UpdateRawContent;
+      end;
+
+      UpdateResponse := Broker.Update(UpdateRequest);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Update request URL: ' + UpdateRequest.GetURLWithParams);
+      Writeln(Format('Update request body: %s', [UpdateRequest.ReqBodyContent]));
+      Writeln('Update response:');
+      if UpdateResponse.Response.Trim.IsEmpty then
+        Writeln('(empty response body)')
+      else
+        Writeln(UpdateResponse.Response);
+
+      // Request abonent information after creation and update to display the final state.
+      InfoRequest.Id := CreatedAbonentId;
+      InfoResponse := Broker.Info(InfoRequest);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
+      Writeln('Info response:');
+
+      if Assigned(InfoResponse.Abonent) then
+      begin
+        ChannelsText := string.Join(', ', InfoResponse.Abonent.Channels.ToStringArray);
+        if ChannelsText.IsEmpty then
+          ChannelsText := '(no channels)';
+
+        Writeln('Details for created abonent after update:');
+        Writeln(Format('Abonent: %s (%s)', [InfoResponse.Abonent.Name, InfoResponse.Abonent.Abid]));
+        Writeln('Caption: ' + InfoResponse.Abonent.Caption);
+        Writeln('Channels: ' + ChannelsText);
+      end
+      else
+        Writeln('Abonent details were not returned in the response.');
+
+      // Remove the abonent created for the test to keep the environment clean.
+      RemoveRequest.AbonentId := CreatedAbonentId;
+      RemoveResponse := Broker.Remove(RemoveRequest);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Remove request URL: ' + RemoveRequest.GetURLWithParams);
+      Writeln('Remove response:');
+      if RemoveResponse.Response.Trim.IsEmpty then
+        Writeln('(empty response body)')
+      else
+        Writeln(RemoveResponse.Response);
+    end
+    else
+    begin
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Skipping update request because abonent identifier is unavailable.');
+    end;
+
+    // Authorize list request with a test ticket used across broker integration tests.
+    if Assigned(ListRequest.Body) then
+      // Limit the number of returned abonents to keep the output concise for the sample run.
+      ListRequest.Body.PageSize := 5;
+
+    // Perform the initial request to retrieve a collection of abonents.
+    ListResponse := Broker.List(ListRequest);
+
+    Writeln('-----------------------------------------------------------------');
+    Writeln('List request URL: ' + ListRequest.GetURLWithParams);
+    Writeln(Format('List request body: %s', [ListRequest.ReqBodyContent]));
+    Writeln('List response:');
+    Writeln(Format('Abonent records: %d', [ListResponse.AbonentList.Count]));
+
+    if ListResponse.AbonentList.Count > 0 then
+    begin
+      Abonent := TAbonent(ListResponse.AbonentList[0]);
+      // Display basic information from the list response before requesting details.
+      Writeln(Format('First abonent: %s (%s)', [Abonent.Name, Abonent.Abid]));      InfoRequest.Id := Abonent.Abid;
+
+      // Execute the request to fetch detailed abonent information.
+      InfoResponse := Broker.Info(InfoRequest);
+
+      Writeln('-----------------------------------------------------------------');
+      Writeln('Info request URL: ' + InfoRequest.GetURLWithParams);
+      Writeln('Info response:');
+
+      if Assigned(InfoResponse.Abonent) then
+      begin
+        // Compose a readable representation of channels returned for the abonent.
+        ChannelsText := string.Join(', ', InfoResponse.Abonent.Channels.ToStringArray);
+        if ChannelsText.IsEmpty then
+          ChannelsText := '(no channels)';
+
+        Writeln(Format('Abonent: %s (%s)', [InfoResponse.Abonent.Name, InfoResponse.Abonent.Abid]));
+        Writeln('Caption: ' + InfoResponse.Abonent.Caption);
+        // Print the resolved channel list so operators can verify provisioning information.
+        Writeln('Channels: ' + ChannelsText);
+      end
+      else
+        // Highlight that the response failed to include an abonent object, which often indicates
+        // a missing or incorrect identifier.
+        Writeln('Abonent details were not returned in the response.');
+    end
+    else
+      // Provide actionable message when the list request yields no records.
+      Writeln('No abonents returned in the list response.');
+
+    Writeln('-----------------------------------------------------------------');
+    Readln;
+  finally
+    NewResponse.Free;
+    NewRequest.Free;
+    UpdateResponse.Free;
+    UpdateRequest.Free;
+    RemoveResponse.Free;
+    RemoveRequest.Free;
+    InfoResponse.Free;
+    InfoRequest.Free;
+    ListResponse.Free;
+    ListRequest.Free;
+    Broker.Free;
+  end;
+end;
+
+
+procedure TestAbonentListRequest;
+var
+  Broker: TAbonentsRestBroker;
+  Request: TAbonentReqList;
+  Response: TAbonentListResponse;  Abonent: TEntity;
+  ChannelsText: string;
+begin
+  Request := TAbonentReqList.Create;
+  Response := TAbonentListResponse.Create;
+  try
+    
+    if Assigned(Request.Body) then
+      // Narrow down the request payload to fetch a manageable amount of abonents for display.
+      Request.Body.PageSize := 5;
+
+    // Send the request to the HTTP broker and collect the resulting abonent list.
+    Broker := TAbonentsRestBroker.Create('ST-Test');
+    try
+      Response := Broker.List(Request);
+    finally
+      Broker.Free;
+    end;
+
+    Writeln('-----------------------------------------------------------------');
+    Writeln('Request URL: ' + Request.GetURLWithParams);
+    Writeln(Format('Request Body: %s', [Request.ReqBodyContent]));
+    if Assigned(Request.Body) then
+      Writeln(Format('Requested page size: %d', [Request.Body.PageSize]));
+    Writeln('-----------------------------------------------------------------');
+    Writeln('Response:');
+    Writeln(Format('Abonent records: %d', [Response.AbonentList.Count]));
+    if Response.AbonentList.Count = 0 then
+      Writeln(' - No abonents returned in the response')
+    else
+      for Abonent in Response.AbonentList do
+      begin
+        // Convert abonent channels to a comma separated list for readability in the console.
+        ChannelsText := string.Join(', ', TAbonent(Abonent).Channels.ToStringArray);
+        if ChannelsText.IsEmpty then
+          ChannelsText := '(no channels)';
+
+        Writeln(Format(' - %s (%s)', [Abonent.Name, TAbonent(Abonent).Abid]));
+        Writeln(Format('   Caption: %s', [Abonent.Caption]));
+        // Output the channels for each abonent retrieved in the list response.
+        Writeln('   Channels: ' + ChannelsText);
+      end;
+    Writeln('-----------------------------------------------------------------');
+    Readln;
+  finally
+    Request.Free;
+    Response.Free;
+  end;
+end;
+
+begin
+  try
+    HttpClient.Addr := '213.167.42.170';
+    HttpClient.Port := 8088;
+
+    ExecuteRequest;
+    //TestAbonentListRequest;
+  except
+    on E: Exception do
+      Writeln(E.ClassName + ': ' + E.Message);
+  end;
+end.

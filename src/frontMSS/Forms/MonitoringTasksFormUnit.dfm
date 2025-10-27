@@ -1,3 +1,3 @@
-inherited MonitoringTasksForm: TMonitoringTasksForm
-  TextHeight = 15
-end
+﻿inherited MonitoringTasksForm: TMonitoringTasksForm
+  TextHeight = 15
+end

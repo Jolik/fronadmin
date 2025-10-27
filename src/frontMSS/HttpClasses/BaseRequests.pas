@@ -1,4 +1,4 @@
-unit BaseRequests;
+﻿unit BaseRequests;
 
 interface
 
@@ -300,10 +300,10 @@ begin
 end;
 
 class function TReqNew.NewBody: TFieldSet;
-begin
-  Result:= BodyClassType.Create;
-end;
-
+begin
+  Result:= BodyClassType.Create;
+end;
+
 procedure TReqNew.ApplyBody(AEntity: TFieldSet);
 begin
   if Assigned(ReqBody) and (AEntity is TFieldSet) then

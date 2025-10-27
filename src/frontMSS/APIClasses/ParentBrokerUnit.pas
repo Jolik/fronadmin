@@ -1,87 +1,87 @@
-unit ParentBrokerUnit;
-
-interface
-
-uses
-  System.Generics.Collections,
-  EntityUnit;
-
-type
-  // Класс-ссылка на брокер TParentBroker
-  TParentBrokerClass = class of TParentBroker;
-
-  ///  базовый брокер для вызовов API
-  TParentBroker = class(TObject)
-  private
-  protected
-    ///  метод возвращает конкретный тип сущности с которым работает брокер
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ClassType: TEntityClass; virtual;
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TEntityListClass; virtual;
-
-    ///  возвращает базовый путь до API
-    function BaseUrlPath: string; virtual; abstract;
-
-  public
-    ///  возвращает список сущностей
-    ///  в случае ошибки возвращается nil
-    function List(
-      out APageCount: Integer;
-      const APage: Integer = 0;
-      const APageSize: Integer = 50;
-      const ASearchStr: String = '';
-      const ASearchBy: String = '';
-      const AOrder: String = 'name';
-      const AOrderDir: String = 'asc'): TEntityList; virtual; abstract;
-
-    ///  создает нужный класс сущности
-    ///  в случае ошибки возвращается nil
-    function CreateNew(): TEntity; virtual; abstract;
-    ///  создает на сервере новый класс сущности
-    ///  в случае успеха возвращается true
-    function New(AEntity: TEntity): boolean; virtual; abstract;
-    ///  выдает информацию о сущности с сервера по идентификатору
-    ///  в случае ошибки возвращается nil
-    function Info(AId: String): TEntity; overload;virtual; abstract;
-    ///  выдает информацию о сущности с сервера
-    ///  в случае ошибки возвращается nil
-    function Info(AEntity: TEntity): TEntity; overload; virtual;
-    ///  обновить параметры сущности на сервере
-    ///  в случае ошибки возвращается false
-    function Update(AEntity: TEntity): Boolean; virtual; abstract;
-    ///  удалить сущность на сервере по идентификатору
-    ///  в случае ошибки возвращается false
-    function Remove(AId: String): Boolean; overload; virtual; abstract;
-    ///  удалить сущность на сервере
-    ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; virtual;
-
-  end;
-
-implementation
-
-{ TParentBroker }
-
-class function TParentBroker.ClassType: TEntityClass;
-begin
-  Result := TEntity;
-end;
-
-class function TParentBroker.ListClassType: TEntityListClass;
-begin
-  Result := TEntityList;
-end;
-
-function TParentBroker.Info(AEntity: TEntity): TEntity;
-begin
-  result := Info(AEntity.Id);
-end;
-
-function TParentBroker.Remove(AEntity: TEntity): Boolean;
-begin
-  result := Remove(AEntity.Id);
-end;
-
-end.
+п»їunit ParentBrokerUnit;
+
+interface
+
+uses
+  System.Generics.Collections,
+  EntityUnit;
+
+type
+  // РљР»Р°СЃСЃ-СЃСЃС‹Р»РєР° РЅР° Р±СЂРѕРєРµСЂ TParentBroker
+  TParentBrokerClass = class of TParentBroker;
+
+  ///  Р±Р°Р·РѕРІС‹Р№ Р±СЂРѕРєРµСЂ РґР»СЏ РІС‹Р·РѕРІРѕРІ API
+  TParentBroker = class(TObject)
+  private
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї СЃСѓС‰РЅРѕСЃС‚Рё СЃ РєРѕС‚РѕСЂС‹Рј СЂР°Р±РѕС‚Р°РµС‚ Р±СЂРѕРєРµСЂ
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ClassType: TEntityClass; virtual;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ListClassType: TEntityListClass; virtual;
+
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ Р±Р°Р·РѕРІС‹Р№ РїСѓС‚СЊ РґРѕ API
+    function BaseUrlPath: string; virtual; abstract;
+
+  public
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє СЃСѓС‰РЅРѕСЃС‚РµР№
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function List(
+      out APageCount: Integer;
+      const APage: Integer = 0;
+      const APageSize: Integer = 50;
+      const ASearchStr: String = '';
+      const ASearchBy: String = '';
+      const AOrder: String = 'name';
+      const AOrderDir: String = 'asc'): TEntityList; virtual; abstract;
+
+    ///  СЃРѕР·РґР°РµС‚ РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function CreateNew(): TEntity; virtual; abstract;
+    ///  СЃРѕР·РґР°РµС‚ РЅР° СЃРµСЂРІРµСЂРµ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
+    function New(AEntity: TEntity): boolean; virtual; abstract;
+    ///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР° РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function Info(AId: String): TEntity; overload;virtual; abstract;
+    ///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР°
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function Info(AEntity: TEntity): TEntity; overload; virtual;
+    ///  РѕР±РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ СЃСѓС‰РЅРѕСЃС‚Рё РЅР° СЃРµСЂРІРµСЂРµ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Update(AEntity: TEntity): Boolean; virtual; abstract;
+    ///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Remove(AId: String): Boolean; overload; virtual; abstract;
+    ///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Remove(AEntity: TEntity): Boolean; overload; virtual;
+
+  end;
+
+implementation
+
+{ TParentBroker }
+
+class function TParentBroker.ClassType: TEntityClass;
+begin
+  Result := TEntity;
+end;
+
+class function TParentBroker.ListClassType: TEntityListClass;
+begin
+  Result := TEntityList;
+end;
+
+function TParentBroker.Info(AEntity: TEntity): TEntity;
+begin
+  result := Info(AEntity.Id);
+end;
+
+function TParentBroker.Remove(AEntity: TEntity): Boolean;
+begin
+  result := Remove(AEntity.Id);
+end;
+
+end.

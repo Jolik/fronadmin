@@ -1,12 +1,12 @@
-unit ConstsUnit;
-
-interface
-
-
-
-resourcestring
-  rsWarningValueNotSetInField = 'Не установлено значение поля "%s".';
-  rsWarningValueMustBeUUID = 'Поле %s должно быть формата UUID.';
-implementation
-
-end.
+п»їunit ConstsUnit;
+
+interface
+
+
+
+resourcestring
+  rsWarningValueNotSetInField = 'РќРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ Р·РЅР°С‡РµРЅРёРµ РїРѕР»СЏ "%s".';
+  rsWarningValueMustBeUUID = 'РџРѕР»Рµ %s РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ С„РѕСЂРјР°С‚Р° UUID.';
+implementation
+
+end.

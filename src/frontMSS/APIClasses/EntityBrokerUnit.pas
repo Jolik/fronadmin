@@ -1,147 +1,147 @@
-unit EntityBrokerUnit;
-
-interface
-
-uses
-  System.Generics.Collections,
-  EntityUnit;
-
-type
-  // Класс-ссылка на ответ API TResponse
-  TResponseClass = class of TResponse;
-
-  ///  базовый класс - парсер ответа API TResponse
-  ///  класс парсит ответ и заполняет свои поля
-  TResponse = class(TObject)
-  private
-    FResStr: string;
-    FResBool: boolean;
-  protected
-  public
-    ///  конструктор класса сразу с ответом
-    constructor CreateWithResponse(AResStr: string); virtual;
-    ///  парсинг ответа
-    function ParseResponse(AResStr: string): boolean; virtual;
-
-    ///  строка ответ
-    property ResStr: string read FResStr;
-    ///  результат в виде булева типа
-    property ResBool: boolean read FResBool;
-  end;
-
-
-type
-  // Класс-ссылка на брокер TEntityBroker
-  TEntityBrokerClass = class of TEntityBroker;
-
-  ///  базовый брокер для вызовов API
-  TEntityBroker = class(TObject)
-  private
-    FAddPath: string;
-  protected
-    ///  метод возвращает конкретный тип сущности с которым работает брокер
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ClassType: TEntityClass; virtual;
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ListClassType: TEntityListClass; virtual;
-    ///  метод возвращает конкретный тип объекта обработчика ответа
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ResponseClassType: TResponseClass; virtual;
-
-    ///  возвращает базовый путь до API - потомок должен переопредеоить
-    function GetBasePath: string; virtual; abstract;
-
-    ///  возвращает весь путь до API
-    function GetPath: string; virtual;
-
-  public
-    ///  возвращает список сущностей
-    ///  в случае ошибки возвращается nil
-    function List(
-      out APageCount: Integer;
-      const APage: Integer = 1;
-      const APageSize: Integer = 50;
-      const ASearchStr: String = '';
-      const ASearchBy: String = '';
-      const AOrder: String = 'name';
-      const AOrderDir: String = 'asc'): TEntityList; virtual; abstract;
-
-    ///  создает нужный класс сущности
-    ///  в случае ошибки возвращается nil
-    function CreateNew(): TEntity; virtual; abstract;
-    ///  создает на сервере новый класс сущности
-    ///  в случае успеха возвращается true
-    function New(AEntity: TEntity): boolean; virtual; abstract;
-    ///  выдает информацию о сущности с сервера по идентификатору
-    ///  в случае ошибки возвращается nil
-    function Info(AId: String): TEntity; overload;virtual; abstract;
-    ///  выдает информацию о сущности с сервера
-    ///  в случае ошибки возвращается nil
-    function Info(AEntity: TEntity): TEntity; overload; virtual;
-    ///  обновить параметры сущности на сервере
-    ///  в случае ошибки возвращается false
-    function Update(AEntity: TEntity): Boolean; virtual; abstract;
-    ///  удалить сущность на сервере по идентификатору
-    ///  в случае ошибки возвращается false
-    function Remove(AId: String): Boolean; overload; virtual; abstract;
-    ///  удалить сущность на сервере
-    ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; virtual;
-
-    ///  дополнительная часть пути (в основном для добавления идентификатора ID)
-    property AddPath: string read FAddPath write FAddPath;
-
-  end;
-
-implementation
-
-{ TEntityBroker }
-
-class function TEntityBroker.ClassType: TEntityClass;
-begin
-  Result := TEntity;
-end;
-
-class function TEntityBroker.ListClassType: TEntityListClass;
-begin
-  Result := TEntityList;
-end;
-
-function TEntityBroker.GetPath: string;
-begin
-  Result := GetBasePath + AddPath;
-end;
-
-function TEntityBroker.Info(AEntity: TEntity): TEntity;
-begin
-  result := Info(AEntity.Id);
-end;
-
-function TEntityBroker.Remove(AEntity: TEntity): Boolean;
-begin
-  result := Remove(AEntity.Id);
-end;
-
-class function TEntityBroker.ResponseClassType: TResponseClass;
-begin
-  Result := TResponse;
-end;
-
-{ TResponse }
-
-constructor TResponse.CreateWithResponse(AResStr: string);
-begin
-  inherited Create();
-
-  ///  парсим сразу ответ
-  FResBool := ParseResponse(AResStr);
-end;
-
-function TResponse.ParseResponse(AResStr: string): boolean;
-begin
-  /// !!!
-  Result := true;
-end;
-
-end.
+п»їunit EntityBrokerUnit;
+
+interface
+
+uses
+  System.Generics.Collections,
+  EntityUnit;
+
+type
+  // РљР»Р°СЃСЃ-СЃСЃС‹Р»РєР° РЅР° РѕС‚РІРµС‚ API TResponse
+  TResponseClass = class of TResponse;
+
+  ///  Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ - РїР°СЂСЃРµСЂ РѕС‚РІРµС‚Р° API TResponse
+  ///  РєР»Р°СЃСЃ РїР°СЂСЃРёС‚ РѕС‚РІРµС‚ Рё Р·Р°РїРѕР»РЅСЏРµС‚ СЃРІРѕРё РїРѕР»СЏ
+  TResponse = class(TObject)
+  private
+    FResStr: string;
+    FResBool: boolean;
+  protected
+  public
+    ///  РєРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РєР»Р°СЃСЃР° СЃСЂР°Р·Сѓ СЃ РѕС‚РІРµС‚РѕРј
+    constructor CreateWithResponse(AResStr: string); virtual;
+    ///  РїР°СЂСЃРёРЅРі РѕС‚РІРµС‚Р°
+    function ParseResponse(AResStr: string): boolean; virtual;
+
+    ///  СЃС‚СЂРѕРєР° РѕС‚РІРµС‚
+    property ResStr: string read FResStr;
+    ///  СЂРµР·СѓР»СЊС‚Р°С‚ РІ РІРёРґРµ Р±СѓР»РµРІР° С‚РёРїР°
+    property ResBool: boolean read FResBool;
+  end;
+
+
+type
+  // РљР»Р°СЃСЃ-СЃСЃС‹Р»РєР° РЅР° Р±СЂРѕРєРµСЂ TEntityBroker
+  TEntityBrokerClass = class of TEntityBroker;
+
+  ///  Р±Р°Р·РѕРІС‹Р№ Р±СЂРѕРєРµСЂ РґР»СЏ РІС‹Р·РѕРІРѕРІ API
+  TEntityBroker = class(TObject)
+  private
+    FAddPath: string;
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї СЃСѓС‰РЅРѕСЃС‚Рё СЃ РєРѕС‚РѕСЂС‹Рј СЂР°Р±РѕС‚Р°РµС‚ Р±СЂРѕРєРµСЂ
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ClassType: TEntityClass; virtual;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ListClassType: TEntityListClass; virtual;
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° РѕР±СЂР°Р±РѕС‚С‡РёРєР° РѕС‚РІРµС‚Р°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ResponseClassType: TResponseClass; virtual;
+
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ Р±Р°Р·РѕРІС‹Р№ РїСѓС‚СЊ РґРѕ API - РїРѕС‚РѕРјРѕРє РґРѕР»Р¶РµРЅ РїРµСЂРµРѕРїСЂРµРґРµРѕРёС‚СЊ
+    function GetBasePath: string; virtual; abstract;
+
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ РІРµСЃСЊ РїСѓС‚СЊ РґРѕ API
+    function GetPath: string; virtual;
+
+  public
+    ///  РІРѕР·РІСЂР°С‰Р°РµС‚ СЃРїРёСЃРѕРє СЃСѓС‰РЅРѕСЃС‚РµР№
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function List(
+      out APageCount: Integer;
+      const APage: Integer = 1;
+      const APageSize: Integer = 50;
+      const ASearchStr: String = '';
+      const ASearchBy: String = '';
+      const AOrder: String = 'name';
+      const AOrderDir: String = 'asc'): TEntityList; virtual; abstract;
+
+    ///  СЃРѕР·РґР°РµС‚ РЅСѓР¶РЅС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function CreateNew(): TEntity; virtual; abstract;
+    ///  СЃРѕР·РґР°РµС‚ РЅР° СЃРµСЂРІРµСЂРµ РЅРѕРІС‹Р№ РєР»Р°СЃСЃ СЃСѓС‰РЅРѕСЃС‚Рё
+    ///  РІ СЃР»СѓС‡Р°Рµ СѓСЃРїРµС…Р° РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
+    function New(AEntity: TEntity): boolean; virtual; abstract;
+    ///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР° РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function Info(AId: String): TEntity; overload;virtual; abstract;
+    ///  РІС‹РґР°РµС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЃСѓС‰РЅРѕСЃС‚Рё СЃ СЃРµСЂРІРµСЂР°
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ nil
+    function Info(AEntity: TEntity): TEntity; overload; virtual;
+    ///  РѕР±РЅРѕРІРёС‚СЊ РїР°СЂР°РјРµС‚СЂС‹ СЃСѓС‰РЅРѕСЃС‚Рё РЅР° СЃРµСЂРІРµСЂРµ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Update(AEntity: TEntity): Boolean; virtual; abstract;
+    ///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ РїРѕ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂСѓ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Remove(AId: String): Boolean; overload; virtual; abstract;
+    ///  СѓРґР°Р»РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ РЅР° СЃРµСЂРІРµСЂРµ
+    ///  РІ СЃР»СѓС‡Р°Рµ РѕС€РёР±РєРё РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ false
+    function Remove(AEntity: TEntity): Boolean; overload; virtual;
+
+    ///  РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅР°СЏ С‡Р°СЃС‚СЊ РїСѓС‚Рё (РІ РѕСЃРЅРѕРІРЅРѕРј РґР»СЏ РґРѕР±Р°РІР»РµРЅРёСЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° ID)
+    property AddPath: string read FAddPath write FAddPath;
+
+  end;
+
+implementation
+
+{ TEntityBroker }
+
+class function TEntityBroker.ClassType: TEntityClass;
+begin
+  Result := TEntity;
+end;
+
+class function TEntityBroker.ListClassType: TEntityListClass;
+begin
+  Result := TEntityList;
+end;
+
+function TEntityBroker.GetPath: string;
+begin
+  Result := GetBasePath + AddPath;
+end;
+
+function TEntityBroker.Info(AEntity: TEntity): TEntity;
+begin
+  result := Info(AEntity.Id);
+end;
+
+function TEntityBroker.Remove(AEntity: TEntity): Boolean;
+begin
+  result := Remove(AEntity.Id);
+end;
+
+class function TEntityBroker.ResponseClassType: TResponseClass;
+begin
+  Result := TResponse;
+end;
+
+{ TResponse }
+
+constructor TResponse.CreateWithResponse(AResStr: string);
+begin
+  inherited Create();
+
+  ///  РїР°СЂСЃРёРј СЃСЂР°Р·Сѓ РѕС‚РІРµС‚
+  FResBool := ParseResponse(AResStr);
+end;
+
+function TResponse.ParseResponse(AResStr: string): boolean;
+begin
+  /// !!!
+  Result := true;
+end;
+
+end.

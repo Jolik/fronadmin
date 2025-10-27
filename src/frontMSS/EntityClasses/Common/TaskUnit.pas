@@ -1,155 +1,155 @@
-unit TaskUnit;
-
-interface
-
-uses
-  System.Classes, System.JSON, System.Generics.Collections,
-  LoggingUnit,
-  EntityUnit;
-
-type
-  /// Класс задачи парсера (сервис strip)
-  TTask = class (TEntity)
-  private
-    FModule: string;
-    function GetTid: string;
-    procedure SetTid(const Value: string);
-
-  protected
-    ///  метод возвращает конкретный тип объекта Settings
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function SettingsClassType: TSettingsClass; override;
-
-    ///  потомок должен вернуть имя поля для идентификатора
-    function GetIdKey: string; override;
-
-  public
-    function Assign(ASource: TFieldSet): boolean; override;
-
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    // идентификатор задачи
-    property Tid: string read GetTid write SetTid;
-    // для поля module - типа Задачи
-    property Module: string read FModule write FModule;
-
-  end;
-
-type
-  ///  список задач
-  TTaskList = class (TEntityList)
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ItemClassType: TEntityClass; override;
-
-  end;
-
-type
-  ///  базовый класс настроек для Задач
-  TTaskSettings = class(TSettings)
-  public
-    // эти требуют существующего правильного экземпляра объекта. на ошибки - эксешан
-    ///  в массиве const APropertyNames передаются поля, которые необходимо использовать
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-  end;
-
-
-implementation
-
-uses
-  System.SysUtils,
-  FuncUnit;
-
-const
-  TidKey = 'tid';
-
-{ TTask }
-
-function TTask.Assign(ASource: TFieldSet): boolean;
-begin
-  Result := false;
-
-  if not inherited Assign(ASource) then
-    exit;
-
-  if not (ASource is TTask) then
-    exit;
-
-  var src := ASource as TTask;
-
-  Module := src.Module;
-
-  ///  копируем поля для настроек
-  if not Settings.Assign(src.Settings) then exit;
-
-  result := true;
-end;
-
-function TTask.GetTid: string;
-begin
-  Result := Id;
-end;
-
-procedure TTask.SetTid(const Value: string);
-begin
-  Id := Value;
-end;
-
-class function TTask.SettingsClassType: TSettingsClass;
-begin
-  Result := TTaskSettings;
-end;
-
-///  метод возвращает наименование ключа идентификатора который используется
-///  для данной сущности (у каждого он может быть свой)
-function TTask.GetIdKey: string;
-begin
-  ///  имя поля идентификатора tid
-  Result := TidKey;
-end;
-
-procedure TTask.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
-begin
-  inherited Parse(src);
-
-  ///  читаем поле module
-  Module := GetValueStrDef(src, 'module', '');
-
-end;
-
-procedure TTask.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
-
-begin
-  inherited Serialize(dst);
-
-  dst.AddPair('module', Module);
-end;
-
-{ TTaskSettings }
-
-procedure TTaskSettings.Parse(src: TJSONObject;
-  const APropertyNames: TArray<string>);
-begin
-  inherited;
-  ///  в базовом классе не делаем ничего
-end;
-
-procedure TTaskSettings.Serialize(dst: TJSONObject;
-  const APropertyNames: TArray<string>);
-begin
-  inherited;
-  ///  в базовом классе не делаем ничего
-end;
-
-{ TTaskList }
-
-class function TTaskList.ItemClassType: TEntityClass;
-begin
-  Result := TTask;
-end;
-
-end.
+п»їunit TaskUnit;
+
+interface
+
+uses
+  System.Classes, System.JSON, System.Generics.Collections,
+  LoggingUnit,
+  EntityUnit;
+
+type
+  /// РљР»Р°СЃСЃ Р·Р°РґР°С‡Рё РїР°СЂСЃРµСЂР° (СЃРµСЂРІРёСЃ strip)
+  TTask = class (TEntity)
+  private
+    FModule: string;
+    function GetTid: string;
+    procedure SetTid(const Value: string);
+
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° Settings
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function SettingsClassType: TSettingsClass; override;
+
+    ///  РїРѕС‚РѕРјРѕРє РґРѕР»Р¶РµРЅ РІРµСЂРЅСѓС‚СЊ РёРјСЏ РїРѕР»СЏ РґР»СЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР°
+    function GetIdKey: string; override;
+
+  public
+    function Assign(ASource: TFieldSet): boolean; override;
+
+    // СЌС‚Рё С‚СЂРµР±СѓСЋС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РѕР±СЉРµРєС‚Р°. РЅР° РѕС€РёР±РєРё - СЌРєСЃРµС€Р°РЅ
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+    // РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ Р·Р°РґР°С‡Рё
+    property Tid: string read GetTid write SetTid;
+    // РґР»СЏ РїРѕР»СЏ module - С‚РёРїР° Р—Р°РґР°С‡Рё
+    property Module: string read FModule write FModule;
+
+  end;
+
+type
+  ///  СЃРїРёСЃРѕРє Р·Р°РґР°С‡
+  TTaskList = class (TEntityList)
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ItemClassType: TEntityClass; override;
+
+  end;
+
+type
+  ///  Р±Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РЅР°СЃС‚СЂРѕРµРє РґР»СЏ Р—Р°РґР°С‡
+  TTaskSettings = class(TSettings)
+  public
+    // СЌС‚Рё С‚СЂРµР±СѓСЋС‚ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РµРіРѕ РїСЂР°РІРёР»СЊРЅРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РѕР±СЉРµРєС‚Р°. РЅР° РѕС€РёР±РєРё - СЌРєСЃРµС€Р°РЅ
+    ///  РІ РјР°СЃСЃРёРІРµ const APropertyNames РїРµСЂРµРґР°СЋС‚СЃСЏ РїРѕР»СЏ, РєРѕС‚РѕСЂС‹Рµ РЅРµРѕР±С…РѕРґРёРјРѕ РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+
+  end;
+
+
+implementation
+
+uses
+  System.SysUtils,
+  FuncUnit;
+
+const
+  TidKey = 'tid';
+
+{ TTask }
+
+function TTask.Assign(ASource: TFieldSet): boolean;
+begin
+  Result := false;
+
+  if not inherited Assign(ASource) then
+    exit;
+
+  if not (ASource is TTask) then
+    exit;
+
+  var src := ASource as TTask;
+
+  Module := src.Module;
+
+  ///  РєРѕРїРёСЂСѓРµРј РїРѕР»СЏ РґР»СЏ РЅР°СЃС‚СЂРѕРµРє
+  if not Settings.Assign(src.Settings) then exit;
+
+  result := true;
+end;
+
+function TTask.GetTid: string;
+begin
+  Result := Id;
+end;
+
+procedure TTask.SetTid(const Value: string);
+begin
+  Id := Value;
+end;
+
+class function TTask.SettingsClassType: TSettingsClass;
+begin
+  Result := TTaskSettings;
+end;
+
+///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РЅР°РёРјРµРЅРѕРІР°РЅРёРµ РєР»СЋС‡Р° РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° РєРѕС‚РѕСЂС‹Р№ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ
+///  РґР»СЏ РґР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё (Сѓ РєР°Р¶РґРѕРіРѕ РѕРЅ РјРѕР¶РµС‚ Р±С‹С‚СЊ СЃРІРѕР№)
+function TTask.GetIdKey: string;
+begin
+  ///  РёРјСЏ РїРѕР»СЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° tid
+  Result := TidKey;
+end;
+
+procedure TTask.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
+begin
+  inherited Parse(src);
+
+  ///  С‡РёС‚Р°РµРј РїРѕР»Рµ module
+  Module := GetValueStrDef(src, 'module', '');
+
+end;
+
+procedure TTask.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+
+begin
+  inherited Serialize(dst);
+
+  dst.AddPair('module', Module);
+end;
+
+{ TTaskSettings }
+
+procedure TTaskSettings.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  ///  РІ Р±Р°Р·РѕРІРѕРј РєР»Р°СЃСЃРµ РЅРµ РґРµР»Р°РµРј РЅРёС‡РµРіРѕ
+end;
+
+procedure TTaskSettings.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  ///  РІ Р±Р°Р·РѕРІРѕРј РєР»Р°СЃСЃРµ РЅРµ РґРµР»Р°РµРј РЅРёС‡РµРіРѕ
+end;
+
+{ TTaskList }
+
+class function TTaskList.ItemClassType: TEntityClass;
+begin
+  Result := TTask;
+end;
+
+end.

@@ -1,47 +1,47 @@
-unit StripTaskUnit;
-
-interface
-
-uses
-  System.Classes, System.JSON, System.Generics.Collections,
-  LoggingUnit,
-  EntityUnit, TaskUnit;
-
-type
-  /// Класс задачи парсера (сервис strip)
-  TStripTask = class (TTask)
-  private
-
-  protected
-
-  public
-
-  end;
-
-type
-  ///  список задач для сервиса стрип
-  TStripTaskList = class (TTaskList)
-  protected
-    ///  метод возвращает конкретный тип объекта элемента списка
-    ///  потомки должны переопределить его, потому что он у всех разный
-    class function ItemClassType: TEntityClass; override;
-
-  end;
-
-type
-  ///  настройки сущности StripTask
-  TStripTaskSettings = class (TSettings)
-
-  end;
-
-
-implementation
-
-{ TStripTaskList }
-
-class function TStripTaskList.ItemClassType: TEntityClass;
-begin
-  Result := TStripTask;
-end;
-
-end.
+п»їunit StripTaskUnit;
+
+interface
+
+uses
+  System.Classes, System.JSON, System.Generics.Collections,
+  LoggingUnit,
+  EntityUnit, TaskUnit;
+
+type
+  /// РљР»Р°СЃСЃ Р·Р°РґР°С‡Рё РїР°СЂСЃРµСЂР° (СЃРµСЂРІРёСЃ strip)
+  TStripTask = class (TTask)
+  private
+
+  protected
+
+  public
+
+  end;
+
+type
+  ///  СЃРїРёСЃРѕРє Р·Р°РґР°С‡ РґР»СЏ СЃРµСЂРІРёСЃР° СЃС‚СЂРёРї
+  TStripTaskList = class (TTaskList)
+  protected
+    ///  РјРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ РєРѕРЅРєСЂРµС‚РЅС‹Р№ С‚РёРї РѕР±СЉРµРєС‚Р° СЌР»РµРјРµРЅС‚Р° СЃРїРёСЃРєР°
+    ///  РїРѕС‚РѕРјРєРё РґРѕР»Р¶РЅС‹ РїРµСЂРµРѕРїСЂРµРґРµР»РёС‚СЊ РµРіРѕ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅ Сѓ РІСЃРµС… СЂР°Р·РЅС‹Р№
+    class function ItemClassType: TEntityClass; override;
+
+  end;
+
+type
+  ///  РЅР°СЃС‚СЂРѕР№РєРё СЃСѓС‰РЅРѕСЃС‚Рё StripTask
+  TStripTaskSettings = class (TSettings)
+
+  end;
+
+
+implementation
+
+{ TStripTaskList }
+
+class function TStripTaskList.ItemClassType: TEntityClass;
+begin
+  Result := TStripTask;
+end;
+
+end.
