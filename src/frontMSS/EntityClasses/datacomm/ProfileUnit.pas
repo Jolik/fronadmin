@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.JSON, System.Generics.Collections,
   EntityUnit,
   StringListUnit,
-  SmallRuleUnit,
+  ProfileRuleUnit,
   StringUnit;
 
 type
@@ -32,7 +32,7 @@ type
   /// </summary>
   TProfileBody = class(TBody)
   private
-    FRule: TSmallRule;
+    FRule: TProfileRule;
     FPlay: TProfilePlay;
   public
     constructor Create; overload; override;
@@ -42,7 +42,7 @@ type
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
-    property Rule: TSmallRule read FRule;
+    property Rule: TProfileRule read FRule;
     property Play: TProfilePlay read FPlay;
   end;
 
@@ -191,7 +191,7 @@ constructor TProfileBody.Create;
 begin
   inherited Create;
 
-  FRule := TSmallRule.Create;
+  FRule := TProfileRule.Create;
   FPlay := TProfilePlay.Create;
 end;
 

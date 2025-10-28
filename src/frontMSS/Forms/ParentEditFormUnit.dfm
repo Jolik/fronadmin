@@ -72,9 +72,9 @@ object ParentEditForm: TParentEditForm
     end
     object teCaption: TUniEdit
       AlignWithMargins = True
-      Left = 80
+      Left = 82
       Top = 3
-      Width = 736
+      Width = 734
       Height = 21
       Hint = ''
       Text = ''
@@ -110,9 +110,9 @@ object ParentEditForm: TParentEditForm
     end
     object teName: TUniEdit
       AlignWithMargins = True
-      Left = 80
+      Left = 82
       Top = 3
-      Width = 736
+      Width = 734
       Height = 21
       Hint = ''
       Text = ''
@@ -123,15 +123,57 @@ object ParentEditForm: TParentEditForm
   end
   object pnClient: TUniContainerPanel
     Left = 0
-    Top = 54
+    Top = 81
     Width = 819
-    Height = 414
+    Height = 387
     Hint = ''
     ParentColor = False
     Align = alClient
     AutoScroll = True
     TabOrder = 3
-    ScrollHeight = 414
+    ExplicitTop = 54
+    ExplicitHeight = 414
+    ScrollHeight = 387
     ScrollWidth = 819
+  end
+  object pnID: TUniContainerPanel
+    Left = 0
+    Top = 54
+    Width = 819
+    Height = 27
+    Hint = ''
+    ParentColor = False
+    Align = alTop
+    TabOrder = 4
+    ExplicitTop = 53
+    object UniLabel1: TUniLabel
+      AlignWithMargins = True
+      Left = 3
+      Top = 5
+      Width = 11
+      Height = 13
+      Hint = ''
+      Margins.Top = 5
+      Margins.Right = 10
+      Margins.Bottom = 5
+      Caption = 'ID'
+      Align = alLeft
+      ParentFont = False
+      Font.Style = [fsBold]
+      TabOrder = 1
+    end
+    object teID: TUniEdit
+      AlignWithMargins = True
+      Left = 82
+      Top = 3
+      Width = 734
+      Height = 21
+      Hint = ''
+      Text = ''
+      Align = alRight
+      Anchors = [akLeft, akTop, akRight, akBottom]
+      TabOrder = 2
+      ReadOnly = True
+    end
   end
 end

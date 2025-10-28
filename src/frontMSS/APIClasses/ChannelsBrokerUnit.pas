@@ -12,6 +12,13 @@ uses
 type
   ///  брокер для API Channels
   TChannelsBroker = class (TEntityBroker)
+  protected
+    FCompid:string;
+    FDeptid:string;
+    function GetBasePath: string; override;
+    class function ListClassType: TEntityListClass; override;
+    class function ClassType: TEntityClass; override;
+  public
     /// возвращает список каналов
     ///  в случае ошибки возвращается nil
     function List(
@@ -45,22 +52,30 @@ type
     ///  в случае ошибки возвращается false
     function Remove(AEntity: TEntity): Boolean; overload; override;
 
+    constructor Create(compid,deptid: string);
   end;
 
 implementation
 
 uses
   System.SysUtils, System.Classes,
-  FuncUnit;
+  FuncUnit, APIConst;
 
 const
-  constURLChannelGetList = '/router/api/v2/Channels/list';
-  constURLChannelGetOneInfo = '/router/api/v2/Channels/%s';
-  constURLChannelInsert = '/router/api/v2/Channels/new';
-  constURLChannelUpdate = '/router/api/v2/Channels/%s/update';
+  constURLChannelGetList = '/router/api/v2/channels/list';
+  constURLChannelGetOneInfo = '/router/api/v2/channels/%s';
+  constURLChannelInsert = '/router/api/v2/channels/new';
+  constURLChannelUpdate = '/router/api/v2/channels/%s/update';
   constURLChannelDelete = '/router/api/v2/rou/%s/remove';
 
 { TChannelsBroker }
+
+
+function TChannelsBroker.GetBasePath: string;
+begin
+   result := constURLRouterBasePath;
+end;
+
 
 //function TChannelsBroker.ChannelGetList(
 //  const APage, APageSize: Integer;
@@ -107,7 +122,13 @@ const
 //  end;
 //end;
 
-/// возвращает список Абонентов
+
+
+
+
+
+
+/// возвращает список каналов
 ///  в случае ошибки возвращается nil
 function TChannelsBroker.List(
   out APageCount: Integer;
@@ -139,33 +160,43 @@ var
   ResStr: String;
 
 begin
-  Result := TChannelList.Create();
-
-  URL := constURLChannelGetList;
-  JSONRequest := CreateJSONRequest;
-//  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
-  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
-  JSONResult := TJSONObject.Create;
+  Result := nil;
   try
-    ResStr := MainHttpModuleUnit.POST(constURLChannelGetList, JSONRequestStream);
-    JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-    InfoObject := ResponseObject.GetValue('info') as TJSONObject;
-    APageCount := InfoObject.GetValue<Integer>('pagecount');
 
-//    JSONResult.GetValue
-  finally
-    JSONRequest.Free;
-    JSONRequestStream.Free;
-    if Assigned(JSONResult) then
+    JSONResult := TJSONObject.Create;
+    try
+      ResStr := MainHttpModuleUnit.GET(constURLChannelGetList);
+      JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      var channelsArray := ResponseObject.GetValue('channels') as TJSONArray;
+      Result := ListClassType.Create(channelsArray);
+    finally
       JSONResult.Free;
-//    if Assigned(ResponseObject) then
-//      ResponseObject.Free;
-//    if Assigned(InfoObject) then
-//      InfoObject.Free;
-//    if Assigned(ChannelsObjectArray) then
-//      ChannelsObjectArray.Free;
+    end;
+
+  except on e:exception do
+    begin
+      Log('TLinksBroker.List '+ e.Message, lrtError);
+      FreeAndNil(Result);
+    end;
   end;
+end;
+
+class function TChannelsBroker.ListClassType: TEntityListClass;
+begin
+  result := TChannelList;
+end;
+
+class function TChannelsBroker.ClassType: TEntityClass;
+begin
+  result := TChannel;
+end;
+
+constructor TChannelsBroker.Create(compid, deptid: string);
+begin
+  inherited Create;
+  FCompid:= compid;
+  FDeptid:= deptid;
 end;
 
 function TChannelsBroker.CreateNew: TEntity;
@@ -190,21 +221,37 @@ var
   ResponseObject: TJSONObject;
 
 begin
-  Result := TChannel.Create;
-  URL := Format(constURLChannelGetOneInfo, [AId]);
-  ResStr := MainHttpModuleUnit.GET(URL);
-  JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+   Result := nil;
   try
-    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
 
-  finally
-    JSONResult.Free;
-//    if Assigned(ResponseObject) then
-//      ResponseObject.Free;
-//    if Assigned(ChannelObject) then
-//      ChannelObject.Free;
+    JSONResult := TJSONObject.Create;
+    try
+      URL := Format(constURLChannelGetOneInfo, [AId]);
+      ResStr := MainHttpModuleUnit.GET(URL);
+      JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+      var channel := ResponseObject.FindValue('channel');
+      if not (channel is TJSONObject) then
+        exit;
+      Result := TChannel.Create(channel as TJSONObject);
+    finally
+      JSONResult.Free;
+    end;
+
+  except on e:exception do
+    begin
+      Log('TLinksBroker.Info '+ e.Message, lrtError);
+      FreeAndNil(Result);
+    end;
   end;
 end;
+
+
+
+
+
+
+
 
 ///  создает на сервере новый класс сущности
 ///  в случае ошибки возвращается false

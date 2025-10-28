@@ -11,6 +11,7 @@ uses
   SharedFrameBoolInput;
 
 type
+
   TParentLinkSettingEditFrame = class(TUniFrame)
     SettingsPanel: TUniPanel;
     SettingsGroupBox: TUniGroupBox;
@@ -35,6 +36,8 @@ type
     ///  класс с настройками которые правит фрейм
     property Link: TLink read Flink write SetLink;
   end;
+
+ TParentLinkSettingEditFrameClass = class of TParentLinkSettingEditFrame;
 
 implementation
 uses

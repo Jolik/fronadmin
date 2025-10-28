@@ -11,10 +11,11 @@ uses
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ChannelsBrokerUnit,
-  ParentEditFormUnit;
+  ParentEditFormUnit, uniLabel;
 
 type
   TChannelsForm = class(TListParentForm)
+    procedure btnUpdateClick(Sender: TObject);
   private
   protected
     ///  функция обновления компоннет на форме
@@ -46,15 +47,19 @@ end;
 
 { TChannelsForm }
 
+procedure TChannelsForm.btnUpdateClick(Sender: TObject);
+begin
+  inherited btnUpdateClick(Sender);
+  //
+end;
+
 function TChannelsForm.CreateBroker: TEntityBroker;
 begin
-  ///  создаем "наш" брокер для Абонентов
-  Result := TChannelsBroker.Create();
+  Result := TChannelsBroker.Create(UniMainModule.CompID, UniMainModule.DeptID);
 end;
 
 function TChannelsForm.CreateEditForm: TParentEditForm;
 begin
-  ///  создаем "нашу" форму редактирования для Абонентов
   Result := ChannelEditForm();
 end;
 

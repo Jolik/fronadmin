@@ -5,10 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses, EntityUnit,
-  KeyValUnit, SmallRuleUnit, FilterUnit, ConditionUnit, SharedFrameRuleConditionUnit,
+  KeyValUnit, FilterUnit, ConditionUnit, SharedFrameRuleConditionUnit,
   uniGUIClasses, uniGUIFrame, uniSplitter, uniMultiItem, uniListBox, LinkUnit,
   uniGUIBaseClasses, uniGroupBox, ProfileUnit, SharedFrameTextInput, uniButton,
   uniPanel, uniComboBox, uniCheckBox, Vcl.StdCtrls, Vcl.Buttons, uniTreeView,
+  ProfileRuleUnit,
   uniTreeMenu, uniEdit, SharedFrameBoolInput, uniBitBtn;
 
 type
@@ -49,8 +50,8 @@ type
     FLink: TLink;
     FSelectedRuleItem: TObject;
     FSelecteNode: TUniTreeNode;
-    procedure RuleToTreeView(rule: TSmallRule);
-    procedure FiltersToTreeViewNode(filters: TFilterList; node: TUniTreeNode);
+    procedure RuleToTreeView(rule: TProfileRule);
+    procedure FiltersToTreeViewNode(filters: TProfileFilterList; node: TUniTreeNode);
     procedure ConditionToFrame(c: TCondition);
     procedure TidyRuleControls;
     procedure DrawRules;
@@ -158,7 +159,7 @@ begin
   TidyRuleControls;
 end;
 
-procedure TProfileFrame.RuleToTreeView(rule: TSmallRule);
+procedure TProfileFrame.RuleToTreeView(rule: TProfileRule);
 begin
   FrameRuleEnabled.SetData(rule.Enabled);
   FrameRulePosition.SetData(rule.Position);
@@ -173,12 +174,12 @@ begin
   FiltersToTreeViewNode(rule.ExcFilters, excFiltersNode);
 end;
 
-procedure TProfileFrame.FiltersToTreeViewNode(filters: TFilterList;
+procedure TProfileFrame.FiltersToTreeViewNode(filters: TProfileFilterList;
   node: TUniTreeNode);
 begin
   for var i := 0 to filters.Count-1 do
   begin
-    var filter := (filters[i] as TFilter);
+    var filter := (filters[i] as TProfileFilter);
     var filterNode := RuleTreeView.Items.AddChildObject(node, 'фильтр-' + IntToStr(i), filter);
     filterNode.CheckboxVisible := true;
     filterNode.Checked := not filter.Disable;
@@ -211,6 +212,8 @@ end;
 procedure TProfileFrame.RuleTreeViewChange(Sender: TObject; Node: TUniTreeNode);
 begin
   FSelecteNode := Node;
+  if Node = nil then
+    exit;
   FSelectedRuleItem := TObject(Node.Data);
   TidyRuleControls;
   if FSelectedRuleItem is TCondition then
@@ -229,7 +232,7 @@ begin
     btnRemoveRules.Hint := 'удалить условие';
     exit;
   end;
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := true;
@@ -237,7 +240,7 @@ begin
     btnRemoveRules.Hint := 'удалить фильтр';
     exit;
   end;
-  if FSelectedRuleItem is TFilterList then
+  if FSelectedRuleItem is TProfileFilterList then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := false;
@@ -251,15 +254,15 @@ end;
 
 procedure TProfileFrame.btnAddRulesClick(Sender: TObject);
 begin
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
-    (FSelectedRuleItem as TFilter).Conditions.Add(TCondition.Create);
+    (FSelectedRuleItem as TProfileFilter).Conditions.Add(TCondition.Create);
     DrawRules;
     exit;
   end;
-  if FSelectedRuleItem is TFilterList then
+  if FSelectedRuleItem is TProfileFilterList then
   begin
-    (FSelectedRuleItem as TFilterList).Add(TFilter.Create);
+    (FSelectedRuleItem as TProfileFilterList).Add(TProfileFilter.Create);
     DrawRules;
     exit;
   end;
@@ -277,21 +280,21 @@ begin
     var q := Format('Удалить условие %s?', [(FSelectedRuleItem as TCondition).Caption]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
-    if not (TObject(FSelecteNode.Parent.Data) is TFilter) then
+    if not (TObject(FSelecteNode.Parent.Data) is TProfileFilter) then
       exit;
-    var f := (TObject(FSelecteNode.Parent.Data) as TFilter);
+    var f := (TObject(FSelecteNode.Parent.Data) as TProfileFilter);
     if not DeletObject(f.Conditions, FSelectedRuleItem) then
       exit;
   end;
 
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
-    var q := Format('Удалить фильтр (%d условий)?', [(FSelectedRuleItem as TFilter).Conditions.Count]);
+    var q := Format('Удалить фильтр (%d условий)?', [(FSelectedRuleItem as TProfileFilter).Conditions.Count]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
-    if not (TObject(FSelecteNode.Parent.Data) is TFilterList) then
+    if not (TObject(FSelecteNode.Parent.Data) is TProfileFilterList) then
       exit;
-    var f := (TObject(FSelecteNode.Parent.Data) as TFilterList);
+    var f := (TObject(FSelecteNode.Parent.Data) as TProfileFilterList);
     if not DeletObject(f, FSelectedRuleItem) then
       exit;
   end;

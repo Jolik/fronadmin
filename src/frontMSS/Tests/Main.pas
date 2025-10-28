@@ -43,6 +43,9 @@ type
     UniPanel1: TUniPanel;
     ShowMemo: TUniMemo;
     LogMemo: TUniMemo;
+    UniGroupBox1: TUniGroupBox;
+    btnChannelsList: TUniButton;
+    btnChannelsForm: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnStripTaskListClick(Sender: TObject);
@@ -63,6 +66,8 @@ type
     procedure btnLinkSettingsClick(Sender: TObject);
     procedure btnSummaryTasksClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
+    procedure btnChannelsListClick(Sender: TObject);
+    procedure btnChannelsFormClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -82,7 +87,9 @@ uses
   LinkSettingsUnit, ParentLinkSettingEditFrameUnit, LinkEditFormUnit,
   LoggingUnit, UniLoggerUnit,
   ParentEditFormUnit,
+  ChannelsBrokerUnit, ChannelUnit,
   OpenMCEPSettingEditFrameUnit,
+  ChannelsFormUnit,
   SocketSpecialSettingEditFrameUnit;
 
 function MainForm: TMainForm;
@@ -100,7 +107,7 @@ begin
   MonitoringTask := nil;
   MonitoringTasksBroker := nil;
   try
-    MonitoringTasksBroker := TMonitoringTasksBroker.Create();
+    MonitoringTasksBroker := TMonitoringTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     ShowMemo.Lines.Add('----------  Monitoring.Info  ----------');
     ShowMemo.Lines.Add(Format('   %s:', [tid]));
@@ -137,7 +144,7 @@ var
   Pages : integer;
 begin
   try
-    MonitoringTasksBroker := TMonitoringTasksBroker.Create();
+    MonitoringTasksBroker := TMonitoringTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     MonitoringTaskList := MonitoringTasksBroker.List(Pages);
 
@@ -183,6 +190,8 @@ var
   Pages : integer;
 begin
   ShowMemo.Clear;
+  LinksBroker := nil;
+  LinksList := nil;
 
   try
     LinksBroker := TLinksBroker.Create();
@@ -219,10 +228,8 @@ begin
     end;
 
   finally
-    // Free the list (all objects will be released automatically)
-    LinksList.Free;
-
-    LinksBroker.Free;
+    freeAndNil(LinksList);
+    freeAndNil(LinksBroker);
   end;
 end;
 
@@ -295,12 +302,72 @@ begin
   end;
 end;
 
-
-
-
-
-
 {$ENDREGION 'Links'}
+
+
+{$REGION 'channels'}
+
+
+
+procedure TMainForm.btnChannelsListClick(Sender: TObject);
+var
+  Channel : TChannel;
+  ChannelBroker : TChannelsBroker;
+  ChannelList : TEntityList;
+  Pages : integer;
+begin
+  ShowMemo.Clear;
+  ChannelList := nil;
+  ChannelBroker := TChannelsBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
+  try
+    ChannelList := ChannelBroker.List(Pages);
+
+    // Display information about each object in TMemo
+    ShowMemo.Lines.Add('----------  List  ----------');
+    ShowMemo.Lines.Add('Содержимое списка:');
+
+    if not Assigned(ChannelList) then
+    begin
+      ShowMemo.Lines.Add('пусто');
+      Exit;
+    end;
+
+    for var chan in ChannelList do
+    begin
+      Channel := (chan as TChannel);
+      ShowMemo.Lines.Add(Format('Класс: %s  |  Адрес: %p', [Channel.ClassName, Pointer(Channel)]));
+      ShowMemo.Lines.Add('Id '+ Channel.Id);
+      ShowMemo.Lines.Add('Name '+ Channel.Name);
+      ShowMemo.Lines.Add('Compid '+ (Channel.Compid));
+      ShowMemo.Lines.Add('Depid '+ (Channel.Depid));
+
+      ShowMemo.Lines.Add('as json:');
+
+      var json := Channel.Serialize();
+
+      if json <> nil then
+        ShowMemo.Lines.Add(json.Format());
+
+      ShowMemo.Lines.Add('----------');
+    end;
+
+  finally
+    freeAndNil(ChannelList);
+    freeAndNil(ChannelBroker);
+  end;
+end;
+
+
+procedure TMainForm.btnChannelsFormClick(Sender: TObject);
+begin
+  ChannelsForm.Show;
+end;
+
+
+{$ENDREGION 'channels'}
+
+
+
 
 {$REGION 'Queues'}
 
@@ -414,7 +481,7 @@ begin
   ShowMemo.Clear;
 
   try
-    StripTasksBroker := TStripTasksBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     StripTaskList := StripTasksBroker.List(Pages);
 
@@ -465,7 +532,7 @@ begin
   ShowMemo.Clear;
 
   try
-    StripTasksBroker := TStripTasksBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
     // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Info  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
@@ -504,7 +571,7 @@ begin
   ShowMemo.Clear;
 
   try
-    StripTasksBroker := TStripTasksBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     st := TStripTask.Create();
     with st do
@@ -558,7 +625,7 @@ begin
   ShowMemo.Clear;
 
   try
-    StripTasksBroker := TStripTasksBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     st := TStripTask.Create();
     with st do
@@ -608,7 +675,7 @@ begin
   ShowMemo.Clear;
 
   try
-    StripTasksBroker := TStripTasksBroker.Create();
+    StripTasksBroker := TStripTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
     // Display task information in TMemo
     ShowMemo.Lines.Add('----------  Remove  ----------');
     ShowMemo.Lines.Add(Format('Информация о Задаче %s:', [tid]));
@@ -646,7 +713,7 @@ begin
   ShowMemo.Clear;
 
   try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTasksBroker := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     SummaryTaskList := SummaryTasksBroker.List(Pages);
 
@@ -699,7 +766,7 @@ begin
   SummaryTask := nil;
   SummaryTasksBroker := nil;
   try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTasksBroker := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     ShowMemo.Lines.Add('----------  Summary.Info  ----------');
     ShowMemo.Lines.Add(Format('   %s:', [tid]));
@@ -743,7 +810,7 @@ begin
   SummaryTask := nil;
   SummaryTasksBroker := nil;
   try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTasksBroker := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
     SummaryTask := TSummaryTask.Create();
 
     SummaryTask.Tid := TGUID.NewGuid.ToString;
@@ -804,7 +871,7 @@ begin
   SummaryTask := nil;
   SummaryTasksBroker := nil;
   try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTasksBroker := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
     SummaryTask := TSummaryTask.Create();
 
     SummaryTask.Tid := tid;
@@ -835,6 +902,8 @@ end;
 
 
 
+
+
 procedure TMainForm.UniFormShow(Sender: TObject);
 begin
   if AppLogger = nil then
@@ -852,7 +921,7 @@ begin
 
   SummaryTasksBroker := nil;
   try
-    SummaryTasksBroker := TSummaryTasksBroker.Create();
+    SummaryTasksBroker := TSummaryTasksBroker.Create(UniMainModule.CompID,UniMainModule.DeptID);
 
     ShowMemo.Lines.Add('----------  Summary.Remove  ----------');
     ShowMemo.Lines.Add(Format('   %s:', [tid]));

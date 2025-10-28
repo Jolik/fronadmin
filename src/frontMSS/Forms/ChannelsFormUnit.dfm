@@ -6,7 +6,12 @@ inherited ChannelsForm: TChannelsForm
       OnClick = nil
     end
     inherited btnUpdate: TUniToolButton
-      OnClick = nil
+      ExplicitTop = 4
+    end
+  end
+  inherited pcEntityInfo: TUniPageControl
+    inherited tsTaskInfo: TUniTabSheet
+      ExplicitHeight = 502
     end
   end
 end

@@ -10,7 +10,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, ParentEditFormUnit, LinksBrokerUnit;
+  EntityBrokerUnit, ParentEditFormUnit, LinksBrokerUnit, uniPanel, uniLabel;
 
 type
   TLinksForm = class(TListParentForm)
@@ -41,7 +41,7 @@ begin
   Result := TLinksForm(UniMainModule.GetFormInstance(TLinksForm));
 end;
 
-{ TChannelsForm }
+{ TLinksForm }
 
 function TLinksForm.CreateBroker: TEntityBroker;
 begin
