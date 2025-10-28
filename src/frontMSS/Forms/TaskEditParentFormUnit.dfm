@@ -1,38 +1,39 @@
 inherited TaskEditParentForm: TTaskEditParentForm
   ClientWidth = 1349
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '#1079#1072#1076#1072#1095#1080'...'
+  ExplicitLeft = -383
   ExplicitWidth = 1365
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited btnOk: TUniButton
       Left = 1190
-      ExplicitLeft = 1188
+      ExplicitLeft = 1190
     end
     inherited btnCancel: TUniButton
       Left = 1271
-      ExplicitLeft = 1269
+      ExplicitLeft = 1271
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited teCaption: TUniEdit
       Left = 92
       Width = 1254
       ExplicitLeft = 92
-      ExplicitWidth = 1252
+      ExplicitWidth = 1254
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited teName: TUniEdit
       Left = 92
       Width = 1254
       ExplicitLeft = 92
-      ExplicitWidth = 1252
+      ExplicitWidth = 1254
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -180,8 +181,6 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alRight
     TabOrder = 4
-    ExplicitLeft = 982
-    ExplicitHeight = 406
   end
   object pnSources: TUniContainerPanel
     Left = 497
@@ -192,27 +191,26 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
-    ExplicitWidth = 485
-    ExplicitHeight = 406
     object lbTaskSources: TUniListBox
       Left = 0
-      Top = 76
+      Top = 45
       Width = 487
-      Height = 338
+      Height = 369
       Hint = ''
       Align = alBottom
+      Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 1
       MultiSelect = True
-      ExplicitTop = 68
-      ExplicitWidth = 485
+      ShowCheckBoxes = True
+      ExplicitTop = 44
     end
     object btnSourcesEdit: TUniButton
-      Left = 24
-      Top = 16
-      Width = 120
+      Left = 10
+      Top = 10
+      Width = 150
       Height = 25
       Hint = ''
-      Caption = #1056#152#1056#183#1056#1112#1056#181#1056#1029#1056#1105#1057#8218#1057#1034' '#1056#1105#1057#1027#1057#8218#1056#1109#1057#8225#1056#1029#1056#1105#1056#1108#1056#1105
+      Caption = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1080#1089#1090#1086#1095#1085#1080#1082#1080
       TabOrder = 2
       OnClick = btnSourcesEditClick
     end

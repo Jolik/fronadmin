@@ -51,7 +51,7 @@ type
     procedure lbAllSourcesChange(Sender: TObject);
     procedure btnRemoveSourceClick(Sender: TObject);
   private
-    AllSourcesBroker: TTaskSourcesBroker;
+    AllSourcesBroker: TSourcesBroker;
     AllSourceList: TSourceList;
     FTaskSourceList: TTaskSourceList;
     FCurrentSourceSid: string;
@@ -82,10 +82,10 @@ uses
 function SelectTaskSourcesForm(taskSourceBroker: TTaskSourcesBroker = nil): TSelectTaskSourcesForm;
 begin
   Result := TSelectTaskSourcesForm(UniMainModule.GetFormInstance(TSelectTaskSourcesForm));
-  if taskSourceBroker=nil then
-    taskSourceBroker:= Result.CreateTaskSourcesBroker();
-
-  Result.AllSourcesBroker:= taskSourceBroker;
+  if taskSourceBroker = nil then
+    taskSourceBroker := Result.CreateTaskSourcesBroker();
+    
+  Result.AllSourcesBroker := TSourcesBroker.Create; //taskSourceBroker;
 end;
 
 procedure TSelectTaskSourcesForm.AddSourceToTaskList(ASource: TSource);
@@ -216,7 +216,7 @@ begin
     lbAllSources.Items.Clear;
 
   if not Assigned(AllSourcesBroker) then
-    Exit;
+    AllSourcesBroker := TSourcesBroker.Create;
 
   PageCount := 0;
   EntityList := nil;

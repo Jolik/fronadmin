@@ -45,17 +45,10 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     TabBarVisible = False
     Align = alRight
     TabOrder = 2
-    ExplicitLeft = 699
-    ExplicitTop = 0
-    ExplicitHeight = 572
     object tsSourceInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 256
-      ExplicitHeight = 544
       object cpSourceInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -69,7 +62,6 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 544
         object cpSourceInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -452,8 +444,6 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
     ParentColor = False
     Align = alBottom
     TabOrder = 3
-    ExplicitTop = 572
-    ExplicitWidth = 1077
     object btnOk: TUniButton
       AlignWithMargins = True
       Left = 776
@@ -467,7 +457,6 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
       Align = alRight
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 918
     end
     object btnCancel: TUniButton
       AlignWithMargins = True
@@ -482,7 +471,6 @@ object SelectTaskSourcesForm: TSelectTaskSourcesForm
       Align = alRight
       TabOrder = 2
       OnClick = btnCancelClick
-      ExplicitLeft = 999
     end
   end
   object btnAddSource: TUniButton

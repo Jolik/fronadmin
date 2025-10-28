@@ -68,7 +68,7 @@ end;
 
 function TTaskParentForm.CreateEditForm: TParentEditForm;
 begin
-   Result := ParentTaskEditForm() as TParentEditForm;
+   Result := ParentTaskEditForm(FSourceTaskBroker) as TParentEditForm;
 end;
 
 function TTaskParentForm.CreateTaskSourcesBroker: TEntityBroker;
