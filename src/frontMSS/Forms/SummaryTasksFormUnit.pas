@@ -12,7 +12,7 @@ uses
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
   ParentEditFormUnit,
-  TasksParentFormUnit, RestBrokerBaseUnit,
+  TasksParentFormUnit, RestBrokerBaseUnit, SummaryTasksRestBrokerUnit,
   TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
@@ -52,8 +52,7 @@ end;
 
 function TSummaryTasksForm.CreateRestBroker: TRestBrokerBase;
 begin
-  result:= inherited;
-  (result as TTasksRestBroker).BasePath:=  APIConst.constURLSummaryBasePath
+  result:= TSummaryTasksRestBroker.Create(UniMainModule.XTicket);
 end;
 
 function TSummaryTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;

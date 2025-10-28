@@ -43,6 +43,8 @@ type
     function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; virtual;
     function Update(AReq: TReqUpdate): TJSONResponse; virtual;
     function Remove(AReq: TReqRemove): TJSONResponse; virtual;
+
+    function ExcuteRaw(AReq: THttpRequest; AResp: TJSONResponse): integer; virtual;
   end;
 
 implementation
@@ -86,6 +88,12 @@ end;
 function TRestBrokerBase.CreateReqUpdate: TReqUpdate;
 begin
   Result := TReqUpdate.Create;
+end;
+
+function TRestBrokerBase.ExcuteRaw(AReq: THttpRequest; AResp: TJSONResponse): integer;
+begin
+  ApplyTicket(AReq);
+  Result := HttpClient.Request(AReq, AResp);
 end;
 
 function TRestBrokerBase.List(AReq: TReqList; AResp: TListResponse): TListResponse;

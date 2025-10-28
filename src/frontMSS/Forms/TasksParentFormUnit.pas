@@ -60,7 +60,7 @@ end;
 
 function TTaskParentForm.CreateRestBroker: TRestBrokerBase;
 begin
-  Result := TTasksRestBroker.Create(UniMainModule.XTicket);
+  Result := TTasksRestBroker.Create(UniMainModule.XTicket) as TRestBrokerBase;
 end;
 
 

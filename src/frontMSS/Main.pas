@@ -101,7 +101,7 @@ end;
 
 procedure TMainForm.btnHandlersClick(Sender: TObject);
 begin
-  //
+  HandlersForm.Show()
 end;
 
 procedure TMainForm.btnRulesClick(Sender: TObject);

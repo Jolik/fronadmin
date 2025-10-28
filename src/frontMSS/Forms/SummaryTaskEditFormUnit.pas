@@ -210,27 +210,6 @@ begin
   UpdateCustomSettingsFrame;
 end;
 
-{procedure TSummaryTaskEditForm.cbModuleChange(Sender: TObject);
-var
-  Settings: TSummaryTaskSettings;
-  NewType: TSummaryTaskType;
-begin
-  Exit;
-
-  Settings := GetSummarySettings();
-
-  if not Assigned(Settings) then
-  begin
-    ClearCustomSettingsFrame;
-    Exit;
-  end;
-
-  NewType := GetSummaryTaskTypeByModule(cbModule.Text);
-  if Settings.SummaryTaskType <> NewType then
-    Settings.SummaryTaskType := NewType;
-
-  UpdateCustomSettingsFrame;
-end;}
 
 (* !!!! function TSummaryTaskEditForm.FormatExcludeWeek(
   const Values: TExcludeWeek): string;
@@ -281,7 +260,7 @@ procedure TSummaryTaskEditForm.SetEntity(AEntity: TFieldSet);
 begin
   ClearCustomSettingsFrame;
   ///        -   !
-  if not (AEntity is TTask) then
+  if not (AEntity is TSummaryTask) then
   begin
     Log('TSummaryTaskEditForm.SetEntity error in AEntity type', lrtError);
     exit;

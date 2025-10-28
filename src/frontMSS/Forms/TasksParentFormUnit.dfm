@@ -1,13 +1,13 @@
-﻿inherited TaskParentForm: TTaskParentForm
+inherited TaskParentForm: TTaskParentForm
   ClientWidth = 1217
   Caption = #1047#1072#1076#1072#1095#1080
   ExplicitWidth = 1233
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     Width = 1217
-    ExplicitWidth = 1217
+    ExplicitWidth = 1215
     inherited btnNew: TUniToolButton
-      OnClick = nil
+      ExplicitTop = 1
     end
   end
   inherited dbgEntity: TUniDBGrid
@@ -16,13 +16,13 @@
   inherited splSplitter: TUniSplitter
     Left = 817
     Width = 0
-    ExplicitLeft = 839
+    ExplicitLeft = 815
     ExplicitWidth = 0
   end
   inherited pcEntityInfo: TUniPageControl
     Left = 817
     Width = 400
-    ExplicitLeft = 817
+    ExplicitLeft = 815
     ExplicitWidth = 400
     inherited tsTaskInfo: TUniTabSheet
       ExplicitWidth = 392
@@ -110,7 +110,6 @@
           TabOrder = 6
           Layout = 'table'
           LayoutAttribs.Columns = 2
-          ExplicitWidth = 355
           object lTaskInfoModule: TUniLabel
             AlignWithMargins = True
             Left = 5
@@ -146,7 +145,6 @@
             Align = alClient
             ParentFont = False
             TabOrder = 2
-            ExplicitWidth = 235
           end
           object pSeparator5: TUniPanel
             AlignWithMargins = True
@@ -163,7 +161,6 @@
             TabOrder = 3
             Caption = ''
             Color = clHighlight
-            ExplicitWidth = 355
           end
         end
       end

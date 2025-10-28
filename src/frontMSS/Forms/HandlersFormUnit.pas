@@ -44,7 +44,7 @@ end;
 
 function THandlersForm.CreateRestBroker: TRestBrokerBase;
 begin
-  Result := THandlersRestBroker.Create;
+  Result := THandlersRestBroker.Create(UniMainModule.XTicket);
 end;
 
 procedure THandlersForm.Refresh(const AId: String);

@@ -101,6 +101,7 @@ end;
 constructor THandlerReqList.Create;
 begin
   inherited Create;
+  Method:= mGET;
   SetEndpoint('handlers/list');
 end;
 
