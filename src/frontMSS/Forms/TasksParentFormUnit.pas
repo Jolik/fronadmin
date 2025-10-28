@@ -104,13 +104,27 @@ begin
   // Load task entity via REST broker
   if Assigned(RestBroker) then
   begin
-    var ReqInfo := RestBroker.CreateReqInfo();
-    ReqInfo.Id := FId;
+    var ReqInfo := RestBroker.CreateReqInfo(FId);
     var RespInfo := RestBroker.Info(ReqInfo);
-    ParentTaskEntity := RespInfo.Entity as TEntity;
-    EditForm.Entity := ParentTaskEntity;
-    // save id explicitly for edit session
-    EditForm.Id := FId;
+    try
+      ParentTaskEntity := nil;
+      if Assigned(RespInfo) and Assigned(RespInfo.Entity) then
+      begin
+        // Clone entity to decouple from response lifetime
+        if RespInfo.Entity is TEntity then
+        begin
+          var Src := TEntity(RespInfo.Entity);
+          var Cls := TEntityClass(Src.ClassType);
+          ParentTaskEntity := Cls.Create;
+          ParentTaskEntity.Assign(Src);
+        end;
+      end;
+      EditForm.Entity := ParentTaskEntity;
+      // save id explicitly for edit session
+      EditForm.Id := FId;
+    finally
+      RespInfo.Free;
+    end;
   end
   else
     ParentTaskEntity := nil;

@@ -25,7 +25,7 @@ uses
     function Remove(AReq: TTaskReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -73,9 +73,9 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function TTasksRestBroker.CreateReqInfo: TReqInfo;
+function TTasksRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := TTaskReqInfo.Create;
+  Result := TTaskReqInfo.CreateID(id);
   Result.BasePath := BasePath;
 end;
 

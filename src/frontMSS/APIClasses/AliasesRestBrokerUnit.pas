@@ -36,7 +36,7 @@ type
 
     // Фабрики запросов
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -91,9 +91,9 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function TAliasesRestBroker.CreateReqInfo: TReqInfo;
+function TAliasesRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := TAliasReqInfo.Create;
+  Result := TAliasReqInfo.CreateID(id);
   Result.BasePath := BasePath;
 end;
 

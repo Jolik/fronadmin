@@ -17,8 +17,6 @@ object ParentEditForm: TParentEditForm
     ParentColor = False
     Align = alBottom
     TabOrder = 0
-    ExplicitTop = 460
-    ExplicitWidth = 817
     object btnOk: TUniButton
       AlignWithMargins = True
       Left = 660
@@ -32,7 +30,6 @@ object ParentEditForm: TParentEditForm
       Align = alRight
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 658
     end
     object btnCancel: TUniButton
       AlignWithMargins = True
@@ -47,7 +44,6 @@ object ParentEditForm: TParentEditForm
       Align = alRight
       TabOrder = 2
       OnClick = btnCancelClick
-      ExplicitLeft = 739
     end
   end
   object pnCaption: TUniContainerPanel
@@ -59,7 +55,6 @@ object ParentEditForm: TParentEditForm
     ParentColor = False
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 817
     object lCaption: TUniLabel
       AlignWithMargins = True
       Left = 3
@@ -77,16 +72,15 @@ object ParentEditForm: TParentEditForm
     end
     object teCaption: TUniEdit
       AlignWithMargins = True
-      Left = 80
+      Left = 82
       Top = 3
-      Width = 736
+      Width = 734
       Height = 21
       Hint = ''
       Text = ''
       Align = alRight
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 2
-      ExplicitWidth = 734
     end
   end
   object pnName: TUniContainerPanel
@@ -98,7 +92,6 @@ object ParentEditForm: TParentEditForm
     ParentColor = False
     Align = alTop
     TabOrder = 2
-    ExplicitWidth = 817
     object lName: TUniLabel
       AlignWithMargins = True
       Left = 3
@@ -117,16 +110,15 @@ object ParentEditForm: TParentEditForm
     end
     object teName: TUniEdit
       AlignWithMargins = True
-      Left = 80
+      Left = 82
       Top = 3
-      Width = 736
+      Width = 734
       Height = 21
       Hint = ''
       Text = ''
       Align = alRight
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 2
-      ExplicitWidth = 734
     end
   end
   object pnClient: TUniContainerPanel
@@ -139,8 +131,6 @@ object ParentEditForm: TParentEditForm
     Align = alClient
     AutoScroll = True
     TabOrder = 3
-    ExplicitWidth = 817
-    ExplicitHeight = 406
     ScrollHeight = 414
     ScrollWidth = 819
   end

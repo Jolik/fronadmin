@@ -112,9 +112,7 @@ begin
   LId := FDMemTableEntity.FieldByName('Id').AsString;
   if Assigned(RestBroker) then
   begin
-    var Req := RestBroker.CreateReqInfo();
-    Req.Id := LId;
-    var Resp := RestBroker.Info(Req);
+    var Resp := RestBroker.Info(RestBroker.CreateReqInfo(LId));
     try
       LEntity := Resp.Entity as TEntity;
       if not Assigned(LEntity) then Exit;

@@ -8,7 +8,14 @@ uses
   BrokerIntfUnit,
   // Known request/response pairs
   AbonentHttpRequests,
-  TaskHttpRequests;
+  TaskHttpRequests,
+  // Newly added request/response pairs
+  CompanyHttpRequests,
+  DepartmentHttpRequests,
+  LinksHttpRequests,
+  ContextsHttpRequests,
+  SourceCredsHttpRequests,
+  SourceTypesHttpRequests;
 
 type
   TRestBroker = class(TInterfacedObject, IBroker)
@@ -62,6 +69,44 @@ begin
   if Req is TTaskReqNew then Exit(TTaskNewResponse.Create);
   if Req is TTaskReqUpdate then Exit(TJSONResponse.Create);
   if Req is TTaskReqRemove then Exit(TJSONResponse.Create);
+
+  // Companies (ACL)
+  if Req is TCompanyReqList then Exit(TCompanyListResponse.Create);
+  if Req is TCompanyReqInfo then Exit(TCompanyInfoResponse.Create);
+  if Req is TCompanyReqNew then Exit(TJSONResponse.Create);
+  if Req is TCompanyReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TCompanyReqRemove then Exit(TJSONResponse.Create);
+
+  // Departments (ACL)
+  if Req is TDepartmentReqList then Exit(TDepartmentListResponse.Create);
+  if Req is TDepartmentReqInfo then Exit(TDepartmentInfoResponse.Create);
+  if Req is TDepartmentReqNew then Exit(TJSONResponse.Create);
+  if Req is TDepartmentReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TDepartmentReqRemove then Exit(TJSONResponse.Create);
+
+  // Links (Datacomm)
+  if Req is TLinkReqList then Exit(TLinkListResponse.Create);
+  if Req is TLinkReqInfo then Exit(TLinkInfoResponse.Create);
+  if Req is TLinkReqNew then Exit(TJSONResponse.Create);
+  if Req is TLinkReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TLinkReqRemove then Exit(TJSONResponse.Create);
+
+  // Contexts (Dataserver)
+  if Req is TContextReqList then Exit(TContextListResponse.Create);
+  if Req is TContextReqInfo then Exit(TContextInfoResponse.Create);
+  if Req is TContextReqNew then Exit(TJSONResponse.Create);
+  if Req is TContextReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TContextReqRemove then Exit(TJSONResponse.Create);
+
+  // Source credentials (Dataserver)
+  if Req is TSourceCredsReqList then Exit(TSourceCredsListResponse.Create);
+  if Req is TSourceCredsReqInfo then Exit(TSourceCredsInfoResponse.Create);
+  if Req is TSourceCredsReqNew then Exit(TJSONResponse.Create);
+  if Req is TSourceCredsReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TSourceCredsReqRemove then Exit(TJSONResponse.Create);
+
+  // Source types (Dataserver)
+  if Req is TSourceTypeReqList then Exit(TSourceTypeListResponse.Create);
 
   // Fallback generic
   Result := TJSONResponse.Create;

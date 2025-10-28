@@ -147,6 +147,14 @@
             <Form>ChannelsForm</Form>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
+        <DCCReference Include="Forms\QueueEditFormUnit.pas">
+            <Form>QueueEditForm</Form>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Forms\QueuesFormUnit.pas">
+            <Form>QueuesForm</Form>
+            <DesignClass>TUniForm</DesignClass>
+        </DCCReference>
         <DCCReference Include="Forms\ListParentFormUnit.pas">
             <Form>ListParentForm</Form>
             <DesignClass>TUniForm</DesignClass>
@@ -443,6 +451,18 @@
         <DCCReference Include="APIClasses\BrokerIntfUnit.pas"/>
         <DCCReference Include="APIClasses\ChannelsRestBrokerUnit.pas"/>
         <DCCReference Include="HttpClasses\ChannelHttpRequests.pas"/>
+        <DCCReference Include="APIClasses\CompaniesRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\ContextsRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\DepartmentsRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\LinksRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SourceCredsRestBrokerUnit.pas"/>
+        <DCCReference Include="APIClasses\SourceTypesRestBrokerUnit.pas"/>
+        <DCCReference Include="HttpClasses\CompanyHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\ContextsHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\DepartmentHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\LinksHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\SourceCredsHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\SourceTypesHttpRequests.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

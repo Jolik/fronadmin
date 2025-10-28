@@ -33,8 +33,6 @@ type
     meDef: TUniMemo;
     lDef: TUniLabel;
     cbEnabled: TUniCheckBox;
-    teLatePeriod: TUniEdit;
-    lLatePeriod: TUniLabel;
     cbModule: TUniComboBox;
     pnCustomSettings: TUniContainerPanel;
     pnSources: TUniContainerPanel;

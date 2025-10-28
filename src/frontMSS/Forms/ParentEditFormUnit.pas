@@ -78,21 +78,13 @@ end;
 
 procedure TParentEditForm.SetEntity(AEntity : TFieldSet);
 begin
-  if Assigned(FEntity) then
-  begin
-    try
-      try
-        FEntity.Free();
-      except
-        Log('TParentEditForm.SetEntity error! ', lrtError);
-
-      end;
-    finally
-      FEntity := nil;
-    end;
-  end;
-
   FEntity := AEntity;
+  if FEntity is TEntity then
+  with  FEntity as TEntity do
+  begin
+    teName.Text := Name;
+    teCaption.Text := Caption;
+  end;
 end;
 
 procedure TParentEditForm.UniFormShow(Sender: TObject);

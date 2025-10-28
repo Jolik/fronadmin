@@ -95,6 +95,7 @@ constructor TChannelReqList.Create;
 begin
   inherited Create;
   SetEndpoint('channels/list');
+  Method := mGET;
 end;
 
 constructor TChannelReqInfo.Create;

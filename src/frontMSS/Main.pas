@@ -7,8 +7,12 @@ uses
   Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniGUIBaseClasses, uniLabel,
-  uniButton, uniSplitter, uniPageControl, uniTreeView, uniTreeMenu, CompanyBrokerUnit, DepartmentBrokerUnit,
-  uniMultiItem, uniComboBox, EntityUnit;
+  uniButton, uniSplitter, uniPageControl, uniTreeView, uniTreeMenu,
+  uniMultiItem, uniComboBox, EntityUnit,
+  // New REST brokers
+  CompaniesRestBrokerUnit, DepartmentsRestBrokerUnit,
+  // Base REST helpers
+  RestBrokerBaseUnit, BaseRequests, BaseResponses;
 
 type
   TMainForm = class(TUniForm)
@@ -18,6 +22,7 @@ type
     btnSummTask: TUniButton;
     btnRouterSources: TUniButton;
     btnAliases: TUniButton;
+    btnQueues: TUniButton;
     btnAbonents: TUniButton;
     btnDSProcessorTasks: TUniButton;
     btnRules: TUniButton;
@@ -41,11 +46,12 @@ type
     procedure UniFormDestroy(Sender: TObject);
     procedure cbCurCompChange(Sender: TObject);
     procedure btnHandlersClick(Sender: TObject);
+    procedure btnQueuesClick(Sender: TObject);
   private
     FDeps: TEntityList;
     FComps: TEntityList;
-    FCompanyBroker : TCompanyBroker;
-    FDepartmentBroker: TDepartmentBroker;
+    FCompanyBroker : TCompaniesRestBroker;
+    FDepartmentBroker: TDepartmentsRestBroker;
     function GetCompid:string;
     function GetDeptid:string;
     procedure UpdateDeptList;
@@ -65,6 +71,7 @@ uses
   ParentFormUnit, ChannelsFormUnit, StripTasksFormUnit, SummaryTasksFormUnit, LinksFormUnit,
   AliasesFormUnit, AbonentsFormUnit,
   RouterSourcesFormUnit,
+  QueuesFormUnit,
   TasksParentFormUnit,
   CompanyUnit,
   DepartmentUnit,
@@ -127,6 +134,11 @@ begin
   LinksForm.Show();
 end;
 
+procedure TMainForm.btnQueuesClick(Sender: TObject);
+begin
+  QueuesForm.Show();
+end;
+
 procedure TMainForm.btnStripTasksClick(Sender: TObject);
 begin
   StripTasksForm.Show();
@@ -162,15 +174,55 @@ end;
 procedure TMainForm.UniFormCreate(Sender: TObject);
 var
   ind, page: integer;
+  Req: TReqList;
+  Resp: TListResponse;
 begin
+  UniMainModule.XTicket:= X_TICKET;
   HttpClient.Addr :=  '213.167.42.170';
   HttpClient.Port := 8088;
-  FCompanyBroker := TCompanyBroker.Create();
-  FDepartmentBroker:= TDepartmentBroker.Create();
-  FComps:= FCompanyBroker.List(page);
-  FDeps:= FDepartmentBroker.List(page);
+  FCompanyBroker := TCompaniesRestBroker.Create(UniMainModule.XTicket);
+  FDepartmentBroker := TDepartmentsRestBroker.Create(UniMainModule.XTicket);
+
+  // Load companies via REST
+  FComps := TCompanyList.Create;
+  Req := FCompanyBroker.CreateReqList;
+  try
+    Resp := FCompanyBroker.List(Req);
+    try
+      for var Ent in Resp.EntityList do
+      begin
+        var C := TCompany.Create;
+        C.Assign(Ent);
+        FComps.Add(C);
+      end;
+    finally
+      Resp.Free;
+    end;
+  finally
+    Req.Free;
+  end;
+
+  // Load departments via REST
+  FDeps := TDepartmentList.Create;
+  Req := FDepartmentBroker.CreateReqList;
+  try
+    Resp := FDepartmentBroker.List(Req);
+    try
+      for var Ent in Resp.EntityList do
+      begin
+        var D := TDepartment.Create;
+        D.Assign(Ent);
+        FDeps.Add(D);
+      end;
+    finally
+      Resp.Free;
+    end;
+  finally
+    Req.Free;
+  end;
+
   for var comp in FComps do
-     cbCurComp.Items.AddObject((comp as TCompany).Index,comp);
+     cbCurComp.Items.AddObject((comp as TCompany).Index, comp);
   if cbCurComp.Items.Count = 0 then
     exit;
   ind:= cbCurComp.Items.IndexOf('SYSTEM');
@@ -179,7 +231,6 @@ begin
   cbCurComp.ItemIndex:= ind;
   UpdateDeptList;
   UniMainModule.CompID:= GetCompid;
-  UniMainModule.XTicket:= X_TICKET;
 
 
 end;

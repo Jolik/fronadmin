@@ -19,20 +19,21 @@ inherited TaskEditParentForm: TTaskEditParentForm
     Width = 1349
     ExplicitWidth = 1349
     inherited teCaption: TUniEdit
-      Left = 98
-      Width = 1248
-      ExplicitLeft = 98
-      ExplicitWidth = 1248
+      Left = 100
+      Width = 1246
+      ExplicitLeft = 100
+      ExplicitTop = 0
+      ExplicitWidth = 1246
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
     ExplicitWidth = 1349
     inherited teName: TUniEdit
-      Left = 98
-      Width = 1248
-      ExplicitLeft = 98
-      ExplicitWidth = 1248
+      Left = 100
+      Width = 1246
+      ExplicitLeft = 100
+      ExplicitWidth = 1246
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -48,7 +49,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Height = 13
       Hint = ''
       Caption = #1048#1076#1077#1085#1090#1080#1092#1080#1082#1072#1090#1086#1088
-      TabOrder = 9
+      TabOrder = 8
     end
     object teTid: TUniEdit
       Left = 160
@@ -66,7 +67,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Height = 13
       Hint = ''
       Caption = 'CompId'
-      TabOrder = 11
+      TabOrder = 9
     end
     object teCompId: TUniEdit
       Left = 160
@@ -85,7 +86,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Height = 13
       Hint = ''
       Caption = 'DepId'
-      TabOrder = 13
+      TabOrder = 11
     end
     object teDepId: TUniEdit
       Left = 160
@@ -104,7 +105,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Height = 13
       Hint = ''
       Caption = #1052#1086#1076#1091#1083#1100
-      TabOrder = 7
+      TabOrder = 6
     end
     object lDef: TUniLabel
       Left = 24
@@ -113,7 +114,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Height = 13
       Hint = ''
       Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-      TabOrder = 8
+      TabOrder = 7
     end
     object meDef: TUniMemo
       Left = 160
@@ -134,24 +135,6 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Caption = #1040#1082#1090#1080#1074#1085#1086
       TabOrder = 4
     end
-    object lLatePeriod: TUniLabel
-      Left = 24
-      Top = 248
-      Width = 54
-      Height = 13
-      Hint = ''
-      Caption = 'LatePeriod'
-      TabOrder = 10
-    end
-    object teLatePeriod: TUniEdit
-      Left = 160
-      Top = 244
-      Width = 120
-      Height = 21
-      Hint = ''
-      Text = ''
-      TabOrder = 5
-    end
     object cbModule: TUniComboBox
       Left = 160
       Top = 108
@@ -166,7 +149,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
         'SummarySEBA'
         'SummaryUnknown')
       ItemIndex = 4
-      TabOrder = 12
+      TabOrder = 10
       IconItems = <>
     end
   end
@@ -219,7 +202,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
         end>
     end
     object btnSourcesEdit: TUniButton
-      Left = 6
+      Left = 0
       Top = 6
       Width = 120
       Height = 25

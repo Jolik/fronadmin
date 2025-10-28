@@ -10,6 +10,8 @@ uses
   TextFileLoggerUnit in 'Logging\TextFileLoggerUnit.pas',
   ChannelEditFormUnit in 'Forms\ChannelEditFormUnit.pas' {ChannelEditForm: TUniForm},
   ChannelsFormUnit in 'Forms\ChannelsFormUnit.pas' {ChannelsForm: TUniForm},
+  QueueEditFormUnit in 'Forms\QueueEditFormUnit.pas' {QueueEditForm: TUniForm},
+  QueuesFormUnit in 'Forms\QueuesFormUnit.pas' {QueuesForm: TUniForm},
   ListParentFormUnit in 'Forms\ListParentFormUnit.pas' {ListParentForm: TUniForm},
   ParentEditFormUnit in 'Forms\ParentEditFormUnit.pas' {ParentEditForm: TUniForm},
   ParentFormUnit in 'Forms\ParentFormUnit.pas' {ParentForm: TUniForm},
@@ -176,7 +178,19 @@ uses
   RouterSourceHttpRequests in 'HttpClasses\RouterSourceHttpRequests.pas',
   BrokerIntfUnit in 'APIClasses\BrokerIntfUnit.pas',
   ChannelsRestBrokerUnit in 'APIClasses\ChannelsRestBrokerUnit.pas',
-  ChannelHttpRequests in 'HttpClasses\ChannelHttpRequests.pas';
+  ChannelHttpRequests in 'HttpClasses\ChannelHttpRequests.pas',
+  CompaniesRestBrokerUnit in 'APIClasses\CompaniesRestBrokerUnit.pas',
+  ContextsRestBrokerUnit in 'APIClasses\ContextsRestBrokerUnit.pas',
+  DepartmentsRestBrokerUnit in 'APIClasses\DepartmentsRestBrokerUnit.pas',
+  LinksRestBrokerUnit in 'APIClasses\LinksRestBrokerUnit.pas',
+  SourceCredsRestBrokerUnit in 'APIClasses\SourceCredsRestBrokerUnit.pas',
+  SourceTypesRestBrokerUnit in 'APIClasses\SourceTypesRestBrokerUnit.pas',
+  CompanyHttpRequests in 'HttpClasses\CompanyHttpRequests.pas',
+  ContextsHttpRequests in 'HttpClasses\ContextsHttpRequests.pas',
+  DepartmentHttpRequests in 'HttpClasses\DepartmentHttpRequests.pas',
+  LinksHttpRequests in 'HttpClasses\LinksHttpRequests.pas',
+  SourceCredsHttpRequests in 'HttpClasses\SourceCredsHttpRequests.pas',
+  SourceTypesHttpRequests in 'HttpClasses\SourceTypesHttpRequests.pas';
 
 {$R *.res}
 

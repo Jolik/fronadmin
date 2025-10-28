@@ -30,6 +30,13 @@ type
     FListClass: TEntityListClass;
     FRootKey: string;
     FItemsKey: string;
+    // pagination info parsed from response, if present
+    FPage: Integer;
+    FPageCount: Integer;
+    FPageSize: Integer;
+    FTotal: Integer;
+    procedure ResetPaging;
+    procedure TryParsePaging(Obj: TJSONObject);
   protected
     procedure SetResponse(const Value: string); override;
   public
@@ -40,6 +47,11 @@ type
     destructor Destroy; override;
     property EntityList: TEntityList read FList;
     property ItemsKey: string read FItemsKey write FItemsKey;
+    // Pagination (0 when missing)
+    property Page: Integer read FPage;
+    property PageCount: Integer read FPageCount;
+    property PageSize: Integer read FPageSize;
+    property Total: Integer read FTotal;
   end;
 
   // Базовый ответ с одной сущностью. Хранит TEntity.
@@ -127,6 +139,7 @@ begin
   FRootKey := ARootKey;
   FItemsKey := AItemsKey;
   FList := FListClass.Create;
+  ResetPaging;
 end;
 
 destructor TListResponse.Destroy;
@@ -141,10 +154,12 @@ var
   RootObject: TJSONObject;
   ItemsValue: TJSONValue;
   ItemsArray: TJSONArray;
+  ContainerObj: TJSONObject;
   itemsKey: string;
 begin
   inherited SetResponse(Value);
   FList.Clear;
+  ResetPaging;
 
   if Value.Trim.IsEmpty then
     Exit;
@@ -167,13 +182,42 @@ begin
        itemsKey:= 'items';
     ItemsValue := RootObject.GetValue(FItemsKey);
       if ItemsValue is TJSONArray then
-        ItemsArray := TJSONArray(ItemsValue);
+        ItemsArray := TJSONArray(ItemsValue)
+      else if ItemsValue is TJSONObject then
+      begin
+        // container object with nested items and (optional) info
+        ContainerObj := TJSONObject(ItemsValue);
+        ItemsArray := ContainerObj.GetValue('items') as TJSONArray;
+        TryParsePaging(ContainerObj.GetValue('info') as TJSONObject);
+      end
+      else
+      begin
+        // try sibling 'info' at root level
+        TryParsePaging(RootObject.GetValue('info') as TJSONObject);
+      end;
 
     if Assigned(ItemsArray) then
       FList.ParseList(ItemsArray);
   finally
     JSONResult.Free;
   end;
+end;
+
+procedure TListResponse.ResetPaging;
+begin
+  FPage := 0;
+  FPageCount := 0;
+  FPageSize := 0;
+  FTotal := 0;
+end;
+
+procedure TListResponse.TryParsePaging(Obj: TJSONObject);
+begin
+  if not Assigned(Obj) then Exit;
+  if not Obj.TryGetValue<Integer>('page', FPage) then FPage := 0;
+  if not Obj.TryGetValue<Integer>('pagecount', FPageCount) then FPageCount := 0;
+  if not Obj.TryGetValue<Integer>('pagesize', FPageSize) then FPageSize := 0;
+  if not Obj.TryGetValue<Integer>('total', FTotal) then FTotal := 0;
 end;
 
 { TEntityResponse }

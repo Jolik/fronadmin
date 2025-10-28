@@ -1,4 +1,4 @@
-﻿object MainForm: TMainForm
+object MainForm: TMainForm
   Left = 0
   Top = 0
   ClientHeight = 722
@@ -52,6 +52,16 @@
     Caption = #1051#1080#1085#1082#1080
     TabOrder = 2
     OnClick = btnLinksClick
+  end
+  object btnQueues: TUniButton
+    Left = 40
+    Top = 233
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1054#1095#1077#1088#1077#1076#1080
+    TabOrder = 15
+    OnClick = btnQueuesClick
   end
   object btnSummTask: TUniButton
     Left = 40

@@ -10,7 +10,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses, RestBrokerBaseUnit,
-  ParentEditFormUnit, LinksBrokerUnit, uniPanel, uniLabel;
+  ParentEditFormUnit, uniPanel, uniLabel,
+  LinksRestBrokerUnit;
 
 type
   TLinksForm = class(TListParentForm)
@@ -52,7 +53,7 @@ end;
 
 function TLinksForm.CreateRestBroker: TRestBrokerBase;
 begin
-  // TRestBrokerBase
+  Result := TLinksRestBroker.Create(UniMainModule.XTicket);
 end;
 
 procedure TLinksForm.Refresh(const AId: String = '');

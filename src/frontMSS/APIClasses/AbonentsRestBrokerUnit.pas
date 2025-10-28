@@ -19,7 +19,7 @@ type
   public
     // Фабрики базовых запросов
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -87,9 +87,9 @@ begin
   Result := TAbonentReqList.Create;
 end;
 
-function TAbonentsRestBroker.CreateReqInfo: TReqInfo;
+function TAbonentsRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := TAbonentReqInfo.Create;
+  Result := TAbonentReqInfo.CreateID(id);
 end;
 
 function TAbonentsRestBroker.CreateReqNew: TReqNew;
@@ -108,4 +108,3 @@ begin
 end;
 
 end.
-

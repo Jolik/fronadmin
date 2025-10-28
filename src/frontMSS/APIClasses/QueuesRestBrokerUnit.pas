@@ -22,7 +22,7 @@ type
     function Remove(AReq: TQueueReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -75,9 +75,9 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function TQueuesRestBroker.CreateReqInfo: TReqInfo;
+function TQueuesRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := TQueueReqInfo.Create;
+  Result := TQueueReqInfo.CreateID(id);
   Result.BasePath := BasePath;
 end;
 

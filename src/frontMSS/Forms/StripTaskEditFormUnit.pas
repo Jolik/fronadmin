@@ -9,7 +9,10 @@ uses
   uniGUIBaseClasses, uniPanel,
   LoggingUnit,  TaskEditParentFormUnit,
   EntityUnit, StripTaskUnit, uniMultiItem, uniComboBox, Math, uniListBox,
-  uniCheckBox, uniMemo;
+  uniCheckBox, uniMemo, FireDAC.Stan.Intf, FireDAC.Stan.Option,
+  FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
+  FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  uniBasicGrid, uniDBGrid;
 
 type
   TStripTaskEditForm = class(TTaskEditParentForm)
@@ -33,7 +36,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication;
+  MainModule, uniGUIApplication, TaskUnit;
 
 function StripTaskEditForm: TStripTaskEditForm;
 begin
@@ -72,16 +75,16 @@ end;
 
 procedure TStripTaskEditForm.SetEntity(AEntity: TFieldSet);
 begin
-  if not (AEntity is TStripTask) then
+  // Accept both TStripTask and base TTask to allow generic REST entities
+  if not (AEntity is TTask) then
   begin
-    Log('TStripTaskEditForm.SetEntity error in AEntity type', lrtError);
-    exit;
+    Log('TStripTaskEditForm.SetEntity error: invalid entity type', lrtError);
+    Exit;
   end;
 
   try
     inherited SetEntity(AEntity);
-//    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(StripTask.Module) <> -1, cbModule.Items.IndexOf(StripTask.Module), 3);
-
+    // base TTaskEditParentForm fills standard fields (tid/compid/depid/module/def/enabled)
   except
     Log('TStripTaskEditForm.SetEntity error', lrtError);
   end;

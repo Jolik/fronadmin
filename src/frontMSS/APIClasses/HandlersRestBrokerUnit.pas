@@ -31,7 +31,7 @@ type
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
 
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -86,9 +86,9 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function THandlersRestBroker.CreateReqInfo: TReqInfo;
+function THandlersRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := THandlerReqInfo.Create;
+  Result := THandlerReqInfo.CreateID(id);
   Result.BasePath := BasePath;
 end;
 

@@ -11,6 +11,8 @@ type
   TQueueListResponse = class(TListResponse)
   private
     function GetQueueList: TQueueList;
+  protected
+    procedure SetResponse(const Value: string); override;
   public
     constructor Create;
     property QueueList: TQueueList read GetQueueList;
@@ -70,6 +72,40 @@ end;
 function TQueueListResponse.GetQueueList: TQueueList;
 begin
   Result := EntityList as TQueueList;
+end;
+
+procedure TQueueListResponse.SetResponse(const Value: string);
+var
+  JSONResult: TJSONObject;
+  RootObject: TJSONObject;
+  QueuesValue: TJSONValue;
+  ItemsArray: TJSONArray;
+begin
+  inherited SetResponse(Value);
+  QueueList.Clear;
+
+  if Value.Trim.IsEmpty then Exit;
+
+  JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+  try
+    if not Assigned(JSONResult) then Exit;
+
+    RootObject := JSONResult.GetValue('response') as TJSONObject;
+    if not Assigned(RootObject) then Exit;
+
+    QueuesValue := RootObject.GetValue('queues');
+    ItemsArray := nil;
+
+    if QueuesValue is TJSONArray then
+      ItemsArray := TJSONArray(QueuesValue)
+    else if QueuesValue is TJSONObject then
+      ItemsArray := TJSONObject(QueuesValue).GetValue('items') as TJSONArray;
+
+    if Assigned(ItemsArray) then
+      QueueList.ParseList(ItemsArray);
+  finally
+    JSONResult.Free;
+  end;
 end;
 
 { TQueueInfoResponse }

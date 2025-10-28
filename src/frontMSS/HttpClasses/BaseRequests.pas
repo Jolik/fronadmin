@@ -24,11 +24,23 @@ type
     property Endpoint: string read FEndpoint write SetEndpoint;
   end;
 
-  // Generic body for list requests (paging, search, ordering and scope filters)
-  TReqListBody = class(THttpReqBody)
+  // Base request body with pagination parameters
+  TPageReqBody = class(THttpReqBody)
   private
     FPage: Integer;
     FPageSize: Integer;
+  protected
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+  public
+    constructor Create; override;
+    property Page: Integer read FPage write FPage;
+    property PageSize: Integer read FPageSize write FPageSize;
+  end;
+
+  // Generic body for list requests (search, ordering and scope filters), inherits pagination
+  TReqListBody = class(TPageReqBody)
+  private
     FSearchBy: string;
     FSearchStr: string;
     FOrder: string;
@@ -37,14 +49,11 @@ type
     FCompIds: TStringArray;
   protected
     procedure UpdateRawContent;
-  protected
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
   public
     constructor Create; override;
     destructor Destroy; override;
-    property Page: Integer read FPage write FPage;
-    property PageSize: Integer read FPageSize write FPageSize;
     property SearchBy: string read FSearchBy write FSearchBy;
     property SearchStr: string read FSearchStr write FSearchStr;
     property Order: string read FOrder write FOrder;
@@ -67,6 +76,10 @@ type
   private
     FId: string;
     procedure SetId(const Value: string);
+  protected
+    // Builds URL AddPath for the current Id. Descendants may override
+    // to append custom suffixes (e.g., '/info').
+    function BuildAddPath(const Id: string): string; virtual;
   public
     constructor Create; override;
     constructor CreateID(const AId: string); reintroduce; overload;
@@ -161,13 +174,34 @@ end;
 
 { TReqListBody }
 
+{ TPageReqBody }
+
+constructor TPageReqBody.Create;
+begin
+  inherited Create;
+  FPage := 1;
+  FPageSize := 50;
+end;
+
+procedure TPageReqBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Parse(src, APropertyNames);
+end;
+
+procedure TPageReqBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Serialize(dst, APropertyNames);
+  dst.AddPair('page', FPage);
+  dst.AddPair('pagesize', FPageSize);
+end;
+
+{ TReqListBody }
+
 constructor TReqListBody.Create;
 begin
   inherited Create;
   FDeptIds := TStringArray.Create;
   FCompIds := TStringArray.Create;
-  FPage := 1;
-  FPageSize := 50;
   // Do not set default ordering globally; entities can add it explicitly
   FOrder := '';
   FOrderDir := '';
@@ -193,8 +227,6 @@ var
   S: string;
 begin
   inherited Serialize(dst, APropertyNames);
-  dst.AddPair('page', FPage);
-  dst.AddPair('pagesize', FPageSize);
   if not FSearchBy.IsEmpty then dst.AddPair('searchBy', FSearchBy);
   if not FSearchStr.IsEmpty then dst.AddPair('searchStr', FSearchStr);
   if not FOrder.IsEmpty then
@@ -279,10 +311,15 @@ begin
   Normalized := Value.Trim;
   if FId = Normalized then Exit;
   FId := Normalized;
-  if FId.IsEmpty then
-    AddPath := ''
+  AddPath := BuildAddPath(FId);
+end;
+
+function TReqInfo.BuildAddPath(const Id: string): string;
+begin
+  if Id.IsEmpty then
+    Result := ''
   else
-    AddPath := FId;
+    Result := Id;
 end;
 
 { TReqNew }

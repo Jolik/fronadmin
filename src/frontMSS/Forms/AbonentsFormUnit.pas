@@ -11,7 +11,6 @@ uses
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, ParentEditFormUnit,
-  AbonentsBrokerUnit,
   RestBrokerBaseUnit, BaseRequests, BaseResponses,
   AbonentsRestBrokerUnit, uniPanel, uniLabel;
 

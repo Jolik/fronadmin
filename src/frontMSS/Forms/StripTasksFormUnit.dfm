@@ -8,7 +8,6 @@ inherited StripTasksForm: TStripTasksForm
     ExplicitWidth = 1215
   end
   inherited dbgEntity: TUniDBGrid
-    OnSelectionChange = nil
   end
   inherited splSplitter: TUniSplitter
     ExplicitLeft = 815

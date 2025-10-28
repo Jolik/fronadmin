@@ -37,7 +37,7 @@ type
 
     // Request factories
     function CreateReqList: TReqList; override;
-    function CreateReqInfo: TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -92,9 +92,9 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function TTaskSourcesRestBroker.CreateReqInfo: TReqInfo;
+function TTaskSourcesRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
-  Result := TTaskSourceReqInfo.Create;
+  Result := TTaskSourceReqInfo.CreateID(id);
   Result.BasePath := BasePath;
 end;
 

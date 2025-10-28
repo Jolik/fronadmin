@@ -14,13 +14,18 @@ uses
   SummaryCXMLTaskCustomSettingsEditFrameUnit,
   SummarySEBATaskCustomSettingsEditFrameUnit,
   SummarySynopTaskCustomSettingsEditFrameUnit,
-  SummaryHydraTaskCustomSettingsEditFrameUnit, uniListBox;
+  SummaryHydraTaskCustomSettingsEditFrameUnit, uniListBox, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
+  FireDAC.Comp.Client, uniBasicGrid, uniDBGrid;
 
 type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
   TTaskSourcesList = TTaskSourceList;
 
   TSummaryTaskEditForm = class(TTaskEditParentForm)
+    lLatePeriod: TUniLabel;
+    teLatePeriod: TUniEdit;
     procedure cbModuleChange(Sender: TObject);
   private
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
@@ -53,7 +58,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SelectTaskSourcesFormUnit;
+  MainModule, uniGUIApplication, SelectTaskSourcesFormUnit, TaskUnit;
 
 function SummaryTaskEditForm: TSummaryTaskEditForm;
 begin
@@ -276,7 +281,7 @@ procedure TSummaryTaskEditForm.SetEntity(AEntity: TFieldSet);
 begin
   ClearCustomSettingsFrame;
   ///        -   !
-  if not (AEntity is TSummaryTask) then
+  if not (AEntity is TTask) then
   begin
     Log('TSummaryTaskEditForm.SetEntity error in AEntity type', lrtError);
     exit;
