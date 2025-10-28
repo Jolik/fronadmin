@@ -5,7 +5,7 @@ interface
 uses
   System.JSON,
   EntityUnit,
-  SmallRuleUnit;
+  ProfileRuleUnit;
 
 type
   /// <summary>
@@ -13,7 +13,7 @@ type
   /// </summary>
   TRule = class(TEntity)
   private
-    FRule: TSmallRule;
+    FRule: TProfileRule;
     function GetRuid: string;
     procedure SetRuid(const Value: string);
   protected
@@ -29,7 +29,7 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     property Ruid: string read GetRuid write SetRuid;
-    property Rule: TSmallRule read FRule;
+    property Rule: TProfileRule read FRule;
   end;
 
   TRuleList = class(TEntityList)
@@ -63,7 +63,7 @@ begin
   SourceRule := TRule(ASource);
 
   if not Assigned(FRule) then
-    FRule := TSmallRule.Create;
+    FRule := TProfileRule.Create;
 
   Result := FRule.Assign(SourceRule.Rule);
 end;
@@ -72,7 +72,7 @@ constructor TRule.Create;
 begin
   inherited Create;
 
-  FRule := TSmallRule.Create;
+  FRule := TProfileRule.Create;
 end;
 
 constructor TRule.Create(src: TJSONObject; const APropertyNames: TArray<string>);

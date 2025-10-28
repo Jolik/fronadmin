@@ -137,7 +137,12 @@ uses
   TaskSourcesBrokerUnit in '..\APIClasses\TaskSourcesBrokerUnit.pas',
   TaskTypesBrokerUnit in '..\APIClasses\TaskTypesBrokerUnit.pas',
   UsersBrokerUnit in '..\APIClasses\UsersBrokerUnit.pas',
-  DSProcessorTaskUnit in '..\EntityClasses\dsprocessor\DSProcessorTaskUnit.pas';
+  DSProcessorTaskUnit in '..\EntityClasses\dsprocessor\DSProcessorTaskUnit.pas',
+  common in '..\Common\common.pas',
+  LinkFrameUtils in '..\Forms\LinksFrames\LinkFrameUtils.pas',
+  QueueFrameUnit in '..\Forms\QueueFrameUnit.pas' {QueueFrame: TUniFrame},
+  ProfileRuleUnit in '..\EntityClasses\acl\ProfileRuleUnit.pas',
+  SharedFrameQueueFilterUnit in '..\Forms\SharedFrameQueueFilterUnit.pas' {QueueConditionFrame: TUniFrame};
 
 {$R *.res}
 

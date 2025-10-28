@@ -6,16 +6,23 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
-  uniGUIBaseClasses, uniPanel,
-  LoggingUnit,
-  EntityUnit, ChannelUnit;
+  uniGUIBaseClasses, uniPanel,   QueueFrameUnit,
+  LoggingUnit, ParentLinkSettingEditFrameUnit,
+  EntityUnit, ChannelUnit, uniSplitter, uniScrollBox;
 
 type
   TChannelEditForm = class(TParentEditForm)
+    panelLink: TUniPanel;
+    UniSplitter1: TUniSplitter;
+    UniPanel2: TUniPanel;
+    scrollBoxLinks: TUniScrollBox;
+    scrollBoxQueue: TUniScrollBox;
   private
+    FLinkSettingsEditFrame: TParentLinkSettingEditFrame;
+    FQueueEditFrame: TQueueFrame;
     function DoCheck: Boolean; override;
     function GetChannel: TChannel;
-    procedure SetEntity(AEntity: TEntity);
+    procedure SetEntity(AEntity: TEntity); override;
 
   protected
     function Apply: boolean; override;
@@ -31,7 +38,10 @@ function ChannelEditForm: TChannelEditForm;
 implementation
 {$R *.dfm}
 
-uses MainModule;
+uses
+  LinkFrameUtils,
+
+  MainModule;
 
 function ChannelEditForm: TChannelEditForm;
 begin
@@ -78,12 +88,20 @@ begin
     Log('TChannelEditForm.SetEntity error in AEntity type', lrtError);
     exit;
   end;
+  inherited SetEntity(AEntity);
 
   try
-    inherited SetEntity(AEntity);
+    var chan := (AEntity as TChannel);
+    var linkFrameClass := LinkFrameByType(chan.Link.linkType);
+    if linkFrameClass = nil then
+      exit;
+    FLinkSettingsEditFrame := linkFrameClass.Create(Self);
+    FLinkSettingsEditFrame.Parent := scrollBoxLinks;
+    FLinkSettingsEditFrame.Link := chan.Link;
 
-    ///  выводим поля канала
-//    teModuleEdit.Text := StripTask.Module;
+    FQueueEditFrame := TQueueFrame.Create(Self);
+    FQueueEditFrame.Parent := scrollBoxQueue;
+    FQueueEditFrame.SetData(chan.Queue);
 
   except
     Log('TChannelEditForm.SetEntity error', lrtError);

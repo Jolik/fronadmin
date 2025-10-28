@@ -19,7 +19,7 @@ object MainForm: TMainForm
     TabOrder = 0
     ScrollDirection = sdVertical
     ExplicitHeight = 486
-    ScrollHeight = 654
+    ScrollHeight = 749
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
@@ -86,7 +86,7 @@ object MainForm: TMainForm
     object gbQueues: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 139
+      Top = 234
       Width = 117
       Height = 85
       Hint = ''
@@ -133,7 +133,7 @@ object MainForm: TMainForm
     object gbStripTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 234
+      Top = 329
       Width = 117
       Height = 205
       Hint = ''
@@ -244,7 +244,7 @@ object MainForm: TMainForm
     object gbSummaryTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 449
+      Top = 544
       Width = 117
       Height = 205
       Hint = ''
@@ -367,6 +367,57 @@ object MainForm: TMainForm
         OnClick = btnSummaryTasksClick
       end
     end
+    object UniGroupBox1: TUniGroupBox
+      AlignWithMargins = True
+      Left = 5
+      Top = 139
+      Width = 117
+      Height = 85
+      Hint = ''
+      Margins.Left = 5
+      Margins.Top = 5
+      Margins.Right = 15
+      Margins.Bottom = 5
+      Caption = ' Channels '
+      Align = alTop
+      TabOrder = 4
+      object btnChannelsList: TUniButton
+        AlignWithMargins = True
+        Left = 12
+        Top = 20
+        Width = 93
+        Height = 25
+        Hint = ''
+        Margins.Left = 10
+        Margins.Top = 5
+        Margins.Right = 10
+        Margins.Bottom = 0
+        Caption = 'List'
+        Align = alTop
+        TabOrder = 1
+        OnClick = btnChannelsListClick
+        ExplicitLeft = 10
+        ExplicitTop = 5
+      end
+      object btnChannelsForm: TUniButton
+        AlignWithMargins = True
+        Left = 12
+        Top = 50
+        Width = 93
+        Height = 25
+        Hint = ''
+        Margins.Left = 10
+        Margins.Top = 5
+        Margins.Right = 10
+        Margins.Bottom = 0
+        Caption = 'Form'
+        Align = alTop
+        TabOrder = 2
+        OnClick = btnChannelsFormClick
+        ExplicitLeft = 20
+        ExplicitTop = 28
+      end
+    end
   end
   object UniPanel1: TUniPanel
     Left = 166
@@ -377,10 +428,8 @@ object MainForm: TMainForm
     Align = alClient
     TabOrder = 1
     Caption = 'UniPanel1'
-    ExplicitLeft = 232
-    ExplicitTop = 328
-    ExplicitWidth = 256
-    ExplicitHeight = 128
+    ExplicitWidth = 532
+    ExplicitHeight = 492
     object ShowMemo: TUniMemo
       AlignWithMargins = True
       Left = 4
@@ -391,9 +440,8 @@ object MainForm: TMainForm
       ScrollBars = ssBoth
       Align = alClient
       TabOrder = 1
-      ExplicitLeft = 3
-      ExplicitTop = 3
-      ExplicitHeight = 326
+      ExplicitWidth = 524
+      ExplicitHeight = 395
     end
     object LogMemo: TUniMemo
       AlignWithMargins = True
@@ -406,9 +454,8 @@ object MainForm: TMainForm
       Align = alBottom
       ReadOnly = True
       TabOrder = 2
-      ExplicitLeft = 1
-      ExplicitTop = 416
-      ExplicitWidth = 532
+      ExplicitTop = 405
+      ExplicitWidth = 524
     end
   end
 end

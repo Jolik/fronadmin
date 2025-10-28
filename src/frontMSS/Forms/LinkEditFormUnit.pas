@@ -29,20 +29,7 @@ implementation
 
 uses
   MainModule, uniGUIApplication,
-  OpenMCEPSettingEditFrameUnit,
-  SocketSpecialSettingEditFrameUnit,
-//  DirDownSettingEditFrameUnit,
-//  DirUpSettingEditFrameUnit,
-//  FTPCliDownLinkSettingEditFrameUnit,
-//  FTPCliUpLinkSettingEditFrameUnit,
-//  Pop3CliDownLinkSettingEditFrameUnit,
-//  SMTPClieUpLinkSettingEditFrameUnit,
-//  FTPServerDownLinkSettingEditFrameUnit,
-//  FTPSrvUpLinkSettingEditFrameUnit,
-//  SMTPSrvDownLinkSettingEditFrameUnit,
-//  HTTPCliDownLinkSettingEditFrameUnit,
-//  SebaSGSLinkSettingEditFrameUnit,
-//  SebaCSDLinkSettingEditFrameUnit,
+  LinkFrameUtils,
   LinkUnit;
 
 function LinkEditForm: TLinkEditForm;
@@ -73,25 +60,10 @@ begin
   if not (entity is TLink) then
     exit;
   var link := (entity as TLink);
-
-//  case link.linkType of
-//    ltDirDown: FLinkSettingsEditFrame := TDirDownSettingEditFrame.Create(LinkEditForm);
-//    ltDirUp: FLinkSettingsEditFrame := TDirUpSettingEditFrame.Create(LinkEditForm);
-//    ltFtpClientDown: FLinkSettingsEditFrame := TFtpCliDownLinkSettingEditFrame.Create(LinkEditForm);
-//    ltFtpClientUp: FLinkSettingsEditFrame := TFTPCliUpLinkSettingEditFrame.Create(LinkEditForm);
-//    ltFtpServerDown: FLinkSettingsEditFrame := TFTPServerDownLinkSettingEditFrame.Create(LinkEditForm);
-//    ltFtpServerUp: FLinkSettingsEditFrame := TFTPSrvUpLinkSettingEditFrame.Create(LinkEditForm);
-//    ltOpenMCEP: FLinkSettingsEditFrame := TOpenMCEPSettingEditFrame.Create(Self);
-//    ltPop3ClientDown: FLinkSettingsEditFrame := TPop3CliDownLinkSettingEditFrame.Create(LinkEditForm);
-//    ltSmtpCliUp: FLinkSettingsEditFrame := TSMTPClieUpLinkSettingEditFrame.Create(LinkEditForm);
-//    ltSmtpSrvDown: FLinkSettingsEditFrame := TSMTPSrvDownLinkSettingEditFrame.Create(LinkEditForm);
-//    ltSocketSpecial: FLinkSettingsEditFrame := TSocketSpecialSettingEditFrame.Create(Self);
-//    ltHttpClientDown: FLinkSettingsEditFrame := THTTPCliDownLinkSettingEditFrame.Create(LinkEditForm);
-//    ltSebaSgsClientDown: FLinkSettingsEditFrame := TSebaSGSLinkSettingEditFrame.Create(LinkEditForm);
-//    ltSebaUsrCsdClientDown: FLinkSettingsEditFrame := TSebaCSDLinkSettingEditFrame.Create(LinkEditForm);
-//    else exit;
-//  end;
-
+  var frameClass := LinkFrameByType(link.linkType);
+  if frameClass = nil then
+    exit;
+  FLinkSettingsEditFrame := frameClass.Create(LinkEditForm);
   FLinkSettingsEditFrame.Parent := pnClient;
   FLinkSettingsEditFrame.Link := link;
 end;

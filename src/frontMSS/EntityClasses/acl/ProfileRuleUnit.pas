@@ -1,4 +1,4 @@
-﻿unit SmallRuleUnit;
+﻿unit ProfileRuleUnit;
 
 interface
 
@@ -13,7 +13,7 @@ type
   /// <summary>
   ///   Represents a small-format routing rule.
   /// </summary>
-  TSmallRule = class(TFieldSet)
+  TProfileRule = class(TFieldSet)
   private
     FDoubles: Boolean;
     FPosition: Integer;
@@ -58,11 +58,11 @@ const
   ExcFiltersKey = 'excFilters';
   DisableKey = 'disable';
 
-{ TSmallRule }
+{ TProfileRule }
 
-function TSmallRule.Assign(ASource: TFieldSet): boolean;
+function TProfileRule.Assign(ASource: TFieldSet): boolean;
 var
-  SourceRule: TSmallRule;
+  SourceRule: TProfileRule;
 begin
   Result := False;
 
@@ -72,10 +72,10 @@ begin
   if not inherited Assign(ASource) then
     Exit;
 
-  if not (ASource is TSmallRule) then
+  if not (ASource is TProfileRule) then
     Exit;
 
-  SourceRule := TSmallRule(ASource);
+  SourceRule := TProfileRule(ASource);
 
   FDoubles := SourceRule.Doubles;
   FPosition := SourceRule.Position;
@@ -125,7 +125,7 @@ begin
   Result := True;
 end;
 
-constructor TSmallRule.Create;
+constructor TProfileRule.Create;
 begin
   inherited Create;
 
@@ -139,14 +139,14 @@ begin
   ResetCollections;
 end;
 
-constructor TSmallRule.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TProfileRule.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Create;
 
   Parse(src, APropertyNames);
 end;
 
-destructor TSmallRule.Destroy;
+destructor TProfileRule.Destroy;
 begin
   FExcFilters.Free;
   FIncFilters.Free;
@@ -156,7 +156,7 @@ begin
   inherited;
 end;
 
-procedure TSmallRule.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TProfileRule.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
   Value: TJSONValue;
 begin
@@ -203,7 +203,7 @@ begin
     FExcFilters.Clear;
 end;
 
-procedure TSmallRule.ResetCollections;
+procedure TProfileRule.ResetCollections;
 begin
   if Assigned(FHandlers) then
     FHandlers.ClearStrings;
@@ -218,7 +218,7 @@ begin
     FExcFilters.Clear;
 end;
 
-procedure TSmallRule.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TProfileRule.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 var
   HandlersArray: TJSONArray;
   ChannelsObject: TJSONObject;

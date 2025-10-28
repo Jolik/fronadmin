@@ -1,7 +1,5 @@
 inherited ListParentForm: TListParentForm
   Caption = 'ListParentForm'
-  ExplicitWidth = 1176
-  ExplicitHeight = 606
   TextHeight = 15
   object tbEntity: TUniToolBar
     Left = 0
@@ -12,7 +10,6 @@ inherited ListParentForm: TListParentForm
     TabOrder = 0
     ParentColor = False
     Color = clBtnFace
-    ExplicitWidth = 1158
     object btnNew: TUniToolButton
       AlignWithMargins = True
       Left = 3
@@ -97,8 +94,6 @@ inherited ListParentForm: TListParentForm
     Align = alRight
     ParentColor = False
     Color = clBtnFace
-    ExplicitLeft = 774
-    ExplicitHeight = 530
   end
   object pcEntityInfo: TUniPageControl
     Left = 782
@@ -110,13 +105,10 @@ inherited ListParentForm: TListParentForm
     TabBarVisible = False
     Align = alRight
     TabOrder = 3
-    ExplicitLeft = 780
-    ExplicitHeight = 530
     object tsTaskInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitHeight = 502
       object cpTaskInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -130,7 +122,6 @@ inherited ListParentForm: TListParentForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 502
         object cpTaskInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -283,7 +274,7 @@ inherited ListParentForm: TListParentForm
           Margins.Right = 5
           Margins.Bottom = 10
           AutoSize = False
-          Caption = #1044#1077#1090#1072#1083#1080' '#1079#1072#1076#1072#1095#1080
+          Caption = #1044#1077#1090#1072#1083#1080' '#1082#1072#1085#1072#1083#1072
           Align = alTop
           ParentFont = False
           Font.Color = clGray
@@ -321,7 +312,7 @@ inherited ListParentForm: TListParentForm
             Margins.Bottom = 7
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #1057#1086#1079#1076#1072#1085#1072
+            Caption = #1057#1086#1079#1076#1072#1085
             Align = alLeft
             ParentFont = False
             Font.Style = [fsBold]
@@ -391,7 +382,7 @@ inherited ListParentForm: TListParentForm
             Margins.Bottom = 7
             Alignment = taRightJustify
             AutoSize = False
-            Caption = #1048#1079#1084#1077#1085#1077#1085#1072
+            Caption = #1048#1079#1084#1077#1085#1077#1085
             Align = alLeft
             ParentFont = False
             Font.Style = [fsBold]
@@ -447,8 +438,8 @@ inherited ListParentForm: TListParentForm
     UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
     UpdateOptions.CheckRequired = False
     UpdateOptions.AutoCommitUpdates = True
-    Left = 296
-    Top = 64
+    Left = 368
+    Top = 72
     object FDMemTableEntityName: TStringField
       FieldName = 'Name'
       Size = 256

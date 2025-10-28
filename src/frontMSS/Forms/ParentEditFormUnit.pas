@@ -22,6 +22,9 @@ type
     lName: TUniLabel;
     teName: TUniEdit;
     pnClient: TUniContainerPanel;
+    pnID: TUniContainerPanel;
+    UniLabel1: TUniLabel;
+    teID: TUniEdit;
 
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
@@ -94,6 +97,7 @@ begin
 
   teName.Text := AEntity.Name;
   teCaption.Text := AEntity.Caption;
+  teID.text := AEntity.Id;
 end;
 
 procedure TParentEditForm.UniFormShow(Sender: TObject);

@@ -8,9 +8,11 @@ uses
 type
   TUniMainModule = class(TUniGUIMainModule)
   private
-    { Private declarations }
+    FCompID: string;
+    FDeptID: string;
   public
-    { Public declarations }
+    property CompID: string read FCompID write FCompID;
+    property DeptID: string read FDeptID write FDeptID;
   end;
 
 function UniMainModule: TUniMainModule;
