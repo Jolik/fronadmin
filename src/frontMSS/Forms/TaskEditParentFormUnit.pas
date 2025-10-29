@@ -43,9 +43,11 @@ type
     SourcesMemenabled: TBooleanField;
     SourcesMemsid: TStringField;
     SourcesMemname: TStringField;
+    unbtnSrcDel1: TUniButton;
 
     procedure btnSourcesEditClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
+    procedure unbtnSrcDel1Click(Sender: TObject);
 //    procedure lbTaskSourcesClick(Sender: TObject);
   protected
     FGrid: TUniDBGrid;
@@ -56,6 +58,7 @@ type
     FTaskSourcesList: TTaskSourcesList;
     FTaskSourcesListOwned: Boolean;
     FTaskTypesList: TTaskTypesList;
+    function ModuleIndex(module:string):integer;
     function GetCurrentModuleValues:string;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
@@ -162,6 +165,19 @@ begin
     exit;
   end;
   Result := Entity as TTask;
+end;
+
+function TTaskEditParentForm.ModuleIndex(module: string): integer;
+begin
+  Result:=-1;
+  for var I := 0 to cbModule.Items.Count do
+  begin
+    if cbModule.Items.ValueFromIndex[i] = module then
+    begin
+       Result:= i;
+       Exit;
+    end;
+  end;
 end;
 
 procedure TTaskEditParentForm.ClearCustomSettingsFrame;
@@ -308,7 +324,7 @@ begin
     teTid.Text         := Task.Tid;
     teCompId.Text      := Task.CompId;
     teDepId.Text       := Task.DepId;
-    cbModule.ItemIndex := IfThen(cbModule.Items.IndexOf(Task.Module) <> -1, cbModule.Items.IndexOf(Task.Module), 4);
+    cbModule.ItemIndex := ModuleIndex(Task.Module);
     meDef.Lines.Text   := Task.Def;
     cbEnabled.Checked  := Task.Enabled;
 
@@ -384,5 +400,11 @@ end;
 
 
 
+
+procedure TTaskEditParentForm.unbtnSrcDel1Click(Sender: TObject);
+begin
+  inherited;
+  SourcesMem.Delete;
+end;
 
 end.

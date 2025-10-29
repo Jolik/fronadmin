@@ -5,33 +5,33 @@ inherited TaskEditParentForm: TTaskEditParentForm
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited btnOk: TUniButton
       Left = 1190
-      ExplicitLeft = 1188
+      ExplicitLeft = 1190
     end
     inherited btnCancel: TUniButton
       Left = 1271
-      ExplicitLeft = 1269
+      ExplicitLeft = 1271
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited teCaption: TUniEdit
-      Left = 106
-      Width = 1240
-      ExplicitLeft = 106
+      Left = 108
+      Width = 1238
+      ExplicitLeft = 108
       ExplicitWidth = 1238
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1347
+    ExplicitWidth = 1349
     inherited teName: TUniEdit
-      Left = 106
-      Width = 1240
-      ExplicitLeft = 106
+      Left = 108
+      Width = 1238
+      ExplicitLeft = 108
       ExplicitWidth = 1238
     end
   end
@@ -136,7 +136,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
     end
     object cbModule: TUniComboBox
       Left = 160
-      Top = 108
+      Top = 106
       Width = 320
       Hint = ''
       Style = csDropDownList
@@ -162,8 +162,6 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alRight
     TabOrder = 4
-    ExplicitLeft = 982
-    ExplicitHeight = 406
   end
   object pnSources: TUniContainerPanel [5]
     Left = 497
@@ -174,8 +172,6 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
-    ExplicitWidth = 485
-    ExplicitHeight = 406
     object gridSources: TUniDBGrid
       Left = 0
       Top = 37
@@ -213,6 +209,16 @@ inherited TaskEditParentForm: TTaskEditParentForm
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1080#1089#1090#1086#1095#1085#1080#1082
       TabOrder = 2
       OnClick = btnSourcesEditClick
+    end
+    object unbtnSrcDel1: TUniButton
+      Left = 126
+      Top = 6
+      Width = 120
+      Height = 25
+      Hint = ''
+      Caption = #1059#1076#1072#1083#1080#1090#1100' '#1080#1089#1090#1086#1095#1085#1080#1082
+      TabOrder = 3
+      OnClick = unbtnSrcDel1Click
     end
   end
   object SourcesDS: TDataSource

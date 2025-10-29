@@ -14,17 +14,16 @@ uses
   ParentEditFormUnit,
   TasksParentFormUnit, RestBrokerBaseUnit, SummaryTasksRestBrokerUnit,
   TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst,
-  uniMultiItem, uniListBox;
+  uniMultiItem, uniListBox, SummaryTaskUnit;
 
 type
   TSummaryTasksForm = class(TTaskParentForm)
-    FDMemTableEntitymodule: TStringField;
-    FDMemTableEntityenabled: TBooleanField;
     UniContainerPanel1: TUniContainerPanel;
     UniPanel1: TUniPanel;
     lbSettings: TUniListBox;
     procedure btnNewClick(Sender: TObject);
   protected
+    procedure OnCreate; override;
     procedure OnInfoUpdated(AEntity: TEntity);override;
     ///
 //    procedure Refresh(const AId: String = ''); override;
@@ -45,7 +44,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit, ParentFormUnit, TasksRestBrokerUnit, SummaryTasksHttpRequests;
+  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, LoggingUnit, ParentFormUnit, TasksRestBrokerUnit, SummaryTasksHttpRequests;
 
 function SummaryTasksForm(): TSummaryTasksForm;
 begin
@@ -87,11 +86,17 @@ begin
   Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLSummaryBasePath);
 end;
 
+procedure TSummaryTasksForm.OnCreate;
+begin
+  FEnabledTaskTypes:= true;
+  inherited;
+end;
+
 procedure TSummaryTasksForm.OnInfoUpdated(AEntity: TEntity);
 begin
   inherited;
   lbSettings.Items.Clear;
-  with AEntity as TSummaryTask do begin
+  with FSelectedEntity as TSummaryTask do begin
     lbSettings.Items.AddPair('Сокращенный заголовок', TaskSettings.Header);
     lbSettings.Items.AddPair('Сокращенный заголовок 2', TaskSettings.Header2);
     lbSettings.Items.AddPair('Корректировка времени сокращенного заголовка', IntToStr(TaskSettings.HeaderCorr));
@@ -100,6 +105,8 @@ begin
     lbSettings.Items.AddPair('Проверять опоздавшие наблюдения', BoolToStr(TaskSettings.CheckLate,true));
     lbSettings.Items.AddPair('каждые X секунд:', IntToStr(TaskSettings.LateEvery));
     lbSettings.Items.AddPair('каждые N минут:', IntToStr(TaskSettings.LatePeriod));
+    var Ex:= TaskSettings.ExcludeWeek;
+
   end;
 end;
 

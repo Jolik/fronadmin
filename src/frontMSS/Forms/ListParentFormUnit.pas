@@ -61,6 +61,7 @@ type
     procedure dbgEntitySelectionChange(Sender: TObject);
   protected
     FID: string;
+    FSelectedEntity: TEntity;
     procedure OnAddListItem(item: TEntity);virtual;
     procedure Refresh(const AId: String = ''); override;
     function UpdateCallback(const AID: string; AEntity: TFieldSet):Boolean;
@@ -108,20 +109,16 @@ end;
 
 procedure TListParentForm.dbgEntitySelectionChange(Sender: TObject);
 var
-  LEntity : TEntity;
   LId     : string;
 begin
+  FSelectedEntity.Free;
   LId := FDMemTableEntity.FieldByName('Id').AsString;
   if Assigned(RestBroker) then
   begin
     var Resp := RestBroker.Info(RestBroker.CreateReqInfo(LId));
-    try
-      LEntity := Resp.Entity as TEntity;
-      if not Assigned(LEntity) then Exit;
-      OnInfoUpdated(LEntity);
-    finally
-      LEntity.Free
-    end;
+    FSelectedEntity := Resp.Entity as TEntity;
+    if not Assigned(FSelectedEntity) then Exit;
+    OnInfoUpdated(FSelectedEntity);
   end;
 end;
 

@@ -1,15 +1,7 @@
 inherited SummaryTasksForm: TSummaryTasksForm
   TextHeight = 15
-  inherited tbEntity: TUniToolBar
-    ExplicitWidth = 1215
-  end
   inherited dbgEntity: TUniDBGrid
     Columns = <
-      item
-        FieldName = 'enabled'
-        Title.Caption = ' '
-        Width = 34
-      end
       item
         FieldName = 'Name'
         Title.Caption = #1048#1084#1103
@@ -19,11 +11,6 @@ inherited SummaryTasksForm: TSummaryTasksForm
         FieldName = 'Caption'
         Title.Caption = #1055#1086#1076#1087#1080#1089#1100
         Width = 100
-      end
-      item
-        FieldName = 'module'
-        Title.Caption = #1052#1086#1076#1091#1083#1100
-        Width = 124
       end
       item
         FieldName = 'Created'
@@ -36,17 +23,10 @@ inherited SummaryTasksForm: TSummaryTasksForm
         Width = 112
       end>
   end
-  inherited splSplitter: TUniSplitter
-    ExplicitLeft = 815
-    ExplicitHeight = 530
-  end
   inherited pcEntityInfo: TUniPageControl
-    ExplicitLeft = 815
-    ExplicitHeight = 530
     inherited tsTaskInfo: TUniTabSheet
-      ExplicitHeight = 502
+      ExplicitTop = 24
       inherited cpTaskInfo: TUniContainerPanel
-        ExplicitHeight = 502
         object UniContainerPanel1: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -79,7 +59,6 @@ inherited SummaryTasksForm: TSummaryTasksForm
             TabOrder = 1
             Caption = ''
             Color = clHighlight
-            ExplicitTop = 220
           end
           object lbSettings: TUniListBox
             Left = 0
@@ -89,21 +68,17 @@ inherited SummaryTasksForm: TSummaryTasksForm
             Hint = ''
             Align = alClient
             TabOrder = 2
-            ExplicitLeft = 192
-            ExplicitTop = 104
-            ExplicitWidth = 121
-            ExplicitHeight = 97
           end
         end
       end
     end
   end
   inherited FDMemTableEntity: TFDMemTable
-    object FDMemTableEntitymodule: TStringField [2]
-      FieldName = 'module'
+    inherited FDMemTableEntityId: TStringField [4]
     end
-    object FDMemTableEntityenabled: TBooleanField
-      FieldName = 'enabled'
+    inherited FDMemTableEntityCreated: TDateTimeField [5]
+    end
+    inherited FDMemTableEntityUpdated: TDateTimeField [6]
     end
   end
 end

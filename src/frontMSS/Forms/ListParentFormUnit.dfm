@@ -1,5 +1,7 @@
 inherited ListParentForm: TListParentForm
   Caption = 'ListParentForm'
+  ExplicitWidth = 1176
+  ExplicitHeight = 606
   TextHeight = 15
   object tbEntity: TUniToolBar
     Left = 0
@@ -10,6 +12,7 @@ inherited ListParentForm: TListParentForm
     TabOrder = 0
     ParentColor = False
     Color = clBtnFace
+    ExplicitWidth = 1158
     object btnNew: TUniToolButton
       AlignWithMargins = True
       Left = 3
@@ -94,6 +97,8 @@ inherited ListParentForm: TListParentForm
     Align = alRight
     ParentColor = False
     Color = clBtnFace
+    ExplicitLeft = 772
+    ExplicitHeight = 530
   end
   object pcEntityInfo: TUniPageControl
     Left = 780
@@ -105,10 +110,13 @@ inherited ListParentForm: TListParentForm
     TabBarVisible = False
     Align = alRight
     TabOrder = 3
+    ExplicitLeft = 778
+    ExplicitHeight = 530
     object tsTaskInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
+      ExplicitHeight = 502
       object cpTaskInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -122,6 +130,7 @@ inherited ListParentForm: TListParentForm
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
+        ExplicitHeight = 502
         object cpTaskInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10

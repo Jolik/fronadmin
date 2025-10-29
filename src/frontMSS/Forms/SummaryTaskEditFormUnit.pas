@@ -17,7 +17,8 @@ uses
   SummaryHydraTaskCustomSettingsEditFrameUnit, uniListBox, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uniBasicGrid, uniDBGrid, uniTimer;
+  FireDAC.Comp.Client, uniBasicGrid, uniDBGrid, uniTimer, uniGroupBox,
+  uniSpinEdit, uniBitBtn, uniSpeedButton;
 
 type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
@@ -25,7 +26,33 @@ type
 
   TSummaryTaskEditForm = class(TTaskEditParentForm)
     lLatePeriod: TUniLabel;
-    teLatePeriod: TUniEdit;
+    ueHeader: TUniEdit;
+    UniLabel1: TUniLabel;
+    ueHeader2: TUniEdit;
+    UniLabel2: TUniLabel;
+    UniLabel3: TUniLabel;
+    uspHeaderCorr: TUniSpinEdit;
+    UniGroupBox1: TUniGroupBox;
+    undtMonthDays: TUniEdit;
+    UniLabel5: TUniLabel;
+    UniLabel6: TUniLabel;
+    UniLabel7: TUniLabel;
+    UniPanel1: TUniPanel;
+    unspndtLateEvery: TUniSpinEdit;
+    UniLabel8: TUniLabel;
+    UniLabel9: TUniLabel;
+    unspndtLatePeriod: TUniSpinEdit;
+    unchckbxCheckLate: TUniCheckBox;
+    unpnlWeekDaysArr: TUniPanel;
+    bt7: TUniSpeedButton;
+    bt6: TUniSpeedButton;
+    bt5: TUniSpeedButton;
+    bt4: TUniSpeedButton;
+    bt3: TUniSpeedButton;
+    bt2: TUniSpeedButton;
+    bt1: TUniSpeedButton;
+    uncmbxTime: TUniComboBox;
+    uncmbxTime1: TUniComboBox;
     procedure cbModuleChange(Sender: TObject);
   private
     function Apply: boolean; override;
@@ -74,8 +101,8 @@ begin
     Exit;
 
   var Settings := GetSummarySettings();
-  if Assigned(Settings) then
-    Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
+//  if Assigned(Settings) then
+//    Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
 
   if Assigned(FCustomSettingsFrame) then
     Result := FCustomSettingsFrame.Apply() and Result;
@@ -256,6 +283,8 @@ begin
 end;    *)
 
 procedure TSummaryTaskEditForm.SetEntity(AEntity: TFieldSet);
+var
+ i:Integer;
 begin
   ClearCustomSettingsFrame;
   ///        -   !
@@ -270,9 +299,33 @@ begin
 
     var Settings := GetSummarySettings();
     if Assigned(Settings) then
-      teLatePeriod.Text := IntToStr(Settings.LatePeriod)
-    else
-      teLatePeriod.Text := '';
+    with Settings do begin
+      ueHeader.Text :=  Header;
+      ueHeader2.Text:=  Header2;
+      uspHeaderCorr.Value:= HeaderCorr;
+      uncmbxTime.ItemIndex := Integer(not Local);
+      for I := Low(ExcludeWeek) to High(ExcludeWeek) do
+      begin
+        with unpnlWeekDaysArr do
+        with Controls[I] as TUniSpeedButton do begin
+            Down := not Boolean(ExcludeWeek[i]);
+      end;
+      end;
+      undtMonthDays.Text:= MonthDays;
+      uncmbxTime1.Text :=  Time;
+      unchckbxCheckLate.Checked:= CheckLate;
+
+      unspndtLateEvery.Enabled:= CheckLate;
+      unspndtLatePeriod.Enabled:= CheckLate;
+      unspndtLateEvery.Value:=LateEvery;
+      unspndtLatePeriod.Value:= LatePeriod;
+
+
+
+    end;
+//      teLatePeriod.Text := IntToStr(Settings.LatePeriod)
+//    else
+//      teLatePeriod.Text := '';
 
     UpdateCustomSettingsFrame;
   except

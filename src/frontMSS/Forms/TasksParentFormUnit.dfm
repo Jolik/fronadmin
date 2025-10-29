@@ -2,26 +2,60 @@ inherited TaskParentForm: TTaskParentForm
   ClientWidth = 1217
   Caption = #1047#1072#1076#1072#1095#1080
   ExplicitWidth = 1233
+  ExplicitHeight = 606
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     Width = 1217
-    ExplicitWidth = 1217
+    ExplicitWidth = 1215
   end
   inherited dbgEntity: TUniDBGrid
     Width = 817
+    Columns = <
+      item
+        FieldName = 'enabled'
+        Title.Caption = ' '
+        Width = 34
+      end
+      item
+        FieldName = 'Name'
+        Title.Caption = #1048#1084#1103
+        Width = 100
+      end
+      item
+        FieldName = 'Caption'
+        Title.Caption = #1055#1086#1076#1087#1080#1089#1100
+        Width = 100
+      end
+      item
+        FieldName = 'module'
+        Title.Caption = #1052#1086#1076#1091#1083#1100
+        Width = 124
+      end
+      item
+        FieldName = 'Created'
+        Title.Caption = #1057#1086#1079#1076#1072#1085
+        Width = 112
+      end
+      item
+        FieldName = 'Updated'
+        Title.Caption = #1048#1079#1084#1077#1085#1077#1085
+        Width = 112
+      end>
   end
   inherited splSplitter: TUniSplitter
     Left = 817
     Width = 0
-    ExplicitLeft = 817
+    ExplicitLeft = 815
     ExplicitWidth = 0
   end
   inherited pcEntityInfo: TUniPageControl
     Left = 817
     Width = 400
-    ExplicitLeft = 817
+    ExplicitLeft = 815
     ExplicitWidth = 400
     inherited tsTaskInfo: TUniTabSheet
+      ExplicitLeft = 4
+      ExplicitTop = 24
       ExplicitWidth = 392
       inherited cpTaskInfo: TUniContainerPanel
         Width = 392
@@ -170,5 +204,11 @@ inherited TaskParentForm: TTaskParentForm
   inherited FDMemTableEntity: TFDMemTable
     Left = 428
     Top = 70
+    object FDMemTableEntityenabled: TBooleanField [0]
+      FieldName = 'enabled'
+    end
+    object FDMemTableEntitymodule: TStringField [3]
+      FieldName = 'module'
+    end
   end
 end

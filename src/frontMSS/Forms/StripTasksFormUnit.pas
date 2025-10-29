@@ -19,6 +19,7 @@ type
   private
 
   protected
+    procedure OnCreate; override;
     ///  функция обновления компоннет на форме
     procedure Refresh(const AId: String = ''); override;
 
@@ -63,6 +64,13 @@ end;
 function TStripTasksForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
 begin
 Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLStripBasePath);
+end;
+
+procedure TStripTasksForm.OnCreate;
+begin
+  FEnabledTaskTypes:= true;
+  inherited;
+
 end;
 
 procedure TStripTasksForm.Refresh(const AId: String = '');
