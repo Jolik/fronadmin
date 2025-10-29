@@ -22,6 +22,7 @@ type
     FEditForm: TParentEditForm;
 
   protected
+    procedure OnCreate; virtual;
     function NewCallback(const AID: string; AEntity: TFieldSet):boolean;
     function UpdateCallback(const AID: string; AEntity: TFieldSet):boolean;
 
@@ -98,6 +99,11 @@ begin
   end;
   if Result then
     Refresh();
+end;
+
+procedure TParentForm.OnCreate;
+begin
+  //
 end;
 
 function TParentForm.UpdateCallback(const AID: string; AEntity: TFieldSet):boolean;
@@ -185,6 +191,7 @@ procedure TParentForm.UniFormCreate(Sender: TObject);
 begin
   // создаем брокера
   FRestBroker := CreateRestBroker();
+  OnCreate;
   // форму редактирования создаём по месту использования
   // FEditForm := CreateEditForm();
 end;

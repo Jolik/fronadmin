@@ -71,9 +71,8 @@ type
     ///  ìåòîä âîçâðàùàåò êîíêðåòíûé òèï îáúåêòà Settings
     ///  ïîòîìêè äîëæíû ïåðåîïðåäåëèòü åãî, ïîòîìó ÷òî îí ó âñåõ ðàçíûé
     class function SettingsClassType: TSettingsClass; override;
-
   public
-
+    function TaskSettings:TSummaryTaskSettings;
   end;
 
 type
@@ -181,8 +180,7 @@ end;
 
 { TSummaryTask }
 
-procedure TSummaryTask.Parse(src: TJSONObject;
-  const APropertyNames: TArray<string>);
+procedure TSummaryTask.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   ///  определяем тип задачи до разбора настроек
   var ModuleName := GetValueStrDef(src, 'module', '');
@@ -198,6 +196,11 @@ end;
 class function TSummaryTask.SettingsClassType: TSettingsClass;
 begin
   Result := TSummaryTaskSettings;
+end;
+
+function TSummaryTask.TaskSettings: TSummaryTaskSettings;
+begin
+  Result := Settings as TSummaryTaskSettings;
 end;
 
 initialization

@@ -3,10 +3,107 @@ inherited SummaryTasksForm: TSummaryTasksForm
   inherited tbEntity: TUniToolBar
     ExplicitWidth = 1215
   end
+  inherited dbgEntity: TUniDBGrid
+    Columns = <
+      item
+        FieldName = 'enabled'
+        Title.Caption = ' '
+        Width = 34
+      end
+      item
+        FieldName = 'Name'
+        Title.Caption = #1048#1084#1103
+        Width = 100
+      end
+      item
+        FieldName = 'Caption'
+        Title.Caption = #1055#1086#1076#1087#1080#1089#1100
+        Width = 100
+      end
+      item
+        FieldName = 'module'
+        Title.Caption = #1052#1086#1076#1091#1083#1100
+        Width = 124
+      end
+      item
+        FieldName = 'Created'
+        Title.Caption = #1057#1086#1079#1076#1072#1085
+        Width = 112
+      end
+      item
+        FieldName = 'Updated'
+        Title.Caption = #1048#1079#1084#1077#1085#1077#1085
+        Width = 112
+      end>
+  end
   inherited splSplitter: TUniSplitter
     ExplicitLeft = 815
+    ExplicitHeight = 530
   end
   inherited pcEntityInfo: TUniPageControl
     ExplicitLeft = 815
+    ExplicitHeight = 530
+    inherited tsTaskInfo: TUniTabSheet
+      ExplicitHeight = 502
+      inherited cpTaskInfo: TUniContainerPanel
+        ExplicitHeight = 502
+        object UniContainerPanel1: TUniContainerPanel
+          AlignWithMargins = True
+          Left = 10
+          Top = 239
+          Width = 377
+          Height = 258
+          Hint = ''
+          Margins.Left = 10
+          Margins.Top = 0
+          Margins.Right = 5
+          Margins.Bottom = 0
+          ParentColor = False
+          Align = alTop
+          ParentAlignmentControl = False
+          TabOrder = 7
+          Layout = 'table'
+          LayoutAttribs.Columns = 2
+          object UniPanel1: TUniPanel
+            AlignWithMargins = True
+            Left = 0
+            Top = 252
+            Width = 377
+            Height = 1
+            Hint = ''
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 5
+            Align = alBottom
+            TabOrder = 1
+            Caption = ''
+            Color = clHighlight
+            ExplicitTop = 220
+          end
+          object lbSettings: TUniListBox
+            Left = 0
+            Top = 0
+            Width = 377
+            Height = 252
+            Hint = ''
+            Align = alClient
+            TabOrder = 2
+            ExplicitLeft = 192
+            ExplicitTop = 104
+            ExplicitWidth = 121
+            ExplicitHeight = 97
+          end
+        end
+      end
+    end
+  end
+  inherited FDMemTableEntity: TFDMemTable
+    object FDMemTableEntitymodule: TStringField [2]
+      FieldName = 'module'
+    end
+    object FDMemTableEntityenabled: TBooleanField
+      FieldName = 'enabled'
+    end
   end
 end

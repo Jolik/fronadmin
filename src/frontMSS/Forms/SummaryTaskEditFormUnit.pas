@@ -17,7 +17,7 @@ uses
   SummaryHydraTaskCustomSettingsEditFrameUnit, uniListBox, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
-  FireDAC.Comp.Client, uniBasicGrid, uniDBGrid;
+  FireDAC.Comp.Client, uniBasicGrid, uniDBGrid, uniTimer;
 
 type
   TParentTaskCustomSettingsEditFrameClass = class of TParentTaskCustomSettingsEditFrame;
@@ -202,7 +202,7 @@ begin
     Exit;
   end;
 
-  NewType := GetSummaryTaskTypeByModule(cbModule.Text);
+  NewType := GetSummaryTaskTypeByModule(GetCurrentModuleValues);
   if Settings.SummaryTaskType <> NewType then
     Settings.SummaryTaskType := NewType;
 

@@ -49,8 +49,7 @@ const
 
   CustomKey = 'Custom';
 
-procedure TTaskSettings.Parse(src: TJSONObject;
-  const APropertyNames: TArray<string>);
+procedure TTaskSettings.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   inherited;
 

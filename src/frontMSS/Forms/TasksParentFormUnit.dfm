@@ -15,20 +15,17 @@ inherited TaskParentForm: TTaskParentForm
     Width = 0
     ExplicitLeft = 817
     ExplicitWidth = 0
-    ExplicitHeight = 538
   end
   inherited pcEntityInfo: TUniPageControl
     Left = 817
     Width = 400
     ExplicitLeft = 817
     ExplicitWidth = 400
-    ExplicitHeight = 538
     inherited tsTaskInfo: TUniTabSheet
       ExplicitWidth = 392
       inherited cpTaskInfo: TUniContainerPanel
         Width = 392
         ExplicitWidth = 392
-        ExplicitHeight = 510
         inherited cpTaskInfoID: TUniContainerPanel
           Width = 377
           ExplicitWidth = 377

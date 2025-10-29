@@ -1,21 +1,5 @@
 inherited SummaryTaskEditForm: TSummaryTaskEditForm
   TextHeight = 15
-  inherited pnCaption: TUniContainerPanel
-    inherited teCaption: TUniEdit
-      Left = 106
-      Width = 1240
-      ExplicitLeft = 106
-      ExplicitWidth = 1238
-    end
-  end
-  inherited pnName: TUniContainerPanel
-    inherited teName: TUniEdit
-      Left = 106
-      Width = 1240
-      ExplicitLeft = 106
-      ExplicitWidth = 1238
-    end
-  end
   inherited pnClient: TUniContainerPanel
     ScrollHeight = 414
     ScrollWidth = 497

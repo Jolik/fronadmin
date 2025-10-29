@@ -61,6 +61,7 @@ type
     procedure dbgEntitySelectionChange(Sender: TObject);
   protected
     FID: string;
+    procedure OnAddListItem(item: TEntity);virtual;
     procedure Refresh(const AId: String = ''); override;
     function UpdateCallback(const AID: string; AEntity: TFieldSet):Boolean;
     procedure OnInfoUpdated(AEntity: TEntity);virtual;
@@ -122,6 +123,15 @@ begin
       LEntity.Free
     end;
   end;
+end;
+
+procedure TListParentForm.OnAddListItem(item: TEntity);
+begin
+  FDMemTableEntity.FieldByName('Id').AsString := item.Id;
+  FDMemTableEntity.FieldByName('Name').AsString := item.Name;
+  FDMemTableEntity.FieldByName('Caption').AsString := item.Caption;
+  FDMemTableEntity.FieldByName('Created').AsDateTime := item.Created;
+  FDMemTableEntity.FieldByName('Updated').AsDateTime := item.Updated;
 end;
 
 procedure TListParentForm.OnInfoUpdated(AEntity: TEntity);
@@ -222,11 +232,7 @@ begin
       for var Entity in EntityList do
       begin
         FDMemTableEntity.Append;
-        FDMemTableEntity.FieldByName('Id').AsString := Entity.Id;
-        FDMemTableEntity.FieldByName('Name').AsString := Entity.Name;
-        FDMemTableEntity.FieldByName('Caption').AsString := Entity.Caption;
-        FDMemTableEntity.FieldByName('Created').AsDateTime := Entity.Created;
-        FDMemTableEntity.FieldByName('Updated').AsDateTime := Entity.Updated;
+        OnAddListItem(Entity);
         FDMemTableEntity.Post;
       end;
 

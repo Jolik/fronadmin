@@ -23,6 +23,35 @@ type
     destructor Destroy; override;
     property FieldSet: TFieldSet read FFieldSet;
   end;
+
+  // Базовый ответ со списком сущностей. Хранит TFieldSetList (или её потомков).
+  TFieldSetListResponse = class(TJSONResponse)
+  private
+    FList: TFieldSetList;
+    FListClass: TFieldSetListClass;
+    FRootKey: string;
+    FItemsKey: string;
+    // pagination info parsed from response, if present
+    FPage: Integer;
+    FPageCount: Integer;
+    FPageSize: Integer;
+    FTotal: Integer;
+    procedure ResetPaging;
+    procedure TryParsePaging(Obj: TJSONObject);
+  protected
+    procedure SetResponse(const Value: string); override;
+  public
+    constructor Create(AListClass: TFieldSetListClass; const ARootKey: string = 'response'; const AItemsKey: string = 'items'); reintroduce; virtual;
+    destructor Destroy; override;
+    property FieldSetList: TFieldSetList read FList;
+    property ItemsKey: string read FItemsKey write FItemsKey;
+    // Pagination (0 when missing)
+    property Page: Integer read FPage;
+    property PageCount: Integer read FPageCount;
+    property PageSize: Integer read FPageSize;
+    property Total: Integer read FTotal;
+  end;
+
   // Базовый ответ со списком сущностей. Хранит TEntityList (или её потомков).
   TListResponse = class(TJSONResponse)
   private
@@ -275,5 +304,97 @@ begin
     JSONResult.Free;
   end;
 end;
+
+constructor TFieldSetListResponse.Create(AListClass: TFieldSetListClass; const ARootKey, AItemsKey: string);
+begin
+  inherited Create;
+  FListClass := AListClass;
+  if FListClass = nil then
+    FListClass := TFieldSetList;
+  FRootKey := ARootKey;
+  FItemsKey := AItemsKey;
+  FList := FListClass.Create;
+  ResetPaging;
+end;
+
+destructor TFieldSetListResponse.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+procedure TFieldSetListResponse.SetResponse(const Value: string);
+var
+  JSONResult: TJSONObject;
+  RootObject: TJSONObject;
+  ItemsValue: TJSONValue;
+  ItemsArray: TJSONArray;
+  ContainerObj: TJSONObject;
+  itemsKey: string;
+begin
+  inherited SetResponse(Value);
+  FList.Clear;
+  ResetPaging;
+
+  if Value.Trim.IsEmpty then
+    Exit;
+
+  JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
+  try
+    if not Assigned(JSONResult) then Exit;
+
+    if FRootKey <> '' then
+      RootObject := JSONResult.GetValue(FRootKey) as TJSONObject
+    else
+      RootObject := JSONResult; // если корневого ключа нет
+
+    if not Assigned(RootObject) then Exit;
+
+    // Ищем массив элементов:
+    ItemsArray := nil;
+    itemsKey := FItemsKey;
+    if itemsKey = '' then
+       itemsKey := 'items';
+    ItemsValue := RootObject.GetValue(FItemsKey);
+    if ItemsValue is TJSONArray then
+      ItemsArray := TJSONArray(ItemsValue)
+    else if ItemsValue is TJSONObject then
+    begin
+      // container object with nested items and (optional) info
+      ContainerObj := TJSONObject(ItemsValue);
+      ItemsArray := ContainerObj.GetValue('items') as TJSONArray;
+      TryParsePaging(ContainerObj.GetValue('info') as TJSONObject);
+    end
+    else
+    begin
+      // try sibling 'info' at root level
+      TryParsePaging(RootObject.GetValue('info') as TJSONObject);
+    end;
+
+    if Assigned(ItemsArray) then
+      FList.ParseList(ItemsArray);
+  finally
+    JSONResult.Free;
+  end;
+end;
+
+procedure TFieldSetListResponse.ResetPaging;
+begin
+  FPage := 0;
+  FPageCount := 0;
+  FPageSize := 0;
+  FTotal := 0;
+end;
+
+procedure TFieldSetListResponse.TryParsePaging(Obj: TJSONObject);
+begin
+  if not Assigned(Obj) then Exit;
+  if not Obj.TryGetValue<Integer>('page', FPage) then FPage := 0;
+  if not Obj.TryGetValue<Integer>('pagecount', FPageCount) then FPageCount := 0;
+  if not Obj.TryGetValue<Integer>('pagesize', FPageSize) then FPageSize := 0;
+  if not Obj.TryGetValue<Integer>('total', FTotal) then FTotal := 0;
+end;
+
+
 
 end.

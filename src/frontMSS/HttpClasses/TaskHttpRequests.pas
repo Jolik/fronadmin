@@ -11,6 +11,7 @@ uses
   BaseRequests,
   BaseResponses,
   TaskUnit,
+  TaskTypesUnit,
   FuncUnit;
 
 type
@@ -25,6 +26,14 @@ type
   public
     constructor Create;
     property TaskList: TTaskList read GetTaskList;
+  end;
+
+  TTaskTypesListResponse = class(TFieldSetListResponse)
+  private
+    function GetTaskTypesList: TTaskTypesList;
+  public
+    constructor Create;
+    property TaskTypesList: TTaskTypesList read GetTaskTypesList;
   end;
 
   TTaskInfoResponse = class(TEntityResponse)
@@ -53,6 +62,14 @@ type
   end;
 
   TTaskReqList = class(TReqList)
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+    function Body: TTaskReqListBody;
+  end;
+
+  TTaskTypesReqList = class(TReqList)
   protected
     class function BodyClassType: TFieldSetClass; override;
   public
@@ -402,6 +419,40 @@ begin
     FSources.SerializeList(Arr);
     dst.AddPair('sources', Arr);
   end;
+end;
+
+
+{ TTaskTypesListResponse }
+
+constructor TTaskTypesListResponse.Create;
+begin
+    inherited Create(TTaskTypesList, 'response', 'types');
+end;
+
+function TTaskTypesListResponse.GetTaskTypesList: TTaskTypesList;
+begin
+   Result := FieldSetList as TTaskTypesList;
+end;
+
+{ TTaskTypesReqList }
+
+
+function TTaskTypesReqList.Body: TTaskReqListBody;
+begin
+   Result := nil;
+end;
+
+class function TTaskTypesReqList.BodyClassType: TFieldSetClass;
+begin
+   Result := TTaskReqListBody;
+end;
+
+constructor TTaskTypesReqList.Create;
+begin
+  inherited Create;
+  Method:= mGET;
+  SetEndpoint('tasks/types');
+
 end;
 
 end.

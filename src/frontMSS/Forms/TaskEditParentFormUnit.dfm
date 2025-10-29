@@ -5,34 +5,34 @@ inherited TaskEditParentForm: TTaskEditParentForm
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1349
+    ExplicitWidth = 1347
     inherited btnOk: TUniButton
       Left = 1190
-      ExplicitLeft = 1190
+      ExplicitLeft = 1188
     end
     inherited btnCancel: TUniButton
       Left = 1271
-      ExplicitLeft = 1271
+      ExplicitLeft = 1269
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1349
+    ExplicitWidth = 1347
     inherited teCaption: TUniEdit
-      Left = 104
-      Width = 1242
-      ExplicitLeft = 104
-      ExplicitWidth = 1242
+      Left = 106
+      Width = 1240
+      ExplicitLeft = 106
+      ExplicitWidth = 1238
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1349
+    ExplicitWidth = 1347
     inherited teName: TUniEdit
-      Left = 104
-      Width = 1242
-      ExplicitLeft = 104
-      ExplicitWidth = 1242
+      Left = 106
+      Width = 1240
+      ExplicitLeft = 106
+      ExplicitWidth = 1238
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -152,7 +152,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
       IconItems = <>
     end
   end
-  object pnCustomSettings: TUniContainerPanel
+  object pnCustomSettings: TUniContainerPanel [4]
     Left = 984
     Top = 54
     Width = 365
@@ -162,8 +162,10 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alRight
     TabOrder = 4
+    ExplicitLeft = 982
+    ExplicitHeight = 406
   end
-  object pnSources: TUniContainerPanel
+  object pnSources: TUniContainerPanel [5]
     Left = 497
     Top = 54
     Width = 487
@@ -172,6 +174,8 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
+    ExplicitWidth = 485
+    ExplicitHeight = 406
     object gridSources: TUniDBGrid
       Left = 0
       Top = 37

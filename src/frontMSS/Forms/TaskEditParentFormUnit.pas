@@ -8,14 +8,14 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo, uniCheckBox,
   LoggingUnit,
-  EntityUnit, TaskSourceUnit, uniMultiItem, uniComboBox, Math,
-  TaskSourcesRestBrokerUnit,
-  ParentTaskCustomSettingsEditFrameUnit, SelectTaskSourcesFormUnit,
-  TaskUnit,
-  uniListBox,
   Data.DB, FireDAC.Comp.Client, uniDBGrid, uniBasicGrid, FireDAC.Stan.Intf,
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
-  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet;
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Comp.DataSet, uniTimer,
+  uniMultiItem, uniComboBox, Math,   uniListBox,
+  EntityUnit, TaskSourceUnit, TaskTypesUnit,
+  TaskSourcesRestBrokerUnit,
+  ParentTaskCustomSettingsEditFrameUnit, SelectTaskSourcesFormUnit,
+  TaskUnit;
 
 
 type
@@ -48,7 +48,6 @@ type
     procedure UniFormShow(Sender: TObject);
 //    procedure lbTaskSourcesClick(Sender: TObject);
   protected
-
     FGrid: TUniDBGrid;
     FSourcesMem: TFDMemTable;
     FSourcesDS: TDataSource;
@@ -56,6 +55,8 @@ type
     FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     FTaskSourcesList: TTaskSourcesList;
     FTaskSourcesListOwned: Boolean;
+    FTaskTypesList: TTaskTypesList;
+    function GetCurrentModuleValues:string;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSettings: TTaskSettings;
@@ -75,6 +76,7 @@ type
     procedure SyncListFromMem;
 
   public
+    procedure SetTaskTypesList(list : TTaskTypesList);
     ///    FEntity     ""
     property Task : TTask read GetTask;
     property TaskSourcesList: TTaskSourcesList read FTaskSourcesList write SetTaskSourcesList;
@@ -127,6 +129,12 @@ begin
     Result := false;
     MessageDlg(Format(rsWarningValueMustBeUUID, [lTid.Caption]), TMsgDlgType.mtWarning, [mbOK], nil)
   end;
+end;
+
+function TTaskEditParentForm.GetCurrentModuleValues: string;
+begin
+  if cbModule.ItemIndex <> -1 then
+   result:= cbModule.Items.ValueFromIndex[cbModule.ItemIndex]
 end;
 
 function TTaskEditParentForm.GetSettings: TTaskSettings;
@@ -186,6 +194,14 @@ begin
     FTaskSourcesListOwned := False;
 
   RefreshTaskSourcesList;
+end;
+
+procedure TTaskEditParentForm.SetTaskTypesList(list: TTaskTypesList);
+begin
+  FTaskTypesList := list;
+  cbModule.Items.Clear;
+ for var ttype in FTaskTypesList do
+   cbModule.Items.AddPair((ttype as TTaskTypes).Caption,(ttype as TTaskTypes).Name)
 end;
 
 procedure TTaskEditParentForm.RefreshTaskSourcesList;

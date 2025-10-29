@@ -12,7 +12,7 @@ uses
   uniBasicGrid, uniDBGrid, uniToolBar, uniGUIBaseClasses,
   EntityBrokerUnit, EntityUnit,
   TaskEditParentFormUnit, TaskSourceUnit, ParentEditFormUnit,
-  TaskSourcesRestBrokerUnit, TaskSourceHttpRequests,
+  TaskSourcesRestBrokerUnit, TaskSourceHttpRequests, TaskTypesUnit,
   TasksRestBrokerUnit, TaskHttpRequests, BaseRequests, RestBrokerBaseUnit;
 
 type
@@ -25,9 +25,14 @@ type
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
   protected
+    FTaskTypesList: TTaskTypesList;
     FSourceTaskBroker: TTaskSourcesRestBroker;
     FCurrentTaskSourcesList: TTaskSourceList;
-
+    function GetModuleCaption(module:string):string;
+    function GetTaskBroker: TTasksRestBroker;
+    procedure OnCreate; override;
+    procedure UpdateTaskTypes;
+    procedure OnAddListItem(item: TEntity);override;
     procedure OnInfoUpdated(AEntity: TEntity);override;
     ///
     function CreateRestBroker(): TRestBrokerBase; override;
@@ -57,6 +62,14 @@ end;
 
 { TTaskParentForm }
 
+procedure TTaskParentForm.UpdateTaskTypes;
+begin
+   var req := GetTaskBroker.CreateTypesReqList;
+   var resp := GetTaskBroker.TypesList(req);
+   FTaskTypesList:= resp.TaskTypesList;
+
+end;
+
 
 function TTaskParentForm.CreateRestBroker: TRestBrokerBase;
 begin
@@ -67,6 +80,26 @@ end;
 function TTaskParentForm.CreateTaskSourcesBroker: TTaskSourcesRestBroker;
 begin
   Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket);
+end;
+
+function TTaskParentForm.GetModuleCaption(module:string): string;
+begin
+  result:= module;
+  for var ttype  in FTaskTypesList do
+  with ttype as TTaskTypes do
+  begin
+    if Name = module  then
+    begin
+      Result:= Caption;
+      exit;
+    end;
+  end;
+end;
+
+function TTaskParentForm.GetTaskBroker: TTasksRestBroker;
+begin
+  Result:= RestBroker as TTasksRestBroker;
+
 end;
 
 function TTaskParentForm.CreateEditForm: TParentEditForm;
@@ -274,10 +307,27 @@ begin
     end;
     FreeAndNil(FCurrentTaskSourcesList);
   end;
-end;procedure TTaskParentForm.OnInfoUpdated(AEntity: TEntity);
+end;
+
+procedure TTaskParentForm.OnAddListItem(item: TEntity);
 begin
   inherited;
-  lTaskInfoModuleValue.Caption    := (AEntity as TTask).Module;
+  with Item as TTask do
+  begin
+    FDMemTableEntity.FieldByName('module').AsString := GetModuleCaption(module);
+    FDMemTableEntity.FieldByName('enabled').AsBoolean := Enabled;
+  end;
+end;
+
+procedure TTaskParentForm.OnCreate;
+begin
+  UpdateTaskTypes;
+end;
+
+procedure TTaskParentForm.OnInfoUpdated(AEntity: TEntity);
+begin
+  inherited;
+  lTaskInfoModuleValue.Caption := (AEntity as TTask).Module;
 end;
 
 

@@ -13,12 +13,19 @@ uses
   EntityBrokerUnit, EntityUnit,
   ParentEditFormUnit,
   TasksParentFormUnit, RestBrokerBaseUnit, SummaryTasksRestBrokerUnit,
-  TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
+  TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst,
+  uniMultiItem, uniListBox;
 
 type
   TSummaryTasksForm = class(TTaskParentForm)
+    FDMemTableEntitymodule: TStringField;
+    FDMemTableEntityenabled: TBooleanField;
+    UniContainerPanel1: TUniContainerPanel;
+    UniPanel1: TUniPanel;
+    lbSettings: TUniListBox;
     procedure btnNewClick(Sender: TObject);
   protected
+    procedure OnInfoUpdated(AEntity: TEntity);override;
     ///
 //    procedure Refresh(const AId: String = ''); override;
     function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
@@ -65,7 +72,9 @@ end;
 
 function TSummaryTasksForm.CreateEditForm: TParentEditForm;
 begin
-  Result := SummaryTaskEditForm();
+  var Res := SummaryTaskEditForm();
+  res.SetTaskTypesList(FTaskTypesList);
+  Result:= res;
 end;
 
 function TSummaryTasksForm.CreateRestBroker: TRestBrokerBase;
@@ -78,162 +87,20 @@ begin
   Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket, APIConst.constURLSummaryBasePath);
 end;
 
-//procedure TSummaryTasksForm.btnUpdateClick(Sender: TObject);
-//var
-//  SummaryTaskEntity: TEntity;
-//  SummaryTask: TSummaryTask;
-//  TaskSourcePageCount: Integer;
-//  EntityList: TEntityList;
-//  TaskSourceList: TTaskSourceList;
-//  EditSummaryForm: TSummaryTaskEditForm;
-//begin
-//  PrepareEditForm;
-//
-//  FId := FDMemTableEntity.FieldByName('Id').AsString;
-//
-//  SummaryTaskEntity := Broker.Info(FId);
-//  EditForm.Entity := SummaryTaskEntity;
-//
-//  TaskSourceList := nil;
-//
-//  if Assigned(FSourceTaskBroker) then
-//    FSourceTaskBroker.AddPath := '';
-//
-//  if Assigned(SummaryTaskEntity) and (SummaryTaskEntity is TSummaryTask) and Assigned(FSourceTaskBroker) then
-//  begin
-//    SummaryTask := SummaryTaskEntity as TSummaryTask;
-//
-//    if SummaryTask.Tid <> '' then
-//    begin
-//      FSourceTaskBroker.AddPath := '/' + SummaryTask.Tid;
-//
-//      EntityList := nil;
-//      try
-//        EntityList := FSourceTaskBroker.List(TaskSourcePageCount);
-//      except
-//        on E: Exception do
-//        begin
-//          Log('TSummaryTasksForm.btnUpdateClick list error: ' + E.Message, lrtError);
-//          EntityList := nil;
-//        end;
-//      end;
-//
-//      if Assigned(EntityList) then
-//      begin
-//        if EntityList is TTaskSourceList then
-//        begin
-//          TaskSourceList := TTaskSourceList(EntityList);
-//          EntityList := nil;
-//        end
-//        else
-//        begin
-//          EntityList.Free;
-//          TaskSourceList := nil;
-//          EntityList := nil;
-//        end;
-//      end;
-//    end;
-//  end;
-//
-//  EditSummaryForm := EditForm as TSummaryTaskEditForm;
-//  if Assigned(EditSummaryForm) then
-//    EditSummaryForm.TaskSourcesList := TaskSourceList;
-//
-////  FreeAndNil(FCurrentTaskSourcesList);
-////  FCurrentTaskSourcesList := TaskSourceList;
-//
-//  try
-//    EditForm.ShowModal(UpdateCallback);
-//  except
-//    on E: Exception do
-//    begin
-//      Log('TSummaryTasksForm.btnUpdateClick show modal error: ' + E.Message, lrtError);
-//
-//      if Assigned(EditSummaryForm) then
-//        EditSummaryForm.TaskSourcesList := nil;
-//
-////      FreeAndNil(FCurrentTaskSourcesList);
-//      raise;
-//    end;
-//  end;
-//end;
-
-//procedure TSummaryTasksForm.UpdateCallback(ASender: TComponent; AResult: Integer);
-//var
-//  UpdateResult: Boolean;
-//  SummaryTask: TSummaryTask;
-//  SummaryForm: TSummaryTaskEditForm;
-//begin
-//  try
-//    if AResult = mrOk then
-//    begin
-//      UpdateResult := Broker.Update(EditForm.Entity);
-//      if not UpdateResult then
-//        Exit;
-//
-//      SummaryTask := nil;
-//      if EditForm.Entity is TSummaryTask then
-//        SummaryTask := TSummaryTask(EditForm.Entity);
-//
-//      if Assigned(FSourceTaskBroker) and Assigned(FCurrentTaskSourcesList) and Assigned(SummaryTask) then
-//      begin
-//        FSourceTaskBroker.AddPath := '';
-//
-//        if SummaryTask.Tid <> '' then
-//        begin
-//          FSourceTaskBroker.AddPath := '/' + SummaryTask.Tid;
-//
-//          for var I := 0 to FCurrentTaskSourcesList.Count - 1 do
-//          begin
-//            var Source := FCurrentTaskSourcesList.Items[I] as TTaskSource;
-//            if not Assigned(Source) then
-//              Continue;
-//
-//            try
-//              FSourceTaskBroker.Update(Source);
-//            except
-//              on E: Exception do
-//                Log('TSummaryTasksForm.UpdateCallback update source error: ' + E.Message, lrtError);
-//            end;
-//          end;
-//        end;
-//      end;
-//
-//      Refresh();
-//
-//      if FId = '' then
-//        FDMemTableEntity.First
-//      else
-//        FDMemTableEntity.Locate('Id', FId, []);
-//    end;
-//  finally
-//    if EditForm is TSummaryTaskEditForm then
-//    begin
-//      SummaryForm := TSummaryTaskEditForm(EditForm);
-//      SummaryForm.TaskSourcesList := nil;
-//    end;
-//
-//    FreeAndNil(FCurrentTaskSourcesList);
-//  end;
-//end;
-
-//procedure TSummaryTasksForm.dbgEntitySelectionChange(Sender: TObject);
-//var
-//  LEntity : TSummaryTask;
-//  LId     : string;
-//  DT      : string;
-//begin
-//  inherited;
-//
-//  LId := FDMemTableEntity.FieldByName('Id').AsString;
-//  ///  ïîëó÷àåì ïîëíóþ èíôîðìàöèþ î ñóùíîñòè îò áðîêåðà
-//  LEntity := Broker.Info(LId) as TSummaryTask;
-//  lTaskInfoModuleValue.Caption    := LEntity.Module;
-//end;
-
-//procedure TSummaryTasksForm.Refresh(const AId: String = '');
-//begin
-//  inherited Refresh(AId)
-//end;
+procedure TSummaryTasksForm.OnInfoUpdated(AEntity: TEntity);
+begin
+  inherited;
+  lbSettings.Items.Clear;
+  with AEntity as TSummaryTask do begin
+    lbSettings.Items.AddPair('Сокращенный заголовок', TaskSettings.Header);
+    lbSettings.Items.AddPair('Сокращенный заголовок 2', TaskSettings.Header2);
+    lbSettings.Items.AddPair('Корректировка времени сокращенного заголовка', IntToStr(TaskSettings.HeaderCorr));
+    lbSettings.Items.AddPair('Дни месяца', TaskSettings.MonthDays);
+    lbSettings.Items.AddPair('Сроки подачи', TaskSettings.Time);
+    lbSettings.Items.AddPair('Проверять опоздавшие наблюдения', BoolToStr(TaskSettings.CheckLate,true));
+    lbSettings.Items.AddPair('каждые X секунд:', IntToStr(TaskSettings.LateEvery));
+    lbSettings.Items.AddPair('каждые N минут:', IntToStr(TaskSettings.LatePeriod));
+  end;
+end;
 
 end.

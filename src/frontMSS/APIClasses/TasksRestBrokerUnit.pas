@@ -16,6 +16,7 @@ uses
     BasePath: string;
     function List(AReq: TTaskReqList): TTaskListResponse; overload;
     function List(AReq: TReqList): TListResponse; overload; override;
+    function TypesList(AReq: TTaskTypesReqList): TTaskTypesListResponse;
     function Info(AReq: TTaskReqInfo): TTaskInfoResponse; overload;
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TTaskReqNew): TTaskNewResponse; overload;
@@ -25,6 +26,7 @@ uses
     function Remove(AReq: TTaskReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
     function CreateReqList: TReqList; override;
+    function CreateTypesReqList: TTaskTypesReqList;
     function CreateReqInfo(id:string=''): TReqInfo; override;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
@@ -61,6 +63,12 @@ end;
 function TTasksRestBroker.Remove(AReq: TReqRemove): TJSONResponse;
 begin
   Result := inherited Remove(AReq);
+end;
+
+function TTasksRestBroker.TypesList(AReq: TTaskTypesReqList): TTaskTypesListResponse;
+begin
+  Result := TTaskTypesListResponse.Create;
+  ExcuteRaw(AReq,Result);
 end;
 
 function TTasksRestBroker.Remove(AReq: TTaskReqRemove): TJSONResponse;
@@ -100,6 +108,12 @@ end;
 function TTasksRestBroker.CreateReqUpdate: TReqUpdate;
 begin
   Result := TTaskReqUpdate.Create;
+  Result.BasePath := BasePath;
+end;
+
+function TTasksRestBroker.CreateTypesReqList: TTaskTypesReqList;
+begin
+  Result := TTaskTypesReqList.Create;
   Result.BasePath := BasePath;
 end;
 
