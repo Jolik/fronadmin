@@ -1,6 +1,8 @@
-﻿inherited SummaryCXMLTaskCustomSettingsEditFrame: TSummaryCXMLTaskCustomSettingsEditFrame
+inherited SummaryCXMLTaskCustomSettingsEditFrame: TSummaryCXMLTaskCustomSettingsEditFrame
   Width = 365
   Height = 414
+  ExplicitWidth = 365
+  ExplicitHeight = 414
   object cbMeteo: TUniCheckBox
     Left = 16
     Top = 16
@@ -13,7 +15,7 @@
   object lAnyTime: TUniLabel
     Left = 16
     Top = 48
-    Width = 46
+    Width = 42
     Height = 13
     Hint = ''
     Caption = 'AnyTime'

@@ -1,7 +1,5 @@
 inherited ListParentForm: TListParentForm
   Caption = 'ListParentForm'
-  ExplicitWidth = 1176
-  ExplicitHeight = 606
   TextHeight = 15
   object tbEntity: TUniToolBar
     Left = 0
@@ -116,7 +114,6 @@ inherited ListParentForm: TListParentForm
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitHeight = 502
       object cpTaskInfo: TUniContainerPanel
         Left = 0
         Top = 0

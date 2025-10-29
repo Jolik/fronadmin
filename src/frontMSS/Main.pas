@@ -12,7 +12,7 @@ uses
   // New REST brokers
   CompaniesRestBrokerUnit, DepartmentsRestBrokerUnit,
   // Base REST helpers
-  RestBrokerBaseUnit, BaseRequests, BaseResponses;
+  RestBrokerBaseUnit, BaseRequests, BaseResponses, uniScreenMask;
 
 type
   TMainForm = class(TUniForm)

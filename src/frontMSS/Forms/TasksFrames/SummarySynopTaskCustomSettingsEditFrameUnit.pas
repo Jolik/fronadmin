@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIFrame, uniLabel, uniEdit,
   ParentTaskCustomSettingsEditFrameUnit,
-  TaskSettingsUnit, SummaryTaskCustomSettingsUnit;
+  TaskSettingsUnit, SummaryTaskCustomSettingsUnit, uniGUIBaseClasses;
 
 type
   TSummarySynopTaskCustomSettingsEditFrame = class(TParentTaskCustomSettingsEditFrame)

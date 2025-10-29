@@ -8,7 +8,10 @@ uses
   uniGUIClasses, uniGUIForm,
   uniButton, uniGUIBaseClasses, uniPanel, uniEdit, uniLabel,
   LoggingUnit,
-  EntityUnit, ConstsUnit;
+  EntityUnit, ConstsUnit, uniTimer;
+
+type
+  TOKCallBackFunc = function(const ID:string; FEntity: TFieldSet): Boolean of object;
 
 type
   TParentEditForm = class(TUniForm)
@@ -22,14 +25,17 @@ type
     lName: TUniLabel;
     teName: TUniEdit;
     pnClient: TUniContainerPanel;
+    UniTimer1: TUniTimer;
 
     procedure btnOkClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
+    procedure UniTimer1Timer(Sender: TObject);
 
   private
 
   protected
+    FOnOkCalback: TOKCallBackFunc;
     /// класс который редактируется
     FEntity: TFieldSet;
     FIsEdit: boolean;
@@ -42,10 +48,12 @@ type
     procedure SetEntity(AEntity : TFieldSet); virtual;
 
   public
+    procedure ShowModalEx(okCallBack:TOKCallBackFunc);
     ///  класс который редактирует форма
     property IsEdit: boolean read FIsEdit write FIsEdit;
     property Entity: TFieldSet read FEntity write SetEntity;
     property Id: string read FId write FId;
+    property OnOkCalback: TOKCallBackFunc read FOnOkCalback write FOnOkCalback;
 
   end;
 
@@ -71,9 +79,10 @@ end;
 
 procedure TParentEditForm.btnOkClick(Sender: TObject);
 begin
+  JSInterface.JSCall('setLoading', ['Обработка...']);
   if DoCheck then
     if Apply() then
-      ModalResult := mrOk;
+       UniTimer1.Enabled:= true;
 end;
 
 procedure TParentEditForm.SetEntity(AEntity : TFieldSet);
@@ -87,14 +96,26 @@ begin
   end;
 end;
 
+procedure TParentEditForm.ShowModalEx(okCallBack: TOKCallBackFunc);
+begin
+  OnOkCalback:=okCallBack;
+  inherited ShowModal();
+end;
+
 procedure TParentEditForm.UniFormShow(Sender: TObject);
 begin
   Caption:= ifThen(FIsEdit,rsCaptionEdit, rsCaptionAdd)
 end;
 
+procedure TParentEditForm.UniTimer1Timer(Sender: TObject);
+begin
+  if FOnOkCalback(FId, FEntity) then
+    ModalResult := mrOk;
+  JSInterface.JSCall('setLoading', [False]);
+end;
+
 function TParentEditForm.Apply : boolean;
 begin
-
   Result := true;
 end;
 

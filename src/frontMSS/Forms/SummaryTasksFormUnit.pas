@@ -17,6 +17,7 @@ uses
 
 type
   TSummaryTasksForm = class(TTaskParentForm)
+    procedure btnNewClick(Sender: TObject);
   protected
     ///
 //    procedure Refresh(const AId: String = ''); override;
@@ -37,13 +38,30 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit, ParentFormUnit, TasksRestBrokerUnit;
+  MainModule, uniGUIApplication, SummaryTaskEditFormUnit, SummaryTaskUnit, LoggingUnit, ParentFormUnit, TasksRestBrokerUnit, SummaryTasksHttpRequests;
 
 function SummaryTasksForm(): TSummaryTasksForm;
 begin
   Result := TSummaryTasksForm(UniMainModule.GetFormInstance(TSummaryTasksForm));
 end;
 
+
+procedure TSummaryTasksForm.btnNewClick(Sender: TObject);
+begin
+  PrepareEditForm;
+
+  ///  создаем класс сущности от брокера
+  var req := TSummaryTaskNewBody.Create;
+  ///  устанавлаием сущность в окно редактирования
+  EditForm.Entity := req;
+
+  try
+    EditForm.ShowModalEx(NewCallback);
+  finally
+///  удалять нельзя потому что класс переходит под управление форму редактирования
+///    LEntity.Free;
+  end;
+end;
 
 function TSummaryTasksForm.CreateEditForm: TParentEditForm;
 begin

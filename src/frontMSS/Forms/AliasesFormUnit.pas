@@ -86,7 +86,7 @@ begin
   LEntity := TAlias.Create; // create empty alias entity without legacy broker
   EditForm.Entity := LEntity;
   try
-    EditForm.ShowModal(NewCallback);
+    EditForm.ShowModalEx(NewCallback);
   finally
     // entity lifetime is managed by form after modal; do not free here
   end;
@@ -114,7 +114,7 @@ begin
   end;
 
   try
-    EditForm.ShowModal(UpdateCallback);
+    EditForm.ShowModalEx(UpdateCallback);
   finally
   end;
 end;

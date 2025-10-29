@@ -1,10 +1,12 @@
-﻿inherited SummarySynopTaskCustomSettingsEditFrame: TSummarySynopTaskCustomSettingsEditFrame
+inherited SummarySynopTaskCustomSettingsEditFrame: TSummarySynopTaskCustomSettingsEditFrame
   Width = 365
   Height = 414
+  ExplicitWidth = 365
+  ExplicitHeight = 414
   object lDataPercent: TUniLabel
     Left = 16
     Top = 16
-    Width = 63
+    Width = 62
     Height = 13
     Hint = ''
     Caption = 'DataPercent'
@@ -22,7 +24,7 @@
   object lWindGustFrom: TUniLabel
     Left = 16
     Top = 64
-    Width = 74
+    Width = 78
     Height = 13
     Hint = ''
     Caption = 'WindGustFrom'
@@ -40,7 +42,7 @@
   object lIsAutoStations: TUniLabel
     Left = 16
     Top = 112
-    Width = 74
+    Width = 75
     Height = 13
     Hint = ''
     Caption = 'IsAutoStations'

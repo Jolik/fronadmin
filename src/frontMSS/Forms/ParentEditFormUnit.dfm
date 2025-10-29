@@ -72,9 +72,9 @@ object ParentEditForm: TParentEditForm
     end
     object teCaption: TUniEdit
       AlignWithMargins = True
-      Left = 82
+      Left = 84
       Top = 3
-      Width = 734
+      Width = 732
       Height = 21
       Hint = ''
       Text = ''
@@ -110,9 +110,9 @@ object ParentEditForm: TParentEditForm
     end
     object teName: TUniEdit
       AlignWithMargins = True
-      Left = 82
+      Left = 84
       Top = 3
-      Width = 734
+      Width = 732
       Height = 21
       Hint = ''
       Text = ''
@@ -133,5 +133,18 @@ object ParentEditForm: TParentEditForm
     TabOrder = 3
     ScrollHeight = 414
     ScrollWidth = 819
+  end
+  object UniTimer1: TUniTimer
+    Interval = 1
+    Enabled = False
+    RunOnce = True
+    ClientEvent.Strings = (
+      'function(sender)'
+      '{'
+      ' '
+      '}')
+    OnTimer = UniTimer1Timer
+    Left = 648
+    Top = 342
   end
 end

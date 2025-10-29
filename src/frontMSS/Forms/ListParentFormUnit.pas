@@ -62,7 +62,7 @@ type
   protected
     FID: string;
     procedure Refresh(const AId: String = ''); override;
-    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+    function UpdateCallback(const AID: string; AEntity: TFieldSet):Boolean;
     procedure OnInfoUpdated(AEntity: TEntity);virtual;
   end;
 
@@ -97,7 +97,8 @@ begin
   EditForm.Id := FId;
 
   try
-    EditForm.ShowModal(UpdateCallback);
+    EditForm.OnOkCalback:= UpdateCallback;
+    EditForm.ShowModal();
   finally
 ///  удалять нельзя потому что класс переходит под управление форму редактирования
 ///    LEntity.Free;
@@ -149,7 +150,7 @@ begin
   EditForm.Entity := req.NewBody;
 
   try
-    EditForm.ShowModal(NewCallback);
+    EditForm.ShowModalEx(NewCallback);
   finally
 ///  удалять нельзя потому что класс переходит под управление форму редактирования
 ///    LEntity.Free;
@@ -244,7 +245,7 @@ begin
   end;
 end;
 
-procedure TListParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+function TListParentForm.UpdateCallback(const AID: string; AEntity: TFieldSet):boolean;
 begin
   inherited;
 

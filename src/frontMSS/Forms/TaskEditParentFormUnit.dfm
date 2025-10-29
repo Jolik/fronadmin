@@ -19,20 +19,20 @@ inherited TaskEditParentForm: TTaskEditParentForm
     Width = 1349
     ExplicitWidth = 1349
     inherited teCaption: TUniEdit
-      Left = 102
-      Width = 1244
-      ExplicitLeft = 102
-      ExplicitWidth = 1244
+      Left = 104
+      Width = 1242
+      ExplicitLeft = 104
+      ExplicitWidth = 1242
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
     ExplicitWidth = 1349
     inherited teName: TUniEdit
-      Left = 102
-      Width = 1244
-      ExplicitLeft = 102
-      ExplicitWidth = 1244
+      Left = 104
+      Width = 1242
+      ExplicitLeft = 104
+      ExplicitWidth = 1242
     end
   end
   inherited pnClient: TUniContainerPanel

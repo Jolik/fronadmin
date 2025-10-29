@@ -28,7 +28,6 @@ type
     teLatePeriod: TUniEdit;
     procedure cbModuleChange(Sender: TObject);
   private
-    FCustomSettingsFrame: TParentTaskCustomSettingsEditFrame;
     function Apply: boolean; override;
     function DoCheck: Boolean; override;
     function GetSummaryTask: TSummaryTask;

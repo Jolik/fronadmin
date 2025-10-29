@@ -106,7 +106,7 @@ type
   end;
 
   TTaskNewBody = class(TTask)
-  private
+  protected
     FSources: TNewTaskSourceList;
   public
     constructor Create; override;

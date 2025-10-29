@@ -70,7 +70,8 @@ begin
   PrepareEditForm;
   EditForm.Entity := TRule.Create;
   try
-    EditForm.ShowModal(NewCallback);
+    EditForm.OnOkCalback:= NewCallback;
+    EditForm.ShowModal();
   finally
   end;
 end;
@@ -93,7 +94,8 @@ begin
   end;
 
   try
-    EditForm.ShowModal(UpdateCallback);
+    EditForm.OnOkCalback:=UpdateCallback;
+    EditForm.ShowModal();
   finally
   end;
 end;

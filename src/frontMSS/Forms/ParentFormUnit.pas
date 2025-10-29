@@ -22,8 +22,8 @@ type
     FEditForm: TParentEditForm;
 
   protected
-    procedure NewCallback(ASender: TComponent; AResult: Integer);
-    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+    function NewCallback(const AID: string; AEntity: TFieldSet):boolean;
+    function UpdateCallback(const AID: string; AEntity: TFieldSet):boolean;
 
     ///  вернуть текущий идентификатор редактируемой сущности
     function GetCurrentEntityId: string; virtual;
@@ -53,109 +53,118 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, HttpClientUnit;
+  MainModule, uniGUIApplication, HttpClientUnit, IdHTTP;
 
 { TParentForm }
 
-procedure TParentForm.NewCallback(ASender: TComponent; AResult: Integer);
+function TParentForm.NewCallback(const AID: string;AEntity: TFieldSet):boolean;
 var
-  res: boolean;
   ReqNew: TReqNew;
   JsonRes: TJSONResponse;
 begin
+  Result := False;
   // если модальное окно закрылось через ОК
-  if AResult <> mrOk then
-    Exit;
-
   if Assigned(FRestBroker) then
   begin
-    res := False;
     ReqNew := FRestBroker.CreateReqNew();
-    if not Assigned(EditForm) or not Assigned(EditForm.Entity) then
+    if not Assigned(AEntity) then
       Exit;
 
-    ReqNew.ApplyBody(EditForm.Entity);
+    ReqNew.ApplyBody(AEntity);
     JsonRes := nil;
     try
-      JsonRes := FRestBroker.New(ReqNew);
-      if not Assigned(JsonRes) then
-        Exit;
+      try
+        JsonRes := FRestBroker.New(ReqNew);
 
-      if JsonRes.StatusCode <> 201 then
-      begin
-        MessageDlg(Format('Создание не удалось. HTTP %d'#13#10'%s',
-          [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil);
-        res := False;
-        Exit;
-      end
-      else
-        res := True;
+        if not JsonRes.StatusCode in [201,200] then
+        begin
+          MessageDlg(Format('Создание не удалось. HTTP %d'#13#10'%s',
+            [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil);
+          Exit;
+        end
+        else
+        Result := True;
+      except
+        on E: EIdHTTPProtocolException do
+          MessageDlg(Format('Создание не удалось. HTTP %d'#13#10'%s',
+            [E.ErrorCode, E.ErrorMessage]), TMsgDlgType.mtWarning, [mbOK], nil);
+        on E: Exception do
+          MessageDlg(Format('Создание не удалось. %s',
+            [e.Message]), TMsgDlgType.mtWarning, [mbOK], nil);
+      end;
     finally
       JsonRes.Free;
     end;
   end;
+  if Result then
+    Refresh();
 end;
 
-procedure TParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+function TParentForm.UpdateCallback(const AID: string; AEntity: TFieldSet):boolean;
 var
-  res: boolean;
   ReqUpd: TReqUpdate;
   JsonRes: TJSONResponse;
   LEditedId: string;
 begin
-  // если модальное окно закрылось через ОК
-  if AResult = mrOk then
+  Result := False;
+
+  FEditForm.ScreenMask.Enabled := True;
+  FEditForm.ScreenMask.Message := 'Обновление...';
+  UniSession.Synchronize;
+  try
+  // считываем из окна отредактированные данные и пытаемся обновить на сервере
+  // если всё ок, то в ответ вернётся обновлённая сущность
+  if Assigned(FRestBroker) then
   begin
-    // считываем из окна отредактированные данные и пытаемся обновить на сервере
-    // если всё ок, то в ответ вернётся обновлённая сущность
-    if Assigned(FRestBroker) then
+
+    ReqUpd := FRestBroker.CreateReqUpdate();
+    if Assigned(ReqUpd) then
     begin
-      res := False;
-      ReqUpd := FRestBroker.CreateReqUpdate();
-      if Assigned(ReqUpd) then
-      begin
+      try
+        LEditedId := AID;
+        if not LEditedId.Trim.IsEmpty then
+          ReqUpd.Id := LEditedId;
+
+        if Assigned(ReqUpd.ReqBody) and Assigned(AEntity) then
+          TFieldSet(ReqUpd.ReqBody).Assign(TFieldSet(EditForm.Entity));
+
+        JsonRes := FRestBroker.Update(ReqUpd);
         try
-          LEditedId := GetCurrentEntityId();
-          if not LEditedId.Trim.IsEmpty then
-            ReqUpd.Id := LEditedId;
-
-          if Assigned(ReqUpd.ReqBody) and Assigned(EditForm) and Assigned(EditForm.Entity) and (EditForm.Entity is TFieldSet) then
-            TFieldSet(ReqUpd.ReqBody).Assign(TFieldSet(EditForm.Entity));
-
-          JsonRes := FRestBroker.Update(ReqUpd);
-          try
-            if Assigned(JsonRes) and (JsonRes.StatusCode = 200) then
-              res := True
+          if Assigned(JsonRes) and (JsonRes.StatusCode = 200) then
+            Result := True
+          else
+          begin
+            if Assigned(JsonRes) then
+              MessageDlg(Format('Обновление не удалось. HTTP %d'#13#10'%s',
+                [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil)
             else
-            begin
-              if Assigned(JsonRes) then
-                MessageDlg(Format('Обновление не удалось. HTTP %d'#13#10'%s',
-                  [JsonRes.StatusCode, JsonRes.Response]), TMsgDlgType.mtWarning, [mbOK], nil)
-              else
-                MessageDlg('Обновление не удалось: пустой ответ', TMsgDlgType.mtWarning, [mbOK], nil);
-              res := False;
-            end;
-          finally
-            JsonRes.Free;
+              MessageDlg('Обновление не удалось: пустой ответ', TMsgDlgType.mtWarning, [mbOK], nil);
           end;
-        except
-          on E: Exception do
-            res := False;
+        finally
+          JsonRes.Free;
         end;
-      end
-      else
-        res := False;
-    end;
-
-    // если обновить на сервере не удалось, то сообщаем об этом
-    if not res then
-      Exit
+      except
+        on E: Exception do
+          Result := False;
+      end;
+    end
     else
-    begin
-      // если сущность на сервере обновилась — обновляем таблицу
-      Refresh();
-    end;
+      Result := False;
   end;
+
+  // если обновить на сервере не удалось, то сообщаем об этом
+  if not Result then
+    Exit
+  else
+  begin
+    // если сущность на сервере обновилась — обновляем таблицу
+    Refresh();
+  end;
+  finally
+    FEditForm.ScreenMask.Enabled := false;
+    FEditForm.ScreenMask.Message := '';
+  end;
+
 end;
 
 function TParentForm.GetCurrentEntityId: string;
@@ -191,6 +200,7 @@ begin
   FEditForm := CreateEditForm();
   FEditForm.IsEdit := isEditMode;
 end;
+
 
 function ParentForm: TParentForm;
 begin

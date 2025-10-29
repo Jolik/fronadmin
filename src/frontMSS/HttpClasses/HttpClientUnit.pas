@@ -643,8 +643,6 @@ var
 begin
   if not Assigned(Req) then
     raise EArgumentNilException.Create('Request must not be nil');
-  if not Assigned(Res) then
-    raise EArgumentNilException.Create('Response must not be nil');
 
   Url := BuildURL(Req);
   ApplyHeaders(Req);

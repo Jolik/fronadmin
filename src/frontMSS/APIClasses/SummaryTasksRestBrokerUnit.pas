@@ -14,22 +14,6 @@ uses
 
 type
 
-  TSummaryTaskNewRequest = class(TTaskReqNew)
-  public
-    class function BodyClassType: TFieldSetClass; override;
-  end;
-
-  // Response wrappers for Summary tasks using TSummaryTask/TSummaryTaskList
-  TSummaryTaskListResponse = class(TListResponse)
-  public
-    constructor Create; reintroduce;
-  end;
-
-  TSummaryTaskInfoResponse = class(TEntityResponse)
-  public
-    constructor Create; reintroduce;
-  end;
-
   // REST broker for Summary tasks; reuses Task requests with summary base path
   TSummaryTasksRestBroker = class(TTasksRestBroker)
   public
@@ -43,21 +27,7 @@ type
 
 implementation
 
-uses APIConst;
-
-{ TSummaryTaskListResponse }
-
-constructor TSummaryTaskListResponse.Create;
-begin
-  inherited Create(TSummaryTaskList, 'response', 'tasks');
-end;
-
-{ TSummaryTaskInfoResponse }
-
-constructor TSummaryTaskInfoResponse.Create;
-begin
-  inherited Create(TSummaryTask, 'response', 'task');
-end;
+uses SummaryTasksHttpRequests, APIConst;
 
 { TSummaryTasksRestBroker }
 
@@ -97,19 +67,5 @@ begin
   Result.BasePath := BasePath;
 end;
 
-{ TSummaryTaskNewRequest }
-
-class function TSummaryTaskNewRequest.BodyClassType: TFieldSetClass;
-begin
-
-end;
-
-{ TSummaryTaskNewBody }
-
-//constructor TSummaryTaskNewBody.Create;
-//begin
-//  inherited;
-//
-//end;
 
 end.
