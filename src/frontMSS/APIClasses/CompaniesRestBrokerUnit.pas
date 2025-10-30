@@ -4,10 +4,10 @@ interface
 
 uses
   RestBrokerBaseUnit, BaseRequests, BaseResponses,
-  CompanyHttpRequests, HttpClientUnit;
+  CompanyHttpRequests, HttpClientUnit, RestEntityBrokerUnit;
 
 type
-  TCompaniesRestBroker = class(TRestBrokerBase)
+  TCompaniesRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
@@ -16,7 +16,7 @@ type
     function Info(AReq: TCompanyReqInfo): TCompanyInfoResponse; overload;
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TCompanyReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
     function Update(AReq: TCompanyReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TCompanyReqRemove): TJSONResponse; overload;
@@ -49,7 +49,7 @@ begin
   Result := List(AReq as TReqList) as TCompanyListResponse;
 end;
 
-function TCompaniesRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TCompaniesRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
   Result := inherited New(AReq, AResp);
 end;

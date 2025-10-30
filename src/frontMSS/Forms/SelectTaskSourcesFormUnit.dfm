@@ -1,4 +1,4 @@
-﻿object SelectTaskSourcesForm: TSelectTaskSourcesForm
+object SelectTaskSourcesForm: TSelectTaskSourcesForm
   Left = 0
   Top = 0
   ClientHeight = 520
@@ -10,26 +10,6 @@
   OnCreate = UniFormCreate
   OnDestroy = UniFormDestroy
   TextHeight = 15
-  object lbTaskSources: TUniListBox
-    Left = 5
-    Top = 5
-    Width = 250
-    Height = 460
-    Hint = ''
-    TabOrder = 0
-    MultiSelect = True
-  end
-  object lbAllSources: TUniListBox
-    Left = 295
-    Top = 5
-    Width = 250
-    Height = 460
-    Hint = ''
-    TabOrder = 1
-    MultiSelect = True
-    OnChange = lbAllSourcesChange
-    OnClick = lbAllSourcesClick
-  end
   object pcEntityInfo: TUniPageControl
     AlignWithMargins = True
     Left = 552
@@ -44,18 +24,14 @@
     ActivePage = tsSourceInfo
     TabBarVisible = False
     Align = alRight
-    TabOrder = 2
-    ExplicitLeft = 699
-    ExplicitTop = 0
-    ExplicitHeight = 572
+    TabOrder = 0
+    ExplicitLeft = 550
+    ExplicitHeight = 452
     object tsSourceInfo: TUniTabSheet
       Hint = ''
       TabVisible = False
       Caption = 'Task.Info'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 256
-      ExplicitHeight = 544
+      ExplicitHeight = 424
       object cpSourceInfo: TUniContainerPanel
         Left = 0
         Top = 0
@@ -69,7 +45,7 @@
         TabOrder = 0
         Layout = 'table'
         LayoutAttribs.Columns = 2
-        ExplicitHeight = 544
+        ExplicitHeight = 424
         object cpSourceInfoID: TUniContainerPanel
           AlignWithMargins = True
           Left = 10
@@ -451,9 +427,9 @@
     Hint = ''
     ParentColor = False
     Align = alBottom
-    TabOrder = 3
-    ExplicitTop = 572
-    ExplicitWidth = 1077
+    TabOrder = 1
+    ExplicitTop = 462
+    ExplicitWidth = 933
     object btnOk: TUniButton
       AlignWithMargins = True
       Left = 776
@@ -467,7 +443,7 @@
       Align = alRight
       TabOrder = 1
       OnClick = btnOkClick
-      ExplicitLeft = 918
+      ExplicitLeft = 774
     end
     object btnCancel: TUniButton
       AlignWithMargins = True
@@ -482,33 +458,60 @@
       Align = alRight
       TabOrder = 2
       OnClick = btnCancelClick
-      ExplicitLeft = 999
+      ExplicitLeft = 855
     end
   end
-  object btnAddSource: TUniButton
-    Left = 260
-    Top = 5
-    Width = 30
-    Height = 30
+  object gridSources: TUniDBGrid
+    Left = 0
+    Top = 0
+    Width = 547
+    Height = 470
     Hint = ''
-    Caption = ''
-    TabOrder = 4
-    ImageIndex = 0
-    IconAlign = iaCenter
-    IconCls = 'arrow_left'
-    OnClick = btnAddSourceClick
+    LoadMask.Message = 'Loading data...'
+    Align = alClient
+    TabOrder = 2
+    Columns = <
+      item
+        FieldName = 'enabled'
+        Title.Caption = #1042#1082#1083
+        Width = 64
+      end
+      item
+        FieldName = 'sid'
+        Title.Caption = ' '#1048#1076#1077#1085#1090#1080#1092#1080#1082#1072#1090#1086#1088
+        Width = 145
+        ReadOnly = True
+      end
+      item
+        FieldName = 'name'
+        Title.Caption = ' '#1053#1072#1079#1074#1072#1085#1080#1077
+        Width = 237
+        ReadOnly = True
+      end>
   end
-  object btnRemoveSource: TUniButton
-    Left = 260
-    Top = 40
-    Width = 30
-    Height = 30
-    Hint = ''
-    Caption = ''
-    TabOrder = 5
-    ImageIndex = 1
-    IconAlign = iaCenter
-    IconCls = 'arrow_right'
-    OnClick = btnRemoveSourceClick
+  object dsSourcesDS: TDataSource
+    DataSet = SourcesMem
+    Left = 230
+    Top = 300
+  end
+  object SourcesMem: TFDMemTable
+    FetchOptions.AssignedValues = [evMode]
+    FetchOptions.Mode = fmAll
+    ResourceOptions.AssignedValues = [rvSilentMode]
+    ResourceOptions.SilentMode = True
+    UpdateOptions.AssignedValues = [uvCheckRequired, uvAutoCommitUpdates]
+    UpdateOptions.CheckRequired = False
+    UpdateOptions.AutoCommitUpdates = True
+    Left = 300
+    Top = 302
+    object SourcesMemenabled: TBooleanField
+      FieldName = 'enabled'
+    end
+    object SourcesMemsid: TStringField
+      FieldName = 'sid'
+    end
+    object SourcesMemname: TStringField
+      FieldName = 'name'
+    end
   end
 end

@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,  EntityUnit,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
-  uniGUIBaseClasses, uniPanel, ParentLinkSettingEditFrameUnit;
+  uniGUIBaseClasses, uniPanel, ParentLinkSettingEditFrameUnit, uniTimer;
 
 type
   TLinkEditForm = class(TParentEditForm)

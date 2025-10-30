@@ -3,7 +3,7 @@
 interface
 
 uses
-  RestBrokerBaseUnit,
+  RestEntityBrokerUnit,
   BaseRequests,
   BaseResponses,
   HttpClientUnit,
@@ -11,7 +11,7 @@ uses
   TaskUnit;
 
  type
-  TTasksRestBroker = class(TRestBrokerBase)
+  TTasksRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     function List(AReq: TTaskReqList): TTaskListResponse; overload;
@@ -20,7 +20,7 @@ uses
     function Info(AReq: TTaskReqInfo): TTaskInfoResponse; overload;
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TTaskReqNew): TTaskNewResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
     function Update(AReq: TTaskReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TTaskReqRemove): TJSONResponse; overload;
@@ -48,7 +48,7 @@ begin
   Result := List(AReq as TReqList) as TTaskListResponse;
 end;
 
-function TTasksRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TTasksRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
   Result := TTaskNewResponse.Create;
   Result := inherited New(AReq, Result);

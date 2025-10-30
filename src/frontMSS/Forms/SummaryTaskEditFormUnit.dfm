@@ -5,30 +5,31 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
   inherited pnBottom: TUniContainerPanel
     Top = 639
     ExplicitTop = 631
-    ExplicitWidth = 1347
-    inherited btnOk: TUniButton
-      ExplicitLeft = 1188
-    end
-    inherited btnCancel: TUniButton
-      ExplicitLeft = 1269
-    end
   end
   inherited pnCaption: TUniContainerPanel
-    ExplicitWidth = 1347
     inherited teCaption: TUniEdit
-      ExplicitWidth = 1236
+      Left = 112
+      Width = 1234
+      ExplicitLeft = 112
+      ExplicitWidth = 1232
     end
   end
   inherited pnName: TUniContainerPanel
     ExplicitWidth = 1347
     inherited teName: TUniEdit
-      ExplicitWidth = 1236
+      Left = 112
+      Width = 1234
+      ExplicitLeft = 112
+      ExplicitTop = 5
+      ExplicitWidth = 1232
+      ExplicitHeight = 20
     end
   end
   inherited pnClient: TUniContainerPanel
-    Height = 585
-    ExplicitHeight = 577
-    ScrollHeight = 585
+    Height = 582
+    ExplicitTop = 57
+    ExplicitHeight = 574
+    ScrollHeight = 582
     ScrollWidth = 497
     inherited teTid: TUniEdit
       Left = 171
@@ -53,6 +54,12 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Width = 309
       ExplicitLeft = 171
       ExplicitWidth = 309
+    end
+    inherited cbEnabled: TUniCheckBox
+      Left = 171
+      Top = 210
+      ExplicitLeft = 171
+      ExplicitTop = 210
     end
     inherited cbModule: TUniComboBox
       Left = 171
@@ -364,14 +371,14 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
     end
   end
   inherited pnCustomSettings: TUniContainerPanel
-    Height = 585
-    ExplicitLeft = 982
-    ExplicitHeight = 577
+    Height = 582
+    ExplicitTop = 57
+    ExplicitHeight = 574
   end
   inherited pnSources: TUniContainerPanel
-    Height = 585
-    ExplicitWidth = 485
-    ExplicitHeight = 577
+    Height = 582
+    ExplicitTop = 57
+    ExplicitHeight = 574
     inherited gridSources: TUniDBGrid
       Height = 548
       Anchors = [akLeft, akTop, akRight, akBottom]

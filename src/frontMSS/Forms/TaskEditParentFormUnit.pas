@@ -70,13 +70,13 @@ type
 //    procedure UpdateSourceItemsText;
     procedure AssignTaskSourcesFrom(const ASourceList: TTaskSourcesList);
     procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
-
+    procedure SyncListFromMem;
 
     function CreateTaskSourceEditForm(): TSelectTaskSourcesForm; virtual;
     procedure SetEntity(AEntity : TFieldSet); override;
     procedure EnsureSourcesGrid;
     procedure FillMemFromList;
-    procedure SyncListFromMem;
+//    procedure GetTaskSources;
 
   public
     procedure SetTaskTypesList(list : TTaskTypesList);
@@ -93,7 +93,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, ConstsUnit, Common, StrUtils;
+  MainModule, uniGUIApplication, ConstsUnit, Common, StrUtils, TaskHttpRequests;
 
 function ParentTaskEditForm(taskSourceBroker: TTaskSourcesRestBroker): TTaskEditParentForm;
 begin
@@ -116,9 +116,6 @@ begin
   Task.Module := cbModule.Text;
   Task.Def := meDef.Lines.Text;
   Task.Enabled := cbEnabled.Checked;
-
-  // Sync Enabled flags from grid back to list
-  SyncListFromMem;
 
   if Assigned(FCustomSettingsFrame) then
     Result := FCustomSettingsFrame.Apply() and Result;
@@ -170,7 +167,7 @@ end;
 function TTaskEditParentForm.ModuleIndex(module: string): integer;
 begin
   Result:=-1;
-  for var I := 0 to cbModule.Items.Count do
+  for var I := 0 to cbModule.Items.Count-1 do
   begin
     if cbModule.Items.ValueFromIndex[i] = module then
     begin
@@ -379,18 +376,26 @@ procedure TTaskEditParentForm.SyncListFromMem;
 begin
   if not Assigned(FTaskSourcesList) or not Assigned(SourcesMem) then Exit;
   SourcesMem.DisableControls;
+  FTaskSourcesList.Clear;
   try
     SourcesMem.First;
     while not SourcesMem.Eof do
     begin
       var Sid := SourcesMem.FieldByName('sid').AsString;
       for var I := 0 to FTaskSourcesList.Count - 1 do
-        if (FTaskSourcesList.Items[I] is TTaskSource) and (TTaskSource(FTaskSourcesList.Items[I]).Sid = Sid) then
-        begin
-          TTaskSource(FTaskSourcesList.Items[I]).Enabled := SourcesMem.FieldByName('enabled').AsBoolean;
-          Break;
-        end;
-      SourcesMem.Next;
+      begin
+          var NewSrc := TTaskSource.Create;
+          try
+            NewSrc.Sid := SourcesMem.FieldByName('sid').AsString;
+            NewSrc.Name := SourcesMem.FieldByName('name').AsString;
+            NewSrc.Enabled := SourcesMem.FieldByName('enabled').AsBoolean;
+            FTaskSourcesList.Add(NewSrc);
+          except
+            NewSrc.Free;
+            raise;
+          end;
+        SourcesMem.Next;
+      end;
     end;
   finally
     SourcesMem.EnableControls;

@@ -71,7 +71,7 @@ type
 implementation
 uses
   LoggingUnit,
-  ProfilesBrokerUnit,
+  ProfilesRestBrokerUnit,
   uniGUIDialogs;
 
 {$R *.dfm}

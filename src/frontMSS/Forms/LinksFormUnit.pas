@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
-  uniToolBar, uniGUIBaseClasses, RestBrokerBaseUnit,
+  uniToolBar, uniGUIBaseClasses, RestBrokerBaseUnit,  RestEntityBrokerUnit,
   ParentEditFormUnit, uniPanel, uniLabel,
   LinksRestBrokerUnit;
 
@@ -17,7 +17,7 @@ type
   TLinksForm = class(TListParentForm)
   protected
       ///  функция для создания нужного брокера потомком
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
 
      ///  функция обновления компоннет на форме
     procedure Refresh(const AId: String = ''); override;
@@ -51,7 +51,7 @@ begin
   Result := LinkEditForm();
 end;
 
-function TLinksForm.CreateRestBroker: TRestBrokerBase;
+function TLinksForm.CreateRestBroker: TRestEntityBroker;
 begin
   Result := TLinksRestBroker.Create(UniMainModule.XTicket);
 end;

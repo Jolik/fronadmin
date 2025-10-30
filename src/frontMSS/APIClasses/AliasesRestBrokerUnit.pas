@@ -1,4 +1,4 @@
-unit AliasesRestBrokerUnit;
+﻿unit AliasesRestBrokerUnit;
 
 interface
 
@@ -9,10 +9,11 @@ uses
   HttpClientUnit,
   AliasHttpRequests,
   AliasUnit,
+  RestEntityBrokerUnit,
   APIConst;
 
 type
-  TAliasesRestBroker = class(TRestBrokerBase)
+  TAliasesRestBroker = class(TRestEntityBroker)
   public
     // Базовый путь API (например, '/router/api/v2')
     BasePath: string;
@@ -26,7 +27,7 @@ type
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
 
     function New(AReq: TAliasReqNew): TAliasNewResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
 
     function Update(AReq: TAliasReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
@@ -64,16 +65,16 @@ begin
   Result := List(AReq as TReqList) as TAliasListResponse;
 end;
 
-function TAliasesRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TAliasesRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
-  Result := TAliasNewResponse.Create;
+  Result := TEntityResponse.Create;
   Result := inherited New(AReq, Result);
 end;
 
 function TAliasesRestBroker.New(AReq: TAliasReqNew): TAliasNewResponse;
 begin
   Result := TAliasNewResponse.Create;
-  New(AReq, Result);
+  ExcuteRaw(AReq, Result);
 end;
 
 function TAliasesRestBroker.Remove(AReq: TReqRemove): TJSONResponse;

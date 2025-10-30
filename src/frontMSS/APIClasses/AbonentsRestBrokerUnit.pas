@@ -8,12 +8,13 @@ uses
   AbonentHttpRequests,
   BaseResponses,
   BaseRequests,
+  RestEntityBrokerUnit,
   RestBrokerBaseUnit,
   EntityUnit,
   AbonentUnit;
 
 type
-  TAbonentsRestBroker = class(TRestBrokerBase)
+  TAbonentsRestBroker = class(TRestEntityBroker)
   private
     procedure ApplyTicketLocal(const Req: THttpRequest);
   public

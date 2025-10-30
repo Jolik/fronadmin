@@ -3,11 +3,11 @@ unit SourceTypesRestBrokerUnit;
 interface
 
 uses
-  RestBrokerBaseUnit, BaseRequests, BaseResponses,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses,  RestEntityBrokerUnit,
   SourceTypesHttpRequests, HttpClientUnit;
 
 type
-  TSourceTypesRestBroker = class(TRestBrokerBase)
+  TSourceTypesRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;

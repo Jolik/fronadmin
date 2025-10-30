@@ -10,8 +10,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit,
-  ParentEditFormUnit, TasksParentFormUnit, RestBrokerBaseUnit, TasksRestBrokerUnit,
+  
+  ParentEditFormUnit, TasksParentFormUnit, RestEntityBrokerUnit, TasksRestBrokerUnit,
   TaskSourcesRestBrokerUnit, uniPanel, uniLabel, APIConst;
 
 type
@@ -24,7 +24,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     ///  функция для создания нужного брокера потоком
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
     ///  функиця для создания нужной формы редактирвоания
     function CreateEditForm(): TParentEditForm; override;
 
@@ -55,7 +55,7 @@ begin
   Result := StripTaskEditForm();
 end;
 
-function TStripTasksForm.CreateRestBroker: TRestBrokerBase;
+function TStripTasksForm.CreateRestBroker: TRestEntityBroker;
 begin
    result:= inherited;
   (result as TTasksRestBroker).BasePath:=  APIConst.constURLStripBasePath;

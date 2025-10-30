@@ -22,8 +22,8 @@ inherited TaskParentForm: TTaskParentForm
         Width = 100
       end
       item
-        FieldName = 'Caption'
-        Title.Caption = #1055#1086#1076#1087#1080#1089#1100
+        FieldName = 'def'
+        Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
         Width = 100
       end
       item
@@ -47,19 +47,23 @@ inherited TaskParentForm: TTaskParentForm
     Width = 0
     ExplicitLeft = 815
     ExplicitWidth = 0
+    ExplicitHeight = 530
   end
   inherited pcEntityInfo: TUniPageControl
     Left = 817
     Width = 400
     ExplicitLeft = 815
     ExplicitWidth = 400
+    ExplicitHeight = 530
     inherited tsTaskInfo: TUniTabSheet
       ExplicitLeft = 4
       ExplicitTop = 24
       ExplicitWidth = 392
+      ExplicitHeight = 502
       inherited cpTaskInfo: TUniContainerPanel
         Width = 392
         ExplicitWidth = 392
+        ExplicitHeight = 502
         inherited cpTaskInfoID: TUniContainerPanel
           Width = 377
           ExplicitWidth = 377

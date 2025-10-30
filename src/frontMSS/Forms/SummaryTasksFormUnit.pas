@@ -10,9 +10,9 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, EntityUnit,
+   EntityUnit,
   ParentEditFormUnit,
-  TasksParentFormUnit, RestBrokerBaseUnit, SummaryTasksRestBrokerUnit,
+  TasksParentFormUnit, RestEntityBrokerUnit, RestBrokerBaseUnit, SummaryTasksRestBrokerUnit,
   TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst,
   uniMultiItem, uniListBox, SummaryTaskUnit;
 
@@ -29,7 +29,7 @@ type
 //    procedure Refresh(const AId: String = ''); override;
     function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
     function CreateEditForm(): TParentEditForm; override;
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
 
 //    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
 
@@ -76,7 +76,7 @@ begin
   Result:= res;
 end;
 
-function TSummaryTasksForm.CreateRestBroker: TRestBrokerBase;
+function TSummaryTasksForm.CreateRestBroker: TRestEntityBroker;
 begin
   result:= TSummaryTasksRestBroker.Create(UniMainModule.XTicket);
 end;

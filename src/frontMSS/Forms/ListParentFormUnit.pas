@@ -12,8 +12,7 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  EntityUnit, EntityBrokerUnit,
-  ParentFormUnit, ParentEditFormUnit, uniLabel, StrUtils,
+  EntityUnit,   ParentFormUnit, ParentEditFormUnit, uniLabel, StrUtils,
   RestBrokerBaseUnit, BaseRequests, BaseResponses, HttpClientUnit;
 
 type
@@ -99,8 +98,7 @@ begin
   EditForm.Id := FId;
 
   try
-    EditForm.OnOkCalback:= UpdateCallback;
-    EditForm.ShowModal();
+    EditForm.ShowModalEx(UpdateCallback);
   finally
 ///  удалять нельзя потому что класс переходит под управление форму редактирования
 ///    LEntity.Free;
@@ -126,7 +124,7 @@ procedure TListParentForm.OnAddListItem(item: TEntity);
 begin
   FDMemTableEntity.FieldByName('Id').AsString := item.Id;
   FDMemTableEntity.FieldByName('Name').AsString := item.Name;
-  FDMemTableEntity.FieldByName('Caption').AsString := item.Caption;
+  FDMemTableEntity.FieldByName('def').AsString := item.Def;
   FDMemTableEntity.FieldByName('Created').AsDateTime := item.Created;
   FDMemTableEntity.FieldByName('Updated').AsDateTime := item.Updated;
 end;

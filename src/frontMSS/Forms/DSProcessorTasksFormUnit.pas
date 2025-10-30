@@ -10,14 +10,14 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, EntityUnit,
-  ParentEditFormUnit, TasksParentFormUnit,  RestBrokerBaseUnit, TasksRestBrokerUnit,
+   EntityUnit,
+  ParentEditFormUnit, TasksParentFormUnit,  RestEntityBrokerUnit, TasksRestBrokerUnit,
   TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
   TDSProcessorTasksForm = class(TTaskParentForm)
   protected
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
     function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
     function CreateEditForm(): TParentEditForm; override;
   public
@@ -45,7 +45,7 @@ begin
   Result := DSProcessorTaskEditForm();
 end;
 
-function TDSProcessorTasksForm.CreateRestBroker: TRestBrokerBase;
+function TDSProcessorTasksForm.CreateRestBroker: TRestEntityBroker;
 begin
    result:= inherited;
   (result as TTasksRestBroker).BasePath:=  APIConst.constURLDSProcessBasePath

@@ -11,6 +11,7 @@ uses
   BaseRequests,
   BaseResponses,
   TaskUnit,
+  TaskSourceUnit,
   TaskTypesUnit,
   FuncUnit;
 
@@ -53,12 +54,12 @@ type
     property Tid: string read FTid write FTid;
   end;
 
-  TTaskNewResponse = class(TFieldSetResponse)
+  TTaskNewResponse = class(TEntityResponse)
   private
-    function GetTaskNewRes: TTaskNewResult;
+    function GetTaskID: string;
   public
-    constructor Create; virtual;
-    property TaskNewRes: TTaskNewResult read GetTaskNewRes;
+    constructor Create;
+    property ID: string read GetTaskID;
   end;
 
   TTaskReqList = class(TReqList)
@@ -104,44 +105,27 @@ type
     procedure SetTaskId(const Value: string);
   end;
 
-  TNewTaskSource = class(TFieldSet)
-  private
-    FSid: string;
-    FName: string;
-    FEnabled: Boolean;
-  public
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    property Sid: string read FSid write FSid;
-    property Name: string read FName write FName;
-    property Enabled: Boolean read FEnabled write FEnabled;
-  end;
-
-  TNewTaskSourceList = class(TFieldSetList)
-  protected
-    class function ItemClassType: TFieldSetClass; override;
-  end;
-
+ 
   TTaskNewBody = class(TTask)
   protected
-    FSources: TNewTaskSourceList;
+    FSources: TTaskSourceList;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    property Sources: TNewTaskSourceList read FSources;
+    property Sources: TTaskSourceList read FSources;
   end;
 
   TTaskUpdateBody = class(TTask)
   private
-    FSources: TNewTaskSourceList;
+    FSources: TTaskSourceList;
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
-    property Sources: TNewTaskSourceList read FSources;
+    property Sources: TTaskSourceList read FSources;
   end;
 
 implementation
@@ -174,15 +158,12 @@ end;
 
 constructor TTaskNewResponse.Create;
 begin
-  inherited Create(TTaskNewResult, 'response', '');
+  inherited Create(TEntity, 'response', 'task');
 end;
 
-function TTaskNewResponse.GetTaskNewRes: TTaskNewResult;
+function TTaskNewResponse.GetTaskID: string;
 begin
-  if FieldSet is TTaskNewResult then
-    Result := TTaskNewResult(FieldSet)
-  else
-    Result := nil;
+ Result :=Entity.Id
 end;
 
 procedure TTaskNewResult.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
@@ -297,36 +278,13 @@ begin
   Id := Value;
 end;
 
-{ TNewTaskSource }
-
-procedure TNewTaskSource.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
-begin
-  inherited Parse(src, APropertyNames);
-  FSid := GetValueStrDef(src, 'sid', '');
-  FName := GetValueStrDef(src, 'name', '');
-  FEnabled := GetValueBool(src, 'enabled');
-end;
-
-procedure TNewTaskSource.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
-begin
-  inherited Serialize(dst, APropertyNames);
-  dst.AddPair('sid', FSid);
-  if not FName.IsEmpty then
-    dst.AddPair('name', FName);
-  dst.AddPair('enabled', FEnabled);
-end;
-
-class function TNewTaskSourceList.ItemClassType: TFieldSetClass;
-begin
-  Result := TNewTaskSource;
-end;
 
 { TTaskNewBody }
 
 constructor TTaskNewBody.Create;
 begin
   inherited Create;
-  FSources := TNewTaskSourceList.Create(True);
+  FSources := TTaskSourceList.Create(True);
 end;
 
 destructor TTaskNewBody.Destroy;
@@ -377,7 +335,7 @@ end;
 constructor TTaskUpdateBody.Create;
 begin
   inherited Create;
-  FSources := TNewTaskSourceList.Create(True);
+  FSources := TTaskSourceList.Create(True);
 end;
 
 destructor TTaskUpdateBody.Destroy;

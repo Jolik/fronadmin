@@ -10,16 +10,16 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniPageControl, uniSplitter, uniBasicGrid,
   uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit,
+  
   ParentEditFormUnit, uniLabel,
-  RestBrokerBaseUnit, ChannelsRestBrokerUnit;
+  RestEntityBrokerUnit, ChannelsRestBrokerUnit;
 
 type
   TChannelsForm = class(TListParentForm)
   protected
     procedure Refresh(const AId: String = ''); override;
     function CreateEditForm(): TParentEditForm; override;
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
   end;
 
 function ChannelsForm: TChannelsForm;
@@ -48,7 +48,7 @@ begin
   inherited Refresh(AId);
 end;
 
-function TChannelsForm.CreateRestBroker: TRestBrokerBase;
+function TChannelsForm.CreateRestBroker: TRestEntityBroker;
 begin
   Result := TChannelsRestBroker.Create(UniMainModule.XTicket);
 end;

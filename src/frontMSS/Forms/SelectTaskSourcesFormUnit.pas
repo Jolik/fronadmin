@@ -7,12 +7,13 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniMultiItem, uniListBox,
   uniPanel, uniLabel, uniPageControl, uniButton,
-  TaskSourceUnit, SourceUnit, TaskSourcesRestBrokerUnit, TaskSourceHttpRequests, uniImageList, uniBitBtn;
+  TaskSourceUnit, SourceUnit, TaskSourcesRestBrokerUnit, TaskSourceHttpRequests, uniImageList, uniBitBtn,
+  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
+  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uniBasicGrid, uniDBGrid;
 
 type
   TSelectTaskSourcesForm = class(TUniForm)
-    lbTaskSources: TUniListBox;
-    lbAllSources: TUniListBox;
     pcEntityInfo: TUniPageControl;
     tsSourceInfo: TUniTabSheet;
     cpSourceInfo: TUniContainerPanel;
@@ -40,18 +41,20 @@ type
     pnBottom: TUniContainerPanel;
     btnOk: TUniButton;
     btnCancel: TUniButton;
-    btnAddSource: TUniButton;
-    btnRemoveSource: TUniButton;
-    procedure btnAddSourceClick(Sender: TObject);
+    dsSourcesDS: TDataSource;
+    SourcesMem: TFDMemTable;
+    SourcesMemenabled: TBooleanField;
+    SourcesMemsid: TStringField;
+    SourcesMemname: TStringField;
+    gridSources: TUniDBGrid;
     procedure btnCancelClick(Sender: TObject);
     procedure btnOkClick(Sender: TObject);
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
     procedure lbAllSourcesClick(Sender: TObject);
     procedure lbAllSourcesChange(Sender: TObject);
-    procedure btnRemoveSourceClick(Sender: TObject);
   private
-    AllSourcesBroker: TTaskSourcesRestBroker;
+//    AllSourcesBroker: TSourcesRestBroker;
     AllSourceList: TSourceList;
     FTaskSourceList: TTaskSourceList;
     FCurrentSourceSid: string;
@@ -85,7 +88,7 @@ begin
   if taskSourceBroker=nil then
     taskSourceBroker:= Result.CreateTaskSourcesBroker();
 
-  Result.AllSourcesBroker:= taskSourceBroker;
+//  Result.AllSourcesBroker:= taskSourceBroker;
 end;
 
 procedure TSelectTaskSourcesForm.AddSourceToTaskList(ASource: TSource);
@@ -100,8 +103,9 @@ begin
 
   NewSource := TTaskSource.Create;
   try
-    NewSource.Assign(ASource);
-    NewSource.Enabled := ASource.Enabled;
+    NewSource.Enabled := true;
+    NewSource.Sid:=ASource.Sid;
+    NewSource.Name:=ASource.Name;
     FTaskSourceList.Add(NewSource);
   except
     NewSource.Free;
@@ -137,34 +141,6 @@ begin
   Result := TTaskSourcesRestBroker.Create(UniMainModule.XTicket);
 end;
 
-procedure TSelectTaskSourcesForm.btnAddSourceClick(Sender: TObject);
-var
-  Added: Boolean;
-begin
-  Added := False;
-
-  if Assigned(lbAllSources) then
-  begin
-//    for var I := 0 to lbAllSources.Items.Count - 1 do
-//      if lbAllSources.Selected[I] then
-//        if lbAllSources.Items.Objects[I] is TSource then
-//        begin
-//          AddSourceToTaskList(TSource(lbAllSources.Items.Objects[I]));
-//          Added := True;
-//        end;
-
-//    if not Added then
-      if (lbAllSources.ItemIndex >= 0) and (lbAllSources.ItemIndex < lbAllSources.Items.Count) then
-        if lbAllSources.Items.Objects[lbAllSources.ItemIndex] is TSource then
-        begin
-          AddSourceToTaskList(TSource(lbAllSources.Items.Objects[lbAllSources.ItemIndex]));
-          Added := True;
-        end;
-  end;
-
-  if Added then
-    PopulateTaskSources;
-end;
 
 procedure TSelectTaskSourcesForm.btnCancelClick(Sender: TObject);
 begin
@@ -176,83 +152,55 @@ begin
   ModalResult := mrOk;
 end;
 
-procedure TSelectTaskSourcesForm.btnRemoveSourceClick(Sender: TObject);
-var
-  Removed: boolean;
-begin
-  Removed := False;
-
-  if FTaskSourceList.IsEmpty or (lbTaskSources.Count = 0) then
-    Exit;
-
-  if not ((lbTaskSources.ItemIndex > -1) and (lbTaskSources.ItemIndex < lbTaskSources.Count)) then
-    Exit;
-
-  for var cnt := 0 to FTaskSourceList.Count - 1 do
-  begin
-    if not (FTaskSourceList.Items[cnt] is TTaskSource) then
-      Continue;
-
-    if (FTaskSourceList.Items[cnt] as TTaskSource).Name = (lbTaskSources.Items.Objects[lbTaskSources.ItemIndex] as TTaskSource).Name then
-    begin
-      FTaskSourceList.Delete(cnt);
-      Removed := True;
-      Break;
-    end;
-  end;
-
-  if Removed then
-    PopulateTaskSources;
-end;
 
 procedure TSelectTaskSourcesForm.LoadAllSources;
 var
   PageCount: Integer;
-  EntityList: TEntityList;
+  tasksList: TTaskSourceList;
 begin
   ClearSourceInfo;
 
-  if Assigned(lbAllSources) then
-    lbAllSources.Items.Clear;
-
-  if not Assigned(AllSourcesBroker) then
-    Exit;
-
-  PageCount := 0;
-  EntityList := nil;
-  try
-    try
-      var Req := AllSourcesBroker.CreateReqList();
-      var Resp := AllSourcesBroker.List(Req);
-      try
-        if Assigned(Resp) then
-          EntityList := Resp.EntityList;
-      finally
-        Resp.Free;
-      end;
-    except
-      on E: Exception do
-      begin
-        Log('TSelectTaskSourcesForm.LoadAllSources list error: ' + E.Message, lrtError);
-        EntityList := nil;
-      end;
-    end;
-
-    FreeAndNil(AllSourceList);
-
-    if not Assigned(EntityList) then
-      Exit;
-
-    if EntityList is TSourceList then
-    begin
-      AllSourceList := TSourceList(EntityList);
-      EntityList := nil;
-    end;
-  finally
-    EntityList.Free;
-  end;
-
-  PopulateAllSources;
+//  if Assigned(lbAllSources) then
+//    lbAllSources.Items.Clear;
+//
+//  if not Assigned(AllSourcesBroker) then
+//    Exit;
+//
+//  PageCount := 0;
+//  tasksList := nil;
+//  try
+//    try
+//      var Req := AllSourcesBroker.CreateReqList();
+//      var Resp := AllSourcesBroker.List(Req);
+//      try
+//        if Assigned(Resp) then
+//          tasksList := (Resp as TTaskSourceListResponse).TaskSourceList;
+//      finally
+//        Resp.Free;
+//      end;
+//    except
+//      on E: Exception do
+//      begin
+//        Log('TSelectTaskSourcesForm.LoadAllSources list error: ' + E.Message, lrtError);
+//        tasksList := nil;
+//      end;
+//    end;
+//
+//    FreeAndNil(AllSourceList);
+//
+//    if not Assigned(tasksList) then
+//      Exit;
+//
+//    if tasksList is TSourceList then
+//    begin
+//      AllSourceList := TSourceList(tasksList);
+//      tasksList := nil;
+//    end;
+//  finally
+//    tasksList.Free;
+//  end;
+//
+//  PopulateAllSources;
 end;
 
 procedure TSelectTaskSourcesForm.lbAllSourcesChange(Sender: TObject);
@@ -270,36 +218,36 @@ var
   Source: TSource;
   DisplayName: string;
 begin
-  if not Assigned(lbAllSources) then
-    Exit;
-
-  lbAllSources.Items.BeginUpdate;
-  try
-    lbAllSources.Items.Clear;
-
-    if not Assigned(AllSourceList) then
-      Exit;
-
-    for var I := 0 to AllSourceList.Count - 1 do
-    begin
-      if not (AllSourceList.Items[I] is TSource) then
-        Continue;
-
-      Source := TSource(AllSourceList.Items[I]);
-      if not Assigned(Source) then
-        Continue;
-
-      DisplayName := Source.Name;
-      if DisplayName = '' then
-        DisplayName := Source.Sid;
-
-      lbAllSources.Items.AddObject(DisplayName, Source);
-    end;
-  finally
-    lbAllSources.Items.EndUpdate;
-  end;
-
-  UpdateSelectedSourceInfo;
+//  if not Assigned(lbAllSources) then
+//    Exit;
+//
+//  lbAllSources.Items.BeginUpdate;
+//  try
+//    lbAllSources.Items.Clear;
+//
+//    if not Assigned(AllSourceList) then
+//      Exit;
+//
+//    for var I := 0 to AllSourceList.Count - 1 do
+//    begin
+//      if not (AllSourceList.Items[I] is TSource) then
+//        Continue;
+//
+//      Source := TSource(AllSourceList.Items[I]);
+//      if not Assigned(Source) then
+//        Continue;
+//
+//      DisplayName := Source.Name;
+//      if DisplayName = '' then
+//        DisplayName := Source.Sid;
+//
+//      lbAllSources.Items.AddObject(DisplayName, Source);
+//    end;
+//  finally
+//    lbAllSources.Items.EndUpdate;
+//  end;
+//
+//  UpdateSelectedSourceInfo;
 end;
 
 procedure TSelectTaskSourcesForm.PopulateTaskSources;
@@ -307,32 +255,32 @@ var
   Source: TTaskSource;
   Index: Integer;
 begin
-  if not Assigned(lbTaskSources) then
-    Exit;
-
-  lbTaskSources.Items.BeginUpdate;
-  try
-    lbTaskSources.Items.Clear;
-
-    if not Assigned(FTaskSourceList) then
-      Exit;
-
-    for var I := 0 to FTaskSourceList.Count - 1 do
-    begin
-      if not (FTaskSourceList.Items[I] is TTaskSource) then
-        Continue;
-
-      Source := TTaskSource(FTaskSourceList.Items[I]);
-      if not Assigned(Source) then
-        Continue;
-
-      Index := lbTaskSources.Items.AddObject(Source.Name, Source);
-      //if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
-      //  lbTaskSources.Selected[Index] := Source.Enabled;
-    end;
-  finally
-    lbTaskSources.Items.EndUpdate;
-  end;
+//  if not Assigned(lbTaskSources) then
+//    Exit;
+//
+//  lbTaskSources.Items.BeginUpdate;
+//  try
+//    lbTaskSources.Items.Clear;
+//
+//    if not Assigned(FTaskSourceList) then
+//      Exit;
+//
+//    for var I := 0 to FTaskSourceList.Count - 1 do
+//    begin
+//      if not (FTaskSourceList.Items[I] is TTaskSource) then
+//        Continue;
+//
+//      Source := TTaskSource(FTaskSourceList.Items[I]);
+//      if not Assigned(Source) then
+//        Continue;
+//
+//      Index := lbTaskSources.Items.AddObject(Source.Name, Source);
+//      //if (Index >= 0) and (Index < lbTaskSources.Items.Count) then
+//      //  lbTaskSources.Selected[Index] := Source.Enabled;
+//    end;
+//  finally
+//    lbTaskSources.Items.EndUpdate;
+//  end;
 end;
 
 function TSelectTaskSourcesForm.TaskSourceExists(const ASid: string): Boolean;
@@ -391,25 +339,25 @@ procedure TSelectTaskSourcesForm.UpdateSelectedSourceInfo;
 var
   SelectedSource: TSource;
 begin
-  SelectedSource := nil;
-
-  if Assigned(lbAllSources) then
-  begin
-    for var I := 0 to lbAllSources.Items.Count - 1 do
-      if lbAllSources.Selected[I] then
-        if lbAllSources.Items.Objects[I] is TSource then
-        begin
-          SelectedSource := TSource(lbAllSources.Items.Objects[I]);
-          Break;
-        end;
-
-    if not Assigned(SelectedSource) then
-      if (lbAllSources.ItemIndex >= 0) and (lbAllSources.ItemIndex < lbAllSources.Items.Count) then
-        if lbAllSources.Items.Objects[lbAllSources.ItemIndex] is TSource then
-          SelectedSource := TSource(lbAllSources.Items.Objects[lbAllSources.ItemIndex]);
-  end;
-
-  UpdateSourceInfoDisplay(SelectedSource);
+//  SelectedSource := nil;
+//
+//  if Assigned(lbAllSources) then
+//  begin
+//    for var I := 0 to lbAllSources.Items.Count - 1 do
+//      if lbAllSources.Selected[I] then
+//        if lbAllSources.Items.Objects[I] is TSource then
+//        begin
+//          SelectedSource := TSource(lbAllSources.Items.Objects[I]);
+//          Break;
+//        end;
+//
+//    if not Assigned(SelectedSource) then
+//      if (lbAllSources.ItemIndex >= 0) and (lbAllSources.ItemIndex < lbAllSources.Items.Count) then
+//        if lbAllSources.Items.Objects[lbAllSources.ItemIndex] is TSource then
+//          SelectedSource := TSource(lbAllSources.Items.Objects[lbAllSources.ItemIndex]);
+//  end;
+//
+//  UpdateSourceInfoDisplay(SelectedSource);
 end;
 
 procedure TSelectTaskSourcesForm.UpdateSourceInfoDisplay(ASource: TSource);
@@ -434,31 +382,31 @@ begin
   InfoSource := ASource;
   OwnsInfoSource := False;
 
-  if Assigned(AllSourcesBroker) then
-    try
-      var Req := AllSourcesBroker.CreateReqInfo();
-      Req.Id := ASource.Sid;
-      var Resp := AllSourcesBroker.Info(Req);
-      try
-        if Assigned(Resp) and (Resp.Entity is TSource) then
-        begin
-          InfoSource := TSource(Resp.Entity);
-          OwnsInfoSource := True;
-        end;
-      finally
-        Resp.Free;
-      end;
-    except
-      on E: Exception do
-      begin
-        Log('TSelectTaskSourcesForm.UpdateSourceInfoDisplay info error: ' + E.Message, lrtError);
-        FreeAndNil(InfoEntity);
-      end;
-    end;
+//  if Assigned(AllSourcesBroker) then
+//    try
+//      var Req := AllSourcesBroker.CreateReqInfo();
+//      Req.Id := ASource.Sid;
+//      var Resp := AllSourcesBroker.Info(Req);
+//      try
+//        if Assigned(Resp) and (Resp.Entity is TSource) then
+//        begin
+//          InfoSource := TSource(Resp.Entity);
+//          OwnsInfoSource := True;
+//        end;
+//      finally
+//        Resp.Free;
+//      end;
+//    except
+//      on E: Exception do
+//      begin
+//        Log('TSelectTaskSourcesForm.UpdateSourceInfoDisplay info error: ' + E.Message, lrtError);
+//        FreeAndNil(InfoEntity);
+//      end;
+//    end;
 
   lSourceInfoIDValue.Caption := InfoSource.Sid;
   lSourceInfoNameValue.Caption := InfoSource.Name;
-  lSourceInfoModuleValue.Caption := InfoSource.Module;
+  lSourceInfoModuleValue.Caption := InfoSource.Index;
 
   if InfoSource.Created > 0 then
   begin
@@ -497,7 +445,7 @@ end;
 procedure TSelectTaskSourcesForm.UniFormDestroy(Sender: TObject);
 begin
   FreeAndNil(AllSourceList);
-  FreeAndNil(AllSourcesBroker);
+//  FreeAndNil(AllSourcesBroker);
   FreeAndNil(FTaskSourceList);
 end;
 

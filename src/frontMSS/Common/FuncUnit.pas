@@ -11,6 +11,8 @@ function ExtractJSONProperties(
 
 function JSONArrayToStringList(AJSONArray: TJSONArray): TStringList;
 function JSONArrayToDictionary(AJSONArray: TJSONArray): TDictionary<string, string>;
+function GetValueInt64Def(json: TJSONValue; path: string; default: Int64): Int64;
+function GetValueFloatDef(json: TJSONValue; path: string; default: Float64): Float64;
 function GetValueIntDef(json: TJSONValue; path: string; default: integer): integer;
 function GetValueStrDef(json: TJSONValue; path: string; default: string): string;
 function GetValueBool(json: TJSONValue; path: string): boolean;
@@ -96,7 +98,23 @@ begin
   end;
 end;
 
+function GetValueFloatDef(json: TJSONValue; path: string; default: Float64): Float64;
+begin
+  Result := default;
+  try
+    json.TryGetValue<Float64>(path, Result);
+  except
+  end;
+end;
 
+function GetValueInt64Def(json: TJSONValue; path: string; default: Int64): Int64;
+begin
+  Result := default;
+  try
+    json.TryGetValue<Int64>(path, Result);
+  except
+  end;
+end;
 
 function GetValueIntDef(json: TJSONValue; path: string; default: integer): integer;
 begin

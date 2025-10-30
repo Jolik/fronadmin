@@ -8,32 +8,24 @@ uses
 
 type
   // TTaskSource .
-  TTaskSource = class(TEntity)
+  TTaskSource = class(TFieldSet)
   private
-    FStationIndex: string;
-    function GetSid: string;
-    procedure SetSid(const Value: string);
-  protected
-    ///
-    function GetIdKey: string; override;
+    FSid: string;
+    FName: string;
+    FEnabled: Boolean;
   public
-    function Assign(ASource: TFieldSet): boolean; override;
+    function Assign(ASource: TFieldSet): boolean;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    property Sid: string read FSid write FSid;
+    property Name: string read FName write FName;
+    property Enabled: Boolean read FEnabled write FEnabled;
 
-    //      .   -
-    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
-
-    //
-    property Sid: string read GetSid write SetSid;
-    property StationIndex: string read FStationIndex write FStationIndex;
   end;
 
 type
-  ///
-  TTaskSourceList = class(TEntityList)
-    ///
-    ///     ,
-    class function ItemClassType: TEntityClass; override;
+  TTaskSourceList = class(TFieldSetList)
+  class function ItemClassType: TFieldSetClass; override;
   end;
 
 implementation
@@ -44,59 +36,40 @@ uses
 
 const
   SidKey = 'sid';
-  IndexKey = 'index';
+  NameKey = 'name';
+  EnabledKey = 'enabled';
 
 { TTaskSource }
 
 function TTaskSource.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
-
-  if not inherited Assign(ASource) then
-    exit;
-
-  if not (ASource is TTaskSource) then
-    exit;
-
+  if not (ASource is TTaskSource) then exit;
   var src := ASource as TTaskSource;
-
-  StationIndex := src.StationIndex;
+  sid:= src.sid;
+  name:= src.Name;
+  Enabled:= src.Enabled;
 
   Result := true;
 end;
 
-function TTaskSource.GetIdKey: string;
-begin
-  Result := SidKey;
-end;
-
-function TTaskSource.GetSid: string;
-begin
-  Result := Id;
-end;
-
-procedure TTaskSource.SetSid(const Value: string);
-begin
-  Id := Value;
-end;
-
 procedure TTaskSource.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  inherited Parse(src, APropertyNames);
-
-  StationIndex := GetValueStrDef(src, IndexKey, '');
+  sid := GetValueStrDef(src, SidKey, '');
+  name := GetValueStrDef(src, NameKey, '');
+  Enabled:= GetValueBool(src, EnabledKey);
 end;
 
 procedure TTaskSource.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 begin
-  inherited Serialize(dst, APropertyNames);
-
-  dst.AddPair(IndexKey, StationIndex);
+  dst.AddPair(SidKey, sid);
+  dst.AddPair(NameKey, name);
+  dst.AddPair(EnabledKey, Enabled);
 end;
 
 { TTaskSourceList }
 
-class function TTaskSourceList.ItemClassType: TEntityClass;
+class function TTaskSourceList.ItemClassType: TFieldSetClass;
 begin
   Result := TTaskSource;
 end;

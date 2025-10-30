@@ -1,7 +1,5 @@
 inherited ChannelsForm: TChannelsForm
   Caption = #1050#1072#1085#1072#1083#1099
-  ExplicitWidth = 1176
-  ExplicitHeight = 606
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     inherited btnNew: TUniToolButton
@@ -38,14 +36,6 @@ inherited ChannelsForm: TChannelsForm
         Title.Caption = #1057#1077#1088#1074#1080#1089
         Width = 124
       end>
-  end
-  inherited pcEntityInfo: TUniPageControl
-    inherited tsTaskInfo: TUniTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
-      ExplicitWidth = 372
-      ExplicitHeight = 510
-    end
   end
   inherited FDMemTableEntity: TFDMemTable
     Left = 368

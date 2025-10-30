@@ -7,10 +7,11 @@ uses
   BaseRequests,
   BaseResponses,
   HandlerHttpRequests,
+    RestEntityBrokerUnit,
   HttpClientUnit;
 
 type
-  THandlersRestBroker = class(TRestBrokerBase)
+  THandlersRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
@@ -22,7 +23,7 @@ type
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
 
     function New(AReq: THandlerReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
 
     function Update(AReq: THandlerReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
@@ -60,7 +61,7 @@ begin
   Result := List(AReq as TReqList) as THandlerListResponse;
 end;
 
-function THandlersRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function THandlersRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
   Result := inherited New(AReq, AResp);
 end;

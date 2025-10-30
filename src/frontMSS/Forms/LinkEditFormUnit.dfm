@@ -9,42 +9,36 @@ inherited LinkEditForm: TLinkEditForm
     Top = 559
     Width = 937
     ExplicitTop = 551
-    ExplicitWidth = 817
     inherited btnOk: TUniButton
       Left = 778
-      ExplicitLeft = 658
     end
     inherited btnCancel: TUniButton
       Left = 859
-      ExplicitLeft = 739
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 937
-    ExplicitWidth = 817
     inherited teCaption: TUniEdit
-      Left = 90
-      Width = 844
-      ExplicitLeft = 90
-      ExplicitWidth = 724
+      Left = 92
+      Width = 842
+      ExplicitLeft = 92
+      ExplicitWidth = 840
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 937
-    ExplicitWidth = 817
     inherited teName: TUniEdit
-      Left = 90
-      Width = 844
-      ExplicitLeft = 90
-      ExplicitWidth = 724
+      Left = 92
+      Width = 842
+      ExplicitLeft = 92
+      ExplicitWidth = 840
     end
   end
   inherited pnClient: TUniContainerPanel
     Width = 937
     Height = 505
-    ExplicitWidth = 817
     ExplicitHeight = 497
-    ScrollHeight = 414
-    ScrollWidth = 819
+    ScrollHeight = 505
+    ScrollWidth = 937
   end
 end

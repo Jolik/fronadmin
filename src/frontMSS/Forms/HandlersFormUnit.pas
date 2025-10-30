@@ -10,14 +10,14 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses, RestBrokerBaseUnit,
-  ParentEditFormUnit, uniPanel, uniLabel,
+  ParentEditFormUnit, uniPanel, uniLabel,  RestEntityBrokerUnit ,
   HandlersRestBrokerUnit;
 
 type
   THandlersForm = class(TListParentForm)
   protected
     procedure Refresh(const AId: String = ''); override;
-    function  CreateRestBroker(): TRestBrokerBase; override;
+    function  CreateRestBroker(): TRestEntityBroker; override;
     function CreateEditForm: TParentEditForm; override;
   end;
 
@@ -42,7 +42,7 @@ begin
   Result := HandlerEditForm();
 end;
 
-function THandlersForm.CreateRestBroker: TRestBrokerBase;
+function THandlersForm.CreateRestBroker: TRestEntityBroker;
 begin
   Result := THandlersRestBroker.Create(UniMainModule.XTicket);
 end;

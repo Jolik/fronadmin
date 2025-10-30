@@ -3,19 +3,20 @@
 interface
 
 uses
+  System.JSON,
   BaseRequests,
   EntityUnit,
   BaseResponses,
   SummaryTaskUnit,
   TaskHttpRequests,
-  System.JSON,
+  TaskSourceUnit,
   APIConst;
 
 type
 
   TSummaryTaskNewBody = class(TSummaryTask)
   protected
-    FSources: TNewTaskSourceList;
+    FSources: TTaskSourceList;
   public
 //    constructor Create; override;
 //    destructor Destroy; override;

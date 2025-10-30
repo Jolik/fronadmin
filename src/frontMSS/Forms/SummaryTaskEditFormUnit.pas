@@ -63,9 +63,7 @@ type
     procedure UpdateCustomSettingsFrame;
     function GetFrameClassByType(const AType: TSummaryTaskType): TParentTaskCustomSettingsEditFrameClass;
     function GetSummaryTaskTypeByModule(const AModule: string): TSummaryTaskType;
-//    procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
-(*!!!    function FormatExcludeWeek(const Values: TExcludeWeek): string;
-    function ParseExcludeWeekText(const AText: string): TExcludeWeek; *)
+
 
   protected
     ///
@@ -93,17 +91,45 @@ end;
 
 { TSummaryTaskEditForm }
 
-function TSummaryTaskEditForm.Apply: boolean;
+function TSummaryTaskEditForm.Apply: Boolean;
+var
+  Settings: TSummaryTaskSettings;
+  I: Integer;
 begin
-  Result := inherited Apply();
+  Result := inherited Apply;
 
   if not Result then
     Exit;
 
-  var Settings := GetSummarySettings();
-//  if Assigned(Settings) then
-//    Settings.LatePeriod := StrToIntDef(teLatePeriod.Text, 0);
+  Settings := GetSummarySettings();
+  if not Assigned(Settings) then
+    Exit(False);
 
+  with Settings do
+  begin
+    Header := ueHeader.Text;
+    Header2 := ueHeader2.Text;
+    HeaderCorr := uspHeaderCorr.Value;
+    Local := uncmbxTime.ItemIndex = 0;
+
+    for I := Low(ExcludeWeek) to High(ExcludeWeek) do
+    begin
+      with unpnlWeekDaysArr.Controls[I] as TUniSpeedButton do
+        ExcludeWeek[I] := integer(not Down); // обратная логика из SetEntity
+    end;
+
+    MonthDays := undtMonthDays.Text;
+    Time := uncmbxTime1.Text;
+    CheckLate := unchckbxCheckLate.Checked;
+
+    LateEvery := unspndtLateEvery.Value;
+    LatePeriod := unspndtLatePeriod.Value;
+
+    // При смене модуля можно обновить тип
+    SummaryTaskType := GetSummaryTaskTypeByModule(GetCurrentModuleValues);
+  end;
+
+  // Если есть кастомные настройки — применяем их тоже
   if Assigned(FCustomSettingsFrame) then
     Result := FCustomSettingsFrame.Apply() and Result;
 end;
@@ -235,52 +261,6 @@ begin
 
   UpdateCustomSettingsFrame;
 end;
-
-
-(* !!!! function TSummaryTaskEditForm.FormatExcludeWeek(
-  const Values: TExcludeWeek): string;
-begin
-  Result := '';
-
-  for var I := 0 to Length(Values) - 1 do
-  begin
-    if Result <> '' then
-      Result := Result + ', ';
-    Result := Result + IntToStr(Values[I]);
-  end;
-end;
-
-function TSummaryTaskEditForm.ParseExcludeWeekText(
-  const AText: string): TExcludeWeek;
-var
-  Parts: TStringList;
-  Normalized: string;
-  ValueText: string;
-begin
-  SetLength(Result, 0);
-
-  Normalized := StringReplace(AText, ';', ',', [rfReplaceAll]);
-  Normalized := StringReplace(Normalized, ' ', ',', [rfReplaceAll]);
-
-  Parts := TStringList.Create;
-  try
-    Parts.StrictDelimiter := True;
-    Parts.Delimiter := ',';
-    Parts.DelimitedText := Normalized;
-
-    for var I := 0 to Parts.Count - 1 do
-    begin
-      ValueText := Trim(Parts[I]);
-      if ValueText = '' then
-        Continue;
-
-      SetLength(Result, Length(Result) + 1);
-      Result[High(Result)] := StrToIntDef(ValueText, 0);
-    end;
-  finally
-    Parts.Free;
-  end;
-end;    *)
 
 procedure TSummaryTaskEditForm.SetEntity(AEntity: TFieldSet);
 var

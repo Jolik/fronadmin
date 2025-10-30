@@ -4,7 +4,7 @@ interface
 
 uses
   System.SysUtils,
-  RestBrokerBaseUnit,
+  RestFieldSetBrokerUnit,
   BaseRequests,
   BaseResponses,
   HttpClientUnit,
@@ -13,7 +13,7 @@ uses
 
 type
   // REST broker for task sources API
-  TTaskSourcesRestBroker = class(TRestBrokerBase)
+  TTaskSourcesRestBroker = class(TRestFieldSetBroker)
   public
     // Base service path (e.g. '/api/v2'); final base path is ServicePath + '/tasks'
     ServicePath: string;
@@ -21,16 +21,12 @@ type
     constructor Create(const ATicket: string = ''; const AServicePath: string = '/api/v2'); reintroduce; overload;
 
     function List(AReq: TTaskSourceReqList): TTaskSourceListResponse; overload;
-    function List(AReq: TReqList): TListResponse; overload; override;
-
+    function List(AReq: TReqList): TFieldSetListResponse; overload;
     function Info(AReq: TTaskSourceReqInfo): TTaskSourceInfoResponse; overload;
-    function Info(AReq: TReqInfo): TEntityResponse; overload; override;
-
-    function New(AReq: TTaskSourceReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
-
+    function Info(AReq: TReqInfo): TFieldSetResponse;overload;
+    function New(AReq: TTaskSourceReqNew): TIdNewResponse; overload;
     function Update(AReq: TTaskSourceReqUpdate): TJSONResponse; overload;
-    function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
+    function Update(AReq: TReqUpdate): TJSONResponse; overload;
 
     function Remove(AReq: TTaskSourceReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
@@ -55,25 +51,22 @@ begin
   BasePath := ServicePath.TrimRight(['/']) + '/tasks';
 end;
 
-function TTaskSourcesRestBroker.List(AReq: TReqList): TListResponse;
-begin
-  Result := TTaskSourceListResponse.Create;
-  Result := inherited List(AReq, Result);
-end;
 
 function TTaskSourcesRestBroker.List(AReq: TTaskSourceReqList): TTaskSourceListResponse;
 begin
   Result := List(AReq as TReqList) as TTaskSourceListResponse;
 end;
 
-function TTaskSourcesRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TTaskSourcesRestBroker.List(AReq: TReqList): TFieldSetListResponse;
 begin
-  Result := inherited New(AReq, AResp);
+  Result := TTaskSourceListResponse.Create;
+  List(AReq, result);
 end;
 
-function TTaskSourcesRestBroker.New(AReq: TTaskSourceReqNew): TJSONResponse;
+
+function TTaskSourcesRestBroker.New(AReq: TTaskSourceReqNew): TIdNewResponse;
 begin
-  Result := TJSONResponse.Create;
+  Result := TIdNewResponse.Create();
   HttpClient.Request(AReq, Result);
 end;
 
@@ -128,9 +121,8 @@ begin
   Result := Info(AReq as TReqInfo) as TTaskSourceInfoResponse;
 end;
 
-function TTaskSourcesRestBroker.Info(AReq: TReqInfo): TEntityResponse;
+function TTaskSourcesRestBroker.Info(AReq: TReqInfo): TFieldSetResponse;
 begin
-  Result := TTaskSourceInfoResponse.Create;
   inherited Info(AReq, Result);
 end;
 

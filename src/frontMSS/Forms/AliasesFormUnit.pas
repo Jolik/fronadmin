@@ -10,8 +10,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, ParentEditFormUnit,
-  RestBrokerBaseUnit,
+  ParentEditFormUnit,
+  RestBrokerBaseUnit, RestEntityBrokerUnit,
   AliasesRestBrokerUnit,
   APIConst, uniPanel, uniLabel;
 
@@ -27,7 +27,7 @@ type
     procedure Refresh(const AId: String = ''); override;
 
     // REST broker for HTTP-based API
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
 
     ///
     function CreateEditForm(): TParentEditForm; override;
@@ -53,8 +53,7 @@ end;
 
 { TAliasesForm }
 
-function TAliasesForm.CreateRestBroker: TRestBrokerBase;
-
+function TAliasesForm.CreateRestBroker: TRestEntityBroker;
 begin
   Result := TAliasesRestBroker.Create(UniMainModule.XTicket);
 end;

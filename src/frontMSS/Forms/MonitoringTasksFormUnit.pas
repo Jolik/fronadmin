@@ -10,9 +10,9 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, EntityUnit,
+  EntityUnit,
   ParentEditFormUnit,
-  TasksParentFormUnit, RestBrokerBaseUnit,
+  TasksParentFormUnit, RestEntityBrokerUnit,
   TaskSourcesRestBrokerUnit, TaskSourceUnit, uniPanel, uniLabel, APIConst;
 
 type
@@ -20,7 +20,7 @@ type
   protected
     function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; override;
     function CreateEditForm(): TParentEditForm; override;
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
 //    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
 
   public
@@ -50,7 +50,7 @@ begin
   Result := MonitoringTaskEditForm();
 end;
 
-function TMonitoringTasksForm.CreateRestBroker: TRestBrokerBase;
+function TMonitoringTasksForm.CreateRestBroker: TRestEntityBroker;
 begin
   result:= inherited;
   (result as TTasksRestBroker).BasePath:= APIConst.constURLMonitoringBasePath

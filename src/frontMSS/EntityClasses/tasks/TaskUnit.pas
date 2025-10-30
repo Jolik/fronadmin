@@ -84,7 +84,7 @@ begin
   Module := src.Module;
 
   ///  копируем поля для настроек
-  if not Settings.Assign(src.Settings) then exit;
+  Settings:= src.Settings;
 
   result := true;
 end;

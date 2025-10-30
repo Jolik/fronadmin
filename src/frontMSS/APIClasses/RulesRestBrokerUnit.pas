@@ -8,10 +8,11 @@ uses
   BaseResponses,
   HttpClientUnit,
   RuleHttpRequests,
+  RestEntityBrokerUnit,
   RuleUnit;
 
 type
-  TRulesRestBroker = class(TRestBrokerBase)
+  TRulesRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
@@ -23,7 +24,7 @@ type
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
 
     function New(AReq: TRuleReqNew): TRuleNewResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
 
     function Update(AReq: TRuleReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
@@ -62,16 +63,16 @@ begin
   Result := List(AReq as TReqList) as TRuleListResponse;
 end;
 
-function TRulesRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TRulesRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
-  Result := TRuleNewResponse.Create;
+  Result := TEntityResponse.Create;// TRuleNewResponse.Create;
   Result := inherited New(AReq, Result);
 end;
 
 function TRulesRestBroker.New(AReq: TRuleReqNew): TRuleNewResponse;
 begin
   Result := TRuleNewResponse.Create;
-  New(AReq, Result);
+  ExcuteRaw(AReq, Result);
 end;
 
 function TRulesRestBroker.Remove(AReq: TReqRemove): TJSONResponse;

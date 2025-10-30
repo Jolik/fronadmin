@@ -4,10 +4,10 @@ interface
 
 uses
   RestBrokerBaseUnit, BaseRequests, BaseResponses,
-  DepartmentHttpRequests, HttpClientUnit;
+  DepartmentHttpRequests, HttpClientUnit, RestEntityBrokerUnit;
 
 type
-  TDepartmentsRestBroker = class(TRestBrokerBase)
+  TDepartmentsRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
@@ -16,8 +16,8 @@ type
     function Info(AReq: TDepartmentReqInfo): TDepartmentInfoResponse; overload;
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TDepartmentReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
-    function Update(AReq: TDepartmentReqUpdate): TJSONResponse; overload;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload;
+   function Update(AReq: TDepartmentReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TDepartmentReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
@@ -49,7 +49,7 @@ begin
   Result := List(AReq as TReqList) as TDepartmentListResponse;
 end;
 
-function TDepartmentsRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TDepartmentsRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
   Result := inherited New(AReq, AResp);
 end;

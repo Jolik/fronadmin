@@ -5,41 +5,60 @@ inherited TaskEditParentForm: TTaskEditParentForm
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1349
+    ExplicitWidth = 1347
     inherited btnOk: TUniButton
       Left = 1190
-      ExplicitLeft = 1190
+      ExplicitLeft = 1188
     end
     inherited btnCancel: TUniButton
       Left = 1271
-      ExplicitLeft = 1271
+      ExplicitLeft = 1269
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 1349
-    ExplicitWidth = 1349
+    Visible = False
+    ExplicitWidth = 1347
     inherited teCaption: TUniEdit
-      Left = 108
-      Width = 1238
-      ExplicitLeft = 108
-      ExplicitWidth = 1238
+      Left = 110
+      Width = 1236
+      Visible = False
+      ExplicitLeft = 110
+      ExplicitWidth = 1234
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
+    Height = 30
     ExplicitWidth = 1349
+    ExplicitHeight = 30
+    inherited lName: TUniLabel
+      Left = 24
+      Top = 9
+      Align = alNone
+      ExplicitLeft = 24
+      ExplicitTop = 9
+    end
     inherited teName: TUniEdit
-      Left = 108
-      Width = 1238
-      ExplicitLeft = 108
-      ExplicitWidth = 1238
+      Left = 110
+      Top = 5
+      Width = 1236
+      Height = 20
+      Margins.Top = 5
+      Margins.Bottom = 5
+      ExplicitLeft = 110
+      ExplicitTop = 0
+      ExplicitWidth = 1236
+      ExplicitHeight = 24
     end
   end
   inherited pnClient: TUniContainerPanel
+    Top = 57
     Width = 497
+    Height = 411
     Align = alLeft
     ExplicitWidth = 497
-    ScrollHeight = 414
+    ScrollHeight = 411
     ScrollWidth = 497
     object lTid: TUniLabel
       Left = 24
@@ -154,27 +173,33 @@ inherited TaskEditParentForm: TTaskEditParentForm
   end
   object pnCustomSettings: TUniContainerPanel [4]
     Left = 984
-    Top = 54
+    Top = 57
     Width = 365
-    Height = 414
+    Height = 411
     Hint = ''
     Visible = False
     ParentColor = False
     Align = alRight
     TabOrder = 4
+    ExplicitLeft = 982
+    ExplicitTop = 54
+    ExplicitHeight = 406
   end
   object pnSources: TUniContainerPanel [5]
     Left = 497
-    Top = 54
+    Top = 57
     Width = 487
-    Height = 414
+    Height = 411
     Hint = ''
     ParentColor = False
     Align = alClient
     TabOrder = 5
+    ExplicitTop = 54
+    ExplicitWidth = 485
+    ExplicitHeight = 406
     object gridSources: TUniDBGrid
       Left = 0
-      Top = 37
+      Top = 34
       Width = 487
       Height = 377
       Hint = ''

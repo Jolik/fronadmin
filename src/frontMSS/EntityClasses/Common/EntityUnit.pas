@@ -249,7 +249,7 @@ const
   CompIdKey = 'compid';
   OwnerKey = 'owner';
   DepIdKey = 'depid';
-  DefKey = 'Def';
+  DefKey = 'def';
   EnabledKey = 'enabled';
   CreatedKey = 'created';
   UpdatedKey = 'updated';

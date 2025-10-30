@@ -1,7 +1,5 @@
 inherited QueuesForm: TQueuesForm
   Caption = #1054#1095#1077#1088#1077#1076#1080
-  ExplicitWidth = 1176
-  ExplicitHeight = 606
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     ExplicitWidth = 1158
@@ -32,53 +30,26 @@ inherited QueuesForm: TQueuesForm
     ExplicitLeft = 778
     ExplicitHeight = 530
     inherited tsTaskInfo: TUniTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
-      ExplicitWidth = 372
-      ExplicitHeight = 502
       inherited cpTaskInfo: TUniContainerPanel
         ExplicitHeight = 502
         inherited cpTaskInfoID: TUniContainerPanel
-          ExplicitWidth = 357
           inherited lTaskInfoIDValue: TUniLabel
             Caption = ''
-            ExplicitWidth = 237
-          end
-          inherited pSeparator1: TUniPanel
-            ExplicitWidth = 357
           end
         end
         inherited cpTaskInfoName: TUniContainerPanel
-          ExplicitWidth = 357
           inherited lTaskInfoNameValue: TUniLabel
             Caption = ''
-            ExplicitWidth = 237
           end
-          inherited pSeparator2: TUniPanel
-            ExplicitWidth = 357
-          end
-        end
-        inherited lTaskCaption: TUniLabel
-          ExplicitWidth = 357
         end
         inherited cpTaskInfoCreated: TUniContainerPanel
-          ExplicitWidth = 357
           inherited lTaskInfoCreatedValue: TUniLabel
             Caption = ''
-            ExplicitWidth = 237
-          end
-          inherited pSeparator3: TUniPanel
-            ExplicitWidth = 357
           end
         end
         inherited cpTaskInfoUpdated: TUniContainerPanel
-          ExplicitWidth = 357
           inherited lTaskInfoUpdatedValue: TUniLabel
             Caption = ''
-            ExplicitWidth = 237
-          end
-          inherited pSeparator4: TUniPanel
-            ExplicitWidth = 357
           end
         end
         object UniContainerPanel1: TUniContainerPanel

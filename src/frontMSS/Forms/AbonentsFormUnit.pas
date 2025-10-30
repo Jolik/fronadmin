@@ -10,15 +10,15 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, ParentEditFormUnit,
-  RestBrokerBaseUnit, BaseRequests, BaseResponses,
+   ParentEditFormUnit,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses, RestEntityBrokerUnit,
   AbonentsRestBrokerUnit, uniPanel, uniLabel;
 
 type
   TAbonentsForm = class(TListParentForm)
   protected
     procedure Refresh(const AId: String = ''); override;
-    function CreateRestBroker: TRestBrokerBase; override;
+    function CreateRestBroker: TRestEntityBroker; override;
     function CreateEditForm: TParentEditForm; override;
   end;
 
@@ -38,7 +38,7 @@ end;
 
 { TAbonentForm }
 
-function TAbonentsForm.CreateRestBroker: TRestBrokerBase;
+function TAbonentsForm.CreateRestBroker: TRestEntityBroker;
 begin
   Result := TAbonentsRestBroker.Create;
 end;

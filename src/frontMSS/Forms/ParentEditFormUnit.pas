@@ -109,9 +109,14 @@ end;
 
 procedure TParentEditForm.UniTimer1Timer(Sender: TObject);
 begin
+  JSInterface.JSCall('setLoading', [False]);
+  if not assigned(FOnOkCalback) then
+  begin
+    ShowMessage('Обработчик не присвоен');
+    exit;
+  end;
   if FOnOkCalback(FId, FEntity) then
     ModalResult := mrOk;
-  JSInterface.JSCall('setLoading', [False]);
 end;
 
 function TParentEditForm.Apply : boolean;

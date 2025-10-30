@@ -3,11 +3,11 @@ unit SourceCredsRestBrokerUnit;
 interface
 
 uses
-  RestBrokerBaseUnit, BaseRequests, BaseResponses,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses, RestEntityBrokerUnit,
   SourceCredsHttpRequests, HttpClientUnit;
 
 type
-  TSourceCredsRestBroker = class(TRestBrokerBase)
+  TSourceCredsRestBroker = class(TRestEntityBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
@@ -16,7 +16,7 @@ type
     function Info(AReq: TSourceCredsReqInfo): TSourceCredsInfoResponse; overload;
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TSourceCredsReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse; overload; override;
+    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
     function Update(AReq: TSourceCredsReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TSourceCredsReqRemove): TJSONResponse; overload;
@@ -49,7 +49,7 @@ begin
   Result := List(AReq as TReqList) as TSourceCredsListResponse;
 end;
 
-function TSourceCredsRestBroker.New(AReq: TReqNew; AResp: TFieldSetResponse): TFieldSetResponse;
+function TSourceCredsRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
 begin
   Result := inherited New(AReq, AResp);
 end;

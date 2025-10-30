@@ -10,10 +10,10 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPanel, uniLabel, uniPageControl, uniSplitter,
   uniBasicGrid, uniDBGrid, uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, EntityUnit, TaskUnit,
+  EntityUnit, TaskUnit,
   TaskEditParentFormUnit, TaskSourceUnit, ParentEditFormUnit,
   TaskSourcesRestBrokerUnit, TaskSourceHttpRequests, TaskTypesUnit,
-  TasksRestBrokerUnit, TaskHttpRequests, BaseRequests, RestBrokerBaseUnit;
+  TasksRestBrokerUnit, TaskHttpRequests, BaseRequests, RestEntityBrokerUnit;
 
 type
   TTaskParentForm = class(TListParentForm)
@@ -31,6 +31,7 @@ type
     FTaskTypesList: TTaskTypesList;
     FSourceTaskBroker: TTaskSourcesRestBroker;
     FCurrentTaskSourcesList: TTaskSourceList;
+    function SaveTaskCommon(IsNew: Boolean; const AID: string; AEntity: TFieldSet): Boolean;
     function GetModuleCaption(module:string):string;
     function GetTaskBroker: TTasksRestBroker;
     procedure OnCreate; override;
@@ -38,12 +39,12 @@ type
     procedure OnAddListItem(item: TEntity);override;
     procedure OnInfoUpdated(AEntity: TEntity);override;
     ///
-    function CreateRestBroker(): TRestBrokerBase; override;
+    function CreateRestBroker(): TRestEntityBroker; override;
     function CreateTaskSourcesBroker(): TTaskSourcesRestBroker; virtual;
-    ///
     function CreateEditForm(): TParentEditForm; override;
 
-    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+    function NewCallback(const AID: string; AEntity: TFieldSet):boolean;
+    function UpdateCallback(const AID: string; AEntity: TFieldSet):Boolean;
 
   public
 
@@ -56,7 +57,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, LoggingUnit;
+  MainModule, uniGUIApplication, LoggingUnit, HttpClientUnit;
 
 function TasksForm: TTaskParentForm;
 begin
@@ -75,9 +76,9 @@ begin
 end;
 
 
-function TTaskParentForm.CreateRestBroker: TRestBrokerBase;
+function TTaskParentForm.CreateRestBroker: TRestEntityBroker;
 begin
-  Result := TTasksRestBroker.Create(UniMainModule.XTicket) as TRestBrokerBase;
+  Result := TTasksRestBroker.Create(UniMainModule.XTicket);
 end;
 
 
@@ -106,6 +107,12 @@ function TTaskParentForm.GetTaskBroker: TTasksRestBroker;
 begin
   Result:= RestBroker as TTasksRestBroker;
 
+end;
+
+function TTaskParentForm.NewCallback(const AID: string;
+  AEntity: TFieldSet): boolean;
+begin
+   Result := SaveTaskCommon(True, AID, AEntity);
 end;
 
 function TTaskParentForm.CreateEditForm: TParentEditForm;
@@ -148,23 +155,15 @@ begin
     TTaskSourceReqList(ReqList).Tid := (FSelectedEntity as TTask).Tid;
     var RespList := FSourceTaskBroker.List(ReqList as TReqList) as TTaskSourceListResponse;
     try
-      if Assigned(RespList) and Assigned(RespList.EntityList) then
+      if Assigned(RespList) and Assigned(RespList.FieldSetList) then
       begin
         TaskSourceList := TTaskSourceList.Create(True);
-        for var J := 0 to TTaskSourceList(RespList.EntityList).Count - 1 do
+        for var J := 0 to RespList.TaskSourceList.Count - 1 do
         begin
-          if TTaskSourceList(RespList.EntityList).Items[J] is TTaskSource then
-          begin
-            var Src := TTaskSource(TTaskSourceList(RespList.EntityList).Items[J]);
-            var CopySrc := TTaskSource.Create;
-            try
-              CopySrc.Assign(Src);
-              TaskSourceList.Add(CopySrc);
-            except
-              CopySrc.Free;
-              raise;
-            end;
-          end;
+          var Src := RespList.TaskSourceList.Items[J] ;
+          var newSrc := TTaskSource.Create();
+          newSrc.Assign(Src);
+          TaskSourceList.Add(newSrc);
         end;
       end
       else
@@ -180,14 +179,16 @@ begin
   end;
 
   EditParentForm := EditForm as TTaskEditParentForm;
-  if Assigned(EditParentForm) then
+  if Assigned(EditParentForm) then begin
     EditParentForm.TaskSourcesList := TaskSourceList;
+    EditParentForm.Entity:= FSelectedEntity;
+  end;
 
   FreeAndNil(FCurrentTaskSourcesList);
   FCurrentTaskSourcesList := TaskSourceList;
 
   try
-    EditForm.ShowModal(UpdateCallback);
+    EditForm.ShowModalEx(UpdateCallback);
   except
     on E: Exception do
     begin
@@ -202,82 +203,9 @@ begin
   end;
 end;
 
-procedure TTaskParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
-var
-  UpdateResult: Boolean;
-  ParentForm: TTaskEditParentForm;
+function TTaskParentForm.UpdateCallback(const AID: string; AEntity: TFieldSet):Boolean;
 begin
-  try
-    if AResult = mrOk then
-    begin
-      UpdateResult := False;
-      if Assigned(RestBroker) then
-      begin
-        var Req := RestBroker.CreateReqUpdate();
-        if not Assigned(Req) then
-          Req := TReqUpdate.Create;
-        try
-          // Prefer explicit Id saved in edit form
-          if EditForm.Id <> '' then
-            Req.Id := EditForm.Id
-          else if Assigned(EditForm.Entity) and (EditForm.Entity is TEntity) then
-            Req.Id := TEntity(EditForm.Entity).Id;
-
-          // Assign scalar fields from edited entity
-          if Assigned(Req.ReqBody) and (EditForm.Entity is TFieldSet) then
-            TFieldSet(Req.ReqBody).Assign(TFieldSet(EditForm.Entity));
-
-          // Populate sources[] into task update body (Go schema)
-          if (Req.ReqBody is TTaskUpdateBody) then
-          begin
-            var UB := TTaskUpdateBody(Req.ReqBody);
-            if Assigned(UB.Sources) then
-            begin
-              UB.Sources.Clear;
-              if Assigned(FCurrentTaskSourcesList) then
-                for var I := 0 to FCurrentTaskSourcesList.Count - 1 do
-                begin
-                  if not (FCurrentTaskSourcesList.Items[I] is TTaskSource) then
-                    Continue;
-                  var Src := TTaskSource(FCurrentTaskSourcesList.Items[I]);
-                  var NewSrc := TNewTaskSource.Create;
-                  NewSrc.Sid := Src.Sid;
-                  NewSrc.Name := Src.Name;
-                  NewSrc.Enabled := Src.Enabled;
-                  UB.Sources.Add(NewSrc);
-                end;
-            end;
-          end;
-
-          var JR := RestBroker.Update(Req);
-          try
-            UpdateResult := Assigned(JR) and (JR.StatusCode = 200);
-          finally
-            JR.Free;
-          end;
-        except
-          on E: Exception do
-            UpdateResult := False;
-        end;
-      end;
-
-      if not UpdateResult then Exit;
-
-      Refresh();
-
-      if FId = '' then
-        FDMemTableEntity.First
-      else
-        FDMemTableEntity.Locate('Id', FId, []);
-    end;
-  finally
-    if EditForm is TTaskEditParentForm then
-    begin
-      ParentForm := TTaskEditParentForm(EditForm);
-      ParentForm.TaskSourcesList := nil;
-    end;
-    FreeAndNil(FCurrentTaskSourcesList);
-  end;
+ result:=  SaveTaskCommon(False, AID, AEntity);
 end;
 
 procedure TTaskParentForm.OnAddListItem(item: TEntity);
@@ -302,6 +230,86 @@ begin
   lTaskInfoModuleValue.Caption := (AEntity as TTask).Module;
 end;
 
+function TTaskParentForm.SaveTaskCommon(IsNew: Boolean; const AID: string; AEntity: TFieldSet): Boolean;
+var
+  Req: TBaseServiceRequest;
+  JR: TJSONResponse;
+begin
+  Result := False;
+
+  if not Assigned(RestBroker) then
+    Exit;
+
+  try
+    // Создаём запрос
+    if IsNew then
+      Req := RestBroker.CreateReqNew
+    else
+      Req := RestBroker.CreateReqUpdate;
+
+    if not Assigned(Req) then
+      Exit;
+
+
+    // Заполняем ID, если есть
+    if not IsNew then
+    with (Req as TReqUpdate) do begin
+      if EditForm.Id <> '' then
+        Id := EditForm.Id
+      else if Assigned(EditForm.Entity) and (EditForm.Entity is TEntity) then
+        Id := TEntity(EditForm.Entity).Id;
+    end;
+
+    // Копируем поля из формы в тело запроса
+    if Assigned(Req.ReqBody) and (AEntity is TFieldSet) then
+      TFieldSet(Req.ReqBody).Assign(AEntity);
+
+    // Собираем sources[] из FDMemTableEntity
+    if Req.ReqBody is TTaskUpdateBody then
+    begin
+      var UB := TTaskUpdateBody(Req.ReqBody);
+      if Assigned(UB.Sources) then
+      begin
+        UB.Sources.Clear;
+
+        FDMemTableEntity.First;
+        while not FDMemTableEntity.Eof do
+        begin
+          var NewSrc := TTaskSource.Create;
+          try
+            NewSrc.Sid := FDMemTableEntity.FieldByName('id').AsString;
+            NewSrc.Name := FDMemTableEntity.FieldByName('module').AsString;
+            NewSrc.Enabled := FDMemTableEntity.FieldByName('enabled').AsBoolean;
+            UB.Sources.Add(NewSrc);
+          except
+            NewSrc.Free;
+            raise;
+          end;
+          FDMemTableEntity.Next;
+        end;
+      end;
+    end;
+
+    // Отправляем запрос
+    if IsNew then
+      JR := RestBroker.New(Req as TReqNew)
+    else
+      JR := RestBroker.Update(Req as TReqUpdate);
+
+    Result := Assigned(JR) and (JR.StatusCode = 200);
+    JR.Free;
+
+  except
+    on E: Exception do
+    begin
+      Log('TTaskParentForm.SaveTaskCommon error: ' + E.Message, lrtError);
+      Result := False;
+    end;
+  end;
+
+  if Result then
+    Refresh;
+end;
 
 end.
 

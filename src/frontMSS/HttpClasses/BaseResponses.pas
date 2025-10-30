@@ -9,6 +9,7 @@ uses
   HttpClientUnit;
 
 type
+
   // Base response for arbitrary TFieldSet payloads (non-entity, small result objects)
   TFieldSetResponse = class(TJSONResponse)
   private
@@ -98,6 +99,29 @@ type
     destructor Destroy; override;
     property Entity: TEntity read FEntity;
   end;
+
+  TFieldSetNewBodyResult = class(TFieldSet)
+  private
+    FID: string;
+    FItemKey: string;
+  public
+    constructor Create; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    property ID: string read FID write FID;
+  end;
+
+  TIdNewResponse = class(TFieldSetResponse)
+  private
+    function GetNewRes: TFieldSetNewBodyResult;
+  public
+    constructor Create; reintroduce; virtual;
+    property NewRes: TFieldSetNewBodyResult read GetNewRes;
+  end;
+
+
+
 
 implementation
 
@@ -396,5 +420,39 @@ begin
 end;
 
 
+
+{ TFieldSetNewBodyResult }
+
+constructor TFieldSetNewBodyResult.Create;
+begin
+  inherited;
+  FItemKey:= 'id';
+end;
+
+procedure TFieldSetNewBodyResult.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  src.GetValue<string>(FItemKey, FID)
+end;
+
+procedure TFieldSetNewBodyResult.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  inherited;
+  dst.AddPair(FItemKey, FID);
+end;
+
+{ TFieldSetNewResponse }
+
+constructor TIdNewResponse.Create;
+begin
+  inherited Create(TFieldSetNewBodyResult, 'response', 'id');
+end;
+
+function TIdNewResponse.GetNewRes: TFieldSetNewBodyResult;
+begin
+  Result:= FFieldSet as TFieldSetNewBodyResult
+end;
 
 end.
