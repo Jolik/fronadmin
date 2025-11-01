@@ -46,6 +46,7 @@ type
   public
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    function Assign(ASource: TFieldSet): boolean; override;
 
     // Все публичные свойства
     property Sid: string read Fsid write Fsid;
@@ -171,6 +172,47 @@ begin
   srcObj.AddPair('number', TJSONNumber.Create(Fnumber));
   srcObj.AddPair('group', Fgroup);
   dst.AddPair('src', srcObj);
+end;
+
+function TSource.Assign(ASource: TFieldSet): boolean;
+var
+  Src: TSource;
+begin
+  if not Assigned(ASource) then
+    Exit(False);
+
+  if not (ASource is TSource) then
+    Exit(inherited Assign(ASource));
+
+  Src := TSource(ASource);
+
+  Sid := Src.Sid;
+  Name := Src.Name;
+  Srctid := Src.Srctid;
+  Pid := Src.Pid;
+  Depid := Src.Depid;
+  OwnerOrg := Src.OwnerOrg;
+  TimeShift := Src.TimeShift;
+  MeteoRange := Src.MeteoRange;
+  BeginMeteoDay := Src.BeginMeteoDay;
+  LastInsert := Src.LastInsert;
+  ShowMon := Src.ShowMon;
+  EnableMon := Src.EnableMon;
+  Country := Src.Country;
+  Region := Src.Region;
+  Municipal := Src.Municipal;
+  Lat := Src.Lat;
+  Lon := Src.Lon;
+  Elev := Src.Elev;
+  Archived := Src.Archived;
+  Updated := Src.Updated;
+  Created := Src.Created;
+  Status := Src.Status;
+  Index := Src.Index;
+  Number := Src.Number;
+  Group := Src.Group;
+
+  Result := inherited Assign(ASource);
 end;
 
 { TSourceList }

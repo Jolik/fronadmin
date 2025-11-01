@@ -1,0 +1,154 @@
+paths:
+  /organizations/list:
+    get:
+      description: "Справочник типов метеорологических организаций"
+      operationId: OrganizationList
+      tags: ['organizations']
+      produces:
+        - application/json
+      parameters:
+        - {$ref: '#/parameters/page'}
+        - {$ref: '#/parameters/pagesize'}
+        - name: orgtype
+          in: query
+          type: array
+          items:
+            type: integer
+          required: false
+      responses:
+        '200':
+          description: OrganizationListResponse
+          schema: {$ref: '#/definitions/OrganizationListResponse'}
+        default:
+          description: ErrorResponse
+          schema: {$ref: '#/definitions/ErrorResponse'}
+
+  /organizations/types/list:
+    get:
+      description: "Справочник типов метеорологических организаций"
+      operationId: OrganizationTypesList
+      tags: ['organizations']
+      produces:
+        - application/json
+      parameters:
+        - {$ref: '#/parameters/page'}
+        - {$ref: '#/parameters/pagesize'}
+      responses:
+        '200':
+          description: "Список типов организаций"
+          schema: {$ref: '#/definitions/OrgTypesListResponse'}
+        default:
+          description: ErrorResponse
+          schema: {$ref: '#/definitions/ErrorResponse'}
+  /orgTypes/list:
+    get:
+      description: "Справочник типов метеорологических организаций (устарело)"
+      operationId: OrgTypesList
+      tags: ['organizations']
+      produces:
+        - application/json
+      parameters:
+        - {$ref: '#/parameters/page'}
+        - {$ref: '#/parameters/pagesize'}
+      responses:
+        '200':
+          description: "Список типов организаций"
+          schema: {$ref: '#/definitions/OrgTypesListResponse'}
+        default:
+          description: ErrorResponse
+          schema: {$ref: '#/definitions/ErrorResponse'}
+
+definitions:
+  OrganizationListResponse:
+    allOf:
+      - {$ref: '#/definitions/MetaResponse'}
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              organizations:
+                x-nullable: false
+                required:
+                  - count
+                  - info
+                  - items
+                properties:
+                  lastUpdated:
+                    type: integer
+                    x-nullable: true
+                  count:
+                    type: integer
+                    x-nullable: false
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                    x-nullable: false
+                  items:
+                    type: array
+                    items: {$ref: '#/definitions/OrganizationResponse'}
+  OrganizationResponse:
+    x-nullable: false
+    properties:
+      orgId:
+        type: integer
+      shortName:
+        type: string
+      name:
+        type: string
+      orgTypeId:
+        type: integer
+      orgTypeName:
+        type: string
+      regionId:
+        type: string
+      regionName:
+        type: string
+      countryId:
+        type: string
+      countryName:
+        type: string
+      status:
+        type: boolean
+      ParentOrgID:
+        type: integer
+        x-nullable: true
+      ParentOrgStr:
+        type: string
+        x-nullable: true
+
+  OrgTypesListResponse:
+    allOf:
+      - {$ref: '#/definitions/MetaResponse'}
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              orgTypes:
+                x-nullable: false
+                required:
+                  - count
+                  - info
+                  - items
+                properties:
+                  lastUpdated:
+                    type: integer
+                    x-nullable: true
+                  count:
+                    type: integer
+                    x-nullable: false
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                    x-nullable: false
+                  items:
+                    type: array
+                    items: {$ref: '#/definitions/OrgTypeResponse'}
+  OrgTypeResponse:
+    x-nullable: false
+    properties:
+      orgTypeId:
+        type: integer
+      abbr:
+        type: string
+      shortName:
+        type: string
+      name:
+        type: string

@@ -415,6 +415,10 @@
         <DCCReference Include="APIClasses\Legacy\BindingsBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\SourcesRestBrokerUnit.pas"/>
         <DCCReference Include="HttpClasses\SourceHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\LocationHttpRequests.pas"/>
+        <DCCReference Include="HttpClasses\OrganizationHttpRequests.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\LocationUnit.pas"/>
+        <DCCReference Include="EntityClasses\dataserver\OrganizationUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -1,0 +1,62 @@
+paths:
+  /locations/list:
+    get:
+      description: "Справочник типов метеорологических организаций"
+      operationId: LocationList
+      tags: ['locations']
+      produces:
+        - application/json
+      parameters:
+        - {$ref: '#/parameters/page'}
+        - {$ref: '#/parameters/pagesize'}
+        - name: parent
+          in: query
+          type: string
+          required: false
+      responses:
+        '200':
+          description: LocationListResponse
+          schema: {$ref: '#/definitions/LocationListResponse'}
+        default:
+          description: ErrorResponse
+          schema: {$ref: '#/definitions/ErrorResponse'}
+
+definitions:
+  LocationListResponse:
+    allOf:
+      - {$ref: '#/definitions/MetaResponse'}
+      - properties:
+          response:
+            type: object
+            x-nullable: false
+            properties:
+              locations:
+                x-nullable: false
+                required:
+                  - count
+                  - info
+                  - items
+                properties:
+                  lastUpdated:
+                    type: integer
+                    x-nullable: true
+                  count:
+                    type: integer
+                    x-nullable: false
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                    x-nullable: false
+                  items:
+                    type: array
+                    items: {$ref: '#/definitions/LocationResponse'}
+  LocationResponse:
+    x-nullable: false
+    properties:
+      locId:
+        type: string
+      name:
+        type: string
+      parentLocId:
+        type: string
+      locGroup:
+        type: string

@@ -22,7 +22,7 @@ type
   end;
 
   THttpRequest = class
-  private
+  protected
     FURL: string;
     FMethod: TMethod;
     FHeaders: TDictionary<string, string>;
@@ -33,12 +33,11 @@ type
     function GetCurl: string;
     procedure SetCurl(const Value: string);
     procedure SetMethodFromString(const Value: string);
-    function GetReqBodyContent: string;
+    function GetReqBodyContent: string;virtual;
     procedure SetReqBodyContent(const Value: string);
     procedure SetURL(const Value: string);
     procedure ParseParamsFromQuery(const Query: string);
     procedure SetAddPath(const Value: string);
-  protected
     class function BodyClassType: TFieldSetClass; virtual;
   public
     constructor Create; virtual;
@@ -644,10 +643,10 @@ begin
   if not Assigned(Req) then
     raise EArgumentNilException.Create('Request must not be nil');
 
+  ReqBodyContent := Req.ReqBodyContent;
+
   Url := BuildURL(Req);
   ApplyHeaders(Req);
-
-  ReqBodyContent := Req.ReqBodyContent;
 
   case Req.Method of
     mGET:

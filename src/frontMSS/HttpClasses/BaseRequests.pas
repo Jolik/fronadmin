@@ -66,6 +66,7 @@ type
   TReqList = class(TBaseServiceRequest)
   protected
     class function BodyClassType: TFieldSetClass; override;
+    function GetReqBodyContent: string;override;
   public
     constructor Create; override;
     function Body: TReqListBody;
@@ -180,7 +181,7 @@ constructor TPageReqBody.Create;
 begin
   inherited Create;
   FPage := 1;
-  FPageSize := 50;
+  FPageSize := 200;
 end;
 
 procedure TPageReqBody.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
@@ -278,6 +279,42 @@ constructor TReqList.Create;
 begin
   inherited Create;
   Method := mPOST;
+end;
+
+function TReqList.GetReqBodyContent: string;
+var
+  LBody: TReqListBody;
+begin
+  LBody := Body;
+
+  if Method = mGET then
+  begin
+    if Assigned(LBody) then
+    begin
+      Params.AddOrSetValue('page', IntToStr(LBody.Page));
+      Params.AddOrSetValue('pagesize', IntToStr(LBody.PageSize));
+    end
+    else
+    begin
+      Params.Remove('page');
+      Params.Remove('pagesize');
+    end;
+    Exit('');
+  end;
+
+  if Assigned(Params) then
+  begin
+    Params.Remove('page');
+    Params.Remove('pagesize');
+  end;
+
+  if Assigned(LBody) then
+  begin
+    Result := LBody.JSON;
+    LBody.RawContent := Result;
+  end
+  else
+    Result := inherited GetReqBodyContent;
 end;
 
 function TReqList.Body: TReqListBody;

@@ -12,7 +12,7 @@ type
 
   // Base response for arbitrary TFieldSet payloads (non-entity, small result objects)
   TFieldSetResponse = class(TJSONResponse)
-  private
+  protected
     FFieldSet: TFieldSet;
     FFieldSetClass: TFieldSetClass;
     FRootKey: string;
@@ -27,7 +27,7 @@ type
 
   // Базовый ответ со списком сущностей. Хранит TFieldSetList (или её потомков).
   TFieldSetListResponse = class(TJSONResponse)
-  private
+  protected
     FList: TFieldSetList;
     FListClass: TFieldSetListClass;
     FRootKey: string;
@@ -42,7 +42,9 @@ type
   protected
     procedure SetResponse(const Value: string); override;
   public
-    constructor Create(AListClass: TFieldSetListClass; const ARootKey: string = 'response'; const AItemsKey: string = 'items'); reintroduce; virtual;
+    constructor Create(AListClass: TFieldSetListClass; const ARootKey: string = 'response'; const AItemsKey: string = 'items');reintroduce;overload; virtual;
+    constructor Create;overload;virtual;
+    function NewListInstance:TFieldSetListResponse;virtual;
     destructor Destroy; override;
     property FieldSetList: TFieldSetList read FList;
     property ItemsKey: string read FItemsKey write FItemsKey;
@@ -341,10 +343,20 @@ begin
   ResetPaging;
 end;
 
+constructor TFieldSetListResponse.Create;
+begin
+  Create(TFieldSetList);
+end;
+
 destructor TFieldSetListResponse.Destroy;
 begin
   FList.Free;
   inherited;
+end;
+
+function TFieldSetListResponse.NewListInstance: TFieldSetListResponse;
+begin
+  Result:= TFieldSetListResponse.Create;
 end;
 
 procedure TFieldSetListResponse.SetResponse(const Value: string);

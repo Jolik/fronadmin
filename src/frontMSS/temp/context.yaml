@@ -1,0 +1,533 @@
+parameters:
+  ContextID:
+    name: ctxid
+    type: string
+    format: uuid
+    in: path
+    required: true
+  CredID:
+    name: crid
+    type: string
+    format: uuid
+    in: path
+    required: true  
+paths:
+  /sources/contexts/types/list:
+    get:
+      description: Список типов контекстов
+      operationId: ListContextTypes
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: GetContextResponse
+          schema: { $ref: '#/definitions/GetContextTypesResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/list:
+    post:
+      description: Список контекстов
+      operationId: ListContexts
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/ListContextsBody' }
+          required: true
+      responses:
+        '200':
+          description: ListContextsResponse
+          schema: { $ref: '#/definitions/ListContextsResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/{ctxid}:
+    get:
+      description: получить информацию о контексте по ID
+      operationId: GetContext
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/ContextID' }
+      responses:
+        '200':
+          description: GetContextResponse
+          schema: { $ref: '#/definitions/GetContextResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/new:
+    post:
+      description: Создать контекст
+      operationId: NewContext
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/NewContextBody' }
+      responses:
+        '201':
+          description: NewContextResponse
+          schema: { $ref: '#/definitions/NewContextResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/{ctxid}/update:
+    post:
+      description: Изменить связывание
+      operationId: UpdateContext
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/ContextID' }
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/UpdateContextBody' }
+      responses:
+        '200':
+          description: UpdateContextResponse
+          schema: { $ref: '#/definitions/UpdateContextResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/{ctxid}/remove:
+    post:
+      description: Удалить связывание
+      operationId: RemoveContext
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/ContextID' }
+      responses:
+        '200':
+          description: RemoveContextResponse
+          schema: { $ref: '#/definitions/RemoveContextResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/creds/list:
+    post:
+      description: для получения списка credentials контекста источника
+      operationId: ListContextCredentials
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: source context credentials list request params
+          schema: { $ref: '#/definitions/ContextCredsListRequestBody' }
+      responses:
+        '200':
+          description: source context credentials list response
+          schema: { $ref: '#/definitions/ContextCredsListResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/creds/new:
+    post:
+      description: для получения списка credentials контекста источника
+      operationId: NewContextCredentials
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: source context credentials list request params
+          schema: { $ref: '#/definitions/ContextCredsNewRequestBody' }
+      responses:
+        '201':
+          description: source context credentials list response
+          schema: { $ref: '#/definitions/ContextCredsNewResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/creds/{crid}/update:
+    post:
+      description: Изменить связывание
+      operationId: UpdateContextCred
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/CredID' }
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/UpdateContextCredBody' }
+      responses:
+        '200':
+          description: UpdateContextCredResponse
+          schema: { $ref: '#/definitions/UpdateContextCredResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/creds/{crid}/remove:
+    post:
+      description: Удалить связывание
+      operationId: RemoveContextCred
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/CredID' }
+      responses:
+        '200':
+          description: RemoveContextResponse
+          schema: { $ref: '#/definitions/RemoveContextResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/contexts/creds/{crid}:
+    get:
+      description: получить информацию о контексте по ID
+      operationId: GetContextCred
+      tags: [ 'contexts' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/CredID' }
+      responses:
+        '200':
+          description: GetContextCredResponse
+          schema: { $ref: '#/definitions/GetContextCredResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }          
+definitions:
+  GetContextTypesResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              ctxtypes:
+                type: array
+                items: { $ref: '#/definitions/ContextType' }
+
+  ContextType:
+    x-nullable: false
+    properties:
+      ctxtid: { type: string, x-nullable: false }
+      name: { type: string, x-nullable: false }
+      def: { $ref: '#/definitions/any' }
+
+  ListContextsBody:
+    x-nullable: false
+    properties:
+      page: { type: integer, x-nullable: true, format: int32, minimum: 1, default: 1 }
+      pageSize: { type: integer, x-nullable: true, format: int32, minimum: 1, default: 1 }
+      order: { type: array, items: { type: string, x-nullable: false } }
+      orderDir: { type: string, x-nullable: true }
+      ctxtid: { type: array, items: { type: string } }
+      ctxid: { type: array, items: { type: string, format: uuid } }
+      crid: { type: array, items: { type: string, format: uuid } }
+      sid: { type: array, items: { type: string } }
+      index: { type: array, items: { type: string } }
+
+  UpdateContextBody:
+    x-nullable: false
+    properties:
+      data: { $ref: '#/definitions/any' }
+
+  ListContextsResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              contexts:
+                x-nullable: false
+                properties:
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                  items:
+                    type: array
+                    items: { $ref: '#/definitions/Context' }
+
+  Context:
+    x-nullable: false
+    properties:
+      ctxid: { type: string, x-nullable: false, format: uuid }
+      ctxtid: { type: string, x-nullable: false }
+      sid: { type: string, x-nullable: false }
+      index: { type: string, x-nullable: false }
+      crid: { type: string, x-nullable: true, format: uuid }
+      data: { $ref: '#/definitions/any' }
+
+  GetContextResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              context: { $ref: '#/definitions/Context' }
+
+  NewContextBody:
+    x-nullable: false
+    properties:
+      ctxid: { type: string, x-nullable: true, format: uuid }
+      ctxtid: { type: string, x-nullable: false, maxLength: 32 }
+      sid: { type: string, x-nullable: false, minLength: 1, maxLength: 16 }
+      index: { type: string, x-nullable: false, minLength: 1, maxLength: 32 }
+      data: { $ref: '#/definitions/any' }
+
+  NewContextResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              ctxid: { type: string, x-nullable: false, format: uuid }
+
+  UpdateContextResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response: { }
+  RemoveContextResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response: { }
+  UpdateContextCredResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response: { }
+  
+  GetContextCredResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              credential: { $ref: '#/definitions/Credential' }
+  ContextCredsListRequestBody:
+    type: object
+    properties:
+      page:
+        type: integer
+        format: int64
+        description: Номер страницы
+        x-nullable: true
+      pagesize:
+        type: integer
+        format: int64
+        description: Размер страницы
+        x-nullable: true
+      ctxid: { type: array, items: { type: string, format: uuid } }
+      crid:
+        type: array
+        items:
+          type: string
+          format: uuid
+        description: Список CRID (макс. 100 элементов)
+        x-nullable: true
+      lid:
+        type: array
+        items:
+          type: string
+          format: uuid
+        description: Список LID (макс. 100 элементов)
+        x-nullable: true
+      name:
+        type: array
+        items:
+          type: string
+        description: Список имён (макс. 100 элементов)
+        x-nullable: true
+      login:
+        type: array
+        items:
+          type: string
+        description: Список логинов (макс. 100 элементов)
+        x-nullable: true
+      updateFrom:
+        type: integer
+        format: int64
+        description: Время обновления от (Unix timestamp)
+        x-nullable: true
+      updateTo:
+        type: integer
+        format: int64
+        description: Время обновления до (Unix timestamp)
+        x-nullable: true
+      order:
+        type: array
+        items:
+          type: string
+          enum:
+            - lid
+            - sid
+            - name
+            - login
+            - created
+            - updated
+        description: Поля сортировки
+        x-nullable: true
+      orderDir:
+        type: string
+        x-nullable: true  
+      searchStr:
+        type: string
+        maxLength: 255
+        description: Строка поиска
+        x-nullable: true
+      search:
+        type: array
+        items:
+          type: string
+          enum:
+            - name
+            - login
+        description: Поля поиска
+        x-nullable: true
+      flags:
+        type: array
+        items:
+          type: string
+          enum:
+            - all
+            - archiveonly
+            - verbose
+        description: Фильтр по флагам (макс. 100 элементов)
+        x-nullable: true
+  ContextCredsListResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              credentials:
+                x-nullable: false
+                properties:
+                  count:
+                    type: integer
+                    x-nullable: false
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                    x-nullable: false
+                  items:
+                    type: array
+                    x-nullable: false
+                    items: { $ref: '#/definitions/Credential' }
+  Credential:
+    type: object
+    x-nullable: false
+    properties:
+      crid:
+        type: string
+        format: uuid
+        description: Идентификатор учётных данных
+      compid:
+        type: string
+        format: uuid
+        description: Идентификатор компании
+      lid:
+        type: string
+        format: uuid
+        description: LID
+      name:
+        type: string
+        description: Название
+      login:
+        type: string
+        description: Логин
+      ctxid:
+        type: string
+        description: Идентификатор контекста
+      pass:
+        type: string
+        description: Пароль
+        x-nullable: true
+      data: { $ref: '#/definitions/any' }
+      body: { $ref: '#/definitions/any' }
+      created:
+        type: integer
+        format: int64
+        description: Дата создания (Unix timestamp)
+      updated:
+        type: integer
+        format: int64
+        description: Дата обновления (Unix timestamp)
+      archived:
+        type: integer
+        format: int64
+        description: Дата архивирования (Unix timestamp)
+        x-nullable: true
+  
+  ContextCredsNewRequestBody:
+    type: object
+    x-nullable: false
+    required: ['ctxid', 'lid', 'login', 'pass']
+    properties:
+      ctxid: { type: string, x-nullable: false, format: uuid }
+      crid:
+        type: string
+        format: uuid
+        description: Идентификатор учётных данных
+      lid:
+        type: string
+        format: uuid
+        x-nullable: false,
+        description: LID
+      name:
+        type: string
+        description: Название
+      login:
+        type: string
+        description: Логин
+        x-nullable: false,
+      pass:
+        type: string
+        description: Пароль
+        x-nullable: true
+      data: { $ref: '#/definitions/any' }
+      body: { $ref: '#/definitions/any' }
+  
+  
+  UpdateContextCredBody:
+    type: object
+    x-nullable: false
+    properties:
+      name:
+        type: string
+        x-nullable: true
+        description: Название
+      login:
+        type: string
+        x-nullable: true
+        description: Логин
+      pass:
+        type: string
+        x-nullable: true
+        description: Пароль
+      data: { $ref: '#/definitions/any' }
+      body: { $ref: '#/definitions/any' }
+  
+  
+  ContextCredsNewResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              crid: { type: string, x-nullable: false, format: uuid }
+

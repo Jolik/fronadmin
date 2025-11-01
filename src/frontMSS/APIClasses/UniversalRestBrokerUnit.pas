@@ -15,7 +15,9 @@ uses
   LinksHttpRequests,
   ContextsHttpRequests,
   SourceCredsHttpRequests,
-  SourceTypesHttpRequests;
+  SourceTypesHttpRequests,
+  LocationHttpRequests,
+  OrganizationHttpRequests;
 
 type
   TRestBroker = class(TInterfacedObject, IBroker)
@@ -93,10 +95,16 @@ begin
 
   // Contexts (Dataserver)
   if Req is TContextReqList then Exit(TContextListResponse.Create);
-  if Req is TContextReqInfo then Exit(TContextInfoResponse.Create);
+//  if Req is TContextReqInfo then Exit(TContextInfoResponse.Create);
   if Req is TContextReqNew then Exit(TJSONResponse.Create);
   if Req is TContextReqUpdate then Exit(TJSONResponse.Create);
   if Req is TContextReqRemove then Exit(TJSONResponse.Create);
+  if Req is TContextTypesReqList then Exit(TContextTypeListResponse.Create);
+  if Req is TContextCredsReqList then Exit(TContextCredsListResponse.Create);
+  if Req is TContextCredReqInfo then Exit(TContextCredInfoResponse.Create);
+  if Req is TContextCredReqNew then Exit(TJSONResponse.Create);
+  if Req is TContextCredReqUpdate then Exit(TJSONResponse.Create);
+  if Req is TContextCredReqRemove then Exit(TJSONResponse.Create);
 
   // Source credentials (Dataserver)
   if Req is TSourceCredsReqList then Exit(TSourceCredsListResponse.Create);
@@ -107,6 +115,14 @@ begin
 
   // Source types (Dataserver)
   if Req is TSourceTypeReqList then Exit(TSourceTypeListResponse.Create);
+
+  // Locations
+  if Req is TLocationReqList then Exit(TLocationListResponse.Create);
+
+  // Organizations
+  if Req is TOrganizationReqList then Exit(TOrganizationListResponse.Create);
+  if Req is TOrganizationTypesReqList then Exit(TOrgTypeListResponse.Create);
+  if Req is TOrgTypesReqList then Exit(TOrgTypeListResponse.Create);
 
   // Fallback generic
   Result := TJSONResponse.Create;

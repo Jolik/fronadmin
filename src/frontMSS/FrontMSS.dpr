@@ -168,7 +168,11 @@ uses
   UsersBrokerUnit in 'APIClasses\Legacy\UsersBrokerUnit.pas',
   BindingsBrokerUnit in 'APIClasses\Legacy\BindingsBrokerUnit.pas',
   SourcesRestBrokerUnit in 'APIClasses\SourcesRestBrokerUnit.pas',
-  SourceHttpRequests in 'HttpClasses\SourceHttpRequests.pas';
+  SourceHttpRequests in 'HttpClasses\SourceHttpRequests.pas',
+  LocationHttpRequests in 'HttpClasses\LocationHttpRequests.pas',
+  OrganizationHttpRequests in 'HttpClasses\OrganizationHttpRequests.pas',
+  LocationUnit in 'EntityClasses\dataserver\LocationUnit.pas',
+  OrganizationUnit in 'EntityClasses\dataserver\OrganizationUnit.pas';
 
 {$R *.res}
 

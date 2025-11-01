@@ -3,30 +3,85 @@ unit ContextsHttpRequests;
 interface
 
 uses
-  System.SysUtils, System.JSON,
-  EntityUnit, HttpClientUnit, BaseRequests, BaseResponses,
-  ContextUnit;
+  System.SysUtils,
+  System.JSON,
+  EntityUnit,
+  HttpClientUnit,
+  BaseRequests,
+  BaseResponses,
+  ContextUnit,
+  ContextTypeUnit,
+  SourceCredsUnit,
+  StringListUnit;
 
 type
+  // Extended body for POST /sources/contexts/list with filtering arrays
+  TContextReqListBody = class(TReqListBody)
+  private
+    FCtxtIds: TStringArray;
+    FCtxIds: TStringArray;
+    FCrids: TStringArray;
+    FSids: TStringArray;
+    FIndexes: TStringArray;
+    procedure WriteArray(const Key: string; const Value: TStringArray; dst: TJSONObject);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    property CtxtIds: TStringArray read FCtxtIds;
+    property CtxIds: TStringArray read FCtxIds;
+    property Crids: TStringArray read FCrids;
+    property Sids: TStringArray read FSids;
+    property Indexes: TStringArray read FIndexes;
+  end;
+
+  // Response wrapper for /sources/contexts/list
   TContextListResponse = class(TListResponse)
   private
     function GetContextList: TContextList;
-  protected
-    procedure SetResponse(const Value: string); override;
   public
     constructor Create;
     property ContextList: TContextList read GetContextList;
   end;
 
-  TContextInfoResponse = class(TEntityResponse)
+  // Response wrapper for /sources/contexts/types/list
+  TContextTypeListResponse = class(TFieldSetListResponse)
   private
-    function GetContext: TContext;
+    function GetContextTypes: TContextTypeList;
+  public
+    constructor Create; override;
+    property ContextTypes: TContextTypeList read GetContextTypes;
+  end;
+
+  // Response wrapper for context credentials list
+  TContextCredsListResponse = class(TListResponse)
+  private
+    function GetCredentialList: TSourceCredsList;
   public
     constructor Create;
-    property Context: TContext read GetContext;
+    property CredentialList: TSourceCredsList read GetCredentialList;
+  end;
+
+  // Response wrapper for single credential
+  TContextCredInfoResponse = class(TEntityResponse)
+  private
+    function GetCredential: TSourceCreds;
+  public
+    constructor Create;
+    property Credential: TSourceCreds read GetCredential;
   end;
 
   TContextReqList = class(TReqList)
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+    function Body: TContextReqListBody;
+  end;
+
+  // GET /sources/contexts/types/list
+  TContextTypesReqList = class(TReqList)
   protected
     class function BodyClassType: TFieldSetClass; override;
   public
@@ -58,7 +113,123 @@ type
     constructor Create; override;
   end;
 
+  // Body for POST /sources/contexts/creds/list
+  TContextCredsReqListBody = class(TReqListBody)
+  private
+    FCtxIds: TStringArray;
+    FCrids: TStringArray;
+    FLids: TStringArray;
+    FNames: TStringArray;
+    FLogins: TStringArray;
+    FUpdateFrom: Int64;
+    FUpdateTo: Int64;
+    FArchiveOnly: Boolean;
+    FVerbose: Boolean;
+    procedure WriteArray(const Key: string; const Value: TStringArray; dst: TJSONObject);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    property CtxIds: TStringArray read FCtxIds;
+    property Crids: TStringArray read FCrids;
+    property Lids: TStringArray read FLids;
+    property Names: TStringArray read FNames;
+    property Logins: TStringArray read FLogins;
+    property UpdateFrom: Int64 read FUpdateFrom write FUpdateFrom;
+    property UpdateTo: Int64 read FUpdateTo write FUpdateTo;
+    property ArchiveOnly: Boolean read FArchiveOnly write FArchiveOnly;
+    property Verbose: Boolean read FVerbose write FVerbose;
+  end;
+
+  // POST /sources/contexts/creds/list
+  TContextCredsReqList = class(TReqList)
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+    function Body: TContextCredsReqListBody;
+  end;
+
+  // GET /sources/contexts/creds/{crid}
+  TContextCredReqInfo = class(TReqInfo)
+  public
+    constructor Create; override;
+    constructor CreateID(const ACredId: string);
+  end;
+
+  // POST /sources/contexts/creds/new
+  TContextCredReqNew = class(TReqNew)
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+  end;
+
+  // POST /sources/contexts/creds/{crid}/update
+  TContextCredReqUpdate = class(TReqUpdate)
+  protected
+    class function BodyClassType: TFieldSetClass; override;
+  public
+    constructor Create; override;
+  end;
+
+  // POST /sources/contexts/creds/{crid}/remove
+  TContextCredReqRemove = class(TReqRemove)
+  public
+    constructor Create; override;
+  end;
+
 implementation
+
+{ TContextReqListBody }
+
+constructor TContextReqListBody.Create;
+begin
+  inherited Create;
+  FCtxtIds := TStringArray.Create;
+  FCtxIds := TStringArray.Create;
+  FCrids := TStringArray.Create;
+  FSids := TStringArray.Create;
+  FIndexes := TStringArray.Create;
+end;
+
+destructor TContextReqListBody.Destroy;
+begin
+  FCtxtIds.Free;
+  FCtxIds.Free;
+  FCrids.Free;
+  FSids.Free;
+  FIndexes.Free;
+  inherited;
+end;
+
+procedure TContextReqListBody.WriteArray(const Key: string; const Value: TStringArray; dst: TJSONObject);
+var
+  Arr: TJSONArray;
+begin
+  if not Assigned(Value) or (Value.Count = 0) then
+    Exit;
+
+  Arr := TJSONArray.Create;
+  try
+    Value.Serialize(Arr);
+    dst.AddPair(Key, Arr);
+  except
+    Arr.Free;
+    raise;
+  end;
+end;
+
+procedure TContextReqListBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Serialize(dst, APropertyNames);
+  WriteArray('ctxtid', FCtxtIds, dst);
+  WriteArray('ctxid', FCtxIds, dst);
+  WriteArray('crid', FCrids, dst);
+  WriteArray('sid', FSids, dst);
+  WriteArray('index', FIndexes, dst);
+end;
 
 { TContextListResponse }
 
@@ -72,57 +243,52 @@ begin
   Result := EntityList as TContextList;
 end;
 
-procedure TContextListResponse.SetResponse(const Value: string);
-var
-  JSONResult: TJSONObject;
-  RootObject: TJSONObject;
-  ContextsValue: TJSONValue;
-  ItemsArray: TJSONArray;
+{ TContextTypeListResponse }
+
+constructor TContextTypeListResponse.Create;
 begin
-  inherited SetResponse(Value);
-  ContextList.Clear;
-
-  if Value.Trim.IsEmpty then Exit;
-
-  JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
-  try
-    if not Assigned(JSONResult) then Exit;
-
-    RootObject := JSONResult.GetValue('response') as TJSONObject;
-    if not Assigned(RootObject) then Exit;
-
-    ContextsValue := RootObject.GetValue('contexts');
-    ItemsArray := nil;
-
-    if ContextsValue is TJSONArray then
-      ItemsArray := TJSONArray(ContextsValue)
-    else if ContextsValue is TJSONObject then
-      ItemsArray := TJSONObject(ContextsValue).GetValue('items') as TJSONArray;
-
-    if Assigned(ItemsArray) then
-      ContextList.ParseList(ItemsArray);
-  finally
-    JSONResult.Free;
-  end;
+  inherited Create(TContextTypeList, 'response', 'ctxtypes');
 end;
 
-{ TContextInfoResponse }
-
-constructor TContextInfoResponse.Create;
+function TContextTypeListResponse.GetContextTypes: TContextTypeList;
 begin
-  inherited Create(TContext, 'response', 'context');
+  Result := FieldSetList as TContextTypeList;
 end;
 
-function TContextInfoResponse.GetContext: TContext;
+{ TContextCredsListResponse }
+
+constructor TContextCredsListResponse.Create;
 begin
-  Result := Entity as TContext;
+  inherited Create(TSourceCredsList, 'response', 'credentials');
 end;
 
-{ Requests }
+function TContextCredsListResponse.GetCredentialList: TSourceCredsList;
+begin
+  Result := EntityList as TSourceCredsList;
+end;
+
+{ TContextCredInfoResponse }
+
+constructor TContextCredInfoResponse.Create;
+begin
+  inherited Create(TSourceCreds, 'response', 'credential');
+end;
+
+function TContextCredInfoResponse.GetCredential: TSourceCreds;
+begin
+  Result := Entity as TSourceCreds;
+end;
+
+{ TContextReqList }
 
 class function TContextReqList.BodyClassType: TFieldSetClass;
 begin
-  Result := TReqListBody;
+  Result := TContextReqListBody;
+end;
+
+function TContextReqList.Body: TContextReqListBody;
+begin
+  Result := inherited Body as TContextReqListBody;
 end;
 
 constructor TContextReqList.Create;
@@ -131,9 +297,26 @@ begin
   SetEndpoint('sources/contexts/list');
 end;
 
+{ TContextTypesReqList }
+
+class function TContextTypesReqList.BodyClassType: TFieldSetClass;
+begin
+  Result := nil;
+end;
+
+constructor TContextTypesReqList.Create;
+begin
+  inherited Create;
+  Method := mGET;
+  SetEndpoint('sources/contexts/types/list');
+end;
+
+{ TContextReqInfo }
+
 constructor TContextReqInfo.Create;
 begin
   inherited Create;
+  Method := mGET;
   SetEndpoint('sources/contexts');
 end;
 
@@ -142,6 +325,8 @@ begin
   Create;
   Id := AId;
 end;
+
+{ TContextReqNew }
 
 class function TContextReqNew.BodyClassType: TFieldSetClass;
 begin
@@ -154,6 +339,8 @@ begin
   SetEndpoint('sources/contexts/new');
 end;
 
+{ TContextReqUpdate }
+
 class function TContextReqUpdate.BodyClassType: TFieldSetClass;
 begin
   Result := TContext;
@@ -165,10 +352,141 @@ begin
   SetEndpoint('sources/contexts');
 end;
 
+{ TContextReqRemove }
+
 constructor TContextReqRemove.Create;
 begin
   inherited Create;
   SetEndpoint('sources/contexts');
+end;
+
+{ TContextCredsReqListBody }
+
+constructor TContextCredsReqListBody.Create;
+begin
+  inherited Create;
+  FCtxIds := TStringArray.Create;
+  FCrids := TStringArray.Create;
+  FLids := TStringArray.Create;
+  FNames := TStringArray.Create;
+  FLogins := TStringArray.Create;
+  FUpdateFrom := 0;
+  FUpdateTo := 0;
+  FArchiveOnly := False;
+  FVerbose := False;
+end;
+
+destructor TContextCredsReqListBody.Destroy;
+begin
+  FCtxIds.Free;
+  FCrids.Free;
+  FLids.Free;
+  FNames.Free;
+  FLogins.Free;
+  inherited;
+end;
+
+procedure TContextCredsReqListBody.WriteArray(const Key: string; const Value: TStringArray; dst: TJSONObject);
+var
+  Arr: TJSONArray;
+begin
+  if not Assigned(Value) or (Value.Count = 0) then
+    Exit;
+
+  Arr := TJSONArray.Create;
+  try
+    Value.Serialize(Arr);
+    dst.AddPair(Key, Arr);
+  except
+    Arr.Free;
+    raise;
+  end;
+end;
+
+procedure TContextCredsReqListBody.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  inherited Serialize(dst, APropertyNames);
+  WriteArray('ctxid', FCtxIds, dst);
+  WriteArray('crid', FCrids, dst);
+  WriteArray('lid', FLids, dst);
+  WriteArray('name', FNames, dst);
+  WriteArray('login', FLogins, dst);
+
+  if FUpdateFrom <> 0 then
+    dst.AddPair('updateFrom', TJSONNumber.Create(FUpdateFrom));
+  if FUpdateTo <> 0 then
+    dst.AddPair('updateTo', TJSONNumber.Create(FUpdateTo));
+  if FArchiveOnly then
+    dst.AddPair('archiveonly', TJSONBool.Create(True));
+  if FVerbose then
+    dst.AddPair('verbose', TJSONBool.Create(True));
+end;
+
+{ TContextCredsReqList }
+
+class function TContextCredsReqList.BodyClassType: TFieldSetClass;
+begin
+  Result := TContextCredsReqListBody;
+end;
+
+constructor TContextCredsReqList.Create;
+begin
+  inherited Create;
+  SetEndpoint('sources/contexts/creds/list');
+end;
+
+function TContextCredsReqList.Body: TContextCredsReqListBody;
+begin
+  Result := inherited Body as TContextCredsReqListBody;
+end;
+
+{ TContextCredReqInfo }
+
+constructor TContextCredReqInfo.Create;
+begin
+  inherited Create;
+  Method := mGET;
+  SetEndpoint('sources/contexts/creds');
+end;
+
+constructor TContextCredReqInfo.CreateID(const ACredId: string);
+begin
+  Create;
+  Id := ACredId;
+end;
+
+{ TContextCredReqNew }
+
+class function TContextCredReqNew.BodyClassType: TFieldSetClass;
+begin
+  Result := TSourceCreds;
+end;
+
+constructor TContextCredReqNew.Create;
+begin
+  inherited Create;
+  SetEndpoint('sources/contexts/creds/new');
+end;
+
+{ TContextCredReqUpdate }
+
+class function TContextCredReqUpdate.BodyClassType: TFieldSetClass;
+begin
+  Result := TSourceCreds;
+end;
+
+constructor TContextCredReqUpdate.Create;
+begin
+  inherited Create;
+  SetEndpoint('sources/contexts/creds');
+end;
+
+{ TContextCredReqRemove }
+
+constructor TContextCredReqRemove.Create;
+begin
+  inherited Create;
+  SetEndpoint('sources/contexts/creds');
 end;
 
 end.

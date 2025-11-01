@@ -1,0 +1,1032 @@
+parameters:
+  SourceID:
+    type: string
+    name: sid
+    in: path
+    description: уникальный идентификатор источника
+    required: true
+    pattern: '^\w{4}-\w{6}-\d{4}$'
+paths:
+  /sources/bind:
+    post:
+      description: для создания автоматической привязки Источника к внешним метаданным
+      operationId: NewSourceBinding
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/NewSourceBindingBody' }
+      responses:
+        '201':
+          description: NewSourceBindingResponse
+          schema: { $ref: '#/definitions/NewSourceBindingResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/types/list:
+    get:
+      description: "для получения списка типов источников"
+      operationId: SourceTypesList
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: SourceTypesListResponse
+          schema: { $ref: '#/definitions/SourceTypesListResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/new:
+    post:
+      description: для создания нового источника
+      operationId: NewSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/NewSourceBody' }
+      responses:
+        '201':
+          description: NewSourceResponse
+          schema: { $ref: '#/definitions/NewSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/newgroup:
+    post:
+      description: для создания нового источника
+      operationId: NewSourceGroup
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/NewSourceGroupBody' }
+      responses:
+        '201':
+          description: NewSourceResponse
+          schema: { $ref: '#/definitions/NewSourceGroupResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/list:
+    get:
+      description: для получения списка источников доступного в ЦСДН
+      operationId: GetSourcesList
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/page' }
+        - { $ref: '#/parameters/pagesize' }
+        - { $ref: '#/parameters/orderDir' }
+        - name: pid
+          in: query
+          description: поиск по ID родительских источников
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: srctid
+          in: query
+          description: поиск по типам источников
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: objs
+          in: query
+          description: поиск по ID связанных объектов
+          type: array
+          items:
+            type: string
+            format: uuid
+          collectionFormat: csv
+        - name: depid
+          in: query
+          description: поиск по ID связанных отделений
+          type: array
+          items:
+            type: string
+            format: uuid
+          collectionFormat: csv
+        - name: country
+          in: query
+          description: поиск по кодам стран
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: region
+          in: query
+          description: поиск по кодам регионов
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: municipal
+          in: query
+          description: поиск по кодам муниципалитетов
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: urn
+          in: query
+          description: поиск по URN метаданных
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: oid
+          in: query
+          description: поиск по ID наблюдений, производимых источниками
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: order
+          type: array
+          items:
+            type: string
+            enum: [ 'sid','name','time','updated','color' ]
+          in: query
+          description: имена полей для сортировки
+          collectionFormat: csv
+        - name: flag
+          type: array
+          items:
+            type: string
+            enum: [ 'all', 'archiveonly', 'verbose', 'binding', 'meta' ]
+          in: query
+          description: "archived для выдачи источников вместе с архивными. 2) archiveonly для выдачи только архивных источников"
+          collectionFormat: csv
+        - name: updatedfrom
+          type: integer
+          in: query
+        - name: updatedto
+          type: integer
+          in: query
+        - name: monType
+          type: string
+          in: query
+        - name: searchStr
+          type: string
+          in: query
+        - name: searchBy
+          in: query
+          type: array
+          items:
+            type: string
+            enum: [ 'sid', 'name', 'index' ]
+          collectionFormat: csv
+      responses:
+        '200':
+          description: GetSourcesListResponse
+          schema: { $ref: '#/definitions/GetSourcesListResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+    post:
+      description: для получения списка источников доступного в ЦСДН
+      operationId: GetPartSourcesList
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/page' }
+        - { $ref: '#/parameters/pagesize' }
+        - { $ref: '#/parameters/orderDir' }
+        - name: order
+          type: array
+          items:
+            type: string
+            enum: [ 'sid','name','time','updated','color' ]
+          in: query
+          description: имена полей для сортировки
+          collectionFormat: csv
+        - name: flag
+          type: array
+          items:
+            type: string
+            enum: [ 'all', 'archiveonly', 'verbose', 'binding', 'meta' ]
+          in: query
+          description: "archived для выдачи источников вместе с архивными. 2) archiveonly для выдачи только архивных источников"
+          collectionFormat: csv
+        - name: body
+          in: body
+          schema: { $ref: '#/definitions/GetPartSourcesListBody' }
+        - name: updatedfrom
+          type: integer
+          in: query
+        - name: updatedto
+          type: integer
+          in: query
+      responses:
+        '200':
+          description: GetSourcesListResponse
+          schema: { $ref: '#/definitions/GetSourcesListResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/{sid}/values:
+    post:
+      description: получить точки по интересующим типам рядов указанного источника
+      operationId: GetSourceValues
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/SourceID' }
+        - { $ref: '#/parameters/startAt' }
+        - { $ref: '#/parameters/endAt' }
+        - { $ref: '#/parameters/lastAt' }
+        - name: lastNewer
+          in: query
+          type: integer
+          description: глубина поиска для lastdata в часах. Когда указывается, перекрывает параметр last_data_newer из конфига ядра
+        - name: body
+          in: body
+          required: true
+          schema: { $ref: '#/definitions/GetSourceValuesBody' }
+        - name: timeAs
+          in: query
+          type: string
+          description: устанавливает для какого поля используется startAt и endAt. Может принимать значения 'dt' и 'fmt'
+        - name: flag
+          in: query
+          description: "список значений через запятую. Возможные значения:
+                                                       newfirst выдавать последние значения ряда первыми в списке
+                                                       mettimeonly выдавать только те значения, у которых есть поле mt
+                                                       notnull выдавать значения, у которых q не равно null
+                                                       verbose выдавать все поля точки, которые не равны null
+                                                       cv добавить в выдачу поле cv
+                                                       lastdata – выдавать последнюю точку ряда"
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: thin
+          in: query
+          type: integer
+          description: коэффициент прореживания в процентах
+      responses:
+        '200':
+          description: GetSourceValuesResponse
+          schema: { $ref: '#/definitions/GetSourceValuesResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/list/values:
+    post:
+      description: получить точки по интересующим типам рядов указанного списка источников
+      operationId: GetSourceListValues
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/startAt' }
+        - { $ref: '#/parameters/endAt' }
+        - { $ref: '#/parameters/lastAt' }
+        - name: lastNewer
+          in: query
+          type: integer
+          description: глубина поиска для lastdata в часах. Когда указывается, перекрывает параметр last_data_newer из конфига ядра
+        - name: body
+          in: body
+          required: true
+          schema: { $ref: '#/definitions/GetSourceValuesListBody' }
+        - name: timeAs
+          in: query
+          type: string
+          description: устанавливает для какого поля используется startAt и endAt. Может принимать значения 'dt' и 'fmt'
+        - name: flag
+          in: query
+          description: "список значений через запятую. Возможные значения:
+                    newfirst выдавать последние значения ряда первыми в списке
+                    mettimeonly выдавать только те значения, у которых есть поле mt
+                    notnull выдавать значения, у которых q не равно null
+                    verbose выдавать все поля точки, которые не равны null
+                    cv добавить в выдачу поле cv
+                    lastdata – выдавать последнюю точку ряда"
+          type: array
+          items:
+            type: string
+          collectionFormat: csv
+        - name: thin
+          in: query
+          type: integer
+          description: коэффициент прореживания в процентах
+      responses:
+        '200':
+          description: GetSourceValuesResponse
+          schema: { $ref: '#/definitions/GetSourceValuesResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/{sid}:
+    get:
+      description: для получения характеристик по указанному источнику
+      operationId: GetSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/SourceID' }
+        - name: flag
+          type: array
+          in: query
+          items:
+            type: string
+            enum: [ 'wigos', 'contacts', 'meta', 'binding' ]
+          collectionFormat: csv
+      responses:
+        '200':
+          description: GetSourceResponse
+          schema: { $ref: '#/definitions/GetSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/{sid}/update:
+    post:
+      description: для обновления нового источника
+      operationId: UpdateSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - { $ref: '#/parameters/SourceID' }
+        - name: body
+          in: body
+          description: New source data
+          schema: { $ref: '#/definitions/UpdateSourceBody' }
+      responses:
+        '200':
+          description: UpdateSourceResponse
+          schema: { $ref: '#/definitions/UpdateSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/archive:
+    post:
+      description: Не удалять источники а архивировать, устанавливает поле archived
+      operationId: ArchiveSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: sid
+          in: query
+          description: уникальный идентификатор источника
+          pattern: '^\w{4}-\w{6}-\d{4}$'
+          required: true
+      responses:
+        '200':
+          description: ArchiveSourceResponse
+          schema: { $ref: '#/definitions/ArchiveSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/restore:
+    post:
+      description: Восстанавливает архивный источник. Если источник не архвный, то выдавать ошибку
+      operationId: RestoreSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: sid
+          in: query
+          description: уникальный идентификатор источника
+          required: true
+          pattern: '^\w{4}-\w{6}-\d{4}$'
+      responses:
+        '200':
+          description: RestoreSourceResponse
+          schema: { $ref: '#/definitions/RestoreSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+  /sources/rem:
+    post:
+      description: Удаляет архивный источник. Если источник не архвный, то выдавать ошибку
+      operationId: RemoveSource
+      tags: [ 'sources' ]
+      produces:
+        - application/json
+      parameters:
+        - type: string
+          name: sid
+          in: query
+          description: уникальный идентификатор источника
+          required: true
+          pattern: '^\w{4}-\w{6}-\d{4}$'
+        - type: boolean
+          name: keep
+          in: query
+          description: если параметр не задан или установлен в true, будут удалены ряды, но источник будет сохранён, если в false, то источник так же будет удалён
+          required: false
+          default: true
+      responses:
+        '200':
+          description: RemoveSourceResponse
+          schema: { $ref: '#/definitions/RemoveSourceResponse' }
+        default:
+          description: ErrorResponse
+          schema: { $ref: '#/definitions/ErrorResponse' }
+
+definitions:
+  SourceID:
+    type: string
+    x-nullable: false
+    description: уникальный идентификатор источника формата XXXX-YINDEX-NNNN
+    example: '1234-123456-1234'
+    pattern: '^\w{4}-\w{6}-\d{4}$'
+
+  NewSourceBindingBody:
+    x-nullable: false
+    properties:
+      binding:
+        type: array
+        maxItems: 500
+        minItems: 1
+        items:
+          type: object
+          x-nullable: false
+          required:
+            - urn
+          properties:
+            urn: { type: string, x-nullable: false }
+            sid: { type: string, x-nullable: false }
+            index: { type: string, x-nullable: false }
+  NewSourceBindingResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              bid: { type: array, items: { type: string, x-nullable: false, format: uuid } }
+
+  GetSourceValuesBody:
+    properties:
+      dstypes:
+        type: array
+        items:
+          required:
+            - dstid
+          properties:
+            dstid:
+              type: string
+              x-nullable: false
+            precision:
+              type: integer
+              default: 6
+              description: точность вывода значения v (кол-ва знаков после запятой)
+            uid:
+              type: string
+              description: идентификатор требуемой единицы измерения
+              x-nullable: true
+            flag:
+              type: string
+  GetSourceValuesListBody:
+    properties:
+      sources:
+        type: array
+        items:
+          type: object
+          properties:
+            sid:
+              type: string
+              x-nullable: false
+              pattern: '^\w{4}-\w{6}-\d{4}$'
+      dstypes:
+        type: array
+        items:
+          required:
+            - dstid
+          properties:
+            dstid:
+              type: string
+              x-nullable: false
+            precision:
+              type: integer
+              default: 6
+              description: точность вывода значения v (кол-ва знаков после запятой)
+            uid:
+              type: string
+              description: идентификатор требуемой единицы измерения
+              x-nullable: true
+            flag:
+              type: string
+  GetSourceValuesResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              dataseries:
+                type: array
+                items: { $ref: '#/definitions/DataseriesValuesResponse' }
+  SourceGenericFieldsReq:
+    properties:
+      pid: { $ref: '#/definitions/String' }
+      name:
+        type: string
+        description: название источника
+        example: Верхние Луки
+        x-nullable: true
+      mid: { type: string, format: uuid, x-nullable: true }
+      srctid: { $ref: '#/definitions/String' }
+      depid: { $ref: '#/definitions/UUIDString' }
+      ownerOrg:
+        $ref: '#/definitions/WordJSON'
+        x-nullable: true
+        minimum: 0
+        maximum: 65535
+      timeShift:
+        type: integer
+        description: Сдвиг времени
+        example: 45
+        x-nullable: true
+      meteoRange:
+        type: integer
+        x-nullable: true
+      contacts: { $ref: '#/definitions/any' }
+      wigos: { $ref: '#/definitions/any' }
+      src: { $ref: '#/definitions/SourceSrcReq' }
+      begin_meteo_day:
+        $ref: '#/definitions/IntJSON'
+      objs: { $ref: '#/definitions/StringSlice' }
+
+  SourceGenericFieldsRes:
+    x-nullable: false
+    properties:
+      pid: { $ref: '#/definitions/SourceID' }
+      name:
+        type: string
+        description: название источника
+        example: Верхние Луки
+        x-nullable: true
+      mid: { type: string, format: uuid, x-nullable: true }
+      srctid: { type: string, x-nullable: false }
+      depid: { type: string, format: uuid, x-nullable: true, x-omitempty: false }
+      ownerOrg:
+        type: integer
+        x-nullable: true
+        minimum: 0
+        maximum: 65535
+      timeShift:
+        type: integer
+        description: Сдвиг времени
+        example: 45
+        x-nullable: false
+      meteoRange:
+        type: integer
+        x-nullable: false
+      contacts: { $ref: '#/definitions/any' }
+      wigos: { $ref: '#/definitions/any' }
+      src: { $ref: '#/definitions/SourceSrcRes' }
+      begin_meteo_day:
+        type: integer
+        x-nullable: true
+      objs:
+        type: array
+        items:
+          type: string
+          format: uuid
+  SourceSrcReq:
+    properties:
+      subid:
+        $ref: '#/definitions/String'
+        maxLength: 8
+      refId:
+        $ref: '#/definitions/ByteJSON'
+        minimum: 0
+        maximum: 255
+      coorIndex:
+        $ref: '#/definitions/IntJSON'
+        description: координатный номер станции Состоит из 7 цифр
+      rank:
+        $ref: '#/definitions/ByteJSON'
+        minimum: 0
+        maximum: 255
+      type:
+        $ref: '#/definitions/WordJSON'
+        minimum: 0
+        maximum: 65535
+      created:
+        $ref: '#/definitions/IntJSON'
+      images: { $ref: '#/definitions/String', x-nullable: true }
+      docs: { $ref: '#/definitions/String', x-nullable: true }
+      index:
+        type: string
+        maxLength: 100
+  SourceSrcRes:
+    x-nullable: false
+    properties:
+      subid:
+        type: string
+        x-nullable: false
+        maxLength: 8
+      refId:
+        type: integer
+        x-nullable: true
+        minimum: 0
+        maximum: 255
+      coorIndex:
+        type: integer
+        description: координатный номер станции Состоит из 7 цифр
+        example: 1234567
+        x-nullable: true
+      rank:
+        type: integer
+        minimum: 0
+        maximum: 255
+        x-nullable: true
+      type:
+        type: integer
+        x-nullable: true
+        minimum: 0
+        maximum: 65535
+      created:
+        type: integer
+        x-nullable: true
+      images: { type: string, x-nullable: true }
+      docs: { type: string, x-nullable: true }
+      group:
+        type: string
+        description: группа источника (XXXX)
+        x-nullable: false
+      number:
+        type: integer
+        x-nullable: false
+      index:
+        type: string
+        description: индекс ВМО/ИКАО
+        example: UWUU
+        x-nullable: true
+  SourceLink:
+    x-nullable: false
+    properties:
+      lid:
+        type: string
+        format: uuid
+        x-nullable: true
+
+  SourceTer:
+    x-nullable: false
+    properties:
+      country:
+        type: string
+        description: Страна (текст вида 'RU')
+        example: RU
+        x-nullable: true
+        maxLength: 2
+        minLength: 2
+      region:
+        type: string
+        description: регион ВМО (текст вида 'RU-ROS')
+        example: RU-RU
+        x-nullable: true
+        pattern: ^\w{2}-\w{2,3}$
+      municipal:
+        type: string
+        description: муниципалитет источника
+        example: Russia
+        x-nullable: true
+        maxLength: 64
+  SourceLocReq:
+    x-nullable: true
+    properties:
+      lat:
+        $ref: '#/definitions/Float'
+        x-nullable: true
+      lon:
+        $ref: '#/definitions/Float'
+        x-nullable: true
+      elev:
+        $ref: '#/definitions/IntJSON'
+        description: высота
+        x-nullable: true
+  SourceLocRes:
+    x-nullable: true
+    properties:
+      lat:
+        type: number
+        x-nullable: true
+      lon:
+        type: number
+        x-nullable: true
+      elev:
+        type: integer
+        description: высота
+        example: 120
+        x-nullable: true
+  SourceRec:
+    x-nullable: false
+    properties:
+      status: { type: string, x-nullable: false }
+      archived:
+        type: integer
+        description: "unixtime Время архивации. Если null, то запись актуальна"
+        example: 1284286794
+        x-nullable: true
+      updateUser: { type: string, format: uuid, x-nullable: true }
+      updated: { type: integer, x-nullable: true }
+      created: { type: integer, x-nullable: true }
+      metadata: { $ref: '#/definitions/MetadataResponse' }
+  SourceGetOnlyFields:
+    properties:
+      last_insert:
+        type: integer
+        description: "unixtime Время последнего обновления."
+        example: 1284286794
+        x-nullable: true
+  SourceDef:
+    allOf:
+      - $ref: '#/definitions/SourceGenericFieldsRes'
+      - $ref: '#/definitions/SourceGetOnlyFields'
+      - properties:
+          ter: { $ref: '#/definitions/SourceTer' }
+          loc: { $ref: '#/definitions/SourceLocRes' }
+          shape: { $ref: '#/definitions/GeoJSON' }
+          rec: { $ref: '#/definitions/SourceRec' }
+          metadata:
+            allOf:
+              - { $ref: '#/definitions/MetadataResponse' }
+              - { $ref: '#/definitions/SourcesMetadata' }
+          sid: { $ref: '#/definitions/SourceID' }
+          contexts:
+            type: array
+            items: { $ref: '#/definitions/Context' }
+          link: { $ref: '#/definitions/SourceLink' }
+          show_mon: { type: integer, x-nullable: false }
+          enable_mon: { type: integer, x-nullable: false }
+        required:
+          - sid
+          - timeShift
+  GetSourcesListResponse:
+    description: для получения списка источников доступного в ЦСДН
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              sources:
+                x-nullable: false
+                properties:
+                  count:
+                    type: integer
+                    x-nullable: false
+                  info:
+                    $ref: '#/definitions/ListInfo'
+                    x-nullable: false
+                  items:
+                    type: array
+                    x-nullable: false
+                    items: { $ref: '#/definitions/SourceDef' }
+  NewSourceBody:
+    x-nullable: false
+    allOf:
+      - { $ref: '#/definitions/SourceGenericFieldsReq' }
+      - properties:
+          ter: { $ref: '#/definitions/SourceTer' }
+          loc: { $ref: '#/definitions/SourceLocReq' }
+          shape: { $ref: '#/definitions/GeoJSON' }
+          contexts:
+            type: array
+            items: { $ref: '#/definitions/Context' }
+          sid:
+            x-nullable: true
+            type: string
+            description: уникальный идентификатор источника
+            pattern: '^\w{4}-\w{6}-\d{4}$'
+            example: '1234-123456-1234'
+          rec: { $ref: '#/definitions/SourceRec' }
+          metadata: { $ref: '#/definitions/any' }
+          lid:
+            x-nullable: true
+            type: string
+            format: uuid
+            description: ID линка
+          show_mon: { type: integer, x-nullable: false }
+          enable_mon: { type: integer, x-nullable: false }
+        required:
+          - sid
+          - ter
+  NewSourceGroupBody:
+    x-nullable: false
+    properties:
+      sources:
+        type: array
+        x-nullable: false
+        items: { $ref: '#/definitions/NewSourceBody' }
+  NewSourceResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            type: object
+            x-nullable: false
+            properties:
+              source: { $ref: '#/definitions/SourceDef' }
+  NewSourceGroupResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              sources:
+                x-nullable: false
+                type: array
+                items: { $ref: '#/definitions/SourceDef' }
+  UpdateSourceBody:
+    x-nullable: false
+    allOf:
+      - { $ref: '#/definitions/SourceGenericFieldsReq' }
+      - properties:
+          loc: { $ref: '#/definitions/SourceLocReq' }
+          shape: { $ref: '#/definitions/GeoJSON' }
+          rec: { $ref: '#/definitions/SourceRec' }
+          ter: { $ref: '#/definitions/SourceTer' }
+          lid: { $ref: '#/definitions/UUIDString' }
+          show_mon: { type: integer, x-nullable: true }
+          enable_mon: { type: integer, x-nullable: true }
+
+  UpdateSourceResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            type: object
+            x-nullable: false
+            properties:
+              source: { $ref: '#/definitions/SourceDef', x-nullable: false }
+  RemoveSourceResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+  RestoreSourceResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+  ArchiveSourceResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            type: object
+            x-nullable: false
+            properties:
+              source:
+                x-nullable: false
+                properties:
+                  sid: { $ref: '#/definitions/SourceID' }
+  GetSourceResponse:
+    description: Информация об источнике
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            x-nullable: false
+            properties:
+              source: { $ref: '#/definitions/SourceDef' }
+  SearchArea:
+    type: object
+    properties:
+      circle:
+        type: object
+        properties:
+          lon:
+            type: number
+            x-nullable: false
+          lat:
+            type: number
+            x-nullable: false
+          r:
+            type: number
+            x-nullable: false
+          unit:
+            type: string
+            x-nullable: false
+      polygon:
+        type: array
+        minItems: 3
+        items:
+          type: object
+          x-nullable: false
+          properties:
+            lon:
+              type: number
+              x-nullable: false
+            lat:
+              type: number
+              x-nullable: false
+      shape: { $ref: '#/definitions/GeoJSON' }
+      mode: { type: string }
+  GetPartSourcesListBody:
+    properties:
+      srcindex:
+        type: array
+        items:
+          type: string
+      urn:
+        type: array
+        items:
+          type: string
+      sid:
+        type: array
+        items:
+          type: string
+      pid:
+        type: array
+        items:
+          type: string
+      srctid:
+        type: array
+        items:
+          type: string
+      ctxtid:
+        type: array
+        items:
+          type: string
+      depid:
+        type: array
+        items:
+          type: string
+          format: uuid
+      country:
+        type: array
+        items:
+          type: string
+      region:
+        type: array
+        items:
+          type: string
+      municipal:
+        type: array
+        items:
+          type: string
+      lid:
+        type: array
+        items:
+          type: string
+          format: uuid
+      objs:
+        type: array
+        items:
+          type: string
+          format: uuid
+      oid:
+        type: array
+        items:
+          type: string
+      monType:
+        type: string
+      area: { $ref: '#/definitions/SearchArea' }
+      searchStr: { type: string, x-nullable: true }
+      searchBy: { type: array, items: { type: string, x-nullable: false, enum: [ 'sid', 'name', 'index' ] } }
+  SourceTypesListResponse:
+    allOf:
+      - { $ref: '#/definitions/MetaResponse' }
+      - properties:
+          response:
+            type: object
+            x-nullable: false
+            properties:
+              srctypes:
+                type: object
+                x-nullable: false
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      x-nullable: false
+                      properties:
+                        srctid: { type: string, x-nullable: false }
+                        name: { type: string, x-nullable: false }
+                        def: { type: object }
+                        srcType: { type: integer, x-nullable: true, x-omitempty: true }
+  SourcesMetadata:
+    properties:
+      binding:
+        type: array
+        x-omitempty: true
+        items:
+          type: object
+          x-nullable: false
+          properties:
+            urn: { type: string, x-nullable: false, x-omitempty: true }
+            index: { type: string, x-nullable: false, x-omitempty: true }
+            data: { $ref: '#/definitions/any' }

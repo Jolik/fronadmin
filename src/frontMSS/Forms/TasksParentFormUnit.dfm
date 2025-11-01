@@ -2,11 +2,10 @@ inherited TaskParentForm: TTaskParentForm
   ClientWidth = 1217
   Caption = #1047#1072#1076#1072#1095#1080
   ExplicitWidth = 1233
-  ExplicitHeight = 606
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     Width = 1217
-    ExplicitWidth = 1215
+    ExplicitWidth = 1217
   end
   inherited dbgEntity: TUniDBGrid
     Width = 817
@@ -45,25 +44,19 @@ inherited TaskParentForm: TTaskParentForm
   inherited splSplitter: TUniSplitter
     Left = 817
     Width = 0
-    ExplicitLeft = 815
+    ExplicitLeft = 817
     ExplicitWidth = 0
-    ExplicitHeight = 530
   end
   inherited pcEntityInfo: TUniPageControl
     Left = 817
     Width = 400
-    ExplicitLeft = 815
+    ExplicitLeft = 817
     ExplicitWidth = 400
-    ExplicitHeight = 530
     inherited tsTaskInfo: TUniTabSheet
-      ExplicitLeft = 4
-      ExplicitTop = 24
       ExplicitWidth = 392
-      ExplicitHeight = 502
       inherited cpTaskInfo: TUniContainerPanel
         Width = 392
         ExplicitWidth = 392
-        ExplicitHeight = 502
         inherited cpTaskInfoID: TUniContainerPanel
           Width = 377
           ExplicitWidth = 377

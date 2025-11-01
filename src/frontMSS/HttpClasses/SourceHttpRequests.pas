@@ -18,7 +18,7 @@ type
   private
     function GetSourceList: TSourceList;
   public
-    constructor Create;
+    constructor Create; override;
     property SourceList: TSourceList read GetSourceList;
   end;
 
@@ -100,13 +100,13 @@ end;
 
 class function TSourceReqList.BodyClassType: TFieldSetClass;
 begin
-  Result := nil;
+  Result := inherited;
 end;
 
 constructor TSourceReqList.Create;
 begin
   inherited Create;
-  Method := mGET;
+  Method := mGet;
   SetEndpoint('sources/list');
 end;
 

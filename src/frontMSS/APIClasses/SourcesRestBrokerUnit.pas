@@ -18,10 +18,12 @@ type
     ServicePath: string;
     BasePath: string;
 
-    constructor Create(const ATicket: string = ''; const AServicePath: string = '/api/v2'); reintroduce; overload;
+    constructor Create(const ATicket: string = ''); overload;
 
+    function ListAll(AReq: TSourceReqList): TSourceListResponse; overload;
+    function ListAll(AReq: TReqList): TFieldSetListResponse; overload;override;
     function List(AReq: TSourceReqList): TSourceListResponse; overload;
-    function List(AReq: TReqList): TFieldSetListResponse; overload;
+    function List(AReq: TReqList): TFieldSetListResponse; overload;override;
     function Info(AReq: TSourceReqInfo): TSourceInfoResponse; overload;
     function Info(AReq: TReqInfo): TFieldSetResponse; overload;
     function New(AReq: TSourceReqNew): TIdNewResponse; overload;
@@ -41,15 +43,15 @@ type
 implementation
 
 uses
-  StrUtils;
+  StrUtils, APIConst;
 
 { TSourcesRestBroker }
 
-constructor TSourcesRestBroker.Create(const ATicket: string; const AServicePath: string);
+constructor TSourcesRestBroker.Create(const ATicket: string = '');
 begin
-  inherited Create(ATicket);
-  ServicePath := AServicePath;
-  BasePath := ServicePath.TrimRight(['/']) + '/sources';
+ inherited Create(ATicket);
+  // Задаём фиксированный базовый путь для маршрутизатора
+  BasePath := constURLDataserverBasePath;
 end;
 
 function TSourcesRestBroker.CreateReqInfo(id: string): TReqInfo;
@@ -61,6 +63,7 @@ end;
 function TSourcesRestBroker.CreateReqList: TReqList;
 begin
   Result := TSourceReqList.Create;
+
   Result.BasePath := BasePath;
 end;
 
@@ -97,10 +100,22 @@ begin
   Result := List(AReq as TReqList) as TSourceListResponse;
 end;
 
+function TSourcesRestBroker.ListAll(AReq: TReqList): TFieldSetListResponse;
+begin
+  Result := TSourceListResponse.Create;
+  ListAll(AReq, Result);
+end;
+
 function TSourcesRestBroker.List(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TSourceListResponse.Create;
-  List(AReq, Result);
+  ListAll(AReq, Result);
+end;
+
+function TSourcesRestBroker.ListAll(AReq: TSourceReqList): TSourceListResponse;
+begin
+  Result := TSourceListResponse.Create;
+  ListAll(AReq, Result)
 end;
 
 function TSourcesRestBroker.New(AReq: TSourceReqNew): TIdNewResponse;

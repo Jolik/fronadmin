@@ -20,17 +20,17 @@ inherited TaskEditParentForm: TTaskEditParentForm
     Visible = False
     ExplicitWidth = 1347
     inherited teCaption: TUniEdit
-      Left = 110
-      Width = 1236
+      Left = 118
+      Width = 1228
       Visible = False
-      ExplicitLeft = 110
-      ExplicitWidth = 1234
+      ExplicitLeft = 118
+      ExplicitWidth = 1226
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 1349
     Height = 30
-    ExplicitWidth = 1349
+    ExplicitWidth = 1347
     ExplicitHeight = 30
     inherited lName: TUniLabel
       Left = 24
@@ -40,16 +40,16 @@ inherited TaskEditParentForm: TTaskEditParentForm
       ExplicitTop = 9
     end
     inherited teName: TUniEdit
-      Left = 110
+      Left = 118
       Top = 5
-      Width = 1236
+      Width = 1228
       Height = 20
       Margins.Top = 5
       Margins.Bottom = 5
-      ExplicitLeft = 110
-      ExplicitTop = 0
-      ExplicitWidth = 1236
-      ExplicitHeight = 24
+      ExplicitLeft = 118
+      ExplicitTop = 5
+      ExplicitWidth = 1226
+      ExplicitHeight = 20
     end
   end
   inherited pnClient: TUniContainerPanel
@@ -57,7 +57,9 @@ inherited TaskEditParentForm: TTaskEditParentForm
     Width = 497
     Height = 411
     Align = alLeft
+    ExplicitTop = 57
     ExplicitWidth = 497
+    ExplicitHeight = 403
     ScrollHeight = 411
     ScrollWidth = 497
     object lTid: TUniLabel
@@ -182,8 +184,7 @@ inherited TaskEditParentForm: TTaskEditParentForm
     Align = alRight
     TabOrder = 4
     ExplicitLeft = 982
-    ExplicitTop = 54
-    ExplicitHeight = 406
+    ExplicitHeight = 403
   end
   object pnSources: TUniContainerPanel [5]
     Left = 497
@@ -194,15 +195,15 @@ inherited TaskEditParentForm: TTaskEditParentForm
     ParentColor = False
     Align = alClient
     TabOrder = 5
-    ExplicitTop = 54
     ExplicitWidth = 485
-    ExplicitHeight = 406
+    ExplicitHeight = 403
     object gridSources: TUniDBGrid
       Left = 0
       Top = 34
       Width = 487
       Height = 377
       Hint = ''
+      WebOptions.PageSize = 200
       LoadMask.Message = 'Loading data...'
       Align = alBottom
       TabOrder = 1

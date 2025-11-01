@@ -264,31 +264,15 @@ begin
     if Assigned(Req.ReqBody) and (AEntity is TFieldSet) then
       TFieldSet(Req.ReqBody).Assign(AEntity);
 
-    // Собираем sources[] из FDMemTableEntity
-    if Req.ReqBody is TTaskUpdateBody then
+    // Собираем sources[]
+    var taskBody := TTaskUpdateBody(Req.ReqBody);
+    if Assigned(taskBody.Sources) then
     begin
-      var UB := TTaskUpdateBody(Req.ReqBody);
-      if Assigned(UB.Sources) then
-      begin
-        UB.Sources.Clear;
-
-        FDMemTableEntity.First;
-        while not FDMemTableEntity.Eof do
-        begin
-          var NewSrc := TTaskSource.Create;
-          try
-            NewSrc.Sid := FDMemTableEntity.FieldByName('id').AsString;
-            NewSrc.Name := FDMemTableEntity.FieldByName('module').AsString;
-            NewSrc.Enabled := FDMemTableEntity.FieldByName('enabled').AsBoolean;
-            UB.Sources.Add(NewSrc);
-          except
-            NewSrc.Free;
-            raise;
-          end;
-          FDMemTableEntity.Next;
-        end;
-      end;
+      taskBody.Sources.OwnsObjects:=false;
+      var tsrList := (EditForm as TTaskEditParentForm).TaskSourcesList;
+      taskBody.Sources.AddRange(tsrList)
     end;
+
 
     // Отправляем запрос
     if IsNew then

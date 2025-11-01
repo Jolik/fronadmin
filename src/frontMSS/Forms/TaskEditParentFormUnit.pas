@@ -48,6 +48,7 @@ type
     procedure btnSourcesEditClick(Sender: TObject);
     procedure UniFormShow(Sender: TObject);
     procedure unbtnSrcDel1Click(Sender: TObject);
+    procedure btnOkClick(Sender: TObject);
 //    procedure lbTaskSourcesClick(Sender: TObject);
   protected
     FGrid: TUniDBGrid;
@@ -72,7 +73,7 @@ type
     procedure SourcesEditCallback(ASender: TComponent; AResult: Integer);
     procedure SyncListFromMem;
 
-    function CreateTaskSourceEditForm(): TSelectTaskSourcesForm; virtual;
+    function CreateTaskSourceEditForm(taskSourcesList: TTaskSourcesList = nil): TSelectTaskSourcesForm; virtual;
     procedure SetEntity(AEntity : TFieldSet); override;
     procedure EnsureSourcesGrid;
     procedure FillMemFromList;
@@ -187,13 +188,12 @@ begin
   pnCustomSettings.Visible := False;
 end;
 
-function TTaskEditParentForm.CreateTaskSourceEditForm: TSelectTaskSourcesForm;
+function TTaskEditParentForm.CreateTaskSourceEditForm(taskSourcesList: TTaskSourcesList): TSelectTaskSourcesForm;
 begin
-  Result := SelectTaskSourcesForm(FTaskSourcesBroker) as TSelectTaskSourcesForm;
+  Result := ShowSelectSourcesForm(taskSourcesList) as TSelectTaskSourcesForm;
 end;
 
-procedure TTaskEditParentForm.SetTaskSourcesList(
-  const Value: TTaskSourcesList);
+procedure TTaskEditParentForm.SetTaskSourcesList(const Value: TTaskSourcesList);
 begin
   if FTaskSourcesListOwned and (FTaskSourcesList <> Value) then
   begin
@@ -269,15 +269,19 @@ begin
   RefreshTaskSourcesList;
 end;
 
+procedure TTaskEditParentForm.btnOkClick(Sender: TObject);
+begin
+  SyncListFromMem;
+  inherited;
+end;
+
 procedure TTaskEditParentForm.btnSourcesEditClick(Sender: TObject);
 var
   SelectForm: TSelectTaskSourcesForm;
 begin
-  SelectForm := CreateTaskSourceEditForm;
+  SelectForm := CreateTaskSourceEditForm(TaskSourcesList);
   if not Assigned(SelectForm) then
     Exit;
-
-  SelectForm.TaskSourceList := TaskSourcesList;
 
   SelectForm.ShowModal(SourcesEditCallback);
 end;
@@ -358,8 +362,6 @@ begin
     if Assigned(FTaskSourcesList) then
       for var I := 0 to FTaskSourcesList.Count - 1 do
       begin
-        if not (FTaskSourcesList.Items[I] is TTaskSource) then
-          Continue;
         var S := TTaskSource(FTaskSourcesList.Items[I]);
         SourcesMem.Append;
         SourcesMem.FieldByName('enabled').AsBoolean := S.Enabled;
@@ -382,20 +384,17 @@ begin
     while not SourcesMem.Eof do
     begin
       var Sid := SourcesMem.FieldByName('sid').AsString;
-      for var I := 0 to FTaskSourcesList.Count - 1 do
-      begin
-          var NewSrc := TTaskSource.Create;
-          try
-            NewSrc.Sid := SourcesMem.FieldByName('sid').AsString;
-            NewSrc.Name := SourcesMem.FieldByName('name').AsString;
-            NewSrc.Enabled := SourcesMem.FieldByName('enabled').AsBoolean;
-            FTaskSourcesList.Add(NewSrc);
-          except
-            NewSrc.Free;
-            raise;
-          end;
-        SourcesMem.Next;
+      var NewSrc := TTaskSource.Create;
+      try
+        NewSrc.Sid := SourcesMem.FieldByName('sid').AsString;
+        NewSrc.Name := SourcesMem.FieldByName('name').AsString;
+        NewSrc.Enabled := SourcesMem.FieldByName('enabled').AsBoolean;
+        FTaskSourcesList.Add(NewSrc);
+      except
+        NewSrc.Free;
+        raise;
       end;
+    SourcesMem.Next;
     end;
   finally
     SourcesMem.EnableControls;

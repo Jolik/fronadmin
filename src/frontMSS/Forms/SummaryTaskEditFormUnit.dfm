@@ -5,29 +5,11 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
   inherited pnBottom: TUniContainerPanel
     Top = 639
     ExplicitTop = 631
-  end
-  inherited pnCaption: TUniContainerPanel
-    inherited teCaption: TUniEdit
-      Left = 112
-      Width = 1234
-      ExplicitLeft = 112
-      ExplicitWidth = 1232
-    end
-  end
-  inherited pnName: TUniContainerPanel
-    ExplicitWidth = 1347
-    inherited teName: TUniEdit
-      Left = 112
-      Width = 1234
-      ExplicitLeft = 112
-      ExplicitTop = 5
-      ExplicitWidth = 1232
-      ExplicitHeight = 20
+    inherited btnOk: TUniButton
     end
   end
   inherited pnClient: TUniContainerPanel
     Height = 582
-    ExplicitTop = 57
     ExplicitHeight = 574
     ScrollHeight = 582
     ScrollWidth = 497
@@ -78,8 +60,8 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       TabOrder = 12
     end
     object ueHeader: TUniEdit
-      Left = 171
-      Top = 239
+      Left = 168
+      Top = 237
       Width = 309
       Height = 21
       Hint = ''
@@ -369,15 +351,50 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       TabOrder = 16
       IconItems = <>
     end
+    object ueHeader2: TUniEdit
+      Left = 168
+      Top = 264
+      Width = 309
+      Height = 21
+      Hint = ''
+      Text = ''
+      TabOrder = 17
+    end
+    object UniLabel1: TUniLabel
+      Left = 18
+      Top = 267
+      Width = 144
+      Height = 13
+      Hint = ''
+      Caption = #1057#1086#1082#1088#1072#1097#1077#1085#1085#1099#1081' '#1079#1072#1075#1086#1083#1086#1074#1086#1082' 2'
+      TabOrder = 18
+    end
+    object UniLabel2: TUniLabel
+      Left = 18
+      Top = 296
+      Width = 147
+      Height = 45
+      Hint = ''
+      AutoSize = False
+      Caption = #1050#1086#1088#1088#1077#1082#1090#1080#1088#1086#1074#1082#1072' '#1074#1088#1077#1084#1077#1085#1080' '#1089#1086#1082#1088#1072#1097#1077#1085#1085#1086#1075#1086' '#1079#1072#1075#1086#1083#1086#1074#1082#1072':'
+      TabOrder = 19
+    end
+    object UniLabel3: TUniLabel
+      Left = 18
+      Top = 336
+      Width = 115
+      Height = 13
+      Hint = ''
+      Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1086#1077' '#1074#1088#1077#1084#1103':'
+      TabOrder = 20
+    end
   end
   inherited pnCustomSettings: TUniContainerPanel
     Height = 582
-    ExplicitTop = 57
     ExplicitHeight = 574
   end
   inherited pnSources: TUniContainerPanel
     Height = 582
-    ExplicitTop = 57
     ExplicitHeight = 574
     inherited gridSources: TUniDBGrid
       Height = 548
@@ -387,42 +404,5 @@ inherited SummaryTaskEditForm: TSummaryTaskEditForm
       Left = 6
       ExplicitLeft = 6
     end
-  end
-  object UniLabel1: TUniLabel [6]
-    Left = 18
-    Top = 321
-    Width = 144
-    Height = 13
-    Hint = ''
-    Caption = #1057#1086#1082#1088#1072#1097#1077#1085#1085#1099#1081' '#1079#1072#1075#1086#1083#1086#1074#1086#1082' 2'
-    TabOrder = 6
-  end
-  object ueHeader2: TUniEdit [7]
-    Left = 171
-    Top = 323
-    Width = 309
-    Height = 21
-    Hint = ''
-    Text = ''
-    TabOrder = 7
-  end
-  object UniLabel2: TUniLabel [8]
-    Left = 18
-    Top = 347
-    Width = 147
-    Height = 45
-    Hint = ''
-    AutoSize = False
-    Caption = #1050#1086#1088#1088#1077#1082#1090#1080#1088#1086#1074#1082#1072' '#1074#1088#1077#1084#1077#1085#1080' '#1089#1086#1082#1088#1072#1097#1077#1085#1085#1086#1075#1086' '#1079#1072#1075#1086#1083#1086#1074#1082#1072':'
-    TabOrder = 8
-  end
-  object UniLabel3: TUniLabel [9]
-    Left = 18
-    Top = 387
-    Width = 115
-    Height = 13
-    Hint = ''
-    Caption = #1048#1089#1087#1086#1083#1100#1079#1091#1077#1084#1086#1077' '#1074#1088#1077#1084#1103':'
-    TabOrder = 9
   end
 end

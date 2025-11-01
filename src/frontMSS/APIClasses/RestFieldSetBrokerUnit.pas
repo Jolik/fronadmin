@@ -17,7 +17,8 @@ type
     // выборка сущностей с указанием типа списка и ключа массива
     function List(AReq: TReqList; AListClass: TFieldSetListClass; const AItemsKey: string = 'items'): TFieldSetListResponse; overload; virtual;
     // выборка всех страниц с учетом info (page/pagecount/pagesize/total)
-    function ListAll(AReq: TReqList): TFieldSetListResponse; overload; virtual;
+    function ListAll(AReq: TReqList; AResp: TFieldSetListResponse):TFieldSetListResponse;overload; virtual;
+    function ListAll(AReq: TReqList): TFieldSetListResponse;overload; virtual;
     function ListAll(AReq: TReqList; AListClass: TFieldSetListClass; const AItemsKey: string = 'items'): TFieldSetListResponse; overload; virtual;
     // прямая, принимающая любой THttpRequest; создает подходящий ответ
     function ListRaw2(AReq: THttpRequest; AListClass: TFieldSetListClass; const AItemsKey: string = 'items'): TFieldSetListResponse; virtual;
@@ -30,7 +31,7 @@ type
 
 implementation
 
-uses System.Math;
+uses System.Math, System.SysUtils;
 
 
 function TRestFieldSetBroker.List(AReq: TReqList; AResp: TFieldSetListResponse): TFieldSetListResponse;
@@ -93,95 +94,63 @@ var
   OrigPage: Integer;
   ListCls: TFieldSetListClass;
 begin
-  Body := AReq.Body;
-  OrigPage := 0;
-  if Assigned(Body) then
-    OrigPage := Body.Page;
-
-  First := List(AReq);
-  try
-    ListCls := TFieldSetListClass(First.FieldSetList.ClassType);
-    Result := TFieldSetListResponse.Create(ListCls, 'response', First.ItemsKey);
-
-    for var i := 0 to First.FieldSetList.Count - 1 do
-    begin
-      var Src := First.FieldSetList[i];
-      var ItemCls := TFieldSetClass(Src.ClassType);
-      var Copy := ItemCls.Create;
-      Copy.Assign(Src);
-      Result.FieldSetList.Add(Copy);
-    end;
-
-    if (First.PageCount <= 1) or (not Assigned(Body)) then Exit;
-
-    for var P := Max(2, First.Page + 1) to First.PageCount do
-    begin
-      Body.Page := P;
-      var Next := List(AReq, ListCls, First.ItemsKey);
-      try
-        for var j := 0 to Next.FieldSetList.Count - 1 do
-        begin
-          var Src2 := Next.FieldSetList[j];
-          var ItemCls2 := TFieldSetClass(Src2.ClassType);
-          var Copy2 := ItemCls2.Create;
-          Copy2.Assign(Src2);
-          Result.FieldSetList.Add(Copy2);
-        end;
-      finally
-        Next.Free;
-      end;
-    end;
-  finally
-    if Assigned(Body) then Body.Page := OrigPage;
-    First.Free;
-  end;
+  raise Exception.Create('Not Implemented');
 end;
 
 function TRestFieldSetBroker.ListAll(AReq: TReqList; AListClass: TFieldSetListClass; const AItemsKey: string): TFieldSetListResponse;
 var
+  Next: TFieldSetListResponse;
   Body: TReqListBody;
-  OrigPage: Integer;
+  startPage: Integer;
   First: TFieldSetListResponse;
 begin
-  Body := AReq.Body;
-  OrigPage := 0;
-  if Assigned(Body) then OrigPage := Body.Page;
-
-  First := List(AReq, AListClass, AItemsKey);
-  try
-    Result := TFieldSetListResponse.Create(AListClass, 'response', AItemsKey);
-
-    for var i := 0 to First.FieldSetList.Count - 1 do
-    begin
-      var Src := First.FieldSetList[i];
-      var ItemCls := TFieldSetClass(Src.ClassType);
-      var Copy := ItemCls.Create;
-      Copy.Assign(Src);
-      Result.FieldSetList.Add(Copy);
+  startPage := 1;
+  if Assigned(Body) then
+    startPage := Body.Page;
+  result:= List(AReq, AListClass, AItemsKey);
+  if (Result.PageCount <= 1)then Exit;
+  for var P := Max(2, Result.Page + 1) to Result.PageCount do
+  begin
+    AReq.Body.Page := P;
+    Next:= List(AReq, AListClass, Result.ItemsKey);
+    Next.FieldSetList.OwnsObjects:=False;
+    try
+      for var j := 0 to Next.FieldSetList.Count - 1 do
+        Result.FieldSetList.Add(Next.FieldSetList[j]);
+    finally
+      Next.Free;
     end;
+  end;
+end;
 
-    if (First.PageCount <= 1) or (not Assigned(Body)) then Exit;
-
-    for var P := Max(2, First.Page + 1) to First.PageCount do
-    begin
-      Body.Page := P;
-      var Next := List(AReq, AListClass, AItemsKey);
-      try
-        for var j := 0 to Next.FieldSetList.Count - 1 do
-        begin
-          var Src2 := Next.FieldSetList[j];
-          var ItemCls2 := TFieldSetClass(Src2.ClassType);
-          var Copy2 := ItemCls2.Create;
-          Copy2.Assign(Src2);
-          Result.FieldSetList.Add(Copy2);
-        end;
-      finally
-        Next.Free;
-      end;
+function TRestFieldSetBroker.ListAll(AReq: TReqList; AResp: TFieldSetListResponse): TFieldSetListResponse;
+var
+  Body: TReqListBody;
+  startPage: Integer;
+  Next: TFieldSetListResponse;
+  ListClass: TFieldSetListClass;
+begin
+  Result := AResp;
+  startPage := 1;
+  if Assigned(Body) then
+    startPage := Body.Page;
+  List(AReq, Result);
+  if (Result.PageCount <= 1)then Exit;
+  for var P := Max(2, Result.Page + 1) to Result.PageCount do
+  begin
+    AReq.Body.Page := P;
+    if Assigned(Result.FieldSetList) then
+      ListClass := TFieldSetListClass(Result.FieldSetList.ClassType)
+    else
+      ListClass := TFieldSetList;
+    Next:= List(AReq, ListClass, Result.ItemsKey);
+    Next.FieldSetList.OwnsObjects:=False;
+    try
+      for var j := 0 to Next.FieldSetList.Count - 1 do
+        Result.FieldSetList.Add(Next.FieldSetList[j]);
+    finally
+      Next.Free;
     end;
-  finally
-    if Assigned(Body) then Body.Page := OrigPage;
-    First.Free;
   end;
 end;
 
