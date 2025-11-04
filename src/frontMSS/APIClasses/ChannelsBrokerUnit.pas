@@ -4,8 +4,13 @@ interface
 
 uses
   System.Generics.Collections, System.JSON,
-  LoggingUnit,
-  MainHttpModuleUnit,
+  LoggingUnit, IdHTTP,
+  MainHttpModuleUnit, uniGUIDialogs,
+  Windows, Messages, SysUtils, Variants, Classes, Graphics,
+  Controls, Forms, uniGUITypes, uniGUIAbstractClasses, LinkUnit,
+  uniGUIClasses, uniGUIFrame, uniGUIBaseClasses, uniTabControl, uniPanel,
+  uniButton, uniPageControl, ProfileUnit, uniBitBtn, uniMultiItem, uniListBox,
+  uniLabel, ProfileFrameUnit, uniComboBox, ProfilesBrokerUnit,
   EntityUnit, ChannelUnit, EntityBrokerUnit;
 
 
@@ -48,9 +53,6 @@ type
     ///  удалить сущность на сервере по идентификатору
     ///  в случае ошибки возвращается false
     function Remove(AId: String): Boolean; overload; override;
-    ///  удалить сущность на сервере
-    ///  в случае ошибки возвращается false
-    function Remove(AEntity: TEntity): Boolean; overload; override;
 
     constructor Create(compid,deptid: string);
   end;
@@ -58,7 +60,6 @@ type
 implementation
 
 uses
-  System.SysUtils, System.Classes,
   FuncUnit, APIConst;
 
 const
@@ -258,52 +259,75 @@ end;
 function TChannelsBroker.New(AEntity: TEntity): Boolean;
 var
   URL: String;
-  JSONRequest: TJSONObject;
+  JSONLink: TJSONObject;
   JSONRequestStream: TStringStream;
   ResStr: String;
 
 begin
-  (*!!! URL := constURLChannelInsert;
-  AEntity.DataFromEntity(JSONChannel);
-  JSONRequest := FuncUnit.ExtractJSONProperties(JSONChannel, ['name', 'caption','channels','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  строим запрос
+  URL := GetBasePath +  '/channels/new';
+  ///  получаем из сущности JSON
+  JSONLink := AEntity.Serialize();
+
+  JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainHttpModule.POST(URL, JSONRequestStream);
+
+    try
+      ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
+      Result := true;
+    except
+      on E:EIdHTTPProtocolException do
+      begin
+        Log('TChannelsBroker.New: ' + E.ErrorMessage, lrtError);
+        Log('TChannelsBroker.New request:'+JSONRequestStream.DataString);
+        MessageDlg(Format('TChannelsBroker.New: ' + E.ErrorMessage, []), TMsgDlgType.mtError, [mbOK], nil)
+      end;
+    end;
+
   finally
-    JSONChannel.Free;
-    JSONRequest.Free;
+    JSONLink.Free;
     JSONRequestStream.Free;
-  end; *)
+  end;
+
 end;
+
+
 
 ///  обновить параметры сущности на сервере
 ///  в случае ошибки возвращается false
 function TChannelsBroker.Update(AEntity: TEntity): Boolean;
 var
   URL: String;
-  ResStr: String;
-  JSONRequest: TJSONObject;
+  JSONLink: TJSONObject;
   JSONRequestStream: TStringStream;
+  ResStr: String;
 
 begin
-(*!!!  Result := False;
-  URL := Format(constURLChannelUpdate, [AId]);
-  JSONRequest := Common_Func.ExtractJSONProperties(JSONChannel, ['caption','channels','attr']);
-  JSONRequestStream := TStringStream.Create(JSONRequest.ToJSON, TEncoding.UTF8);
+  ///  если пытаются передать не наш класс то не делаем ничего!
+  if not (AEntity is TChannel) then
+    exit;
+
+  ///  строим запрос
+  URL := Format(GetBasePath + '/channels/%s/update', [AEntity.Id]);
+
+  ///  получаем из сущности JSON
+  JSONLink := AEntity.Serialize();
+
+  JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
-    ResStr := MainHttpModule.POST(URL, JSONRequestStream);
+    ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
+
+    ////  !!! обрабатываем ответ
+    ///  пока возвращаем всегда true
+    Result := true;
+
   finally
-    JSONRequest.Free;
+    JSONLink.Free;
     JSONRequestStream.Free;
-  end; *)
-end;
-
-///  удалить сущность на сервере
-///  в случае ошибки возвращается false
-function TChannelsBroker.Remove(AEntity: TEntity): Boolean;
-begin
+  end;
 
 end;
+
 
 ///  удалить сущность на сервере по идентификатору
 ///  в случае ошибки возвращается false
@@ -311,9 +335,12 @@ function TChannelsBroker.Remove(AId: String): Boolean;
 var
   URL: String;
   ResStr: String;
+  JSONRequestStream: TStringStream;
+
 begin
-  URL := Format(constURLChannelDelete, [AId]);
-  ResStr := MainHttpModuleUnit.GET(URL)
+  URL := Format(GetBasePath +  '/channels/%s/remove', [AId]);
+  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
+  ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 end;
 
 end.

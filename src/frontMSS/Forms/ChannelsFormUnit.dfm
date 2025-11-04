@@ -3,9 +3,6 @@ inherited ChannelsForm: TChannelsForm
   TextHeight = 15
   inherited tbEntity: TUniToolBar
     ExplicitWidth = 1158
-    inherited btnNew: TUniToolButton
-      OnClick = nil
-    end
   end
   inherited splSplitter: TUniSplitter
     ExplicitLeft = 774

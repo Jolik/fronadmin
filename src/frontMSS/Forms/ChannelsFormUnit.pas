@@ -18,6 +18,10 @@ type
     procedure btnUpdateClick(Sender: TObject);
   private
   protected
+  protected
+    procedure NewCallback(ASender: TComponent; AResult: Integer); override;
+    procedure UpdateCallback(ASender: TComponent; AResult: Integer);  override;
+
     ///  функция обновления компоннет на форме
     procedure Refresh(const AId: String = ''); override;
 
@@ -49,7 +53,7 @@ end;
 
 procedure TChannelsForm.btnUpdateClick(Sender: TObject);
 begin
-  inherited btnUpdateClick(Sender);
+  inherited;
   //
 end;
 
@@ -63,9 +67,22 @@ begin
   Result := ChannelEditForm();
 end;
 
+
 procedure TChannelsForm.Refresh(const AId: String = '');
 begin
   inherited Refresh(AId)
+end;
+
+procedure TChannelsForm.NewCallback(ASender: TComponent; AResult: Integer);
+begin
+  if AResult = mrOk then
+    Refresh();
+end;
+
+procedure TChannelsForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+begin
+  if AResult = mrOk then
+    Refresh();
 end;
 
 end.

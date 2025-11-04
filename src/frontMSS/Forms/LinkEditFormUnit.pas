@@ -190,9 +190,6 @@ begin
 end;
 
 
-
-
-
 function TLinkEditForm.SaveProfiles(): boolean;
 begin
   try
