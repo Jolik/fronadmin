@@ -368,19 +368,28 @@ begin
     LSource := ASource as TEntity;
 
   try
-    Self.Id := LSource.Id;
-    Self.CompId := LSource.CompId;
-    Self.Owner := LSource.Owner;
-    Self.DepId := LSource.DepId;
-    Self.Name := LSource.Name;
-    Self.Caption := LSource.Caption;
-    Self.Def := LSource.Def;
-    Self.Enabled := LSource.Enabled;
-    if not Self.Settings.Assign(LSource.Settings) then exit;
-    if not Self.Data.Assign(LSource.Data) then exit;
-    if not Self.Body.Assign(LSource.Body) then exit;
-    Self.Created := LSource.Created;
-    Self.Updated := LSource.Updated;
+    Id := LSource.Id;
+    CompId := LSource.CompId;
+    Owner := LSource.Owner;
+    DepId := LSource.DepId;
+    Name := LSource.Name;
+    Caption := LSource.Caption;
+    Def := LSource.Def;
+    Enabled := LSource.Enabled;
+    Created := LSource.Created;
+    Updated := LSource.Updated;
+
+    FreeAndNil(FSettings);
+    FSettings := LSource.SettingsClassType.Create;
+    FSettings.Assign(LSource.Settings);
+
+    FreeAndNil(FData);
+    FData := LSource.DataClassType.Create;
+    FData.Assign(LSource.Data);
+
+    FreeAndNil(FBody);
+    FBody := LSource.BodyClassType.Create;
+    FBody.Assign(LSource.Body);
 
     Result := true;
   finally
@@ -496,11 +505,13 @@ end;
 
 function TEntityList.Assign(ASource: TEntityList): boolean;
 begin
-  ///  Instantiate objects, copy fields, and add them to the list
+  Clear;
+  if ASource = nil then
+    exit;
   for var i := 0 to ASource.Count-1 do
   begin
-    var es := TEntity.Create();
-    es.Assign(ASource.Items[i]);
+    var es := ASource.ItemClassType.Create;
+     es.Assign(ASource.Items[i]);
     inherited Add(es);
   end;
 end;

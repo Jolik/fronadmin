@@ -27,6 +27,8 @@ uses
 function UniMainModule: TUniMainModule;
 begin
   Result := TUniMainModule(UniApplication.UniMainModule);
+  Result.CompID := '85697f9f-b80d-4668-8ed2-2f70ed825eee';
+  Result.DeptID := '00000000-0000-0000-0000-000000000000';
   Result.EnableSynchronousOperations := true;
 end;
 

@@ -342,11 +342,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\Forms\LinkSettingsFormUnit.pas">
-            <Form>LinkSettingsForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\Forms\LinksFormUnit.pas">
             <Form>LinksForm</Form>
             <FormType>dfm</FormType>

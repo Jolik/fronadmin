@@ -62,8 +62,11 @@ type
     /// </summary>
     function Remove(AId: String): Boolean; overload; override;
 
+    //
+    function Synchronize(src: TProfileList): boolean;
     // Lid link id
     property Lid: string read FLid write FLid;
+
   end;
 
 implementation
@@ -93,6 +96,9 @@ begin
   Result := TProfileList;
 end;
 
+
+
+
 function TProfilesBroker.List(
   out APageCount: Integer;
   const APage: Integer;
@@ -108,38 +114,39 @@ begin
   Result := nil;
   APageCount := 0;
 
+  JSONResult := nil;
   try
-    JSONResult := nil;
-    try
-      var url := Format('%s/%s/profiles/list', [GetPath, FLid]);
-      ResStr := MainHttpModuleUnit.GET(url);
-      JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
-      if not Assigned(JSONResult) then
-        Exit;
+    var url := Format('%s/%s/profiles/list', [GetPath, FLid]);
+    ResStr := MainHttpModuleUnit.GET(url);
+    JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
+    if not Assigned(JSONResult) then
+      Exit;
 
-      ResponseObject := JSONResult.GetValue('response') as TJSONObject;
-      if not Assigned(ResponseObject) then
-        Exit;
 
-      ProfilesObject := ResponseObject.GetValue('profiles') as TJSONObject;
-      if not Assigned(ProfilesObject) then
-        Exit;
-
-      ItemsArray := ProfilesObject.GetValue('items') as TJSONArray;
-      if not Assigned(ItemsArray) then
-        Exit;
-
-      Result := ListClassType.Create(ItemsArray);
-    finally
-      JSONResult.Free;
-    end;
-
-  except on E: Exception do
+    if GetValueStrDef(JSONResult, 'meta.error', '') = 'not found' then
     begin
-      Log('TProfilesBroker.List ' + E.Message, lrtError);
-      FreeAndNil(Result);
+      Result := ListClassType.Create;
+      exit;
     end;
+
+
+    ResponseObject := JSONResult.GetValue('response') as TJSONObject;
+    if not Assigned(ResponseObject) then
+      Exit;
+
+    ProfilesObject := ResponseObject.GetValue('profiles') as TJSONObject;
+    if not Assigned(ProfilesObject) then
+      Exit;
+
+    ItemsArray := ProfilesObject.GetValue('items') as TJSONArray;
+    if not Assigned(ItemsArray) then
+      Exit;
+
+    Result := ListClassType.Create(ItemsArray);
+  finally
+    JSONResult.Free;
   end;
+
 end;
 
 function TProfilesBroker.CreateNew: TEntity;
@@ -257,6 +264,22 @@ begin
   finally
     JSONRequestStream.Free;
   end;
+end;
+
+// Synchronize заменит все профили линка на src
+function TProfilesBroker.Synchronize(src: TProfileList): boolean;
+var
+  Pages : integer;
+begin
+  result := false;
+  var lst := List(Pages);
+  for var l in lst do
+    if not Remove(l.Id) then
+      exit;
+  for var p in src do
+    if not New(p) then
+      exit;
+  result := true;
 end;
 
 end.

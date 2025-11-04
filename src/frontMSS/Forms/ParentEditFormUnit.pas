@@ -7,7 +7,7 @@ uses
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIForm,
   uniButton, uniGUIBaseClasses, uniPanel, uniEdit, uniLabel,
-  LoggingUnit,
+  LoggingUnit,  LinkUnit,
   EntityUnit, ConstsUnit;
 
 type
@@ -65,6 +65,8 @@ resourcestring
 
 { TParentEditForm }
 
+
+
 procedure TParentEditForm.btnCancelClick(Sender: TObject);
 begin
   ModalResult := mrCancel;
@@ -72,10 +74,13 @@ end;
 
 procedure TParentEditForm.btnOkClick(Sender: TObject);
 begin
-  if DoCheck then
-    if Apply() then
-      ModalResult := mrOk;
+  if not DoCheck then
+    exit;
+  if not Apply() then
+    exit;
+  ModalResult := mrOk;
 end;
+
 
 procedure TParentEditForm.SetEntity(AEntity : TEntity);
 begin
@@ -112,6 +117,7 @@ begin
 
   Result := true;
 end;
+
 
 function TParentEditForm.DoCheck: Boolean;
 begin

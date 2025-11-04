@@ -81,7 +81,7 @@ type
 implementation
 
 uses
-  FuncUnit;
+  FuncUnit, loggingUnit;
 
 const
   RuleKey = 'rule';
@@ -113,8 +113,6 @@ begin
   begin
     FFta.Clear;
     FFta.Parse(SourcePlay.FTA.Serialize)
-    //if not FFta.Assign(SourcePlay.FTA) then
-    //  Exit;
   end;
 
   Result := True;

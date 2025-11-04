@@ -7,7 +7,7 @@ uses
   Generics.Collections, System.JSON,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
   uniGUIClasses, uniGUIRegClasses, uniGUIForm, uniButton, uniGUIBaseClasses,
-  uniMemo,
+  uniMemo,  LinksFormUnit,
   LinksBrokerUnit, EntityUnit, LinkUnit,
   StripTasksBrokerUnit, StripTaskUnit,
   SummaryTasksBrokerUnit, SummaryTaskUnit,
@@ -46,6 +46,7 @@ type
     UniGroupBox1: TUniGroupBox;
     btnChannelsList: TUniButton;
     btnChannelsForm: TUniButton;
+    bntLinkSettings: TUniButton;
     procedure btnLinskListClick(Sender: TObject);
     procedure btnLinkInfoClick(Sender: TObject);
     procedure btnStripTaskListClick(Sender: TObject);
@@ -68,6 +69,7 @@ type
     procedure UniFormShow(Sender: TObject);
     procedure btnChannelsListClick(Sender: TObject);
     procedure btnChannelsFormClick(Sender: TObject);
+    procedure bntLinkSettingsClick(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -288,6 +290,7 @@ begin
       ShowMemo.Lines.Add('link not found');
       exit;
     end;
+    LinkEditForm.IsEdit := true;
     LinkEditForm.Entity := entity;
     if LinkEditForm.ShowModal() <> mrOk then
     begin
@@ -300,6 +303,12 @@ begin
   finally
     LinksBroker.Free;
   end;
+end;
+
+
+procedure TMainForm.bntLinkSettingsClick(Sender: TObject);
+begin
+  LinksForm.Show;
 end;
 
 {$ENDREGION 'Links'}
@@ -898,6 +907,7 @@ begin
     SummaryTasksBroker.Free;
   end;
 end;
+
 
 
 

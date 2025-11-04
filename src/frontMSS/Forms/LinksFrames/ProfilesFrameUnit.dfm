@@ -9,7 +9,7 @@ object ProfilesFrame: TProfilesFrame
     Left = 3
     Top = 40
     Width = 286
-    Height = 238
+    Height = 268
     Hint = ''
     Margins.Top = 10
     AutoScroll = True
@@ -18,7 +18,7 @@ object ProfilesFrame: TProfilesFrame
     BorderStyle = ubsNone
     ShowCaption = False
     Caption = 'profilePanel'
-    ScrollHeight = 238
+    ScrollHeight = 268
     ScrollWidth = 286
   end
   object UniPanel3: TUniPanel
@@ -47,7 +47,6 @@ object ProfilesFrame: TProfilesFrame
       Align = alRight
       TabOrder = 1
       OnClick = btnRemoveProfileClick
-      ExplicitLeft = 261
     end
     object btnAddProfile: TUniBitBtn
       AlignWithMargins = True
@@ -62,7 +61,6 @@ object ProfilesFrame: TProfilesFrame
       Align = alRight
       TabOrder = 2
       OnClick = btnAddProfileClick
-      ExplicitLeft = 230
     end
     object profilesComboBox: TUniComboBox
       AlignWithMargins = True
@@ -79,33 +77,6 @@ object ProfilesFrame: TProfilesFrame
       TabOrder = 3
       IconItems = <>
       OnSelect = profilesComboBoxSelect
-      ExplicitWidth = 207
-    end
-  end
-  object UniPanel1: TUniPanel
-    Left = 0
-    Top = 281
-    Width = 292
-    Height = 30
-    Hint = ''
-    Constraints.MaxHeight = 30
-    Constraints.MinHeight = 30
-    Align = alBottom
-    TabOrder = 2
-    BorderStyle = ubsNone
-    ShowCaption = False
-    Caption = 'UniPanel1'
-    object BitBtnSaveProfile: TUniBitBtn
-      AlignWithMargins = True
-      Left = 203
-      Top = 3
-      Width = 86
-      Height = 24
-      Hint = ''
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      Align = alRight
-      TabOrder = 1
-      OnClick = BitBtnSaveProfileClick
     end
   end
 end

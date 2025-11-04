@@ -43,6 +43,16 @@ type
     procedure RuleTreeViewChange(Sender: TObject; Node: TUniTreeNode);
     procedure btnAddRulesClick(Sender: TObject);
     procedure btnRemoveRulesClick(Sender: TObject);
+    procedure DescriptionFrameEditChange(Sender: TObject);
+    procedure FrameRuleEnabledCheckBoxChange(Sender: TObject);
+    procedure FrameRulePositionEditChange(Sender: TObject);
+    procedure CheckBox_fta_FILEChange(Sender: TObject);
+    procedure CheckBox_fta_TLFChange(Sender: TObject);
+    procedure CheckBox_fta_TLGChange(Sender: TObject);
+    procedure CheckBox_fta_GAOChange(Sender: TObject);
+    procedure CheckBox_fta_SIMPLEChange(Sender: TObject);
+    procedure CheckBox_fta_JSONChange(Sender: TObject);
+    procedure CheckBox_fta_XMLChange(Sender: TObject);
   private
     FProfile: TProfile;
     FFTACheckboxes: TKeyValue<TUniCheckbox>;
@@ -50,6 +60,7 @@ type
     FLink: TLink;
     FSelectedRuleItem: TObject;
     FSelecteNode: TUniTreeNode;
+    FOnChange: TNotifyEvent;
     procedure RuleToTreeView(rule: TProfileRule);
     procedure FiltersToTreeViewNode(filters: TProfileFilterList; node: TUniTreeNode);
     procedure ConditionToFrame(c: TCondition);
@@ -63,17 +74,15 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    procedure SetData(src: TProfile); virtual;
+    procedure SetData(srcProfile: TProfile; srclink: TLink); virtual;
     procedure GetData(dst: TProfile); virtual;
-    procedure SetLink(link: TLink); virtual;
 
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 implementation
 uses
-  LoggingUnit,
-  ProfilesBrokerUnit,
-  uniGUIDialogs;
+  LoggingUnit;
 
 {$R *.dfm}
 
@@ -98,25 +107,31 @@ end;
 
 
 
+procedure TProfileFrame.DescriptionFrameEditChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
 destructor TProfileFrame.Destroy;
 begin
   FFTACheckboxes.Free;
-  FreeAndNil(FProfile);
   inherited;
 end;
 
 
 
 
-procedure TProfileFrame.SetData(src: TProfile);
+procedure TProfileFrame.SetData(srcProfile: TProfile; srclink: TLink);
 begin
-  FreeAndNil(FProfile);
-  if src = nil then
+  FLink := srclink;
+  if srcProfile = nil then
     exit;
-  FProfile := src;
+  FProfile := srcProfile;
   PridFrame.Edit.Text := FProfile.Id;
   DescriptionFrame.Edit.Text := FProfile.Description;
-  DescriptionFrame.Edit.Readonly := not FProfile.IsNew;
+  if FProfile.ProfileBody = nil then
+    exit;
   for var fta in FProfile.ProfileBody.Play.FTA.ToArray do
   begin
     var cb := FFTACheckboxes.ValueByKey(fta, nil);
@@ -137,15 +152,10 @@ begin
     if cb.Checked then
       FProfile.ProfileBody.Play.FTA.Add( FFTACheckboxes.KeyByValue(cb) );
   FProfile.Description := DescriptionFrame.Edit.Text;
-  if not  dst.Assign(FProfile) then
-    exit;
+  (FProfile.Body as TProfileBody).Rule.Enabled := FrameRuleEnabled.GetData;
+  (FProfile.Body as TProfileBody).Rule.Position := FrameRulePosition.GetDataInt(0);
 end;
 
-
-procedure TProfileFrame.SetLink(link: TLink);
-begin
-  FLink := link;
-end;
 
 
 procedure TProfileFrame.DrawRules;
@@ -174,6 +184,7 @@ begin
   FiltersToTreeViewNode(rule.ExcFilters, excFiltersNode);
 end;
 
+
 procedure TProfileFrame.FiltersToTreeViewNode(filters: TProfileFilterList;
   node: TUniTreeNode);
 begin
@@ -193,6 +204,60 @@ begin
 end;
 
 
+
+procedure TProfileFrame.FrameRuleEnabledCheckBoxChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.FrameRulePositionEditChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_FILEChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_GAOChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_JSONChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_SIMPLEChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_TLFChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_TLGChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_XMLChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
 
 procedure TProfileFrame.ConditionToFrame(c: TCondition);
 begin
@@ -264,6 +329,8 @@ begin
   begin
     (FSelectedRuleItem as TProfileFilterList).Add(TProfileFilter.Create);
     DrawRules;
+    if Assigned(FOnChange) then
+      FOnChange(Self);
     exit;
   end;
 end;
@@ -300,6 +367,8 @@ begin
   end;
 
   DrawRules;
+  if Assigned(FOnChange) then
+    FOnChange(Self);
 end;
 
 
@@ -323,6 +392,8 @@ begin
     exit;
   FConditionFrame.GetData(FSelectedRuleItem as TCondition);
   DrawRules;
+  if Assigned(FOnChange) then
+    FOnChange(Self);
 end;
 
 

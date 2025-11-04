@@ -1,54 +1,56 @@
 inherited ChannelEditForm: TChannelEditForm
-  ClientHeight = 711
+  ClientHeight = 546
   ClientWidth = 882
   Caption = #1057#1086#1079#1076#1072#1085#1080#1077'/'#1088#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1085#1080#1077' '#1082#1072#1085#1072#1083#1072'...'
   ExplicitWidth = 898
-  ExplicitHeight = 750
+  ExplicitHeight = 585
   TextHeight = 15
   inherited pnBottom: TUniContainerPanel
-    Top = 661
+    Top = 496
     Width = 882
-    ExplicitTop = 653
-    ExplicitWidth = 880
+    ExplicitTop = 496
+    ExplicitWidth = 882
     inherited btnOk: TUniButton
       Left = 723
-      ExplicitLeft = 721
+      ExplicitLeft = 723
     end
     inherited btnCancel: TUniButton
       Left = 804
-      ExplicitLeft = 802
+      ExplicitLeft = 804
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 882
-    ExplicitWidth = 880
+    ExplicitWidth = 882
     inherited teCaption: TUniEdit
-      Left = 86
-      Width = 793
-      ExplicitWidth = 793
+      Left = 90
+      Width = 789
+      ExplicitLeft = 90
+      ExplicitWidth = 789
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 882
-    ExplicitWidth = 880
+    ExplicitWidth = 882
     inherited teName: TUniEdit
-      Left = 86
-      Width = 793
-      ExplicitWidth = 793
+      Left = 90
+      Width = 789
+      ExplicitLeft = 90
+      ExplicitWidth = 789
     end
   end
   inherited pnClient: TUniContainerPanel
     Width = 882
-    Height = 580
-    ExplicitWidth = 880
-    ExplicitHeight = 572
-    ScrollHeight = 580
+    Height = 415
+    ExplicitWidth = 882
+    ExplicitHeight = 415
+    ScrollHeight = 415
     ScrollWidth = 882
     object panelLink: TUniPanel
       Left = 0
       Top = 0
       Width = 882
-      Height = 321
+      Height = 193
       Hint = ''
       Align = alTop
       TabOrder = 1
@@ -58,7 +60,7 @@ inherited ChannelEditForm: TChannelEditForm
         Left = 1
         Top = 1
         Width = 880
-        Height = 319
+        Height = 191
         Hint = ''
         Align = alClient
         TabOrder = 1
@@ -66,7 +68,7 @@ inherited ChannelEditForm: TChannelEditForm
     end
     object UniSplitter1: TUniSplitter
       Left = 0
-      Top = 321
+      Top = 193
       Width = 882
       Height = 6
       Cursor = crVSplit
@@ -77,9 +79,9 @@ inherited ChannelEditForm: TChannelEditForm
     end
     object UniPanel2: TUniPanel
       Left = 0
-      Top = 327
+      Top = 199
       Width = 882
-      Height = 253
+      Height = 216
       Hint = ''
       Align = alClient
       TabOrder = 3
@@ -88,7 +90,7 @@ inherited ChannelEditForm: TChannelEditForm
         Left = 1
         Top = 1
         Width = 880
-        Height = 251
+        Height = 214
         Hint = ''
         Align = alClient
         TabOrder = 1
@@ -97,11 +99,12 @@ inherited ChannelEditForm: TChannelEditForm
   end
   inherited pnID: TUniContainerPanel
     Width = 882
-    ExplicitWidth = 880
+    ExplicitWidth = 882
     inherited teID: TUniEdit
-      Left = 86
-      Width = 793
-      ExplicitWidth = 793
+      Left = 90
+      Width = 789
+      ExplicitLeft = 90
+      ExplicitWidth = 789
     end
   end
 end

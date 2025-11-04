@@ -21,6 +21,7 @@ object FrameQueue: TFrameQueue
     end
     inherited Edit: TUniEdit
       Width = 103
+      ReadOnly = True
       ExplicitWidth = 103
     end
     inherited PanelUnits: TUniPanel

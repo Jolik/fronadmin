@@ -69,6 +69,8 @@ implementation
 
 procedure TQueueFrame.SetData(src: TQueue);
 begin
+  if not(src is TQueue) then
+    exit;
   FQueue := src;
   FrameCaption.SetData(src.Caption);
   FrameQID.SetData(src.Qid);

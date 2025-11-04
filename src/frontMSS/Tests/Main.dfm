@@ -19,13 +19,13 @@ object MainForm: TMainForm
     TabOrder = 0
     ScrollDirection = sdVertical
     ExplicitHeight = 486
-    ScrollHeight = 749
+    ScrollHeight = 773
     object gbLinks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
       Top = 5
       Width = 117
-      Height = 124
+      Height = 148
       Hint = ''
       Margins.Left = 5
       Margins.Top = 5
@@ -82,11 +82,29 @@ object MainForm: TMainForm
         TabOrder = 3
         OnClick = btnLinkSettingsClick
       end
+      object bntLinkSettings: TUniButton
+        AlignWithMargins = True
+        Left = 12
+        Top = 110
+        Width = 93
+        Height = 25
+        Hint = ''
+        Margins.Left = 10
+        Margins.Top = 5
+        Margins.Right = 10
+        Margins.Bottom = 0
+        Caption = 'Form'
+        Align = alTop
+        TabOrder = 4
+        OnClick = bntLinkSettingsClick
+        ExplicitLeft = 14
+        ExplicitTop = 139
+      end
     end
     object gbQueues: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 234
+      Top = 258
       Width = 117
       Height = 85
       Hint = ''
@@ -97,6 +115,7 @@ object MainForm: TMainForm
       Caption = ' Queues '
       Align = alTop
       TabOrder = 1
+      ExplicitTop = 234
       object btnQueuesList: TUniButton
         AlignWithMargins = True
         Left = 12
@@ -133,7 +152,7 @@ object MainForm: TMainForm
     object gbStripTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 329
+      Top = 353
       Width = 117
       Height = 205
       Hint = ''
@@ -144,6 +163,7 @@ object MainForm: TMainForm
       Caption = ' Strip.Tasks '
       Align = alTop
       TabOrder = 2
+      ExplicitTop = 329
       object btnStripTaskList: TUniButton
         AlignWithMargins = True
         Left = 12
@@ -244,7 +264,7 @@ object MainForm: TMainForm
     object gbSummaryTasks: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 544
+      Top = 568
       Width = 117
       Height = 205
       Hint = ''
@@ -255,6 +275,7 @@ object MainForm: TMainForm
       Caption = ' Summary.Tasks '
       Align = alTop
       TabOrder = 3
+      ExplicitTop = 544
       object btnSummaryTaskList: TUniButton
         AlignWithMargins = True
         Left = 12
@@ -370,7 +391,7 @@ object MainForm: TMainForm
     object UniGroupBox1: TUniGroupBox
       AlignWithMargins = True
       Left = 5
-      Top = 139
+      Top = 163
       Width = 117
       Height = 85
       Hint = ''
@@ -381,6 +402,7 @@ object MainForm: TMainForm
       Caption = ' Channels '
       Align = alTop
       TabOrder = 4
+      ExplicitTop = 139
       object btnChannelsList: TUniButton
         AlignWithMargins = True
         Left = 12
@@ -396,8 +418,6 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 1
         OnClick = btnChannelsListClick
-        ExplicitLeft = 10
-        ExplicitTop = 5
       end
       object btnChannelsForm: TUniButton
         AlignWithMargins = True
@@ -414,8 +434,6 @@ object MainForm: TMainForm
         Align = alTop
         TabOrder = 2
         OnClick = btnChannelsFormClick
-        ExplicitLeft = 20
-        ExplicitTop = 28
       end
     end
   end

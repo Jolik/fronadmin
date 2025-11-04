@@ -64,7 +64,7 @@ const
   constURLLinkGetOneInfo = '/links/%s/info';
   constURLLinkNew = '/links/new';
   constURLLinkUpdate = '/links/%s/update';
-  constURLLinkDelete = '/links/%s/remove';
+
 
 { TLinksBroker }
 
@@ -209,6 +209,7 @@ begin
 
   JSONRequestStream := TStringStream.Create(JSONLink.ToJSON, TEncoding.UTF8);
   try
+Log(JSONRequestStream.DataString);
     ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
     ////  !!! обрабатываем ответ
@@ -270,12 +271,13 @@ var
   JSONRequestStream: TStringStream;
 
 begin
-  URL := Format(GetBasePath + constURLLinkDelete, [AId]);
-
+  URL := Format(GetBasePath +  '/links/%s/archive', [AId]);
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
+  ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 
-  ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream)
-
+  URL := Format(GetBasePath +  '/links/%s/remove', [AId]);
+  JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
+  ResStr := MainHttpModuleUnit.POST(URL, JSONRequestStream);
 end;
 
 end.

@@ -17,6 +17,7 @@ type
     UniPanel2: TUniPanel;
     scrollBoxLinks: TUniScrollBox;
     scrollBoxQueue: TUniScrollBox;
+    procedure btnOkClick(Sender: TObject);
   private
     FLinkSettingsEditFrame: TParentLinkSettingEditFrame;
     FQueueEditFrame: TQueueFrame;
@@ -60,6 +61,16 @@ begin
 //  Abonent.Attr := GetAttrList;
 end;
 
+procedure TChannelEditForm.btnOkClick(Sender: TObject);
+begin
+  inherited;
+  FQueueEditFrame.GetData(Channel.Queue);
+  if IsEdit then
+  begin
+
+  end;
+end;
+
 function TChannelEditForm.DoCheck: Boolean;
 begin
   Result := inherited DoCheck();
@@ -97,7 +108,7 @@ begin
       exit;
     FLinkSettingsEditFrame := linkFrameClass.Create(Self);
     FLinkSettingsEditFrame.Parent := scrollBoxLinks;
-    FLinkSettingsEditFrame.Link := chan.Link;
+    FLinkSettingsEditFrame.SetData(chan.Link, nil);
 
     FQueueEditFrame := TQueueFrame.Create(Self);
     FQueueEditFrame.Parent := scrollBoxQueue;

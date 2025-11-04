@@ -72,9 +72,9 @@ object ParentEditForm: TParentEditForm
     end
     object teCaption: TUniEdit
       AlignWithMargins = True
-      Left = 82
+      Left = 86
       Top = 3
-      Width = 734
+      Width = 730
       Height = 21
       Hint = ''
       Text = ''
@@ -110,9 +110,9 @@ object ParentEditForm: TParentEditForm
     end
     object teName: TUniEdit
       AlignWithMargins = True
-      Left = 82
+      Left = 86
       Top = 3
-      Width = 734
+      Width = 730
       Height = 21
       Hint = ''
       Text = ''
@@ -131,8 +131,6 @@ object ParentEditForm: TParentEditForm
     Align = alClient
     AutoScroll = True
     TabOrder = 3
-    ExplicitTop = 54
-    ExplicitHeight = 414
     ScrollHeight = 387
     ScrollWidth = 819
   end
@@ -145,7 +143,6 @@ object ParentEditForm: TParentEditForm
     ParentColor = False
     Align = alTop
     TabOrder = 4
-    ExplicitTop = 53
     object UniLabel1: TUniLabel
       AlignWithMargins = True
       Left = 3
@@ -164,9 +161,9 @@ object ParentEditForm: TParentEditForm
     end
     object teID: TUniEdit
       AlignWithMargins = True
-      Left = 82
+      Left = 86
       Top = 3
-      Width = 734
+      Width = 730
       Height = 21
       Hint = ''
       Text = ''

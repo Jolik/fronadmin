@@ -78,7 +78,6 @@ uses
   DSProcessorTaskEditFormUnit in '..\Forms\DSProcessorTaskEditFormUnit.pas' {DSProcessorTaskEditForm: TUniForm},
   DSProcessorTasksFormUnit in '..\Forms\DSProcessorTasksFormUnit.pas' {DSProcessorTasksForm: TUniForm},
   LinkEditFormUnit in '..\Forms\LinkEditFormUnit.pas' {LinkEditForm: TUniForm},
-  LinkSettingsFormUnit in '..\Forms\LinkSettingsFormUnit.pas' {LinkSettingsForm: TUniForm},
   LinksFormUnit in '..\Forms\LinksFormUnit.pas' {LinksForm: TUniForm},
   ListParentFormUnit in '..\Forms\ListParentFormUnit.pas' {ListParentForm: TUniForm},
   ParentEditFormUnit in '..\Forms\ParentEditFormUnit.pas' {ParentEditForm: TUniForm},
