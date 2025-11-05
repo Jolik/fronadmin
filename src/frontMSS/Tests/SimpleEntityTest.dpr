@@ -164,6 +164,18 @@ begin
   end;
 end;
 
+procedure CompareSerializationFieldSet(const EntityName: string; const Source: TJSONObject; const FieldSet: TFieldSet);
+var
+  Serialized: TJSONObject;
+begin
+  Serialized := FieldSet.Serialize;
+  try
+    AssertJsonEqual(Source, Serialized, EntityName);
+  finally
+    Serialized.Free;
+  end;
+end;
+
 procedure AssertBaseScalars(const Entity: TEntity; const Json: TJSONObject;
   const IdKey, EntityName: string);
 var
@@ -206,6 +218,42 @@ begin
   ExpectedArchived := UnixToDateTime(ArchivedValue);
   Ensure(Abs(Entity.Archived - ExpectedArchived) < (1 / 864000),
     Format('%s: неверное поле archived', [EntityName]));
+end;
+
+procedure AssertSourceCredsBase(const Creds: TSourceCreds; const Json: TJSONObject);
+var
+  CreatedValue, UpdatedValue, ArchivedValue: Integer;
+  ExpectedCreated, ExpectedUpdated, ExpectedArchived: TDateTime;
+begin
+  Ensure(Creds.Id = GetValueStrDef(Json, 'crid', ''),
+    'TSourceCreds: неверное значение идентификатора');
+  Ensure(Creds.Name = GetValueStrDef(Json, 'name', ''),
+    'TSourceCreds: неверное поле name');
+  Ensure(Creds.CompId = GetValueStrDef(Json, 'compid', ''),
+    'TSourceCreds: неверное поле compid');
+  Ensure(Creds.CtxId = GetValueStrDef(Json, 'ctxid', ''),
+    'TSourceCreds: неверное поле ctxid');
+  Ensure(Creds.Lid = GetValueStrDef(Json, 'lid', ''),
+    'TSourceCreds: неверное поле lid');
+  Ensure(Creds.Login = GetValueStrDef(Json, 'login', ''),
+    'TSourceCreds: неверное поле login');
+  Ensure(Creds.Pass = GetValueStrDef(Json, 'pass', ''),
+    'TSourceCreds: неверное поле pass');
+
+  CreatedValue := GetValueIntDef(Json, 'created', 0);
+  UpdatedValue := GetValueIntDef(Json, 'updated', 0);
+  ArchivedValue := GetValueIntDef(Json, 'archived', 0);
+
+  ExpectedCreated := UnixToDateTime(CreatedValue);
+  ExpectedUpdated := UnixToDateTime(UpdatedValue);
+  ExpectedArchived := UnixToDateTime(ArchivedValue);
+
+  Ensure(Abs(Creds.Created - ExpectedCreated) < (1 / 864000),
+    'TSourceCreds: неверное поле created');
+  Ensure(Abs(Creds.Updated - ExpectedUpdated) < (1 / 864000),
+    'TSourceCreds: неверное поле updated');
+  Ensure(Abs(Creds.Archived - ExpectedArchived) < (1 / 864000),
+    'TSourceCreds: неверное поле archived');
 end;
 
 procedure AssertStringListEquals(const List: TFieldSetStringList;
@@ -579,7 +627,7 @@ end;
 
 procedure TestSourceCreds;
 var
-  Source, DataObject: TJSONObject;
+  Source: TJSONObject;
   Entity: TSourceCreds;
   SourceData: TJSONObject;
 begin
@@ -588,7 +636,7 @@ begin
   try
     Entity := TSourceCreds.Create(Source);
     try
-      AssertBaseScalars(Entity, Source, 'crid', 'TSourceCreds');
+      AssertSourceCredsBase(Entity, Source);
       Ensure(Entity.CtxId = 'ctx-777', 'TSourceCreds: неверное поле ctxid');
       Ensure(Entity.Lid = 'link-777', 'TSourceCreds: неверное поле lid');
       Ensure(Entity.Login = 'user', 'TSourceCreds: неверное поле login');
@@ -598,7 +646,7 @@ begin
       Ensure(Assigned(SourceData), 'TSourceCreds: отсутствует секция data');
       Ensure(Entity.SourceData.Def = 'Credentials definition', 'TSourceCreds: неверное поле data.def');
 
-      CompareSerialization('TSourceCreds', Source, Entity);
+      CompareSerializationFieldSet('TSourceCreds', Source, Entity);
     finally
       Entity.Free;
     end;
@@ -727,3 +775,4 @@ begin
     end;
   end;
 end.
+

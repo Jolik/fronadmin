@@ -23,12 +23,10 @@ type
     function ListAll(AReq: TReqList): TFieldSetListResponse; overload; override;
 
     function ListTypes(AReq: TOrganizationTypesReqList): TOrgTypeListResponse; overload;
-    function ListTypes(AReq: TReqList): TFieldSetListResponse; overload;
-    function ListTypesLegacy(AReq: TOrgTypesReqList): TOrgTypeListResponse;
+    function ListTypesAll(AReq: TOrganizationTypesReqList): TOrgTypeListResponse; overload;
 
     function CreateReqList: TReqList; override;
     function CreateOrgTypesReqList: TOrganizationTypesReqList;
-    function CreateLegacyOrgTypesReqList: TOrgTypesReqList;
   end;
 
 implementation
@@ -41,14 +39,9 @@ uses
 constructor TOrganizationsRestBroker.Create(const ATicket: string);
 begin
   inherited Create(ATicket);
-  BasePath := constURLDataserverBasePath;
+  BasePath := constURLManagementcommBasePath;
 end;
 
-function TOrganizationsRestBroker.CreateLegacyOrgTypesReqList: TOrgTypesReqList;
-begin
-  Result := TOrgTypesReqList.Create;
-  Result.BasePath := BasePath;
-end;
 
 function TOrganizationsRestBroker.CreateOrgTypesReqList: TOrganizationTypesReqList;
 begin
@@ -84,20 +77,16 @@ begin
   inherited ListAll(AReq, Result);
 end;
 
-function TOrganizationsRestBroker.ListTypes(AReq: TReqList): TFieldSetListResponse;
+function TOrganizationsRestBroker.ListTypes(AReq: TOrganizationTypesReqList): TOrgTypeListResponse;
 begin
   Result := TOrgTypeListResponse.Create;
   inherited List(AReq, Result);
 end;
 
-function TOrganizationsRestBroker.ListTypes(AReq: TOrganizationTypesReqList): TOrgTypeListResponse;
+function TOrganizationsRestBroker.ListTypesAll(AReq: TOrganizationTypesReqList): TOrgTypeListResponse;
 begin
-  Result := ListTypes(AReq as TReqList) as TOrgTypeListResponse;
-end;
-
-function TOrganizationsRestBroker.ListTypesLegacy(AReq: TOrgTypesReqList): TOrgTypeListResponse;
-begin
-  Result := ListTypes(AReq as TReqList) as TOrgTypeListResponse;
+  Result := TOrgTypeListResponse.Create;
+  inherited ListAll(AReq, Result);
 end;
 
 end.

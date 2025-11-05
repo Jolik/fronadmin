@@ -6,33 +6,37 @@ uses
   RestBrokerBaseUnit,
   BaseRequests,
   BaseResponses,
-  RestEntityBrokerUnit,
+  RestFieldSetBrokerUnit,
   ContextsHttpRequests,
   HttpClientUnit;
 
 type
-  TContextsRestBroker = class(TRestEntityBroker)
+  TContextsRestBroker = class(TRestFieldSetBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
     function List(AReq: TContextReqList): TContextListResponse; overload;
-    function List(AReq: TReqList): TListResponse; overload; override;
+    function List(AReq: TReqList): TFieldSetListResponse; overload; override;
 //    function Info(AReq: TContextReqInfo): TContextInfoResponse; overload;
 //    function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TContextReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
     function Update(AReq: TContextReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TContextReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
 
     function ListTypes(AReq: TContextTypesReqList): TContextTypeListResponse; overload;
+    function ListTypesAll(AReq: TContextTypesReqList): TContextTypeListResponse;overload;
+    function ListTypesAll(AReq: TReqList): TFieldSetListResponse;overload;
     function ListTypes(AReq: TReqList): TFieldSetListResponse; overload;
 
     function ListCredentials(AReq: TContextCredsReqList): TContextCredsListResponse; overload;
-    function ListCredentials(AReq: TReqList): TListResponse; overload;
+    function ListCredentials(AReq: TReqList): TFieldSetListResponse; overload;
+    function ListCredentialsAll(AReq: TContextCredsReqList): TContextCredsListResponse; overload;
+    function ListCredentialsAll(AReq: TReqList): TFieldSetListResponse; overload;
+
     function CredentialInfo(AReq: TContextCredReqInfo): TContextCredInfoResponse; overload;
-    function CredentialInfo(AReq: TReqInfo): TEntityResponse; overload;
+    function CredentialInfo(AReq: TReqInfo): TFieldSetResponse; overload;
     function NewCredential(AReq: TContextCredReqNew): TJSONResponse;
     function UpdateCredential(AReq: TContextCredReqUpdate): TJSONResponse;
     function RemoveCredential(AReq: TContextCredReqRemove): TJSONResponse;
@@ -61,7 +65,7 @@ begin
   BasePath := constURLDataserverBasePath;
 end;
 
-function TContextsRestBroker.List(AReq: TReqList): TListResponse;
+function TContextsRestBroker.List(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TContextListResponse.Create;
   Result := inherited List(AReq, Result);
@@ -75,23 +79,23 @@ end;
 function TContextsRestBroker.ListTypes(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TContextTypeListResponse.Create;
-  try
-    ApplyTicket(AReq);
-    HttpClient.Request(AReq, Result);
-  except
-    Result.Free;
-    raise;
-  end;
+  Result := inherited List(AReq, Result);
+end;
+
+function TContextsRestBroker.ListTypesAll(AReq: TReqList): TFieldSetListResponse;
+begin
+  Result := TContextTypeListResponse.Create;
+  Result := inherited ListAll(AReq, Result);
+end;
+
+function TContextsRestBroker.ListTypesAll(AReq: TContextTypesReqList): TContextTypeListResponse;
+begin
+  Result := ListTypesAll(AReq as TReqList) as TContextTypeListResponse;
 end;
 
 function TContextsRestBroker.ListTypes(AReq: TContextTypesReqList): TContextTypeListResponse;
 begin
   Result := ListTypes(AReq as TReqList) as TContextTypeListResponse;
-end;
-
-function TContextsRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
-begin
-  Result := inherited New(AReq, AResp);
 end;
 
 function TContextsRestBroker.New(AReq: TContextReqNew): TJSONResponse;
@@ -115,16 +119,22 @@ begin
   Result := Update(AReq as TReqUpdate);
 end;
 
-function TContextsRestBroker.ListCredentials(AReq: TReqList): TListResponse;
+
+function TContextsRestBroker.ListCredentialsAll(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TContextCredsListResponse.Create;
-  try
-    ApplyTicket(AReq);
-    HttpClient.Request(AReq, Result);
-  except
-    Result.Free;
-    raise;
-  end;
+  Result := inherited ListAll(AReq, Result);
+end;
+
+function TContextsRestBroker.ListCredentialsAll(AReq: TContextCredsReqList): TContextCredsListResponse;
+begin
+  Result := ListCredentialsAll(AReq as TReqList) as TContextCredsListResponse;
+end;
+
+function TContextsRestBroker.ListCredentials(AReq: TReqList): TFieldSetListResponse;
+begin
+  Result := TContextCredsListResponse.Create;
+  Result := inherited List(AReq, Result);
 end;
 
 function TContextsRestBroker.ListCredentials(AReq: TContextCredsReqList): TContextCredsListResponse;
@@ -132,7 +142,7 @@ begin
   Result := ListCredentials(AReq as TReqList) as TContextCredsListResponse;
 end;
 
-function TContextsRestBroker.CredentialInfo(AReq: TReqInfo): TEntityResponse;
+function TContextsRestBroker.CredentialInfo(AReq: TReqInfo): TFieldSetResponse;
 begin
   Result := TContextCredInfoResponse.Create;
   try

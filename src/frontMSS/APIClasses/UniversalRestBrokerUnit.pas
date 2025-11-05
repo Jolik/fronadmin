@@ -122,7 +122,6 @@ begin
   // Organizations
   if Req is TOrganizationReqList then Exit(TOrganizationListResponse.Create);
   if Req is TOrganizationTypesReqList then Exit(TOrgTypeListResponse.Create);
-  if Req is TOrgTypesReqList then Exit(TOrgTypeListResponse.Create);
 
   // Fallback generic
   Result := TJSONResponse.Create;

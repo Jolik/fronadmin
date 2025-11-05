@@ -171,4 +171,14 @@ object MainForm: TMainForm
     TabOrder = 14
     OnClick = btnHandlersClick
   end
+  object unbtnSources: TUniButton
+    Left = 40
+    Top = 544
+    Width = 75
+    Height = 25
+    Hint = ''
+    Caption = #1048#1089#1090#1086#1095#1085#1080#1082#1080
+    TabOrder = 16
+    OnClick = unbtnSourcesClick
+  end
 end

@@ -1,4 +1,4 @@
-﻿object UniMainModule: TUniMainModule
+object UniMainModule: TUniMainModule
   MonitoredKeys.Keys = <>
   Height = 248
   Width = 378

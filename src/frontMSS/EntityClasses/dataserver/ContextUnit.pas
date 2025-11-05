@@ -8,16 +8,15 @@ uses
 
 type
   /// <summary>Context entity for dataserver sources.</summary>
-  TContext = class(TEntity)
+  TContext = class(TFieldSet)
   private
+    FCtxId: string;
     FCtxtid: string;
     FSid: string;
     FIndex: string;
     FData: TJSONObject;
     function GetCtxId: string;
     procedure SetCtxId(const Value: string);
-  protected
-    function GetIdKey: string; override;
   public
     constructor Create; overload; override;
     destructor Destroy; override;
@@ -34,9 +33,9 @@ type
   end;
 
   /// <summary>Collection of contexts for dataserver sources.</summary>
-  TContextList = class(TEntityList)
+  TContextList = class(TFieldSetList)
   protected
-    class function ItemClassType: TEntityClass; override;
+    class function ItemClassType: TFieldSetClass; override;
   end;
 
 implementation
@@ -55,17 +54,22 @@ const
 { TContext }
 
 function TContext.Assign(ASource: TFieldSet): boolean;
+var
+  Src: TContext;
 begin
-  Result := false;
-
-  if not inherited Assign(ASource) then
-    Exit;
+  if not Assigned(ASource) then
+    Exit(False);
 
   if not (ASource is TContext) then
+    Exit(inherited Assign(ASource));
+
+  Result := inherited Assign(ASource);
+  if not Result then
     Exit;
 
-  var Src := TContext(ASource);
+  Src := TContext(ASource);
 
+  FCtxId := Src.CtxId;
   FCtxtid := Src.CtxtId;
   FSid := Src.Sid;
   FIndex := Src.Index;
@@ -94,19 +98,14 @@ end;
 
 function TContext.GetCtxId: string;
 begin
-  Result := Id;
-end;
-
-function TContext.GetIdKey: string;
-begin
-  Result := CtxIdKey;
+  Result := FCtxId;
 end;
 
 procedure TContext.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
   DataValue: TJSONValue;
 begin
-  Id := '';
+  FCtxId := '';
   FCtxtid := '';
   FSid := '';
   FIndex := '';
@@ -119,7 +118,7 @@ begin
     Exit;
   end;
 
-  Id := GetValueStrDef(src, GetIdKey, '');
+  FCtxId := GetValueStrDef(src, CtxIdKey, '');
   FCtxtid := GetValueStrDef(src, CtxtIdKey, '');
   FSid := GetValueStrDef(src, SidKey, '');
   FIndex := GetValueStrDef(src, IndexKey, '');
@@ -138,7 +137,7 @@ begin
   if not Assigned(dst) then
     Exit;
 
-  dst.AddPair(GetIdKey, Id);
+  dst.AddPair(CtxIdKey, FCtxId);
   dst.AddPair(CtxtIdKey, FCtxtid);
   dst.AddPair(SidKey, FSid);
   dst.AddPair(IndexKey, FIndex);
@@ -152,12 +151,12 @@ end;
 
 procedure TContext.SetCtxId(const Value: string);
 begin
-  Id := Value;
+  FCtxId := Value;
 end;
 
 { TContextList }
 
-class function TContextList.ItemClassType: TEntityClass;
+class function TContextList.ItemClassType: TFieldSetClass;
 begin
   Result := TContext;
 end;

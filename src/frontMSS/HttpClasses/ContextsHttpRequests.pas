@@ -37,7 +37,7 @@ type
   end;
 
   // Response wrapper for /sources/contexts/list
-  TContextListResponse = class(TListResponse)
+  TContextListResponse = class(TFieldSetListResponse)
   private
     function GetContextList: TContextList;
   public
@@ -51,11 +51,11 @@ type
     function GetContextTypes: TContextTypeList;
   public
     constructor Create; override;
-    property ContextTypes: TContextTypeList read GetContextTypes;
+    property ContextTypesList: TContextTypeList read GetContextTypes;
   end;
 
   // Response wrapper for context credentials list
-  TContextCredsListResponse = class(TListResponse)
+  TContextCredsListResponse = class(TFieldSetListResponse)
   private
     function GetCredentialList: TSourceCredsList;
   public
@@ -64,7 +64,7 @@ type
   end;
 
   // Response wrapper for single credential
-  TContextCredInfoResponse = class(TEntityResponse)
+  TContextCredInfoResponse = class(TFieldSetResponse)
   private
     function GetCredential: TSourceCreds;
   public
@@ -240,7 +240,7 @@ end;
 
 function TContextListResponse.GetContextList: TContextList;
 begin
-  Result := EntityList as TContextList;
+  Result := FieldSetList as TContextList;
 end;
 
 { TContextTypeListResponse }
@@ -264,7 +264,7 @@ end;
 
 function TContextCredsListResponse.GetCredentialList: TSourceCredsList;
 begin
-  Result := EntityList as TSourceCredsList;
+  Result := FieldSetList as TSourceCredsList;
 end;
 
 { TContextCredInfoResponse }
@@ -276,7 +276,7 @@ end;
 
 function TContextCredInfoResponse.GetCredential: TSourceCreds;
 begin
-  Result := Entity as TSourceCreds;
+  Result := FieldSet as TSourceCreds;
 end;
 
 { TContextReqList }
@@ -490,4 +490,3 @@ begin
 end;
 
 end.
-

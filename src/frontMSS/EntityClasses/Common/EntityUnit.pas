@@ -267,7 +267,6 @@ constructor TFieldSet.Create(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   Create();
-
   Parse(src, APropertyNames);
 end;
 

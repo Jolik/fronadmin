@@ -6,20 +6,20 @@ uses
   System.Generics.Collections, System.JSON,
   LoggingUnit,
   MainHttpModuleUnit,
-  EntityUnit, SourceCredsUnit, EntityBrokerUnit;
+  EntityUnit, SourceCredsUnit, FieldSetBrokerUnit;
 
 type
   ///    API Source Credentials
-  TSourceCredsBroker = class (TEntityBroker)
+  TSourceCredsBroker = class (TFieldSetBroker)
   protected
     ///      API
-    function GetBasePath: string; override;
+    function BaseUrlPath: string; override;
     ///
     ///     ,
-    class function ClassType: TEntityClass; override;
+    class function ClassType: TFieldSetClass; override;
     ///
     ///     ,
-    class function ListClassType: TEntityListClass; override;
+    class function ListClassType: TFieldSetListClass; override;
 
   public
     ///
@@ -31,23 +31,23 @@ type
       const ASearchStr: String = '';
       const ASearchBy: String = '';
       const AOrder: String = 'name';
-      const AOrderDir: String = 'asc'): TEntityList; override;
+      const AOrderDir: String = 'asc'): TFieldSetList; override;
 
     ///
     ///      nil
-    function CreateNew(): TEntity; override;
+    function CreateNew(): TFieldSet; override;
     ///
     ///      false
-    function New(AEntity: TEntity): Boolean; override;
+    function New(AFieldSet: TFieldSet): Boolean; override;
     ///
     ///      nil
-    function Info(AId: String): TEntity; overload; override;
+    function Info(AId: String): TFieldSet;
     ///
     ///      false
-    function Update(AEntity: TEntity): Boolean; override;
+    function Update(AFieldSet: TSourceCreds): Boolean;
     ///
     ///      false
-    function Remove(AId: String): Boolean; overload; override;
+    function Remove(AId: String): Boolean; overload;
 
   end;
 
@@ -67,17 +67,17 @@ const
 
 { TSourceCredsBroker }
 
-function TSourceCredsBroker.GetBasePath: string;
+function TSourceCredsBroker.BaseUrlPath: string;
 begin
   Result := constURLDataserverBasePath;
 end;
 
-class function TSourceCredsBroker.ClassType: TEntityClass;
+class function TSourceCredsBroker.ClassType: TFieldSetClass;
 begin
   Result := TSourceCreds;
 end;
 
-class function TSourceCredsBroker.ListClassType: TEntityListClass;
+class function TSourceCredsBroker.ListClassType: TFieldSetListClass;
 begin
   Result := TSourceCredsList;
 end;
@@ -91,7 +91,7 @@ function TSourceCredsBroker.List(
   const ASearchStr: String = '';
   const ASearchBy: String = '';
   const AOrder: String = 'name';
-  const AOrderDir: String = 'asc'): TEntityList;
+  const AOrderDir: String = 'asc'): TFieldSetList;
 var
   JSONResult: TJSONObject;
   ResponseObject: TJSONObject;
@@ -112,7 +112,7 @@ begin
     RequestStream := TStringStream.Create('{}', TEncoding.UTF8);
     try
       ///    -
-      ResStr := MainHttpModuleUnit.POST(GetBasePath + constURLSourceCredsList, RequestStream);
+      ResStr := MainHttpModuleUnit.POST(BaseUrlPath + constURLSourceCredsList, RequestStream);
       ///
       JSONResult := TJSONObject.ParseJSONValue(ResStr) as TJSONObject;
       if not Assigned(JSONResult) then
@@ -151,14 +151,14 @@ begin
   end;
 end;
 
-function TSourceCredsBroker.CreateNew: TEntity;
+function TSourceCredsBroker.CreateNew: TFieldSet;
 begin
   Result := ClassType.Create();
 end;
 
 ///
 ///      nil
-function TSourceCredsBroker.Info(AId: String): TEntity;
+function TSourceCredsBroker.Info(AId: String): TFieldSet;
 var
   URL: String;
   ResStr: String;
@@ -173,7 +173,7 @@ begin
     exit;
 
   try
-    URL := Format(GetBasePath + constURLSourceCredsInfo, [AId]);
+    URL := Format(BaseUrlPath + constURLSourceCredsInfo, [AId]);
 
     ResStr := MainHttpModuleUnit.GET(URL);
 
@@ -205,7 +205,7 @@ end;
 
 ///
 ///      false
-function TSourceCredsBroker.New(AEntity: TEntity): Boolean;
+function TSourceCredsBroker.New(AFieldSet: TFieldSet): Boolean;
 var
   URL: String;
   JSONCreds: TJSONObject;
@@ -215,9 +215,9 @@ begin
   Result := false;
 
   ///
-  URL := GetBasePath + constURLSourceCredsNew;
+  URL := BaseUrlPath + constURLSourceCredsNew;
   ///     JSON
-  JSONCreds := AEntity.Serialize();
+  JSONCreds := AFieldSet.Serialize();
 
   JSONRequestStream := TStringStream.Create(JSONCreds.ToJSON, TEncoding.UTF8);
   try
@@ -237,7 +237,7 @@ end;
 
 ///
 ///      false
-function TSourceCredsBroker.Update(AEntity: TEntity): Boolean;
+function TSourceCredsBroker.Update(AFieldSet: TSourceCreds): Boolean;
 var
   URL: String;
   JSONCreds: TJSONObject;
@@ -246,15 +246,12 @@ var
 begin
   Result := false;
 
-  ///           !
-  if not (AEntity is TSourceCreds) then
-    exit;
+  if not Assigned(AFieldSet) then
+    Exit;
 
-  ///
-  URL := Format(GetBasePath + constURLSourceCredsUpdate, [(AEntity as TSourceCreds).Crid]);
+  URL := Format(BaseUrlPath + constURLSourceCredsUpdate, [AFieldSet.Crid]);
 
-  ///     JSON
-  JSONCreds := AEntity.Serialize();
+  JSONCreds := AFieldSet.Serialize();
 
   JSONRequestStream := TStringStream.Create(JSONCreds.ToJSON, TEncoding.UTF8);
   try
@@ -282,7 +279,7 @@ var
 begin
   Result := false;
 
-  URL := Format(GetBasePath + constURLSourceCredsRemove, [AId]);
+  URL := Format(BaseUrlPath + constURLSourceCredsRemove, [AId]);
 
   JSONRequestStream := TStringStream.Create('{}', TEncoding.UTF8);
   try

@@ -7,7 +7,8 @@ uses
   System.Classes,
   System.JSON,
   System.Generics.Collections,
-  EntityUnit;
+  EntityUnit,
+  ContextUnit;
 
 type
   // Основная сущность источника, соответствующая SourceDef
@@ -42,8 +43,12 @@ type
     Findex: string;
     Fnumber: Integer;
     Fgroup: string;
+    FsrcTypeID: integer;
+    Fcontexts: TContextList;
 
   public
+    constructor Create; overload; override;
+    destructor Destroy; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     function Assign(ASource: TFieldSet): boolean; override;
@@ -78,6 +83,8 @@ type
     property Index: string read Findex write Findex;
     property Number: Integer read Fnumber write Fnumber;
     property Group: string read Fgroup write Fgroup;
+    property SrcTypeID: Integer read FsrcTypeID write FsrcTypeID;
+    property Contexts: TContextList read Fcontexts;
   end;
 
   TSourceList = class(TFieldSetList)
@@ -92,8 +99,25 @@ uses
 
 { TSource }
 
-procedure TSource.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TSource.Create;
 begin
+  inherited Create;
+  Fcontexts := TContextList.Create;
+end;
+
+destructor TSource.Destroy;
+begin
+  FreeAndNil(Fcontexts);
+  inherited;
+end;
+
+procedure TSource.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  ContextsValue: TJSONValue;
+begin
+  if Assigned(Fcontexts) then
+    Fcontexts.Clear;
+
   Fsid := GetValueStrDef(src, 'sid', '');
   Fname := GetValueStrDef(src, 'name', '');
   Fsrctid := GetValueStrDef(src, 'srctid', '');
@@ -127,6 +151,16 @@ begin
   Findex := GetValueStrDef(src, 'src.index', '');
   Fnumber := GetValueIntDef(src, 'src.number', 0);
   Fgroup := GetValueStrDef(src, 'src.group', '');
+  FsrcTypeID := GetValueIntDef(src, 'src.type', -1);
+
+  ContextsValue := nil;
+  if Assigned(src) then
+    ContextsValue := src.FindValue('contexts');
+
+  if ContextsValue is TJSONArray then
+    Fcontexts.ParseList(ContextsValue as TJSONArray)
+  else if ContextsValue is TJSONObject then
+    Fcontexts.Parse(ContextsValue as TJSONObject);
 end;
 
 procedure TSource.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
@@ -171,7 +205,17 @@ begin
   srcObj.AddPair('index', Findex);
   srcObj.AddPair('number', TJSONNumber.Create(Fnumber));
   srcObj.AddPair('group', Fgroup);
+  if FsrcTypeID <> -1 then
+    srcObj.AddPair('type', TJSONNumber.Create(FsrcTypeID));
   dst.AddPair('src', srcObj);
+
+  if Assigned(Fcontexts) then
+  begin
+    if Fcontexts.Count > 0 then
+      dst.AddPair('contexts', Fcontexts.SerializeList)
+    else
+      dst.AddPair('contexts', TJSONArray.Create);
+  end;
 end;
 
 function TSource.Assign(ASource: TFieldSet): boolean;
@@ -211,6 +255,20 @@ begin
   Index := Src.Index;
   Number := Src.Number;
   Group := Src.Group;
+  SrcTypeID := Src.SrcTypeID;
+
+  if Assigned(Fcontexts) then
+  begin
+    if Assigned(Src.Contexts) then
+      Fcontexts.Assign(Src.Contexts)
+    else
+      Fcontexts.Clear;
+  end
+  else if Assigned(Src.Contexts) then
+  begin
+    Fcontexts := TContextList.Create;
+    Fcontexts.Assign(Src.Contexts);
+  end;
 
   Result := inherited Assign(ASource);
 end;

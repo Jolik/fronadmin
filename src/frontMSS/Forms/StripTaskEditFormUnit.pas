@@ -12,7 +12,7 @@ uses
   uniCheckBox, uniMemo, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  uniBasicGrid, uniDBGrid;
+  uniBasicGrid, uniDBGrid, uniTimer;
 
 type
   TStripTaskEditForm = class(TTaskEditParentForm)

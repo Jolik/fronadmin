@@ -3,20 +3,19 @@ unit SourceCredsRestBrokerUnit;
 interface
 
 uses
-  RestBrokerBaseUnit, BaseRequests, BaseResponses, RestEntityBrokerUnit,
+  RestBrokerBaseUnit, BaseRequests, BaseResponses, RestFieldSetBrokerUnit,
   SourceCredsHttpRequests, HttpClientUnit;
 
 type
-  TSourceCredsRestBroker = class(TRestEntityBroker)
+  TSourceCredsRestBroker = class(TRestFieldSetBroker)
   public
     BasePath: string;
     constructor Create(const ATicket: string = ''); override;
     function List(AReq: TSourceCredsReqList): TSourceCredsListResponse; overload;
-    function List(AReq: TReqList): TListResponse; overload; override;
+    function List(AReq: TReqList): TFieldSetListResponse; overload; override;
     function Info(AReq: TSourceCredsReqInfo): TSourceCredsInfoResponse; overload;
-    function Info(AReq: TReqInfo): TEntityResponse; overload; override;
+    function Info(AReq: TReqInfo): TFieldSetResponse; overload;
     function New(AReq: TSourceCredsReqNew): TJSONResponse; overload;
-    function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload; override;
     function Update(AReq: TSourceCredsReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TSourceCredsReqRemove): TJSONResponse; overload;
@@ -38,7 +37,7 @@ begin
   BasePath := constURLDataserverBasePath;
 end;
 
-function TSourceCredsRestBroker.List(AReq: TReqList): TListResponse;
+function TSourceCredsRestBroker.List(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TSourceCredsListResponse.Create;
   Result := inherited List(AReq, Result);
@@ -47,11 +46,6 @@ end;
 function TSourceCredsRestBroker.List(AReq: TSourceCredsReqList): TSourceCredsListResponse;
 begin
   Result := List(AReq as TReqList) as TSourceCredsListResponse;
-end;
-
-function TSourceCredsRestBroker.New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse;
-begin
-  Result := inherited New(AReq, AResp);
 end;
 
 function TSourceCredsRestBroker.New(AReq: TSourceCredsReqNew): TJSONResponse;
@@ -105,10 +99,16 @@ begin
   Result.BasePath := BasePath;
 end;
 
-function TSourceCredsRestBroker.Info(AReq: TReqInfo): TEntityResponse;
+function TSourceCredsRestBroker.Info(AReq: TReqInfo): TFieldSetResponse;
 begin
   Result := TSourceCredsInfoResponse.Create;
-  inherited Info(AReq, Result);
+  try
+    ApplyTicket(AReq);
+    HttpClient.Request(AReq, Result);
+  except
+    Result.Free;
+    raise;
+  end;
 end;
 
 function TSourceCredsRestBroker.Info(AReq: TSourceCredsReqInfo): TSourceCredsInfoResponse;

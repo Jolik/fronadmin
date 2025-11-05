@@ -3,7 +3,7 @@
 interface
 
 uses
-  System.Classes, System.JSON, System.Generics.Collections,
+  System.Classes, System.JSON, System.Generics.Collections, System.DateUtils,
   EntityUnit;
 
 type
@@ -25,21 +25,26 @@ type
 
 type
   // TSourceCreds .
-  TSourceCreds = class (TEntity)
+  TSourceCreds = class(TFieldSet)
   private
+    FId: string;
+    FName: string;
+    FCompId: string;
+    FCreated: TDateTime;
+    FUpdated: TDateTime;
+    FArchived: TDateTime;
     FCtxId: string;
     FLid: string;
     FLogin: string;
     FPass: string;
+    FBody: TBody;
+    FSourceData: TSourceCredData;
     function GetCrid: string;
-    function GetSourceData: TSourceCredData;
     procedure SetCrid(const Value: string);
-  protected
-    ///
-    function GetIdKey: string; override;
-    ///       Data
-    class function DataClassType: TDataClass; override;
   public
+    constructor Create; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    destructor Destroy; override;
     function Assign(ASource: TFieldSet): boolean; override;
 
     //      .   -
@@ -47,21 +52,26 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
 
     //
+    property Id: string read FId write FId;
     property Crid: string read GetCrid write SetCrid;
+    property Name: string read FName write FName;
+    property CompId: string read FCompId write FCompId;
+    property Created: TDateTime read FCreated write FCreated;
+    property Updated: TDateTime read FUpdated write FUpdated;
+    property Archived: TDateTime read FArchived write FArchived;
     property CtxId: string read FCtxId write FCtxId;
     property Lid: string read FLid write FLid;
     property Login: string read FLogin write FLogin;
     property Pass: string read FPass write FPass;
+    property Body: TBody read FBody;
     ///    Data.Def
-    property SourceData: TSourceCredData read GetSourceData;
+    property SourceData: TSourceCredData read FSourceData;
   end;
 
 type
   ///
-  TSourceCredsList = class (TEntityList)
-    ///
-    ///     ,
-    class function ItemClassType: TEntityClass; override;
+  TSourceCredsList = class(TFieldSetList)
+    class function ItemClassType: TFieldSetClass; override;
   end;
 
 implementation
@@ -77,6 +87,13 @@ const
   LidKey = 'lid';
   LoginKey = 'login';
   PassKey = 'pass';
+  NameKey = 'name';
+  CompIdKey = 'compid';
+  CreatedKey = 'created';
+  UpdatedKey = 'updated';
+  ArchivedKey = 'archived';
+  BodyKey = 'body';
+  DataKey = 'data';
 
 { TSourceCredData }
 
@@ -152,75 +169,149 @@ end;
 { TSourceCreds }
 
 function TSourceCreds.Assign(ASource: TFieldSet): boolean;
+var
+  Src: TSourceCreds;
 begin
-  Result := false;
+  Result := False;
 
-  if not inherited Assign(ASource) then
-    exit;
+  if not Assigned(ASource) then
+    Exit;
 
   if not (ASource is TSourceCreds) then
-    exit;
+    Exit;
 
-  var src := ASource as TSourceCreds;
+  Src := TSourceCreds(ASource);
 
-  CtxId := src.CtxId;
-  Lid := src.Lid;
-  Login := src.Login;
-  Pass := src.Pass;
+  FId := Src.Id;
+  FName := Src.Name;
+  FCompId := Src.CompId;
+  FCreated := Src.Created;
+  FUpdated := Src.Updated;
+  FArchived := Src.Archived;
 
-  Result := true;
+  FCtxId := Src.CtxId;
+  FLid := Src.Lid;
+  FLogin := Src.Login;
+  FPass := Src.Pass;
+
+  FBody.Assign(Src.Body);
+  FSourceData.Assign(Src.SourceData);
+
+  Result := True;
+end;
+
+constructor TSourceCreds.Create;
+begin
+  inherited Create;
+  FBody := TBody.Create;
+  FSourceData := TSourceCredData.Create;
+end;
+
+constructor TSourceCreds.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+begin
+  Create;
+  Parse(src, APropertyNames);
+end;
+
+destructor TSourceCreds.Destroy;
+begin
+  FSourceData.Free;
+  FBody.Free;
+  inherited;
 end;
 
 function TSourceCreds.GetCrid: string;
 begin
-  Result := Id;
-end;
-
-function TSourceCreds.GetSourceData: TSourceCredData;
-begin
-  Result := Data as TSourceCredData;
-end;
-
-function TSourceCreds.GetIdKey: string;
-begin
-  Result := CridKey;
-end;
-
-class function TSourceCreds.DataClassType: TDataClass;
-begin
-  Result := TSourceCredData;
+  Result := FId;
 end;
 
 procedure TSourceCreds.SetCrid(const Value: string);
 begin
-  Id := Value;
+  FId := Value;
 end;
 
-procedure TSourceCreds.Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TSourceCreds.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+var
+  BodyObj, DataObj: TJSONObject;
+  CreatedValue, UpdatedValue, ArchivedValue: Integer;
 begin
-  inherited Parse(src, APropertyNames);
+  if not Assigned(src) then
+    Exit;
 
-  CtxId := GetValueStrDef(src, CtxIdKey, '');
-  Lid := GetValueStrDef(src, LidKey, '');
-  Login := GetValueStrDef(src, LoginKey, '');
-  Pass := GetValueStrDef(src, PassKey, '');
+  FId := GetValueStrDef(src, CridKey, '');
+  FName := GetValueStrDef(src, NameKey, '');
+  FCompId := GetValueStrDef(src, CompIdKey, '');
+
+  CreatedValue := GetValueIntDef(src, CreatedKey, 0);
+  UpdatedValue := GetValueIntDef(src, UpdatedKey, 0);
+  ArchivedValue := GetValueIntDef(src, ArchivedKey, 0);
+
+  if CreatedValue <> 0 then
+    FCreated := UnixToDateTime(CreatedValue)
+  else
+    FCreated := 0;
+
+  if UpdatedValue <> 0 then
+    FUpdated := UnixToDateTime(UpdatedValue)
+  else
+    FUpdated := 0;
+
+  if ArchivedValue <> 0 then
+    FArchived := UnixToDateTime(ArchivedValue)
+  else
+    FArchived := 0;
+
+  FCtxId := GetValueStrDef(src, CtxIdKey, '');
+  FLid := GetValueStrDef(src, LidKey, '');
+  FLogin := GetValueStrDef(src, LoginKey, '');
+  FPass := GetValueStrDef(src, PassKey, '');
+
+  BodyObj := src.GetValue(BodyKey) as TJSONObject;
+  if Assigned(BodyObj) then
+    FBody.Parse(BodyObj);
+
+  DataObj := src.GetValue(DataKey) as TJSONObject;
+  if Assigned(DataObj) then
+    FSourceData.Parse(DataObj);
 end;
 
-procedure TSourceCreds.Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil);
+procedure TSourceCreds.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+var
+  BodyObj, DataObj: TJSONObject;
 begin
-  inherited Serialize(dst, APropertyNames);
+  if not Assigned(dst) then
+    Exit;
 
-  dst.AddPair(CtxIdKey, CtxId);
-  dst.AddPair(LidKey, Lid);
-  dst.AddPair(LoginKey, Login);
-  dst.AddPair(PassKey, Pass);
+  dst.AddPair(CridKey, FId);
+  dst.AddPair(NameKey, FName);
+  dst.AddPair(CompIdKey, FCompId);
+  dst.AddPair(CreatedKey, TJSONNumber.Create(DateTimeToUnix(FCreated)));
+  dst.AddPair(UpdatedKey, TJSONNumber.Create(DateTimeToUnix(FUpdated)));
+  dst.AddPair(ArchivedKey, TJSONNumber.Create(DateTimeToUnix(FArchived)));
+
+  DataObj := FSourceData.Serialize;
+  if Assigned(DataObj) then
+    dst.AddPair(DataKey, DataObj);
+
+  BodyObj := FBody.Serialize;
+  if Assigned(BodyObj) then
+    dst.AddPair(BodyKey, BodyObj);
+
+  dst.AddPair(CtxIdKey, FCtxId);
+  dst.AddPair(LidKey, FLid);
+  dst.AddPair(LoginKey, FLogin);
+  dst.AddPair(PassKey, FPass);
 end;
 
 { TSourceCredsList }
 
-class function TSourceCredsList.ItemClassType: TEntityClass;
+class function TSourceCredsList.ItemClassType: TFieldSetClass;
 begin
   Result := TSourceCreds;
 end;
 
 end.
+
+
+
+

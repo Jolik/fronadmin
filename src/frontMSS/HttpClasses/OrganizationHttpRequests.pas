@@ -52,12 +52,6 @@ type
     constructor Create; override;
   end;
 
-  // GET /orgTypes/list (legacy shortcut)
-  TOrgTypesReqList = class(TOrganizationTypesReqList)
-  public
-    constructor Create; override;
-  end;
-
 implementation
 
 { TOrganizationListResponse }
@@ -138,14 +132,6 @@ begin
   inherited Create;
   Method := mGET;
   SetEndpoint('organizations/types/list');
-end;
-
-{ TOrgTypesReqList }
-
-constructor TOrgTypesReqList.Create;
-begin
-  inherited Create;
-  SetEndpoint('orgTypes/list');
 end;
 
 end.

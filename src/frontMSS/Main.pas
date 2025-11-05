@@ -32,6 +32,7 @@ type
     cbCurComp: TUniComboBox;
     UniLabel2: TUniLabel;
     btnHandlers: TUniButton;
+    unbtnSources: TUniButton;
     procedure btnAbonentsClick(Sender: TObject);
     procedure btnChannelClick(Sender: TObject);
     procedure btnStripTasksClick(Sender: TObject);
@@ -47,6 +48,7 @@ type
     procedure cbCurCompChange(Sender: TObject);
     procedure btnHandlersClick(Sender: TObject);
     procedure btnQueuesClick(Sender: TObject);
+    procedure unbtnSourcesClick(Sender: TObject);
   private
     FDeps: TEntityList;
     FComps: TEntityList;
@@ -78,6 +80,7 @@ uses
   HandlersFormUnit,
   DSProcessorTasksFormUnit,
   MonitoringTasksFormUnit,
+  SourcesFormUnit,
   HttpClientUnit,
   RulesFormUnit;
 
@@ -166,9 +169,14 @@ begin
     Result:= (cbCurDept.Items.Objects[cbCurDept.ItemIndex] as TDepartment).Id;
 end;
 
+procedure TMainForm.unbtnSourcesClick(Sender: TObject);
+begin
+  ShowSourcesForm();
+end;
+
 procedure TMainForm.UniButton1Click(Sender: TObject);
 begin
- MonitoringTasksForm.Show();
+  MonitoringTasksForm.Show();
 end;
 
 procedure TMainForm.UniFormCreate(Sender: TObject);

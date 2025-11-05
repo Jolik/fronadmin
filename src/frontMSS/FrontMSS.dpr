@@ -3,6 +3,10 @@
 
 
 
+
+
+
+
 uses
   Forms,
   APIConst in 'APIClasses\APIConst.pas',
@@ -162,6 +166,7 @@ uses
   SourceTypesHttpRequests in 'HttpClasses\SourceTypesHttpRequests.pas',
   RestEntityBrokerUnit in 'APIClasses\RestEntityBrokerUnit.pas',
   RestFieldSetBrokerUnit in 'APIClasses\RestFieldSetBrokerUnit.pas',
+  DsGroupsRestBrokerUnit in 'APIClasses\DsGroupsRestBrokerUnit.pas',
   EntityBrokerUnit in 'APIClasses\Legacy\EntityBrokerUnit.pas',
   DsGroupsBrokerUnit in 'APIClasses\Legacy\DsGroupsBrokerUnit.pas',
   ParentBrokerUnit in 'APIClasses\Legacy\ParentBrokerUnit.pas',
@@ -169,10 +174,15 @@ uses
   BindingsBrokerUnit in 'APIClasses\Legacy\BindingsBrokerUnit.pas',
   SourcesRestBrokerUnit in 'APIClasses\SourcesRestBrokerUnit.pas',
   SourceHttpRequests in 'HttpClasses\SourceHttpRequests.pas',
+  DsGroupHttpRequests in 'HttpClasses\DsGroupHttpRequests.pas',
   LocationHttpRequests in 'HttpClasses\LocationHttpRequests.pas',
   OrganizationHttpRequests in 'HttpClasses\OrganizationHttpRequests.pas',
   LocationUnit in 'EntityClasses\dataserver\LocationUnit.pas',
-  OrganizationUnit in 'EntityClasses\dataserver\OrganizationUnit.pas';
+  OrganizationUnit in 'EntityClasses\dataserver\OrganizationUnit.pas',
+  SourcesFormUnit in 'Forms\SourcesFormUnit.pas',
+  SourceEditFormUnit in 'Forms\SourceEditFormUnit.pas',
+  LocationsRestBrokerUnit in 'APIClasses\LocationsRestBrokerUnit.pas',
+  OrganizationsRestBrokerUnit in 'APIClasses\OrganizationsRestBrokerUnit.pas';
 
 {$R *.res}
 

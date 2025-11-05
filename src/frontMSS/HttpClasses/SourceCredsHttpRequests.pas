@@ -8,17 +8,15 @@ uses
   SourceCredsUnit;
 
 type
-  TSourceCredsListResponse = class(TListResponse)
+  TSourceCredsListResponse = class(TFieldSetListResponse)
   private
     function GetSourceCredsList: TSourceCredsList;
-  protected
-    procedure SetResponse(const Value: string); override;
   public
     constructor Create;
     property SourceCredsList: TSourceCredsList read GetSourceCredsList;
   end;
 
-  TSourceCredsInfoResponse = class(TEntityResponse)
+  TSourceCredsInfoResponse = class(TFieldSetResponse)
   private
     function GetSourceCreds: TSourceCreds;
   public
@@ -69,41 +67,7 @@ end;
 
 function TSourceCredsListResponse.GetSourceCredsList: TSourceCredsList;
 begin
-  Result := EntityList as TSourceCredsList;
-end;
-
-procedure TSourceCredsListResponse.SetResponse(const Value: string);
-var
-  JSONResult: TJSONObject;
-  RootObject: TJSONObject;
-  CredsValue: TJSONValue;
-  ItemsArray: TJSONArray;
-begin
-  inherited SetResponse(Value);
-  SourceCredsList.Clear;
-
-  if Value.Trim.IsEmpty then Exit;
-
-  JSONResult := TJSONObject.ParseJSONValue(Value) as TJSONObject;
-  try
-    if not Assigned(JSONResult) then Exit;
-
-    RootObject := JSONResult.GetValue('response') as TJSONObject;
-    if not Assigned(RootObject) then Exit;
-
-    CredsValue := RootObject.GetValue('credentials');
-    ItemsArray := nil;
-
-    if CredsValue is TJSONArray then
-      ItemsArray := TJSONArray(CredsValue)
-    else if CredsValue is TJSONObject then
-      ItemsArray := TJSONObject(CredsValue).GetValue('items') as TJSONArray;
-
-    if Assigned(ItemsArray) then
-      SourceCredsList.ParseList(ItemsArray);
-  finally
-    JSONResult.Free;
-  end;
+  Result := FieldSetList as TSourceCredsList;
 end;
 
 { TSourceCredsInfoResponse }
@@ -115,7 +79,7 @@ end;
 
 function TSourceCredsInfoResponse.GetSourceCreds: TSourceCreds;
 begin
-  Result := Entity as TSourceCreds;
+  Result := FieldSet as TSourceCreds;
 end;
 
 { Requests }
@@ -172,4 +136,3 @@ begin
 end;
 
 end.
-

@@ -92,6 +92,7 @@ end;
 
 function TSourcesRestBroker.Info(AReq: TReqInfo): TFieldSetResponse;
 begin
+  result:=  TSourceInfoResponse.Create;
   inherited Info(AReq, Result);
 end;
 

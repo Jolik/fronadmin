@@ -1947,8 +1947,8 @@ end;
 procedure ListSourceCreds();
 var
   SourceCredsBroker: TSourceCredsBroker;
-  SourceCredsList: TEntityList;
-  SourceCredsEntity: TEntity;
+  SourceCredsList: TFieldSetList;
+  SourceCredsEntity: TFieldSet;
   PageCount: Integer;
 begin
   try
@@ -1996,7 +1996,7 @@ begin
             Writeln('---------- Source Creds Info ----------');
             Writeln('Requesting info for: ' + FirstCreds.Crid);
 
-            var InfoEntity: TEntity := nil;
+            var InfoEntity: TFieldSet := nil;
             try
               InfoEntity := SourceCredsBroker.Info(FirstCreds.Crid);
 

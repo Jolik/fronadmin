@@ -35,7 +35,7 @@ uses
 constructor TLocationsRestBroker.Create(const ATicket: string);
 begin
   inherited Create(ATicket);
-  BasePath := constURLDataserverBasePath;
+  BasePath := constURLManagementcommBasePath;
 end;
 
 function TLocationsRestBroker.CreateReqList: TReqList;
