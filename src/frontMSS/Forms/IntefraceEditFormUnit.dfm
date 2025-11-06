@@ -45,6 +45,7 @@ object InterfaceModalForm: TInterfaceModalForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       Anchors = [akRight, akBottom]
       TabOrder = 2
+      OnClick = btnSaveClick
       ExplicitLeft = 358
     end
   end
