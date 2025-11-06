@@ -16,8 +16,7 @@ object SourceEditForm: TSourceEditForm
     Align = alClient
     TabOrder = 0
     Caption = ''
-    ExplicitWidth = 1298
-    ExplicitHeight = 811
+    ExplicitWidth = 1302
     object pnlLeft: TUniScrollBox
       Left = 1
       Top = 1
@@ -26,7 +25,6 @@ object SourceEditForm: TSourceEditForm
       Hint = ''
       Align = alLeft
       TabOrder = 1
-      ExplicitHeight = 809
       ScrollHeight = 769
       object gbIdentification: TUniGroupBox
         Left = 0
@@ -437,7 +435,6 @@ object SourceEditForm: TSourceEditForm
       Align = alLeft
       ParentColor = False
       Color = clBtnFace
-      ExplicitHeight = 809
     end
     object pnlRight: TUniPanel
       Left = 507
@@ -448,8 +445,6 @@ object SourceEditForm: TSourceEditForm
       Align = alClient
       TabOrder = 3
       Caption = ''
-      ExplicitWidth = 790
-      ExplicitHeight = 809
       object gbContexts: TUniGroupBox
         Left = 1
         Top = 1
@@ -459,7 +454,6 @@ object SourceEditForm: TSourceEditForm
         Caption = #1050#1086#1085#1090#1077#1082#1089#1090#1099
         Align = alTop
         TabOrder = 1
-        ExplicitWidth = 788
         object grdContexts: TUniDBGrid
           Left = 2
           Top = 50
@@ -468,6 +462,8 @@ object SourceEditForm: TSourceEditForm
           Hint = ''
           DataSource = SourcesContextDS
           ReadOnly = True
+          WebOptions.Paged = False
+          WebOptions.FetchAll = True
           LoadMask.Message = 'Loading data...'
           Align = alClient
           TabOrder = 1
@@ -501,7 +497,6 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
-          ExplicitWidth = 784
           object unbtnAddContext: TUniButton
             Left = 6
             Top = 4
@@ -510,7 +505,7 @@ object SourceEditForm: TSourceEditForm
             Hint = ''
             Caption = '+'
             TabOrder = 1
-            OnClick = btnCloseClick
+            OnClick = unbtnAddContextClick
           end
           object unbtnDelContext: TUniButton
             Left = 46
@@ -520,6 +515,17 @@ object SourceEditForm: TSourceEditForm
             Hint = ''
             Caption = '-'
             TabOrder = 2
+            OnClick = unbtnDelContextClick
+          end
+          object unbtnContextRefresh: TUniButton
+            Left = 86
+            Top = 4
+            Width = 34
+            Height = 25
+            Hint = ''
+            Caption = #8634
+            TabOrder = 3
+            OnClick = unbtnContextRefreshClick
           end
         end
       end
@@ -532,8 +538,6 @@ object SourceEditForm: TSourceEditForm
         Caption = #1048#1085#1090#1077#1088#1092#1077#1081#1089#1099
         Align = alClient
         TabOrder = 2
-        ExplicitWidth = 788
-        ExplicitHeight = 507
         object grdInterfaces: TUniDBGrid
           Left = 2
           Top = 50
@@ -541,9 +545,13 @@ object SourceEditForm: TSourceEditForm
           Height = 463
           Hint = ''
           DataSource = ContextCredsDS
+          WebOptions.Paged = False
+          WebOptions.FetchAll = True
           LoadMask.Message = 'Loading data...'
+          ForceFit = True
           Align = alClient
           TabOrder = 1
+          OnDblClick = grdInterfacesDblClick
           Columns = <
             item
               FieldName = 'name'
@@ -553,7 +561,7 @@ object SourceEditForm: TSourceEditForm
             item
               FieldName = 'interface'
               Title.Caption = ' '#1048#1085#1090#1077#1088#1092#1077#1081#1089
-              Width = 124
+              Width = 167
             end
             item
               FieldName = 'login'
@@ -563,7 +571,7 @@ object SourceEditForm: TSourceEditForm
             item
               FieldName = 'def'
               Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
-              Width = 124
+              Width = 343
             end>
         end
         object unpnlCredsButtons: TUniPanel
@@ -575,7 +583,6 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
-          ExplicitWidth = 784
           object unbtnAddCred: TUniButton
             Left = 6
             Top = 3
@@ -584,7 +591,7 @@ object SourceEditForm: TSourceEditForm
             Hint = ''
             Caption = '+'
             TabOrder = 1
-            OnClick = btnCloseClick
+            OnClick = unbtnAddCredClick
           end
           object unbtnDeleteCred: TUniButton
             Left = 46
@@ -594,6 +601,17 @@ object SourceEditForm: TSourceEditForm
             Hint = ''
             Caption = '-'
             TabOrder = 2
+            OnClick = unbtnDeleteCredClick
+          end
+          object unbtnCredsRefresh: TUniButton
+            Left = 86
+            Top = 4
+            Width = 34
+            Height = 25
+            Hint = ''
+            Caption = #8634
+            TabOrder = 3
+            OnClick = unbtnCredsRefreshClick
           end
         end
       end
@@ -608,8 +626,6 @@ object SourceEditForm: TSourceEditForm
     Align = alBottom
     TabOrder = 1
     Caption = ''
-    ExplicitTop = 811
-    ExplicitWidth = 1298
     object btnClose: TUniButton
       Left = 1218
       Top = 8
@@ -628,12 +644,17 @@ object SourceEditForm: TSourceEditForm
       Hint = ''
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       TabOrder = 2
+      OnClick = btnSaveClick
     end
   end
   object ContextMem: TFDMemTable
     Active = True
-    OnCalcFields = ContextMemCalcFields
     FieldDefs = <
+      item
+        Name = 'typeName'
+        DataType = ftString
+        Size = 100
+      end
       item
         Name = 'index'
         DataType = ftString
@@ -661,10 +682,8 @@ object SourceEditForm: TSourceEditForm
     Left = 868
     Top = 54
     object ContextMemsid: TStringField
-      FieldKind = fkCalculated
       FieldName = 'typeName'
       Size = 100
-      Calculated = True
     end
     object ContextMemname: TStringField
       FieldName = 'index'
@@ -695,22 +714,37 @@ object SourceEditForm: TSourceEditForm
       item
         Name = 'name'
         DataType = ftString
-        Size = 20
+        Size = 255
       end
       item
         Name = 'interface'
         DataType = ftString
-        Size = 20
+        Size = 255
       end
       item
         Name = 'login'
         DataType = ftString
-        Size = 20
+        Size = 255
       end
       item
         Name = 'def'
         DataType = ftString
-        Size = 20
+        Size = 255
+      end
+      item
+        Name = 'ctxid'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'lid'
+        DataType = ftString
+        Size = 36
+      end
+      item
+        Name = 'crid'
+        DataType = ftString
+        Size = 36
       end>
     IndexDefs = <>
     FetchOptions.AssignedValues = [evMode]
@@ -725,15 +759,31 @@ object SourceEditForm: TSourceEditForm
     Top = 518
     object CredMemName: TStringField
       FieldName = 'name'
+      Size = 255
     end
     object CredMemIntf: TStringField
       FieldName = 'interface'
+      Size = 255
     end
     object CredMemLogin: TStringField
       FieldName = 'login'
+      Size = 255
     end
     object CredMemDef: TStringField
       FieldName = 'def'
+      Size = 255
+    end
+    object ContextCredsMemctxid: TStringField
+      FieldName = 'ctxid'
+      Size = 36
+    end
+    object ContextCredsMemlid: TStringField
+      FieldName = 'lid'
+      Size = 36
+    end
+    object CredsMemCrID: TStringField
+      FieldName = 'crid'
+      Size = 36
     end
   end
 end

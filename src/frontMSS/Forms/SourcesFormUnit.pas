@@ -285,36 +285,44 @@ begin
   var fs := TFormatSettings.Create;
   fs.DecimalSeparator := '.';
   var mapName := unmpSource1.JSName + '.uniMap';
-   UniSession.AddJS(Format(
-    '(function tryCenterAndPopup(){' +
-    '  if(window.%0:s){' +
-    '    %0:s.invalidateSize();' +
-    '    %0:s.flyTo([%1:s,%2:s], 9, {animate:true, duration:0.7});' +
-    '    %0:s.eachLayer(function(l){' +
-    '      if(l instanceof L.Marker && l.getPopup && l.getPopup().getContent()=="%3:s"){' +
-    '        l.openPopup();' +
-    '      }' +
-    '    });' +
-    '  } else {' +
-    '    setTimeout(tryCenterAndPopup,300);' +
-    '  }' +
-    '})();',
-    [
-      mapName,
-      FloatToStr(ASource.Lat, fs),
-      FloatToStr(ASource.Lon, fs),
-      StringReplace(ASource.Name, '"', '\"', [rfReplaceAll])
-    ]
-  ));
-
-
+  var HasCoords := ASource.Lat.HasValue and ASource.Lon.HasValue;
+  if HasCoords then
+    UniSession.AddJS(Format(
+      '(function tryCenterAndPopup(){' +
+      '  if(window.%0:s){' +
+      '    %0:s.invalidateSize();' +
+      '    %0:s.flyTo([%1:s,%2:s], 9, {animate:true, duration:0.7});' +
+      '    %0:s.eachLayer(function(l){' +
+      '      if(l instanceof L.Marker && l.getPopup && l.getPopup().getContent()=="%3:s"){' +
+      '        l.openPopup();' +
+      '      }' +
+      '    });' +
+      '  } else {' +
+      '    setTimeout(tryCenterAndPopup,300);' +
+      '  }' +
+      '})();',
+      [
+        mapName,
+        FloatToStr(ASource.Lat.Value, fs),
+        FloatToStr(ASource.Lon.Value, fs),
+        StringReplace(ASource.Name, '"', '\"', [rfReplaceAll])
+      ]
+    ));
 
   lSourceInfoIDValue.Caption := ASource.Sid;
   unlblSourceInfoNameValue.Caption := ASource.Name;
   lSourceInfoModuleValue.Caption := ASource.Index;
   unlblregion.Caption := ASource.Region;
-  unlbllat.Caption := FloatToStr(ASource.Lat);
-  unlbllon.Caption := FloatToStr(ASource.Lon);
+  if HasCoords then
+  begin
+    unlbllat.Caption := FloatToStr(ASource.Lat.Value);
+    unlbllon.Caption := FloatToStr(ASource.Lon.Value);
+  end
+  else
+  begin
+    unlbllat.Caption := '';
+    unlbllon.Caption := '';
+  end;
 
 
   if ASource.Created > 0 then
@@ -361,10 +369,8 @@ begin
 end;
 
 procedure TSourcesForm.unmpSource1MapReady(Sender: TObject);
-var
-  src: TSource;
 begin
-  var fs := TFormatSettings.Create; fs.DecimalSeparator := '.'; // используем точку для JS
+  var fs := TFormatSettings.Create; fs.DecimalSeparator := '.'; // �ᯮ��㥬 ��� ��� JS
   var mapName := unmpSource1.JSName + '.uniMap';
 
     // invalidateSize
@@ -372,21 +378,30 @@ begin
     'if(%s) {%s.invalidateSize();}', [mapName, mapName]
   ));
 
-  // маркеры добавляем напрямую в JS
+  // ��થ�� ������塞 ������� � JS
   for var srcP in SourceList do
-  with srcP as TSource do
-    if (Lat <> 0) and (Lon <> 0) then
+  begin
+    var Source := TSource(srcP);
+    if Source.Lat.HasValue and Source.Lon.HasValue then
       UniSession.AddJS(Format(
         'L.marker([%.6f,%.6f]).addTo(%s).bindPopup("%s");',
-        [Lat, Lon, mapName, StringReplace(Name, '"', '\"', [rfReplaceAll])],
+        [Source.Lat.Value, Source.Lon.Value, mapName, StringReplace(Source.Name, '"', '\"', [rfReplaceAll])],
         fs
       ));
+  end;
 
-  // центрируем карту
+  // 業���㥬 �����
   if SourceList.Count = 0 then Exit;
 
-  with SourceList[0] as TSource do
-    unmpSource1.SetView(Lat, Lon, 8)
+  for var srcP in SourceList do
+  begin
+    var Source := TSource(srcP);
+    if Source.Lat.HasValue and Source.Lon.HasValue then
+    begin
+      unmpSource1.SetView(Source.Lat.Value, Source.Lon.Value, 8);
+      Break;
+    end;
+  end;
 
 end;
 
@@ -459,3 +474,5 @@ begin
 end;
 
 end.
+
+

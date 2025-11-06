@@ -425,6 +425,8 @@
         <DCCReference Include="Forms\SourceEditFormUnit.pas"/>
         <DCCReference Include="APIClasses\LocationsRestBrokerUnit.pas"/>
         <DCCReference Include="APIClasses\OrganizationsRestBrokerUnit.pas"/>
+        <DCCReference Include="Forms\IntefraceEditFormUnit.pas"/>
+        <DCCReference Include="Forms\ContextCreateFormUnit.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

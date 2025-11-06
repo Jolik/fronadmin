@@ -5,12 +5,14 @@ interface
 uses
   SysUtils, Classes, System.Generics.Collections, UniGUIClasses, UniGUIForm, UniGUIBaseClasses, UniGUIAbstractClasses,
   UniGUIApplication, UniPanel, UniEdit, UniLabel, UniButton, UniComboBox, UniScrollBox,
-  UniGroupBox, UniMemo, UniSplitter, UniDBGrid, System.StrUtils, uniBasicGrid,
-  uniMultiItem, Vcl.Controls, Vcl.Forms, SourceUnit, OrganizationUnit, ContextTypeUnit,
-  LocationUnit, ContextsRestBrokerUnit, ContextUnit, SourceCredsRestBrokerUnit,
+  UniGroupBox, UniMemo, UniSplitter, UniDBGrid, System.StrUtils, System.UITypes, uniBasicGrid,
+  uniGUITypes, uniMultiItem, Vcl.Controls, Vcl.Forms,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
+  SourceUnit, OrganizationUnit, ContextTypeUnit, SourceCredsUnit,
+  LocationUnit, ContextsRestBrokerUnit, ContextUnit, SourceCredsRestBrokerUnit,
+  LinkUnit, FuncUnit, IntefraceEditFormUnit;
 
 type
   TSourceEditForm = class(TUniForm)
@@ -88,6 +90,10 @@ type
     unbtnAddContext: TUniButton;
     unbtnDelContext: TUniButton;
     btnSave: TUniButton;
+    ContextCredsMemlid: TStringField;
+    unbtnContextRefresh: TUniButton;
+    unbtnCredsRefresh: TUniButton;
+    CredsMemCrID: TStringField;
 
     procedure btnCloseClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -96,9 +102,16 @@ type
     procedure cbCountryChange(Sender: TObject);
     procedure cbRegionChange(Sender: TObject);
     procedure cbOrgTypeChange(Sender: TObject);
-    procedure ContextMemCalcFields(DataSet: TDataSet);
     procedure grdContextsSelectionChange(Sender: TObject);
+    procedure unbtnDelContextClick(Sender: TObject);
+    procedure unbtnContextRefreshClick(Sender: TObject);
+    procedure unbtnCredsRefreshClick(Sender: TObject);
+    procedure unbtnDeleteCredClick(Sender: TObject);
+    procedure unbtnAddContextClick(Sender: TObject);
+    procedure unbtnAddCredClick(Sender: TObject);
+    procedure grdInterfacesDblClick(Sender: TObject);
    protected
+    class var FLinks: TDictionary<string, TLink>;
     FIsEditMode: Boolean;
     FSource: TSource;
     FOrganizations: TObjectList<TOrganization>;
@@ -114,8 +127,20 @@ type
     FCredBroker: TSourceCredsRestBroker;
 
     procedure SetContextDS(contexts: TContextList);
+    procedure DelContext;
+    procedure DelCred;
+    procedure CreateContext(const ACtxtId: string; AIndex: Integer);
+    procedure CreateCredential(const AParams: TInterfaceCreateResult);
+    procedure UpdateCredential(const AParams: TInterfaceEditResult; ACred: TSourceCreds);
+    procedure EditCredential(const ACredId: string);
+    function BuildLinkList: TLinkList;
     procedure UpdateUI;
     procedure LoadData;
+    procedure ApplyToSource;
+    procedure RefreshContexts;
+    procedure RefreshCreds;
+    procedure SaveSource;
+    procedure UpdateSource;
     procedure PopulateOrganizationCombos;
     procedure PopulateOrganizationTypeCombos;
     procedure PopulateLocationCombos;
@@ -145,8 +170,11 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, SourcesRestBrokerUnit, OrganizationsRestBrokerUnit, OrganizationHttpRequests,
-  LocationsRestBrokerUnit, LocationHttpRequests, IdHTTP, ContextsHttpRequests, SourceCredsUnit;
+  IdHTTP, MainModule, SourcesRestBrokerUnit, OrganizationsRestBrokerUnit,
+  OrganizationHttpRequests, LocationsRestBrokerUnit, LocationHttpRequests,
+  ContextsHttpRequests, LinksRestBrokerUnit, APIConst,
+  HttpClientUnit, LoggingUnit,
+  LinksHttpRequests, ContextCreateFormUnit;
 
 function SourceEditForm(isEdit:boolean;source:TSource): TSourceEditForm;
 begin
@@ -167,12 +195,389 @@ begin
   FSelectedCountryId := 'RU';
   FSelectedRegionId := '';
   FSelectedOwnerOrgId := 0;
+  if not Assigned(FLinks) then
+     FLinks:= TDictionary<String,TLink>.Create;
   FCredBroker:= TSourceCredsRestBroker.Create(UniMainModule.XTicket);
   FContextBroker:= TContextsRestBroker.Create(UniMainModule.XTicket);
-  FOrganizations := TObjectList<TOrganization>.Create(True);
-  FLocations := TObjectList<TLocation>.Create(True);
-  FOrgTypes:=  TObjectList<TOrgType>.Create(true);
-  FContextTypes:= TObjectList<TContextType>.Create(true);
+  FOrganizations := TObjectList<TOrganization>.Create(false);
+  FLocations := TObjectList<TLocation>.Create(false);
+  FOrgTypes:=  TObjectList<TOrgType>.Create(false);
+  FContextTypes:= TObjectList<TContextType>.Create(false);
+end;
+
+procedure TSourceEditForm.DelContext;
+var
+ resp :TJSONResponse;
+begin
+  var ctxid:= ContextMem.FieldByName('ctxid').AsString;
+  if ctxid = '' then exit;
+  var req := FContextBroker.CreateReqRemove();
+  try
+    req.Id := ctxid;
+    try
+      resp:= FContextBroker.Remove(req);
+      RefreshContexts;
+    except
+      on E: EIdHTTPProtocolException do begin
+        var msg := Format('Ошибка удаления контекста. HTTP %d'#13#10'%s', [E.ErrorCode, E.ErrorMessage]);
+        Log(msg, lrtError);
+        MessageDlg(msg, TMsgDlgType.mtWarning, [mbOK], nil);
+      end;
+
+      on E: Exception do begin
+        var msg := Format('Ошибка удаления контекста. %s', [e.Message]);
+        Log(msg, lrtError);
+        MessageDlg(msg, TMsgDlgType.mtWarning, [mbOK], nil);
+      end;
+    end;
+  finally
+    resp.free;
+    req.free;
+  end;
+end;
+
+procedure TSourceEditForm.DelCred;
+var
+ resp :TJSONResponse;
+begin
+  var crid:= ContextCredsMem.FieldByName('crid').AsString;
+  if crid = '' then exit;
+  var req := FContextBroker.CreateReqCredRemove(crid);
+  try
+    try
+      resp:= FContextBroker.RemoveCredential(req);
+      RefreshCreds;
+    except
+      on E: EIdHTTPProtocolException do begin
+        var msg := Format('Ошибка удаления: HTTP %d'#13#10'%s', [E.ErrorCode, E.ErrorMessage]);
+        Log(msg, lrtError);
+        MessageDlg(msg, TMsgDlgType.mtWarning, [mbOK], nil);
+      end;
+
+      on E: Exception do begin
+        var msg := Format('Ошибка удаления: %s', [e.Message]);
+        Log(msg, lrtError);
+        MessageDlg(msg, TMsgDlgType.mtWarning, [mbOK], nil);
+      end;
+    end;
+  finally
+    resp.free;
+    req.free;
+  end;
+end;
+
+procedure TSourceEditForm.CreateContext(const ACtxtId: string; AIndex: Integer);
+var
+  Req: TContextReqNew;
+  Resp: TJSONResponse;
+  ContextEntity: TContext;
+begin
+  if not Assigned(FContextBroker) then
+    Exit;
+
+  if not Assigned(FSource) then
+  begin
+    MessageDlg('Источник не выбран.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  if FSource.Sid.Trim.IsEmpty then
+  begin
+    MessageDlg('Сохраните источник или заполните SID перед добавлением контекста.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  Req := FContextBroker.CreateReqNew() as TContextReqNew;
+  Resp := nil;
+  ContextEntity := TContext.Create;
+  try
+    ContextEntity.Sid := FSource.Sid;
+    ContextEntity.CtxtId := ACtxtId;
+    ContextEntity.Index := IntToStr(AIndex);
+
+    Req.ApplyBody(ContextEntity);
+
+    try
+      Resp := FContextBroker.New(Req);
+      if Assigned(Resp) and (Resp.StatusCode in [200, 201]) then
+      begin
+        RefreshContexts;
+        MessageDlg('Контекст успешно создан.', mtInformation, [mbOK], nil);
+      end
+      else if Assigned(Resp) then
+        MessageDlg(Format('Не удалось создать контекст. HTTP %d'#13#10'%s',
+          [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil);
+    except
+      on E: EIdHTTPProtocolException do
+        MessageDlg(Format('Ошибка создания контекста. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+      on E: Exception do
+        MessageDlg(Format('Ошибка создания контекста. %s',
+          [E.Message]), mtWarning, [mbOK], nil);
+    end;
+  finally
+    ContextEntity.Free;
+    Resp.Free;
+    Req.Free;
+  end;
+end;
+
+procedure TSourceEditForm.unbtnAddContextClick(Sender: TObject);
+var
+  ContextForm: TContextCreateForm;
+  DefaultIndex: Integer;
+begin
+  if (not Assigned(FContextTypes)) or (FContextTypes.Count = 0) then
+  begin
+    MessageDlg('Типы контекстов не загружены.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  if Assigned(ContextMem) and ContextMem.Active then
+    DefaultIndex := ContextMem.RecordCount + 1
+  else
+    DefaultIndex := 1;
+
+  ContextForm := TContextCreateForm.Create(UniApplication);
+  try
+    ContextForm.SetContextTypes(FContextTypes);
+    ContextForm.OpenWithIndex(DefaultIndex);
+    ContextForm.OnSave :=
+      procedure(const AResult: TContextCreateResult)
+      begin
+        CreateContext(AResult.CtxtId, AResult.Index);
+      end;
+    ContextForm.ShowModal;
+  except
+    ContextForm.Free;
+    raise;
+  end;
+end;
+
+
+function TSourceEditForm.BuildLinkList: TLinkList;
+begin
+  Result := TLinkList.Create(False);
+  if Assigned(FLinks) then
+    for var Pair in FLinks do
+      Result.Add(Pair.Value);
+end;
+
+procedure TSourceEditForm.CreateCredential(const AParams: TInterfaceCreateResult);
+var
+  Req: TContextCredReqNew;
+  Resp: TJSONResponse;
+  Cred: TSourceCreds;
+begin
+  Req := FContextBroker.CreateReqCredNew() as TContextCredReqNew;
+  Resp := nil;
+  Cred := TSourceCreds.Create;
+  try
+    Cred.CtxId := AParams.CtxId;
+    Cred.Lid := AParams.Lid;
+    Cred.Name := AParams.Name;
+    Cred.Login := AParams.Login;
+    if AParams.Password.HasValue then
+      Cred.Pass := AParams.Password.Value
+    else
+      Cred.Pass := '';
+    Cred.SourceData.Def := AParams.Def;
+
+    Req.ApplyBody(Cred);
+    try
+      Resp := FContextBroker.NewCredential(Req);
+      if Assigned(Resp) and (Resp.StatusCode in [200, 201]) then
+      begin
+        RefreshCreds;
+        MessageDlg('Интерфейс создан.', mtInformation, [mbOK], nil);
+      end
+      else if Assigned(Resp) then
+        MessageDlg(Format('Не удалось создать интерфейс. HTTP %d'#13#10'%s',
+          [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil);
+    except
+      on E: EIdHTTPProtocolException do
+        MessageDlg(Format('Ошибка создания интерфейса. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+      on E: Exception do
+        MessageDlg('Ошибка создания интерфейса: ' + E.Message, mtWarning, [mbOK], nil);
+    end;
+  finally
+    Cred.Free;
+    Resp.Free;
+    Req.Free;
+  end;
+end;
+
+procedure TSourceEditForm.UpdateCredential(const AParams: TInterfaceEditResult; ACred: TSourceCreds);
+var
+  Req: TContextCredReqUpdate;
+  Resp: TJSONResponse;
+begin
+  if not Assigned(ACred) then
+    Exit;
+
+  Req := FContextBroker.CreateReqCredUpdate(AParams.Crid) as TContextCredReqUpdate;
+  Resp := nil;
+  try
+    ACred.Crid := AParams.Crid;
+    ACred.CtxId := AParams.CtxId;
+    ACred.Lid := AParams.Lid;
+    ACred.Name := AParams.Name;
+    ACred.Login := AParams.Login;
+    if AParams.Password.HasValue then
+      ACred.Pass := AParams.Password.Value;
+    ACred.SourceData.Def := AParams.Def;
+
+    Req.Id := AParams.Crid;
+    Req.ReqBody.Assign(ACred);
+    try
+      Resp := FContextBroker.UpdateCredential(Req);
+      if Assigned(Resp) and (Resp.StatusCode in [200, 204]) then
+      begin
+        RefreshCreds;
+        MessageDlg('Интерфейс обновлен.', mtInformation, [mbOK], nil);
+      end
+      else if Assigned(Resp) then
+        MessageDlg(Format('Не удалось обновить интерфейс. HTTP %d'#13#10'%s',
+          [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil);
+    except
+      on E: EIdHTTPProtocolException do
+        MessageDlg(Format('Ошибка обновления интерфейса. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+      on E: Exception do
+        MessageDlg('Ошибка обновления интерфейса: ' + E.Message, mtWarning, [mbOK], nil);
+    end;
+  finally
+    Resp.Free;
+    Req.Free;
+  end;
+end;
+
+procedure TSourceEditForm.EditCredential(const ACredId: string);
+var
+  Req: TContextCredReqInfo;
+  Resp: TContextCredInfoResponse;
+  CredCopy: TSourceCreds;
+  LinkList: TLinkList;
+  Form: TInterfaceModalForm;
+begin
+  if ACredId.Trim.IsEmpty then
+    Exit;
+
+  Req := FContextBroker.CreateReqCredInfo(ACredId);
+  Resp := nil;
+  CredCopy := nil;
+  try
+    try
+      Resp := FContextBroker.CredentialInfo(Req);
+    except
+      on E: EIdHTTPProtocolException do
+      begin
+        MessageDlg(Format('Ошибка получения интерфейса. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+        Exit;
+      end;
+      on E: Exception do
+      begin
+        MessageDlg('Ошибка получения интерфейса: ' + E.Message, mtWarning, [mbOK], nil);
+        Exit;
+      end;
+    end;
+
+    if not Assigned(Resp) or not Assigned(Resp.Credential) then
+    begin
+      MessageDlg('Не удалось получить данные интерфейса.', mtWarning, [mbOK], nil);
+      Exit;
+    end;
+
+    CredCopy := TSourceCreds.Create;
+    CredCopy.Assign(Resp.Credential);
+  finally
+    Resp.Free;
+    Req.Free;
+  end;
+
+  LinkList := BuildLinkList;
+  try
+    Form := TInterfaceModalForm.Create(UniApplication);
+    try
+      Form.LoadForEdit(CredCopy, LinkList);
+      Form.OnUpdate :=
+        procedure(const AResult: TInterfaceEditResult)
+        begin
+          UpdateCredential(AResult, CredCopy);
+          CredCopy.Free;
+          CredCopy := nil;
+        end;
+      Form.ShowModal;
+    except
+      Form.Free;
+      raise;
+    end;
+  finally
+    LinkList.Free;
+    if Assigned(CredCopy) then
+      CredCopy.Free;
+  end;
+end;
+
+procedure TSourceEditForm.unbtnAddCredClick(Sender: TObject);
+var
+  ContextId: string;
+  LinkList: TLinkList;
+  Form: TInterfaceModalForm;
+begin
+  if (not ContextMem.Active) or ContextMem.IsEmpty then
+  begin
+    MessageDlg('Выберите контекст перед добавлением интерфейса.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  ContextId := ContextMem.FieldByName('ctxid').AsString;
+  if ContextId.Trim.IsEmpty then
+  begin
+    MessageDlg('Контекст не выбран.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  if (not Assigned(FLinks)) or (FLinks.Count = 0) then
+  begin
+    MessageDlg('Список интерфейсов пуст. Обновите данные.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  LinkList := BuildLinkList;
+  try
+    Form := TInterfaceModalForm.Create(UniApplication);
+    try
+      Form.LoadForCreate(ContextId, LinkList);
+      Form.OnCreate :=
+        procedure(const AResult: TInterfaceCreateResult)
+        begin
+          CreateCredential(AResult);
+        end;
+      Form.ShowModal;
+    except
+      Form.Free;
+      raise;
+    end;
+  finally
+    LinkList.Free;
+  end;
+end;
+
+procedure TSourceEditForm.grdInterfacesDblClick(Sender: TObject);
+var
+  CredId: string;
+begin
+  if (not ContextCredsMem.Active) or ContextCredsMem.IsEmpty then
+    Exit;
+
+  CredId := ContextCredsMem.FieldByName('crid').AsString;
+  if CredId.Trim.IsEmpty then
+    Exit;
+
+  EditCredential(CredId);
 end;
 
 destructor TSourceEditForm.Destroy;
@@ -201,9 +606,18 @@ begin
     edtPid.Text := FSource.Pid;
     edtIndex.Text := FSource.Index;
     edtNumber.Text := IntToStr(FSource.Number);
-    edtLat.Text := FloatToStr(FSource.Lat);
-    edtLon.Text := FloatToStr(FSource.Lon);
-    edtElev.Text := IntToStr(FSource.Elev);
+    if FSource.Lat.HasValue then
+      edtLat.Text := FloatToStr(FSource.Lat.Value)
+    else
+      edtLat.Text := '';
+    if FSource.Lon.HasValue then
+      edtLon.Text := FloatToStr(FSource.Lon.Value)
+    else
+      edtLon.Text := '';
+    if FSource.Elev.HasValue then
+      edtElev.Text := IntToStr(FSource.Elev.Value)
+    else
+      edtElev.Text := '';
     edtTimeShift.Text := IntToStr(FSource.TimeShift);
     edtMeteoRange.Text := IntToStr(FSource.MeteoRange);
   end
@@ -253,6 +667,8 @@ var
   OrgTypeResp: TOrgTypeListResponse;
   CtxTypeReq: TContextTypesReqList;
   CtxTypeResp: TContextTypeListResponse;
+  LinkReq: TLinkReqList;
+  LinkResp: TLinkListResponse;
   LocBroker: TLocationsRestBroker;
   LocReq: TLocationReqList;
   LocResp: TLocationListResponse;
@@ -351,8 +767,7 @@ begin
 
   if not HasOrgTypeCache then
   begin
-    OrgTypeReq := nil;
-    OrgTypeResp := nil;
+    OrgTypeReq := nil; OrgTypeResp := nil; OrgBroker := nil;
     try
       try
         OrgBroker := TOrganizationsRestBroker.Create(MainModuleInst.XTicket);
@@ -393,8 +808,38 @@ begin
             FContextTypes.Add(ctxType as TContextType);
         end;
       finally
+        CtxTypeReq.Free;
         CtxTypeResp.Free;
-        OrgReq.Free;
+      end;
+    except
+      on E: EIdHTTPProtocolException do
+        ShowMessage(Format('Ошибка загрузки огранизаций: %d %s', [E.ErrorCode, E.ErrorMessage]));
+      on E: Exception do
+        ShowMessage('Ошибка загрузки огранизаций: ' + E.Message);
+    end;
+  end;
+
+  if FLinks.Count = 0 then
+  begin
+    LinkReq := nil;
+    LinkResp := nil;
+    try
+      var DrvLinkBroker:= TLinksRestBroker.Create(MainModuleInst.XTicket);
+      DrvLinkBroker.BasePath:= APIConst.constURLDrvcommBasePath;
+
+      try
+        LinkReq := DrvLinkBroker.CreateReqList as TLinkReqList;
+        LinkResp := DrvLinkBroker.List(LinkReq);
+        if Assigned(LinkResp.LinkList) then
+        begin
+          LinkResp.LinkList.OwnsObjects:= false;
+          for var link in LinkResp.LinkList do
+            FLinks.Add(link.id, link as TLink);
+        end;
+      finally
+        DrvLinkBroker.Free;
+        LinkReq.Free;
+        LinkResp.Free;
       end;
     except
       on E: EIdHTTPProtocolException do
@@ -409,6 +854,7 @@ begin
   PopulateLocationCombos;
   PopulateOrganizationTypeCombos;
 end;
+
 procedure TSourceEditForm.PopulateOrganizationCombos;
 var
   Org: TOrganization;
@@ -463,7 +909,7 @@ begin
   try
     cbCountry.Items.Clear;
     for Loc in FLocations do
-      if Loc.ParentLocId.Trim = '' then
+      if Loc.ParentLocId = '' then
         cbCountry.Items.AddObject(Loc.Name, Loc);
   finally
     cbCountry.Items.EndUpdate;
@@ -541,6 +987,11 @@ begin
     FSource.Region := FSelectedRegionId;
 end;
 
+procedure TSourceEditForm.UpdateSource;
+begin
+
+end;
+
 procedure TSourceEditForm.ApplyOrganizationSelection;
 var
   Owner: TOrganization;
@@ -605,6 +1056,39 @@ begin
     cbOrgType.ItemIndex := -1;
 end;
 
+procedure TSourceEditForm.ApplyToSource;
+var
+  LatValue, LonValue: Double;
+  ElevValue: Integer;
+  NullableLat, NullableLon: Nullable<Double>;
+  NullableElev: Nullable<Integer>;
+begin
+  if Assigned(FSource) then
+  begin
+    FSource.Sid := edtSid.Text;
+    FSource.Name := edtName.Text;
+    FSource.Pid := edtPid.Text;
+    FSource.Index := edtIndex.Text;
+    FSource.Number := StrToIntDef(edtNumber.Text, 0);
+    NullableLat.Clear;
+    if TryStrToFloat(Trim(edtLat.Text), LatValue) then
+      NullableLat := Nullable<Double>.Create(LatValue);
+    FSource.Lat := NullableLat;
+
+    NullableLon.Clear;
+    if TryStrToFloat(Trim(edtLon.Text), LonValue) then
+      NullableLon := Nullable<Double>.Create(LonValue);
+    FSource.Lon := NullableLon;
+
+    NullableElev.Clear;
+    if TryStrToInt(Trim(edtElev.Text), ElevValue) then
+      NullableElev := Nullable<Integer>.Create(ElevValue);
+    FSource.Elev := NullableElev;
+    FSource.TimeShift := StrToIntDef(edtTimeShift.Text, 0);
+    FSource.MeteoRange := StrToIntDef(edtMeteoRange.Text, 0);
+  end
+end;
+
 procedure TSourceEditForm.ApplyLocationSelection;
 var
   Country: TLocation;
@@ -649,34 +1133,8 @@ begin
 end;
 
 procedure TSourceEditForm.grdContextsSelectionChange(Sender: TObject);
-var 
-  req: TContextCredsReqList;
-  resp: TContextCredsListResponse;
 begin
-  ContextCredsMem.EmptyDataSet;
-  ContextCredsMem.DisableControls;
-  var id := ContextMem.FieldByName('ctxid').AsString;
-  if id = '' then exit;
-  try
-
-    req := FContextBroker.CreateReqCredList();
-    req.Body.CtxIds.Add(id);
-    resp := FContextBroker.ListCredentialsAll(req);
-
-    for var credp in resp.CredentialList do
-    with credp as TSourceCreds do begin
-      ContextCredsMem.Append;
-      ContextCredsMem.FieldByName('name').AsString := Name;
-      ContextCredsMem.FieldByName('login').AsString := Login;
-      if assigned(SourceData) then
-        ContextCredsMem.FieldByName('def').AsString :=SourceData.Def;
-      ContextMem.Post;
-  end;
-  finally
-    req.Free;
-    resp.Free;
-    ContextCredsMem.EnableControls;
-  end;
+  RefreshCreds;
 end;
 
 function TSourceEditForm.FindContextTypeById(Id: string): TContextType;
@@ -752,15 +1210,54 @@ begin
   if not assigned(contexts) or (contexts.Count = 0) then exit;
   ContextMem.EmptyDataSet;
   ContextMem.DisableControls;
-
-  for var ctx in contexts do
-  with ctx as TContext do begin
-    ContextMem.Append;
-    ContextMem.FieldByName('index').AsString := Index;
-    ContextMem.FieldByName('ctxid').AsString := CtxId;
-    ContextMem.FieldByName('ctxtid').AsString :=CtxtId;
-    ContextMem.Post;
+  try
+    for var ctx in contexts do
+    with ctx as TContext do begin
+      ContextMem.Append;
+      ContextMem.FieldByName('index').AsString := Index;
+      ContextMem.FieldByName('ctxid').AsString := CtxId;
+      ContextMem.FieldByName('ctxtid').AsString :=CtxtId;
+      var ctxType := FindContextTypeById(ctxtid);
+      if ctxType <> nil then
+        ContextMem.FieldByName('typeName').AsString := ctxType.Name;
+      ContextMem.Post;
+    end;
+  finally
+    ContextMem.EnableControls;
   end;
+end;
+
+procedure TSourceEditForm.unbtnDelContextClick(Sender: TObject);
+begin
+  MessageDlg('Удалить контекст?', mtConfirmation, [mbYes, mbNo],
+     procedure(Sender: TComponent; Res: Integer)
+     begin
+       DelContext;
+     end);
+end;
+
+procedure TSourceEditForm.unbtnDeleteCredClick(Sender: TObject);
+begin
+  MessageDlg('Удалить интерфейс источника?', mtConfirmation, [mbYes, mbNo],
+     procedure(Sender: TComponent; Res: Integer)
+     begin
+       DelCred;
+     end);
+
+end;
+
+procedure TSourceEditForm.unbtnContextRefreshClick(Sender: TObject);
+begin
+  RefreshContexts;
+end;
+
+procedure TSourceEditForm.unbtnCredsRefreshClick(Sender: TObject);
+begin
+  RefreshCreds;
+end;
+
+procedure TSourceEditForm.SaveSource;
+begin
 
 end;
 
@@ -822,14 +1319,6 @@ begin
 
   if Assigned(FSource) then
     FSource.OwnerOrg := FSelectedOwnerOrgId;
-end;
-
-procedure TSourceEditForm.ContextMemCalcFields(DataSet: TDataSet);
-begin
-  var ctxtid := DataSet.FieldByName('ctxtid').AsString;
-  var ctxType := FindContextTypeById(ctxtid);
-  if ctxType <> nil then
-    DataSet.FieldByName('typeName').AsString := ctxType.Name;
 end;
 
 procedure TSourceEditForm.cbCgmsChange(Sender: TObject);
@@ -907,21 +1396,74 @@ end;
 procedure TSourceEditForm.btnSaveClick(Sender: TObject);
 begin
   if not FIsEditMode then
-    ShowMessage('������ ����� ��������: ' + edtName.Text)
+    ShowMessage('Источник обновлен: ' + edtName.Text)
   else
-    ShowMessage('��������� ��������� ��� ��������� ' + edtSid.Text);
+    ShowMessage('Создан источник ' + edtSid.Text);
+end;
+
+procedure TSourceEditForm.RefreshContexts;
+var 
+  req: TContextReqList;
+  resp: TContextListResponse;
+begin
+  try
+    req := FContextBroker.CreateReqList() as TContextReqList;
+    req.Body.Sids.Add(FSource.Sid);
+    resp := FContextBroker.ListAll(req) as TContextListResponse;
+    SetContextDS(resp.ContextList);
+  finally
+    req.Free;
+    resp.Free;
+  end;  
+end;
+
+procedure TSourceEditForm.RefreshCreds;
+var
+  req: TContextCredsReqList;
+  resp: TContextCredsListResponse;
+  link: TLink;
+begin
+  ContextCredsMem.EmptyDataSet;
+  ContextCredsMem.DisableControls;
+  var id := ContextMem.FieldByName('ctxid').AsString;
+  if id = '' then
+  begin
+    ContextCredsMem.EnableControls;
+    Exit;
+  end;
+  try
+
+    req := FContextBroker.CreateReqCredList();
+    req.Body.CtxIds.Add(id);
+    resp := FContextBroker.ListCredentialsAll(req);
+
+    for var credp in resp.CredentialList do
+    with credp as TSourceCreds do begin
+      ContextCredsMem.Append;
+      ContextCredsMem.FieldByName('lid').AsString:= Lid;
+      ContextCredsMem.FieldByName('name').AsString:= Name;
+      ContextCredsMem.FieldByName('login').AsString:= Login;
+      ContextCredsMem.FieldByName('crid').AsString:= Id;
+      ContextCredsMem.FieldByName('ctxid').AsString := CtxId;
+
+      if (Lid <> '') and FLinks.TryGetValue(lid, link) then
+        ContextCredsMem.FieldByName('interface').AsString:= link.Name
+      else
+        ContextCredsMem.FieldByName('interface').AsString := Lid;
+      if assigned(SourceData) then
+        ContextCredsMem.FieldByName('def').AsString:= SourceData.Def
+      else
+        ContextCredsMem.FieldByName('def').Clear;
+      ContextCredsMem.Post;
+    end;
+  finally
+    req.Free;
+    resp.Free;
+    ContextCredsMem.EnableControls;
+  end;
 end;
 
 end.
 
-
-
-
-
-
-
-
-
-
-
-
+finalization
+  FLinks.Free;

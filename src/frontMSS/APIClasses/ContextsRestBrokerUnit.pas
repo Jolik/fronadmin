@@ -17,8 +17,10 @@ type
     constructor Create(const ATicket: string = ''); override;
     function List(AReq: TContextReqList): TContextListResponse; overload;
     function List(AReq: TReqList): TFieldSetListResponse; overload; override;
-//    function Info(AReq: TContextReqInfo): TContextInfoResponse; overload;
-//    function Info(AReq: TReqInfo): TEntityResponse; overload; override;
+    function ListAll(AReq: TContextReqList): TContextListResponse; overload;
+    function ListAll(AReq: TReqList): TFieldSetListResponse; overload; override;
+
+
     function New(AReq: TContextReqNew): TJSONResponse; overload;
     function Update(AReq: TContextReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
@@ -69,6 +71,17 @@ function TContextsRestBroker.List(AReq: TReqList): TFieldSetListResponse;
 begin
   Result := TContextListResponse.Create;
   Result := inherited List(AReq, Result);
+end;
+
+function TContextsRestBroker.ListAll(AReq: TReqList): TFieldSetListResponse;
+begin
+  Result := TContextListResponse.Create;
+  Result := inherited ListAll(AReq, Result);
+end;
+
+function TContextsRestBroker.ListAll(AReq: TContextReqList): TContextListResponse;
+begin
+   Result := ListAll(AReq as TReqList) as TContextListResponse;
 end;
 
 function TContextsRestBroker.List(AReq: TContextReqList): TContextListResponse;

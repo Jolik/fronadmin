@@ -8,6 +8,7 @@ uses
   System.JSON,
   System.Generics.Collections,
   EntityUnit,
+  FuncUnit,
   ContextUnit;
 
 type
@@ -31,9 +32,9 @@ type
     Fregion: string;
     Fmunicipal: string;
 
-    Flat: Double;
-    Flon: Double;
-    Felev: Integer;
+    Flat: Nullable<Double>;
+    Flon: Nullable<Double>;
+    Felev: Nullable<Integer>;
 
     Farchived: Int64;
     Fupdated: Int64;
@@ -71,9 +72,9 @@ type
     property Region: string read Fregion write Fregion;
     property Municipal: string read Fmunicipal write Fmunicipal;
 
-    property Lat: Double read Flat write Flat;
-    property Lon: Double read Flon write Flon;
-    property Elev: Integer read Felev write Felev;
+    property Lat: Nullable<Double> read Flat write Flat;
+    property Lon: Nullable<Double> read Flon write Flon;
+    property Elev: Nullable<Integer> read Felev write Felev;
 
     property Archived: Int64 read Farchived write Farchived;
     property Updated: Int64 read Fupdated write Fupdated;
@@ -93,9 +94,6 @@ type
   end;
 
 implementation
-
-uses
-  FuncUnit;
 
 { TSource }
 
@@ -137,9 +135,9 @@ begin
   Fmunicipal := GetValueStrDef(src, 'ter.municipal', '');
 
   // Координаты
-  Flat := GetValueFloatDef(src, 'loc.lat', 0);
-  Flon := GetValueFloatDef(src, 'loc.lon', 0);
-  Felev := GetValueIntDef(src, 'loc.elev', 0);
+  Flat := GetNullableFloat(src, 'loc.lat');
+  Flon := GetNullableFloat(src, 'loc.lon');
+  Felev := GetNullableInt(src, 'loc.elev');
 
   // Запись
   Farchived := GetValueInt64Def(src, 'rec.archived', 0);
@@ -187,9 +185,18 @@ begin
 
   // Координаты
   var loc := TJSONObject.Create;
-  loc.AddPair('lat', TJSONNumber.Create(Flat));
-  loc.AddPair('lon', TJSONNumber.Create(Flon));
-  loc.AddPair('elev', TJSONNumber.Create(Felev));
+  if Flat.HasValue then
+    loc.AddPair('lat', TJSONNumber.Create(Flat.Value))
+  else
+    loc.AddPair('lat', TJSONNull.Create);
+  if Flon.HasValue then
+    loc.AddPair('lon', TJSONNumber.Create(Flon.Value))
+  else
+    loc.AddPair('lon', TJSONNull.Create);
+  if Felev.HasValue then
+    loc.AddPair('elev', TJSONNumber.Create(Felev.Value))
+  else
+    loc.AddPair('elev', TJSONNull.Create);
   dst.AddPair('loc', loc);
 
   // Запись

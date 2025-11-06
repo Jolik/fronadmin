@@ -364,8 +364,14 @@ begin
   unlblSourceInfoNameValue.Caption := InfoSource.Name;
   lSourceInfoModuleValue.Caption := InfoSource.Index;
   unlblregion.Caption := InfoSource.Region;
-  unlbllat.Caption := FloatToStr(InfoSource.Lat);
-  unlbllon.Caption := FloatToStr(InfoSource.Lon);
+  if InfoSource.Lat.HasValue then
+    unlbllat.Caption := FloatToStr(InfoSource.Lat.Value)
+  else
+    unlbllat.Caption := '';
+  if InfoSource.Lon.HasValue then
+    unlbllon.Caption := FloatToStr(InfoSource.Lon.Value)
+  else
+    unlbllon.Caption := '';
 
 
   if InfoSource.Created > 0 then

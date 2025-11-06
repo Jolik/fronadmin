@@ -182,7 +182,9 @@ uses
   SourcesFormUnit in 'Forms\SourcesFormUnit.pas',
   SourceEditFormUnit in 'Forms\SourceEditFormUnit.pas',
   LocationsRestBrokerUnit in 'APIClasses\LocationsRestBrokerUnit.pas',
-  OrganizationsRestBrokerUnit in 'APIClasses\OrganizationsRestBrokerUnit.pas';
+  OrganizationsRestBrokerUnit in 'APIClasses\OrganizationsRestBrokerUnit.pas',
+  IntefraceEditFormUnit in 'Forms\IntefraceEditFormUnit.pas',
+  ContextCreateFormUnit in 'Forms\ContextCreateFormUnit.pas';
 
 {$R *.res}
 

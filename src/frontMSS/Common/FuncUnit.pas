@@ -5,6 +5,18 @@ interface
 uses
   System.Classes, System.JSON, System.Generics.Collections;
 
+type
+  Nullable<T> = record
+  private
+    FHasValue: Boolean;
+    FValue: T;
+  public
+    class function Create(const AValue: T): Nullable<T>; static;
+    procedure Clear;
+    property HasValue: Boolean read FHasValue;
+    property Value: T read FValue;
+  end;
+
 function ExtractJSONProperties(
   const ASourceJSONObject: TJSONObject;
   const APropertyNames: TArray<string>): TJSONObject;
@@ -13,12 +25,28 @@ function JSONArrayToStringList(AJSONArray: TJSONArray): TStringList;
 function JSONArrayToDictionary(AJSONArray: TJSONArray): TDictionary<string, string>;
 function GetValueInt64Def(json: TJSONValue; path: string; default: Int64): Int64;
 function GetValueFloatDef(json: TJSONValue; path: string; default: Float64): Float64;
+function GetNullableFloat(json: TJSONValue; path: string): Nullable<Double>;
 function GetValueIntDef(json: TJSONValue; path: string; default: integer): integer;
+function GetNullableInt(json: TJSONValue; path: string): Nullable<Integer>;
 function GetValueStrDef(json: TJSONValue; path: string; default: string): string;
 function GetValueBool(json: TJSONValue; path: string): boolean;
 function ClassNameSafe(o: TObject): string;
 
 implementation
+
+{ Nullable<T> }
+
+class function Nullable<T>.Create(const AValue: T): Nullable<T>;
+begin
+  Result.FHasValue := True;
+  Result.FValue := AValue;
+end;
+
+procedure Nullable<T>.Clear;
+begin
+  FHasValue := False;
+  FValue := Default(T);
+end;
 
 function ExtractJSONProperties(
   const ASourceJSONObject: TJSONObject;
@@ -107,6 +135,23 @@ begin
   end;
 end;
 
+function GetNullableFloat(json: TJSONValue; path: string): Nullable<Double>;
+var
+  Value: Double;
+  Node: TJSONValue;
+begin
+  Result.Clear;
+  if not Assigned(json) then
+    Exit;
+
+  Node := json.FindValue(path);
+  if not Assigned(Node) or (Node is TJSONNull) then
+    Exit;
+
+  if Node.TryGetValue<Double>(Value) then
+    Result := Nullable<Double>.Create(Value);
+end;
+
 function GetValueInt64Def(json: TJSONValue; path: string; default: Int64): Int64;
 begin
   Result := default;
@@ -123,6 +168,23 @@ begin
     json.TryGetValue<integer>(path, result);
   except
   end;
+end;
+
+function GetNullableInt(json: TJSONValue; path: string): Nullable<Integer>;
+var
+  Value: Integer;
+  Node: TJSONValue;
+begin
+  Result.Clear;
+  if not Assigned(json) then
+    Exit;
+
+  Node := json.FindValue(path);
+  if not Assigned(Node) or (Node is TJSONNull) then
+    Exit;
+
+  if Node.TryGetValue<Integer>(Value) then
+    Result := Nullable<Integer>.Create(Value);
 end;
 
 
