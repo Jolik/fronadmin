@@ -21,7 +21,7 @@ type
     function ListAll(AReq: TReqList): TFieldSetListResponse; overload; override;
 
 
-    function New(AReq: TContextReqNew): TJSONResponse; overload;
+    function New(AReq: TContextReqNew): TIdNewResponse; overload;
     function Update(AReq: TContextReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TContextReqRemove): TJSONResponse; overload;
@@ -111,10 +111,10 @@ begin
   Result := ListTypes(AReq as TReqList) as TContextTypeListResponse;
 end;
 
-function TContextsRestBroker.New(AReq: TContextReqNew): TJSONResponse;
+function TContextsRestBroker.New(AReq: TContextReqNew): TIdNewResponse;
 begin
-  Result := TJSONResponse.Create;
-  HttpClient.Request(AReq, Result);
+  Result := TIdNewResponse.Create('ctxid');
+  inherited New(AReq, Result);
 end;
 
 function TContextsRestBroker.Remove(AReq: TReqRemove): TJSONResponse;

@@ -17,7 +17,8 @@ uses
   SourceCredsHttpRequests,
   SourceTypesHttpRequests,
   LocationHttpRequests,
-  OrganizationHttpRequests;
+  OrganizationHttpRequests,
+  BaseResponses;
 
 type
   TRestBroker = class(TInterfacedObject, IBroker)
@@ -96,7 +97,7 @@ begin
   // Contexts (Dataserver)
   if Req is TContextReqList then Exit(TContextListResponse.Create);
 //  if Req is TContextReqInfo then Exit(TContextInfoResponse.Create);
-  if Req is TContextReqNew then Exit(TJSONResponse.Create);
+  if Req is TContextReqNew then Exit(TIdNewResponse.Create('ctxid'));
   if Req is TContextReqUpdate then Exit(TJSONResponse.Create);
   if Req is TContextReqRemove then Exit(TJSONResponse.Create);
   if Req is TContextTypesReqList then Exit(TContextTypeListResponse.Create);

@@ -11,7 +11,7 @@ uses
 type
   TContextCreateResult = record
     CtxtId: string;
-    Index: Integer;
+    Index: string;
   end;
 
   TOnSaveContext = reference to procedure(const AResult: TContextCreateResult);
@@ -32,10 +32,10 @@ type
     FOnSave: TOnSaveContext;
     procedure PopulateTypes(const ATypes: TObjectList<TContextType>);
     function SelectedCtxtId(out ACtxtId: string): Boolean;
-    function ValidateForm(out Err: string; out ACtxtId: string; out AIndex: Integer): Boolean;
+    function ValidateForm(out Err: string; out ACtxtId: string; out AIndex: string): Boolean;
   public
     procedure SetContextTypes(const ATypes: TObjectList<TContextType>);
-    procedure OpenWithIndex(AIndex: Integer);
+    procedure OpenWithIndex(AIndex: string);
 
     property OnSave: TOnSaveContext read FOnSave write FOnSave;
   end;
@@ -53,7 +53,7 @@ procedure TContextCreateForm.btnSaveClick(Sender: TObject);
 var
   Err: string;
   CtxtId: string;
-  IndexValue: Integer;
+  IndexValue: string;
   ResultData: TContextCreateResult;
 begin
   if not ValidateForm(Err, CtxtId, IndexValue) then
@@ -71,10 +71,10 @@ begin
   Close;
 end;
 
-procedure TContextCreateForm.OpenWithIndex(AIndex: Integer);
+procedure TContextCreateForm.OpenWithIndex(AIndex: string);
 begin
-  if AIndex > 0 then
-    edIndex.Text := AIndex.ToString
+  if not AIndex.IsEmpty then
+    edIndex.Text := AIndex
   else
     edIndex.Text := '';
 end;
@@ -130,9 +130,7 @@ begin
 end;
 
 function TContextCreateForm.ValidateForm(out Err: string; out ACtxtId: string;
-  out AIndex: Integer): Boolean;
-var
-  IndexText: string;
+  out AIndex: string): Boolean;
 begin
   Err := '';
   Result := False;
@@ -143,18 +141,13 @@ begin
     Exit;
   end;
 
-  IndexText := Trim(edIndex.Text);
-  if IndexText = '' then
+  AIndex := Trim(edIndex.Text);
+  if AIndex = '' then
   begin
     Err := 'Укажите индекс контекста.';
     Exit;
   end;
 
-  if not TryStrToInt(IndexText, AIndex) then
-  begin
-    Err := 'Индекс контекста должен быть числом.';
-    Exit;
-  end;
 
   Result := True;
 end;

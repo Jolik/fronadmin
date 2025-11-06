@@ -17,8 +17,8 @@ object ContextCreateForm: TContextCreateForm
     Align = alClient
     TabOrder = 0
     Caption = ''
-    ExplicitWidth = 256
-    ExplicitHeight = 128
+    ExplicitWidth = 418
+    ExplicitHeight = 144
     object lblType: TUniLabel
       Left = 16
       Top = 20
@@ -53,7 +53,7 @@ object ContextCreateForm: TContextCreateForm
     object edIndex: TUniEdit
       Left = 120
       Top = 56
-      Width = 120
+      Width = 280
       Height = 24
       Hint = ''
       Text = ''
@@ -69,8 +69,8 @@ object ContextCreateForm: TContextCreateForm
     Align = alBottom
     TabOrder = 1
     Caption = ''
-    ExplicitTop = 0
-    ExplicitWidth = 256
+    ExplicitTop = 144
+    ExplicitWidth = 418
     object btnClose: TUniButton
       Left = 16
       Top = 8
@@ -88,6 +88,7 @@ object ContextCreateForm: TContextCreateForm
       Hint = ''
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100
       TabOrder = 2
+      OnClick = btnSaveClick
     end
   end
 end

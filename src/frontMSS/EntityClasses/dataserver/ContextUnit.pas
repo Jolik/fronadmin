@@ -137,7 +137,8 @@ begin
   if not Assigned(dst) then
     Exit;
 
-  dst.AddPair(CtxIdKey, FCtxId);
+  if not FCtxId.IsEmpty then
+    dst.AddPair(CtxIdKey, FCtxId);
   dst.AddPair(CtxtIdKey, FCtxtid);
   dst.AddPair(SidKey, FSid);
   dst.AddPair(IndexKey, FIndex);

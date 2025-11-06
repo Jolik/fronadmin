@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Classes, System.Generics.Collections, System.UITypes,
   uniGUIClasses, uniGUIForm, uniGUIBaseClasses, uniPanel, uniButton,
   uniLabel, uniEdit, uniMemo, uniComboBox,
-  SourceCredsUnit, LinkUnit, FuncUnit;
+  SourceCredsUnit, LinkUnit, FuncUnit, uniMultiItem, Vcl.Controls, Vcl.Forms;
 
 type
   TInterfaceCreateResult = record

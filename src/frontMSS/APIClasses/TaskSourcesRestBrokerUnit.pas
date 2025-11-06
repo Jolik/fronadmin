@@ -24,7 +24,7 @@ type
     function List(AReq: TReqList): TFieldSetListResponse; overload;
     function Info(AReq: TTaskSourceReqInfo): TTaskSourceInfoResponse; overload;
     function Info(AReq: TReqInfo): TFieldSetResponse;overload;
-    function New(AReq: TTaskSourceReqNew): TIdNewResponse; overload;
+    function New(AReq: TTaskSourceReqNew; const AIdFieldName: string): TIdNewResponse; overload;
     function Update(AReq: TTaskSourceReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload;
 
@@ -64,9 +64,9 @@ begin
 end;
 
 
-function TTaskSourcesRestBroker.New(AReq: TTaskSourceReqNew): TIdNewResponse;
+function TTaskSourcesRestBroker.New(AReq: TTaskSourceReqNew; const AIdFieldName: string): TIdNewResponse;
 begin
-  Result := TIdNewResponse.Create();
+  Result := TIdNewResponse.Create('tid');
   HttpClient.Request(AReq, Result);
 end;
 

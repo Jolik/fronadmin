@@ -129,7 +129,7 @@ type
     procedure SetContextDS(contexts: TContextList);
     procedure DelContext;
     procedure DelCred;
-    procedure CreateContext(const ACtxtId: string; AIndex: Integer);
+    procedure CreateContext(const ACtxtId: string; AIndex: string);
     procedure CreateCredential(const AParams: TInterfaceCreateResult);
     procedure UpdateCredential(const AParams: TInterfaceEditResult; ACred: TSourceCreds);
     procedure EditCredential(const ACredId: string);
@@ -173,7 +173,7 @@ uses
   IdHTTP, MainModule, SourcesRestBrokerUnit, OrganizationsRestBrokerUnit,
   OrganizationHttpRequests, LocationsRestBrokerUnit, LocationHttpRequests,
   ContextsHttpRequests, LinksRestBrokerUnit, APIConst,
-  HttpClientUnit, LoggingUnit,
+  HttpClientUnit, LoggingUnit, BaseResponses,
   LinksHttpRequests, ContextCreateFormUnit;
 
 function SourceEditForm(isEdit:boolean;source:TSource): TSourceEditForm;
@@ -266,24 +266,16 @@ begin
   end;
 end;
 
-procedure TSourceEditForm.CreateContext(const ACtxtId: string; AIndex: Integer);
+procedure TSourceEditForm.CreateContext(const ACtxtId: string; AIndex: string);
 var
   Req: TContextReqNew;
-  Resp: TJSONResponse;
+  Resp: TIdNewResponse;
   ContextEntity: TContext;
 begin
-  if not Assigned(FContextBroker) then
-    Exit;
 
-  if not Assigned(FSource) then
+  if not FIsEditMode then
   begin
-    MessageDlg('Источник не выбран.', mtWarning, [mbOK], nil);
-    Exit;
-  end;
-
-  if FSource.Sid.Trim.IsEmpty then
-  begin
-    MessageDlg('Сохраните источник или заполните SID перед добавлением контекста.', mtWarning, [mbOK], nil);
+    MessageDlg('Сохраните источник перед добавлением контекста.', mtWarning, [mbOK], nil);
     Exit;
   end;
 
@@ -293,7 +285,7 @@ begin
   try
     ContextEntity.Sid := FSource.Sid;
     ContextEntity.CtxtId := ACtxtId;
-    ContextEntity.Index := IntToStr(AIndex);
+    ContextEntity.Index := AIndex;
 
     Req.ApplyBody(ContextEntity);
 
@@ -325,7 +317,6 @@ end;
 procedure TSourceEditForm.unbtnAddContextClick(Sender: TObject);
 var
   ContextForm: TContextCreateForm;
-  DefaultIndex: Integer;
 begin
   if (not Assigned(FContextTypes)) or (FContextTypes.Count = 0) then
   begin
@@ -333,15 +324,10 @@ begin
     Exit;
   end;
 
-  if Assigned(ContextMem) and ContextMem.Active then
-    DefaultIndex := ContextMem.RecordCount + 1
-  else
-    DefaultIndex := 1;
-
   ContextForm := TContextCreateForm.Create(UniApplication);
   try
     ContextForm.SetContextTypes(FContextTypes);
-    ContextForm.OpenWithIndex(DefaultIndex);
+    ContextForm.OpenWithIndex(FSource.Index);
     ContextForm.OnSave :=
       procedure(const AResult: TContextCreateResult)
       begin

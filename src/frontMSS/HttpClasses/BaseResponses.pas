@@ -106,20 +106,27 @@ type
   private
     FID: string;
     FItemKey: string;
+    class var FDefaultItemKey: string;
   public
     constructor Create; override;
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     property ID: string read FID write FID;
+    property ItemKey: string read FItemKey write FItemKey;
+    class property DefaultItemKey: string read FDefaultItemKey write FDefaultItemKey;
   end;
 
   TIdNewResponse = class(TFieldSetResponse)
   private
     function GetNewRes: TFieldSetNewBodyResult;
+  protected
+    FIdFieldName: string;
+    procedure SetResponse(const Value: string); override;
   public
-    constructor Create; reintroduce; virtual;
-    property NewRes: TFieldSetNewBodyResult read GetNewRes;
+    constructor Create(const AIdFieldName: string = 'id'); reintroduce; virtual;
+    property ResBody: TFieldSetNewBodyResult read GetNewRes;
+    property IdFieldName: string read FIdFieldName write FIdFieldName;
   end;
 
 
@@ -438,14 +445,17 @@ end;
 constructor TFieldSetNewBodyResult.Create;
 begin
   inherited;
-  FItemKey:= 'id';
+  if FDefaultItemKey <> '' then
+    FItemKey := FDefaultItemKey
+  else
+    FItemKey:= 'id';
 end;
 
 procedure TFieldSetNewBodyResult.Parse(src: TJSONObject;
   const APropertyNames: TArray<string>);
 begin
   inherited;
-  src.GetValue<string>(FItemKey, FID)
+  FID := src.GetValue<string>(FItemKey, FID);
 end;
 
 procedure TFieldSetNewBodyResult.Serialize(dst: TJSONObject;
@@ -457,14 +467,30 @@ end;
 
 { TFieldSetNewResponse }
 
-constructor TIdNewResponse.Create;
+constructor TIdNewResponse.Create(const AIdFieldName: string);
 begin
-  inherited Create(TFieldSetNewBodyResult, 'response', 'id');
+  FIdFieldName := AIdFieldName;
+  inherited Create(TFieldSetNewBodyResult, 'response', '');
 end;
 
 function TIdNewResponse.GetNewRes: TFieldSetNewBodyResult;
 begin
   Result:= FFieldSet as TFieldSetNewBodyResult
+end;
+
+procedure TIdNewResponse.SetResponse(const Value: string);
+var
+  PrevDefault: string;
+begin
+  if FIdFieldName.Trim = '' then
+    FIdFieldName := 'id';
+  PrevDefault := TFieldSetNewBodyResult.DefaultItemKey;
+  try
+    TFieldSetNewBodyResult.DefaultItemKey := FIdFieldName;
+    inherited SetResponse(Value);
+  finally
+    TFieldSetNewBodyResult.DefaultItemKey := PrevDefault;
+  end;
 end;
 
 end.

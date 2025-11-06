@@ -16,7 +16,8 @@ object SourceEditForm: TSourceEditForm
     Align = alClient
     TabOrder = 0
     Caption = ''
-    ExplicitWidth = 1302
+    ExplicitWidth = 1298
+    ExplicitHeight = 811
     object pnlLeft: TUniScrollBox
       Left = 1
       Top = 1
@@ -25,6 +26,7 @@ object SourceEditForm: TSourceEditForm
       Hint = ''
       Align = alLeft
       TabOrder = 1
+      ExplicitHeight = 809
       ScrollHeight = 769
       object gbIdentification: TUniGroupBox
         Left = 0
@@ -435,6 +437,7 @@ object SourceEditForm: TSourceEditForm
       Align = alLeft
       ParentColor = False
       Color = clBtnFace
+      ExplicitHeight = 809
     end
     object pnlRight: TUniPanel
       Left = 507
@@ -445,6 +448,8 @@ object SourceEditForm: TSourceEditForm
       Align = alClient
       TabOrder = 3
       Caption = ''
+      ExplicitWidth = 790
+      ExplicitHeight = 809
       object gbContexts: TUniGroupBox
         Left = 1
         Top = 1
@@ -454,6 +459,7 @@ object SourceEditForm: TSourceEditForm
         Caption = #1050#1086#1085#1090#1077#1082#1089#1090#1099
         Align = alTop
         TabOrder = 1
+        ExplicitWidth = 788
         object grdContexts: TUniDBGrid
           Left = 2
           Top = 50
@@ -497,6 +503,7 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
+          ExplicitWidth = 784
           object unbtnAddContext: TUniButton
             Left = 6
             Top = 4
@@ -538,6 +545,8 @@ object SourceEditForm: TSourceEditForm
         Caption = #1048#1085#1090#1077#1088#1092#1077#1081#1089#1099
         Align = alClient
         TabOrder = 2
+        ExplicitWidth = 788
+        ExplicitHeight = 507
         object grdInterfaces: TUniDBGrid
           Left = 2
           Top = 50
@@ -583,6 +592,7 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
+          ExplicitWidth = 784
           object unbtnAddCred: TUniButton
             Left = 6
             Top = 3
@@ -626,6 +636,8 @@ object SourceEditForm: TSourceEditForm
     Align = alBottom
     TabOrder = 1
     Caption = ''
+    ExplicitTop = 811
+    ExplicitWidth = 1298
     object btnClose: TUniButton
       Left = 1218
       Top = 8
