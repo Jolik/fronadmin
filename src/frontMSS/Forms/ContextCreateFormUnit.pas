@@ -58,7 +58,7 @@ begin
     MessageDlg(Err, mtWarning, [mbOK], nil);
     Exit;
   end;
-    ResCtx.Create;
+    ResCtx:= TContext.Create;
   try
     ResCtx.CtxtId := CtxtId;
     ResCtx.Index := IndexValue;

@@ -299,7 +299,7 @@ begin
     MessageDlg('Сохраните источник перед добавлением контекста.', mtWarning, [mbOK], nil);
     Exit;
   end;
-
+  ACtx.Sid := FSource.Sid;
   Req := FContextBroker.CreateReqNew() as TContextReqNew;
   Resp := nil;
   try
