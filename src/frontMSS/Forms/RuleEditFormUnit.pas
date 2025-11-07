@@ -54,7 +54,7 @@ type
     procedure FilterRemoveButtonClick(Sender: TObject);
     procedure ClearFilterEditors(AEditors: TObjectList<TObject>);
     procedure AddFilterEditor(AEditors: TObjectList<TObject>; AScrollBox: TUniScrollBox;
-      const ACaptionBase: string; AKind: TFilterListKind; AFilter: TFilter = nil);
+      const ACaptionBase: string; AKind: TFilterListKind; AFilter: TProfileFilter = nil);
     procedure UpdateFilterCaptions(AEditors: TObjectList<TObject>; const ACaptionBase: string);
   protected
     procedure AfterConstruction; override;
@@ -89,9 +89,9 @@ type
     FRemoveButton: TUniButton;
   public
     constructor Create(AOwnerForm: TRuleEditForm; AParent: TUniScrollBox;
-      const ACaption: string; AKind: TFilterListKind; AFilter: TFilter = nil);
+      const ACaption: string; AKind: TFilterListKind; AFilter: TProfileFilter = nil);
     destructor Destroy; override;
-    function FillFilter(AFilter: TFilter; out AErrorMessage: string): Boolean;
+    function FillFilter(AFilter: TProfileFilter; out AErrorMessage: string): Boolean;
     procedure UpdateCaption(const ACaption: string);
     property Kind: TFilterListKind read FKind;
     property Panel: TUniContainerPanel read FPanel;
@@ -112,7 +112,7 @@ const
 { TFilterEditorItem }
 
 constructor TFilterEditorItem.Create(AOwnerForm: TRuleEditForm; AParent: TUniScrollBox;
-  const ACaption: string; AKind: TFilterListKind; AFilter: TFilter);
+  const ACaption: string; AKind: TFilterListKind; AFilter: TProfileFilter);
 var
   ConditionsArray: TJSONArray;
 begin
@@ -208,7 +208,7 @@ begin
   inherited;
 end;
 
-function TFilterEditorItem.FillFilter(AFilter: TFilter; out AErrorMessage: string): Boolean;
+function TFilterEditorItem.FillFilter(AFilter: TProfileFilter; out AErrorMessage: string): Boolean;
 var
   JSONValue: TJSONValue;
   JSONArray: TJSONArray;
@@ -280,7 +280,7 @@ var
   SmallRule: TSmallRule;
   ChannelsText: string;
   ChannelsValue: TJSONValue;
-  Filter: TFilter;
+  Filter: TProfileFilter;
   ErrorMessage: string;
   EditorObj: TObject;
   Editor: TFilterEditorItem;
@@ -340,7 +340,7 @@ begin
   for EditorObj in FIncFilterEditors do
   begin
     Editor := TFilterEditorItem(EditorObj);
-    Filter := TFilter.Create;
+    Filter := TProfileFilter.Create;
     if not Editor.FillFilter(Filter, ErrorMessage) then
     begin
       Filter.Free;
@@ -355,7 +355,7 @@ begin
   for EditorObj in FExcFilterEditors do
   begin
     Editor := TFilterEditorItem(EditorObj);
-    Filter := TFilter.Create;
+    Filter := TProfileFilter.Create;
     if not Editor.FillFilter(Filter, ErrorMessage) then
     begin
       Filter.Free;
@@ -462,7 +462,7 @@ var
   SmallRule: TSmallRule;
   Value: string;
   ChannelsObject: TJSONObject;
-  Filter: TFilter;
+  Filter: TProfileFilter;
   I: Integer;
 begin
   if not (AEntity is TRule) then
@@ -527,7 +527,7 @@ begin
 end;
 
 procedure TRuleEditForm.AddFilterEditor(AEditors: TObjectList<TObject>; AScrollBox: TUniScrollBox;
-  const ACaptionBase: string; AKind: TFilterListKind; AFilter: TFilter);
+  const ACaptionBase: string; AKind: TFilterListKind; AFilter: TProfileFilter);
 var
   Caption: string;
   Editor: TFilterEditorItem;

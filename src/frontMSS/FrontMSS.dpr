@@ -92,7 +92,6 @@ uses
   SharedFrameBoolInput in 'Forms\LinksFrames\SharedFrameBoolInput.pas' {FrameBoolInput: TUniFrame},
   SharedFrameCombobox in 'Forms\LinksFrames\SharedFrameCombobox.pas' {FrameCombobox: TUniFrame},
   SharedFrameConnections in 'Forms\LinksFrames\SharedFrameConnections.pas' {FrameConnections: TUniFrame},
-  SharedFrameQueue in 'Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
   SharedFrameTextInput in 'Forms\LinksFrames\SharedFrameTextInput.pas' {FrameTextInput: TUniFrame},
   SocketSpecialSettingEditFrameUnit in 'Forms\LinksFrames\SocketSpecialSettingEditFrameUnit.pas' {SocketSpecialSettingEditFrame: TUniFrame},
   SummaryTaskSourcesBrokerUnit in 'APIClasses\SummaryTaskSourcesBrokerUnit.pas',
@@ -118,7 +117,11 @@ uses
   MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
   SourcesBrokerUnit in 'APIClasses\SourcesBrokerUnit.pas',
   SharedFrameRuleConditionUnit in '\\ksandr-pc\МетеоКонтекст\Jolik\src\frontMSS\Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame},
-  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas';
+  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas',
+  ProfileRuleUnit in 'EntityClasses\acl\ProfileRuleUnit.pas',
+  QueueFrameUnit in 'Forms\QueueFrameUnit.pas' {QueueFrame: TUniFrame},
+  SharedFrameQueue in 'Forms\LinksFrames\SharedFrameQueue.pas' {FrameQueue: TUniFrame},
+  SharedFrameQueueFilterUnit in 'Forms\SharedFrameQueueFilterUnit.pas' {QueueConditionFrame: TUniFrame};
 
 {$R *.res}
 

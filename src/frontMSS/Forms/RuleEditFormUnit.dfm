@@ -9,44 +9,42 @@ inherited RuleEditForm: TRuleEditForm
     Top = 568
     Width = 866
     ExplicitTop = 568
-    ExplicitWidth = 865
+    ExplicitWidth = 866
     inherited btnOk: TUniButton
       Left = 707
-      ExplicitLeft = 706
+      ExplicitLeft = 707
     end
     inherited btnCancel: TUniButton
       Left = 788
-      ExplicitLeft = 787
+      ExplicitLeft = 788
     end
   end
   inherited pnCaption: TUniContainerPanel
     Width = 866
-    ExplicitWidth = 865
+    ExplicitWidth = 866
     inherited teCaption: TUniEdit
       Left = 84
       Width = 779
       ExplicitLeft = 84
-      ExplicitWidth = 778
+      ExplicitWidth = 779
     end
   end
   inherited pnName: TUniContainerPanel
     Width = 866
-    ExplicitWidth = 865
+    ExplicitWidth = 866
     inherited teName: TUniEdit
       Left = 84
       Width = 779
       ExplicitLeft = 84
-      ExplicitWidth = 778
+      ExplicitWidth = 779
     end
   end
   inherited pnClient: TUniContainerPanel
     Width = 866
-    Height = 514
-    ExplicitLeft = -3
-    ExplicitTop = 53
-    ExplicitWidth = 865
-    ExplicitHeight = 514
-    ScrollHeight = 514
+    Height = 487
+    ExplicitWidth = 866
+    ExplicitHeight = 487
+    ScrollHeight = 487
     ScrollWidth = 866
     object cpTop: TUniContainerPanel
       Left = 0
@@ -137,8 +135,6 @@ inherited RuleEditForm: TRuleEditForm
       ParentColor = False
       Align = alTop
       TabOrder = 2
-      ExplicitTop = 125
-      ExplicitWidth = 865
       object cpMiddleLeft: TUniContainerPanel
         Left = 0
         Top = 0
@@ -175,10 +171,6 @@ inherited RuleEditForm: TRuleEditForm
             '')
           Align = alClient
           TabOrder = 2
-          ExplicitLeft = 88
-          ExplicitTop = 172
-          ExplicitWidth = 340
-          ExplicitHeight = 96
         end
       end
       object cpMiddleRight: TUniContainerPanel
@@ -190,10 +182,6 @@ inherited RuleEditForm: TRuleEditForm
         ParentColor = False
         Align = alClient
         TabOrder = 2
-        ExplicitLeft = 388
-        ExplicitTop = 38
-        ExplicitWidth = 477
-        ExplicitHeight = 227
         object meChannels: TUniMemo
           AlignWithMargins = True
           Left = 30
@@ -208,10 +196,6 @@ inherited RuleEditForm: TRuleEditForm
             '')
           Align = alClient
           TabOrder = 1
-          ExplicitLeft = 38
-          ExplicitTop = 54
-          ExplicitWidth = 340
-          ExplicitHeight = 96
         end
         object lChannels: TUniLabel
           AlignWithMargins = True
@@ -225,8 +209,6 @@ inherited RuleEditForm: TRuleEditForm
           Caption = #1050#1072#1085#1072#1083#1099
           Align = alTop
           TabOrder = 2
-          ExplicitLeft = 38
-          ExplicitTop = 29
         end
       end
       object UniSplitter1: TUniSplitter
@@ -252,47 +234,37 @@ inherited RuleEditForm: TRuleEditForm
       Align = alTop
       ParentColor = False
       Color = clBtnShadow
-      ExplicitTop = 245
     end
     object cpBottom: TUniContainerPanel
       Left = 0
       Top = 232
       Width = 866
-      Height = 282
+      Height = 255
       Hint = ''
       ParentColor = False
       Align = alClient
       TabOrder = 4
-      ExplicitLeft = 238
-      ExplicitTop = 266
-      ExplicitWidth = 256
-      ExplicitHeight = 128
       object cpBottomLeft: TUniContainerPanel
         Left = 0
         Top = 0
         Width = 430
-        Height = 282
+        Height = 255
         Hint = ''
         ParentColor = False
         Align = alLeft
         TabOrder = 1
-        ExplicitHeight = 263
         object sbIncFilters: TUniScrollBox
           AlignWithMargins = True
           Left = 30
           Top = 43
           Width = 390
-          Height = 236
+          Height = 209
           Hint = ''
           Margins.Left = 30
           Margins.Right = 10
           Align = alClient
           TabOrder = 1
           ScrollDirection = sdVertical
-          ExplicitLeft = 24
-          ExplicitTop = 63
-          ExplicitWidth = 340
-          ExplicitHeight = 200
         end
         object cpBottomLeftTop: TUniContainerPanel
           AlignWithMargins = True
@@ -308,7 +280,6 @@ inherited RuleEditForm: TRuleEditForm
           ParentColor = False
           Align = alTop
           TabOrder = 2
-          ExplicitTop = 0
           object btnAddIncFilter: TUniButton
             AlignWithMargins = True
             Left = 300
@@ -322,9 +293,6 @@ inherited RuleEditForm: TRuleEditForm
             TabOrder = 1
             IconCls = 'add'
             OnClick = btnAddIncFilterClick
-            ExplicitLeft = 244
-            ExplicitTop = 44
-            ExplicitHeight = 25
           end
           object lIncFilters: TUniLabel
             AlignWithMargins = True
@@ -338,8 +306,6 @@ inherited RuleEditForm: TRuleEditForm
             Caption = #1060#1080#1083#1100#1090#1088#1099' '#1074#1082#1083#1102#1095#1077#1085#1080#1103
             Align = alLeft
             TabOrder = 2
-            ExplicitLeft = 24
-            ExplicitTop = 26
           end
         end
       end
@@ -347,43 +313,34 @@ inherited RuleEditForm: TRuleEditForm
         Left = 430
         Top = 0
         Width = 2
-        Height = 282
+        Height = 255
         Hint = ''
         MinSize = 200
         Align = alLeft
         ParentColor = False
         Color = clBtnShadow
-        ExplicitHeight = 267
       end
       object cpBottomRight: TUniContainerPanel
         Left = 432
         Top = 0
         Width = 434
-        Height = 282
+        Height = 255
         Hint = ''
         ParentColor = False
         Align = alClient
         TabOrder = 3
-        ExplicitLeft = 456
-        ExplicitTop = 36
-        ExplicitWidth = 379
-        ExplicitHeight = 217
         object sbExcFilters: TUniScrollBox
           AlignWithMargins = True
           Left = 30
           Top = 43
           Width = 394
-          Height = 236
+          Height = 209
           Hint = ''
           Margins.Left = 30
           Margins.Right = 10
           Align = alClient
           TabOrder = 1
           ScrollDirection = sdVertical
-          ExplicitLeft = 51
-          ExplicitTop = 49
-          ExplicitWidth = 340
-          ExplicitHeight = 200
         end
         object cpBottomRightTop: TUniContainerPanel
           AlignWithMargins = True
@@ -399,8 +356,6 @@ inherited RuleEditForm: TRuleEditForm
           ParentColor = False
           Align = alTop
           TabOrder = 2
-          ExplicitLeft = 1
-          ExplicitTop = 1
           object lExcFilters: TUniLabel
             AlignWithMargins = True
             Left = 30
@@ -413,8 +368,6 @@ inherited RuleEditForm: TRuleEditForm
             Caption = #1060#1080#1083#1100#1090#1088#1099' '#1080#1089#1082#1083#1102#1095#1077#1085#1080#1103
             Align = alLeft
             TabOrder = 1
-            ExplicitLeft = 60
-            ExplicitTop = 12
           end
           object btnAddExcFilter: TUniButton
             AlignWithMargins = True
@@ -429,12 +382,15 @@ inherited RuleEditForm: TRuleEditForm
             TabOrder = 2
             IconCls = 'add'
             OnClick = btnAddExcFilterClick
-            ExplicitLeft = 259
-            ExplicitTop = 0
-            ExplicitHeight = 25
           end
         end
       end
+    end
+  end
+  inherited pnID: TUniContainerPanel
+    Width = 866
+    inherited teID: TUniEdit
+      Left = 133
     end
   end
 end
