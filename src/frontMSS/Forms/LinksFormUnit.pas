@@ -10,11 +10,16 @@ uses
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, Data.DB, FireDAC.Comp.DataSet,
   FireDAC.Comp.Client, uniPageControl, uniSplitter, uniBasicGrid, uniDBGrid,
   uniToolBar, uniGUIBaseClasses,
-  EntityBrokerUnit, ParentEditFormUnit, LinksBrokerUnit;
+  EntityBrokerUnit, ParentEditFormUnit, LinksBrokerUnit, uniPanel, uniLabel;
 
 type
   TLinksForm = class(TListParentForm)
+    procedure btnRemoveClick(Sender: TObject);
   private
+  protected
+    procedure NewCallback(ASender: TComponent; AResult: Integer); override;
+    procedure UpdateCallback(ASender: TComponent; AResult: Integer);  override;
+
   public
     ///  функция обновления компоннет на форме
     procedure Refresh(const AId: String = ''); override;
@@ -41,7 +46,16 @@ begin
   Result := TLinksForm(UniMainModule.GetFormInstance(TLinksForm));
 end;
 
-{ TChannelsForm }
+{ TLinksForm }
+
+procedure TLinksForm.btnRemoveClick(Sender: TObject);
+begin
+  var lid := FDMemTableEntity.FieldByName('Id').AsString;
+  if MessageDlg(Format('Удалить линк %s?', [lid]), mtConfirmation, mbYesNo) <> mrYes then
+    exit;
+  Broker.Remove(lid);
+  Refresh();
+end;
 
 function TLinksForm.CreateBroker: TEntityBroker;
 begin
@@ -55,9 +69,24 @@ begin
   Result := LinkEditForm();
 end;
 
+
+
 procedure TLinksForm.Refresh(const AId: String = '');
 begin
   inherited Refresh(AId)
+end;
+
+
+procedure TLinksForm.NewCallback(ASender: TComponent; AResult: Integer);
+begin
+  if AResult = mrOk then
+    Refresh();
+end;
+
+procedure TLinksForm.UpdateCallback(ASender: TComponent; AResult: Integer);
+begin
+  if AResult = mrOk then
+    Refresh();
 end;
 
 end.

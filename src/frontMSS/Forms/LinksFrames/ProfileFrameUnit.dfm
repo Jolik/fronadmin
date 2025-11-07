@@ -15,7 +15,7 @@ object ProfileFrame: TProfileFrame
     TabOrder = 0
     object UniPanel1: TUniPanel
       Left = 2
-      Top = 15
+      Top = 22
       Width = 354
       Height = 66
       Hint = ''
@@ -24,6 +24,7 @@ object ProfileFrame: TProfileFrame
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel1'
+      ExplicitTop = 15
       inline FrameRuleEnabled: TFrameBoolInput
         Left = 0
         Top = 0
@@ -41,6 +42,7 @@ object ProfileFrame: TProfileFrame
         end
         inherited CheckBox: TUniCheckBox
           Width = 216
+          OnChange = FrameRuleEnabledCheckBoxChange
           ExplicitWidth = 216
         end
       end
@@ -63,6 +65,7 @@ object ProfileFrame: TProfileFrame
         inherited Edit: TUniEdit
           Width = 183
           InputType = 'number'
+          OnChange = FrameRulePositionEditChange
           ExplicitWidth = 183
         end
         inherited PanelUnits: TUniPanel
@@ -74,9 +77,9 @@ object ProfileFrame: TProfileFrame
     end
     object UniPanel2: TUniPanel
       Left = 2
-      Top = 81
+      Top = 88
       Width = 354
-      Height = 156
+      Height = 149
       Hint = ''
       Align = alClient
       TabOrder = 2
@@ -86,29 +89,31 @@ object ProfileFrame: TProfileFrame
         Left = 169
         Top = 1
         Width = 6
-        Height = 154
+        Height = 147
         Hint = ''
         Align = alLeft
         ParentColor = False
         Color = clBtnFace
+        ExplicitHeight = 154
       end
       object PanelConditions: TUniPanel
         Left = 175
         Top = 1
         Width = 178
-        Height = 154
+        Height = 147
         Hint = ''
         Align = alClient
         TabOrder = 2
         BorderStyle = ubsNone
         ShowCaption = False
         Caption = 'PanelConditions'
+        ExplicitHeight = 154
       end
       object UniPanel3: TUniPanel
         Left = 1
         Top = 1
         Width = 168
-        Height = 154
+        Height = 147
         Hint = ''
         Align = alLeft
         TabOrder = 3
@@ -119,7 +124,7 @@ object ProfileFrame: TProfileFrame
           Left = 0
           Top = 25
           Width = 168
-          Height = 129
+          Height = 122
           Hint = ''
           Items.FontData = {0100000000}
           Align = alClient
@@ -252,6 +257,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_XML'
         Align = alTop
         TabOrder = 1
+        OnChange = CheckBox_fta_XMLChange
       end
       object CheckBox_fta_JSON: TUniCheckBox
         AlignWithMargins = True
@@ -264,6 +270,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_JSON'
         Align = alTop
         TabOrder = 2
+        OnChange = CheckBox_fta_JSONChange
       end
       object CheckBox_fta_SIMPLE: TUniCheckBox
         AlignWithMargins = True
@@ -276,6 +283,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_SIMPLE'
         Align = alTop
         TabOrder = 3
+        OnChange = CheckBox_fta_SIMPLEChange
       end
       object CheckBox_fta_GAO: TUniCheckBox
         AlignWithMargins = True
@@ -288,6 +296,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_GAO'
         Align = alTop
         TabOrder = 4
+        OnChange = CheckBox_fta_GAOChange
       end
       object CheckBox_fta_TLG: TUniCheckBox
         AlignWithMargins = True
@@ -300,6 +309,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_TLG'
         Align = alTop
         TabOrder = 5
+        OnChange = CheckBox_fta_TLGChange
       end
       object CheckBox_fta_TLF: TUniCheckBox
         AlignWithMargins = True
@@ -312,6 +322,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_TLF'
         Align = alTop
         TabOrder = 6
+        OnChange = CheckBox_fta_TLFChange
       end
       object CheckBox_fta_FILE: TUniCheckBox
         AlignWithMargins = True
@@ -324,6 +335,7 @@ object ProfileFrame: TProfileFrame
         Caption = 'fta_FILE'
         Align = alTop
         TabOrder = 7
+        OnChange = CheckBox_fta_FILEChange
       end
     end
   end
@@ -371,6 +383,7 @@ object ProfileFrame: TProfileFrame
     end
     inherited Edit: TUniEdit
       Width = 187
+      OnChange = DescriptionFrameEditChange
       ExplicitWidth = 187
     end
     inherited PanelUnits: TUniPanel

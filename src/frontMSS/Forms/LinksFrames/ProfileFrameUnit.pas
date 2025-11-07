@@ -5,10 +5,11 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
   Controls, Forms, uniGUITypes, uniGUIAbstractClasses, EntityUnit,
-  KeyValUnit, SmallRuleUnit, FilterUnit, ConditionUnit, SharedFrameRuleConditionUnit,
+  KeyValUnit, FilterUnit, ConditionUnit, SharedFrameRuleConditionUnit,
   uniGUIClasses, uniGUIFrame, uniSplitter, uniMultiItem, uniListBox, LinkUnit,
   uniGUIBaseClasses, uniGroupBox, ProfileUnit, SharedFrameTextInput, uniButton,
   uniPanel, uniComboBox, uniCheckBox, Vcl.StdCtrls, Vcl.Buttons, uniTreeView,
+  ProfileRuleUnit,
   uniTreeMenu, uniEdit, SharedFrameBoolInput, uniBitBtn;
 
 type
@@ -42,6 +43,16 @@ type
     procedure RuleTreeViewChange(Sender: TObject; Node: TUniTreeNode);
     procedure btnAddRulesClick(Sender: TObject);
     procedure btnRemoveRulesClick(Sender: TObject);
+    procedure DescriptionFrameEditChange(Sender: TObject);
+    procedure FrameRuleEnabledCheckBoxChange(Sender: TObject);
+    procedure FrameRulePositionEditChange(Sender: TObject);
+    procedure CheckBox_fta_FILEChange(Sender: TObject);
+    procedure CheckBox_fta_TLFChange(Sender: TObject);
+    procedure CheckBox_fta_TLGChange(Sender: TObject);
+    procedure CheckBox_fta_GAOChange(Sender: TObject);
+    procedure CheckBox_fta_SIMPLEChange(Sender: TObject);
+    procedure CheckBox_fta_JSONChange(Sender: TObject);
+    procedure CheckBox_fta_XMLChange(Sender: TObject);
   private
     FProfile: TProfile;
     FFTACheckboxes: TKeyValue<TUniCheckbox>;
@@ -49,8 +60,9 @@ type
     FLink: TLink;
     FSelectedRuleItem: TObject;
     FSelecteNode: TUniTreeNode;
-    procedure RuleToTreeView(rule: TSmallRule);
-    procedure FiltersToTreeViewNode(filters: TFilterList; node: TUniTreeNode);
+    FOnChange: TNotifyEvent;
+    procedure RuleToTreeView(rule: TProfileRule);
+    procedure FiltersToTreeViewNode(filters: TProfileFilterList; node: TUniTreeNode);
     procedure ConditionToFrame(c: TCondition);
     procedure TidyRuleControls;
     procedure DrawRules;
@@ -62,17 +74,15 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    procedure SetData(src: TProfile); virtual;
+    procedure SetData(srcProfile: TProfile; srclink: TLink); virtual;
     procedure GetData(dst: TProfile); virtual;
-    procedure SetLink(link: TLink); virtual;
 
+    property OnChange: TNotifyEvent read FOnChange write FOnChange;
   end;
 
 implementation
 uses
-  LoggingUnit,
-  ProfilesBrokerUnit,
-  uniGUIDialogs;
+  LoggingUnit;
 
 {$R *.dfm}
 
@@ -97,25 +107,31 @@ end;
 
 
 
+procedure TProfileFrame.DescriptionFrameEditChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
 destructor TProfileFrame.Destroy;
 begin
   FFTACheckboxes.Free;
-  FreeAndNil(FProfile);
   inherited;
 end;
 
 
 
 
-procedure TProfileFrame.SetData(src: TProfile);
+procedure TProfileFrame.SetData(srcProfile: TProfile; srclink: TLink);
 begin
-  FreeAndNil(FProfile);
-  if src = nil then
+  FLink := srclink;
+  if srcProfile = nil then
     exit;
-  FProfile := src;
+  FProfile := srcProfile;
   PridFrame.Edit.Text := FProfile.Id;
   DescriptionFrame.Edit.Text := FProfile.Description;
-  DescriptionFrame.Edit.Readonly := not FProfile.IsNew;
+  if FProfile.ProfileBody = nil then
+    exit;
   for var fta in FProfile.ProfileBody.Play.FTA.ToArray do
   begin
     var cb := FFTACheckboxes.ValueByKey(fta, nil);
@@ -136,15 +152,10 @@ begin
     if cb.Checked then
       FProfile.ProfileBody.Play.FTA.Add( FFTACheckboxes.KeyByValue(cb) );
   FProfile.Description := DescriptionFrame.Edit.Text;
-  if not  dst.Assign(FProfile) then
-    exit;
+  (FProfile.Body as TProfileBody).Rule.Enabled := FrameRuleEnabled.GetData;
+  (FProfile.Body as TProfileBody).Rule.Position := FrameRulePosition.GetDataInt(0);
 end;
 
-
-procedure TProfileFrame.SetLink(link: TLink);
-begin
-  FLink := link;
-end;
 
 
 procedure TProfileFrame.DrawRules;
@@ -158,7 +169,7 @@ begin
   TidyRuleControls;
 end;
 
-procedure TProfileFrame.RuleToTreeView(rule: TSmallRule);
+procedure TProfileFrame.RuleToTreeView(rule: TProfileRule);
 begin
   FrameRuleEnabled.SetData(rule.Enabled);
   FrameRulePosition.SetData(rule.Position);
@@ -173,12 +184,13 @@ begin
   FiltersToTreeViewNode(rule.ExcFilters, excFiltersNode);
 end;
 
-procedure TProfileFrame.FiltersToTreeViewNode(filters: TFilterList;
+
+procedure TProfileFrame.FiltersToTreeViewNode(filters: TProfileFilterList;
   node: TUniTreeNode);
 begin
   for var i := 0 to filters.Count-1 do
   begin
-    var filter := (filters[i] as TFilter);
+    var filter := (filters[i] as TProfileFilter);
     var filterNode := RuleTreeView.Items.AddChildObject(node, 'фильтр-' + IntToStr(i), filter);
     filterNode.CheckboxVisible := true;
     filterNode.Checked := not filter.Disable;
@@ -192,6 +204,60 @@ begin
 end;
 
 
+
+procedure TProfileFrame.FrameRuleEnabledCheckBoxChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.FrameRulePositionEditChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_FILEChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_GAOChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_JSONChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_SIMPLEChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_TLFChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_TLGChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
+
+procedure TProfileFrame.CheckBox_fta_XMLChange(Sender: TObject);
+begin
+  if Assigned(FOnChange) then
+    FOnChange(Self);
+end;
 
 procedure TProfileFrame.ConditionToFrame(c: TCondition);
 begin
@@ -211,6 +277,8 @@ end;
 procedure TProfileFrame.RuleTreeViewChange(Sender: TObject; Node: TUniTreeNode);
 begin
   FSelecteNode := Node;
+  if Node = nil then
+    exit;
   FSelectedRuleItem := TObject(Node.Data);
   TidyRuleControls;
   if FSelectedRuleItem is TCondition then
@@ -229,7 +297,7 @@ begin
     btnRemoveRules.Hint := 'удалить условие';
     exit;
   end;
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := true;
@@ -237,7 +305,7 @@ begin
     btnRemoveRules.Hint := 'удалить фильтр';
     exit;
   end;
-  if FSelectedRuleItem is TFilterList then
+  if FSelectedRuleItem is TProfileFilterList then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := false;
@@ -251,16 +319,18 @@ end;
 
 procedure TProfileFrame.btnAddRulesClick(Sender: TObject);
 begin
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
-    (FSelectedRuleItem as TFilter).Conditions.Add(TCondition.Create);
+    (FSelectedRuleItem as TProfileFilter).Conditions.Add(TCondition.Create);
     DrawRules;
     exit;
   end;
-  if FSelectedRuleItem is TFilterList then
+  if FSelectedRuleItem is TProfileFilterList then
   begin
-    (FSelectedRuleItem as TFilterList).Add(TFilter.Create);
+    (FSelectedRuleItem as TProfileFilterList).Add(TProfileFilter.Create);
     DrawRules;
+    if Assigned(FOnChange) then
+      FOnChange(Self);
     exit;
   end;
 end;
@@ -277,26 +347,28 @@ begin
     var q := Format('Удалить условие %s?', [(FSelectedRuleItem as TCondition).Caption]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
-    if not (TObject(FSelecteNode.Parent.Data) is TFilter) then
+    if not (TObject(FSelecteNode.Parent.Data) is TProfileFilter) then
       exit;
-    var f := (TObject(FSelecteNode.Parent.Data) as TFilter);
+    var f := (TObject(FSelecteNode.Parent.Data) as TProfileFilter);
     if not DeletObject(f.Conditions, FSelectedRuleItem) then
       exit;
   end;
 
-  if FSelectedRuleItem is TFilter then
+  if FSelectedRuleItem is TProfileFilter then
   begin
-    var q := Format('Удалить фильтр (%d условий)?', [(FSelectedRuleItem as TFilter).Conditions.Count]);
+    var q := Format('Удалить фильтр (%d условий)?', [(FSelectedRuleItem as TProfileFilter).Conditions.Count]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
-    if not (TObject(FSelecteNode.Parent.Data) is TFilterList) then
+    if not (TObject(FSelecteNode.Parent.Data) is TProfileFilterList) then
       exit;
-    var f := (TObject(FSelecteNode.Parent.Data) as TFilterList);
+    var f := (TObject(FSelecteNode.Parent.Data) as TProfileFilterList);
     if not DeletObject(f, FSelectedRuleItem) then
       exit;
   end;
 
   DrawRules;
+  if Assigned(FOnChange) then
+    FOnChange(Self);
 end;
 
 
@@ -320,6 +392,8 @@ begin
     exit;
   FConditionFrame.GetData(FSelectedRuleItem as TCondition);
   DrawRules;
+  if Assigned(FOnChange) then
+    FOnChange(Self);
 end;
 
 

@@ -480,10 +480,10 @@ begin
   inherited;
   dst.AddPair('connections', FConnections.SerializeList());
   dst.AddPair('queue', FQueueSettings.Serialize());
-  dst.AddPair('dir', FDirSettings.Serialize());
   var custom := TJSONObject.Create;
   dst.AddPair('custom', custom);
   custom.AddPair('type', AType);
+  custom.AddPair('dir', FDirSettings.Serialize());
   var protocol := TJSONObject.Create;
   custom.AddPair('protocol', protocol);
   protocol.AddPair('postpone_timeout', PostponeTimeout);

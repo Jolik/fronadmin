@@ -342,11 +342,6 @@
             <FormType>dfm</FormType>
             <DesignClass>TUniForm</DesignClass>
         </DCCReference>
-        <DCCReference Include="..\Forms\LinkSettingsFormUnit.pas">
-            <Form>LinkSettingsForm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TUniForm</DesignClass>
-        </DCCReference>
         <DCCReference Include="..\Forms\LinksFormUnit.pas">
             <Form>LinksForm</Form>
             <FormType>dfm</FormType>
@@ -458,6 +453,19 @@
         <DCCReference Include="..\APIClasses\TaskTypesBrokerUnit.pas"/>
         <DCCReference Include="..\APIClasses\UsersBrokerUnit.pas"/>
         <DCCReference Include="..\EntityClasses\dsprocessor\DSProcessorTaskUnit.pas"/>
+        <DCCReference Include="..\Common\common.pas"/>
+        <DCCReference Include="..\Forms\LinksFrames\LinkFrameUtils.pas"/>
+        <DCCReference Include="..\Forms\QueueFrameUnit.pas">
+            <Form>QueueFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
+        <DCCReference Include="..\EntityClasses\acl\ProfileRuleUnit.pas"/>
+        <DCCReference Include="..\Forms\SharedFrameQueueFilterUnit.pas">
+            <Form>QueueConditionFrame</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TUniFrame</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

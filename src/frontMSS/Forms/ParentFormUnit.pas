@@ -21,8 +21,8 @@ type
     FEditForm : TParentEditForm;
 
   protected
-    procedure NewCallback(ASender: TComponent; AResult: Integer);
-    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+    procedure NewCallback(ASender: TComponent; AResult: Integer); virtual;
+    procedure UpdateCallback(ASender: TComponent; AResult: Integer); virtual;
 
     ///  функция для обновления компонент на форме
     procedure Refresh(const AId: String = ''); virtual; abstract;

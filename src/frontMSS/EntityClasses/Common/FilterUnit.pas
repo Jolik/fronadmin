@@ -9,8 +9,8 @@ uses
   EntityUnit;
 
 type
-  ///
-  TFilter = class(TFieldSet)
+
+  TProfileFilter = class(TFieldSet)
   private
     FDisable: boolean;
     FConditions: TConditionList;
@@ -27,22 +27,54 @@ type
     property Conditions: TConditionList read FConditions;
   end;
 
-  ///
-  TFilterList = class(TFieldSetList)
+
+  TProfileFilterList = class(TFieldSetList)
   private
-    function GetFilter(Index: Integer): TFilter;
-    procedure SetFilter(Index: Integer; const Value: TFilter);
+    function GeTProfileFilter(Index: Integer): TProfileFilter;
+    procedure SeTProfileFilter(Index: Integer; const Value: TProfileFilter);
   protected
     class function ItemClassType: TFieldSetClass; override;
   public
-    property Filters[Index: Integer]: TFilter read GetFilter write SetFilter;
+    property Filters[Index: Integer]: TProfileFilter read GeTProfileFilter write SeTProfileFilter;
   end;
+
+
+  TQueueFilter = class(TFieldSet)
+  private
+    FSig: string; // inc|exc
+    FFilters: TConditionList;
+  public
+    constructor Create; overload; override;
+    constructor Create(src: TJSONObject; const APropertyNames: TArray<string> = nil); overload; override;
+    destructor Destroy; override;
+
+    function Assign(ASource: TFieldSet): boolean; override;
+    procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+    procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
+
+    property Sig: string read FSig write FSig;
+    property Filters: TConditionList read FFilters;
+  end;
+
+
+  TQueueFilterList = class(TFieldSetList)
+  private
+    function GetQueueFilter(Index: Integer): TQueueFilter;
+    procedure SetQueueFilter(Index: Integer; const Value: TQueueFilter);
+  protected
+    class function ItemClassType: TFieldSetClass; override;
+  public
+    property Filters[Index: Integer]: TQueueFilter read GetQueueFilter write SetQueueFilter;
+  end;
+
+
+
 
 implementation
 
-{ TFilter }
+{ TProfileFilter }
 
-function TFilter.Assign(ASource: TFieldSet): boolean;
+function TProfileFilter.Assign(ASource: TFieldSet): boolean;
 begin
   Result := false;
 
@@ -52,10 +84,10 @@ begin
   if not inherited Assign(ASource) then
     Exit;
 
-  if not (ASource is TFilter) then
+  if not (ASource is TProfileFilter) then
     Exit;
 
-  var src := TFilter(ASource);
+  var src := TProfileFilter(ASource);
 
   Disable := src.Disable;
 
@@ -79,28 +111,28 @@ begin
   Result := true;
 end;
 
-constructor TFilter.Create;
+constructor TProfileFilter.Create;
 begin
   inherited Create;
 
   FConditions := TConditionList.Create;
 end;
 
-constructor TFilter.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TProfileFilter.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Create;
 
   Parse(src, APropertyNames);
 end;
 
-destructor TFilter.Destroy;
+destructor TProfileFilter.Destroy;
 begin
   FConditions.Free;
 
   inherited;
 end;
 
-procedure TFilter.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TProfileFilter.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
   Value: TJSONValue;
 begin
@@ -117,7 +149,7 @@ begin
     FConditions.ParseList(Value as TJSONArray);
 end;
 
-procedure TFilter.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TProfileFilter.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 begin
   if not Assigned(dst) then
     Exit;
@@ -130,25 +162,25 @@ begin
     dst.AddPair('conditions', TJSONArray.Create);
 end;
 
-{ TFilterList }
+{ TProfileFilterList }
 
-function TFilterList.GetFilter(Index: Integer): TFilter;
+function TProfileFilterList.GeTProfileFilter(Index: Integer): TProfileFilter;
 begin
   Result := nil;
 
   if (Index < 0) or (Index >= Count) then
     Exit;
 
-  if Items[Index] is TFilter then
-    Result := TFilter(Items[Index]);
+  if Items[Index] is TProfileFilter then
+    Result := TProfileFilter(Items[Index]);
 end;
 
-class function TFilterList.ItemClassType: TFieldSetClass;
+class function TProfileFilterList.ItemClassType: TFieldSetClass;
 begin
-  Result := TFilter;
+  Result := TProfileFilter;
 end;
 
-procedure TFilterList.SetFilter(Index: Integer; const Value: TFilter);
+procedure TProfileFilterList.SeTProfileFilter(Index: Integer; const Value: TProfileFilter);
 begin
   if (Index < 0) or (Index >= Count) then
     Exit;
@@ -156,7 +188,7 @@ begin
   if not Assigned(Value) then
     Exit;
 
-  if not (Value is TFilter) then
+  if not (Value is TProfileFilter) then
     Exit;
 
   if Assigned(Items[Index]) then
@@ -164,5 +196,135 @@ begin
 
   Items[Index] := Value;
 end;
+
+{ TQueueFilter }
+
+function TQueueFilter.Assign(ASource: TFieldSet): boolean;
+begin
+ Result := false;
+
+  if not Assigned(ASource) then
+    Exit;
+
+  if not inherited Assign(ASource) then
+    Exit;
+
+  if not (ASource is TQueueFilter) then
+    Exit;
+
+  var src := TQueueFilter(ASource);
+
+  FSig := src.Sig;
+
+  FFilters.Clear;
+  for var I := 0 to src.Filters.Count - 1 do
+  begin
+    var Filter := src.Filters[I];
+    if not Assigned(Filter) then
+      Continue;
+
+    var NewFilter := TCondition.Create;
+    if not NewFilter.Assign(Filter) then
+    begin
+      NewFilter.Free;
+      Continue;
+    end;
+
+    FFilters.Add(NewFilter);
+  end;
+
+  Result := true;
+end;
+
+constructor TQueueFilter.Create;
+begin
+  FFilters := TConditionList.Create;
+end;
+
+constructor TQueueFilter.Create(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  Create;
+
+  Parse(src, APropertyNames);
+end;
+
+destructor TQueueFilter.Destroy;
+begin
+  FFilters.Free;
+  inherited;
+end;
+
+procedure TQueueFilter.Parse(src: TJSONObject;
+  const APropertyNames: TArray<string>);
+var
+  Value: TJSONValue;
+begin
+  FSig := '';
+  FFilters.Clear;
+
+  if not Assigned(src) then
+    Exit;
+
+  FSig := GetValueStrDef(src, 'sig', '');
+
+  Value := src.FindValue('filter');
+  if (Value is TJSONArray) then
+    FFilters.ParseList(Value as TJSONArray);
+end;
+
+
+procedure TQueueFilter.Serialize(dst: TJSONObject;
+  const APropertyNames: TArray<string>);
+begin
+  if not Assigned(dst) then
+    Exit;
+
+  dst.AddPair('sig', FSig);
+  var f := FFilters.SerializeList;
+  if Assigned(f) then
+    dst.AddPair('filter', f)
+  else
+    dst.AddPair('filter', TJSONArray.Create);
+end;
+
+
+{ TQueueFilterList }
+
+function TQueueFilterList.GeTQueueFilter(Index: Integer): TQueueFilter;
+begin
+  Result := nil;
+
+  if (Index < 0) or (Index >= Count) then
+    Exit;
+
+  if Items[Index] is TQueueFilter then
+    Result := TQueueFilter(Items[Index]);
+end;
+
+procedure TQueueFilterList.SetQueueFilter(Index: Integer;
+  const Value: TQueueFilter);
+begin
+  if (Index < 0) or (Index >= Count) then
+    Exit;
+
+  if not Assigned(Value) then
+    Exit;
+
+  if not (Value is TQueueFilter) then
+    Exit;
+
+  if Assigned(Items[Index]) then
+    Items[Index].Free;
+
+  Items[Index] := Value;
+end;
+
+class function TQueueFilterList.ItemClassType: TFieldSetClass;
+begin
+  result := TQueueFilter;
+end;
+
+
 
 end.

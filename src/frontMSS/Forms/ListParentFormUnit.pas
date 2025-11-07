@@ -61,7 +61,7 @@ type
   protected
     FID: string;
     procedure Refresh(const AId: String = ''); override;
-    procedure UpdateCallback(ASender: TComponent; AResult: Integer);
+
   end;
 
 function ListParentForm: TListParentForm;
@@ -118,6 +118,8 @@ begin
 
   tsTaskInfo.TabVisible := True;
 end;
+
+
 
 procedure TListParentForm.btnNewClick(Sender: TObject);
 var
@@ -206,15 +208,6 @@ begin
   end;
 end;
 
-procedure TListParentForm.UpdateCallback(ASender: TComponent; AResult: Integer);
-begin
-  inherited;
-
-  if FID = '' then
-    FDMemTableEntity.First
-  else
-    FDMemTableEntity.Locate('Id', FID, []);
-end;
 
 procedure TListParentForm.UniFormCreate(Sender: TObject);
 begin
@@ -223,10 +216,14 @@ begin
   Refresh();
 end;
 
+
+
 function ListParentForm: TListParentForm;
 begin
   Result := TListParentForm(UniMainModule.GetFormInstance(TListParentForm));
   Result.EditForm.Hide;
 end;
+
+
 
 end.

@@ -16,37 +16,32 @@ type
     btnRemoveProfile: TUniBitBtn;
     btnAddProfile: TUniBitBtn;
     profilesComboBox: TUniComboBox;
-    UniPanel1: TUniPanel;
-    BitBtnSaveProfile: TUniBitBtn;
     procedure profilesComboBoxSelect(Sender: TObject);
     procedure btnRemoveProfileClick(Sender: TObject);
     procedure btnAddProfileClick(Sender: TObject);
-    procedure BitBtnSaveProfileClick(Sender: TObject);
   private
     FProfiles: TProfileList;
-    FLink: TLink;
     FProfileFrame: TProfileFrame;
-    FBroker: TProfilesBroker;
+    FLink: TLink;
     procedure Clear;
-    procedure LoadList;
-    function DeleteProfile(prid: string): boolean;
-    function LoadProfile(prid: string): boolean;
-    function SaveProfile(): boolean;
     procedure CreateProfile();
-    procedure DrawProfiles;
-    procedure SetLink(const Value: TLink);
+    procedure DrawProfile;
+    procedure FillProfilesCombobox;
+    procedure OnFrameChange(sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
-    function Apply: boolean; virtual;
-    property Link: TLink read FLink write SetLink;
+    procedure SetData(src: TProfileList; link: TLink); virtual;
+    procedure GetData(dst: TProfileList); virtual;
+
+    function Validate(): boolean; virtual;
   end;
 
 implementation
 
 uses
- LoggingUnit;
+ LoggingUnit, common;
 
 {$R *.dfm}
 
@@ -55,128 +50,88 @@ uses
 constructor TProfilesFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  FBroker := TProfilesBroker.Create;
+  FProfiles := TProfileList.Create()
 end;
 
 
 
 destructor TProfilesFrame.Destroy;
 begin
-  FBroker.Free;
+  FProfiles.Free;
   inherited;
 end;
 
 
-
-procedure TProfilesFrame.SetLink(const Value: TLink);
+procedure TProfilesFrame.SetData(src: TProfileList; link: TLink);
 begin
-  FLink := Value;
-  FBroker.Lid := FLink.Id;
-  Clear;
-  LoadList;
-  DrawProfiles;
+  FProfiles.Assign(src);
+  FLink := link;
+  FillProfilesCombobox;
+  if profilesComboBox.items.Count > 0 then
+  begin
+    profilesComboBox.ItemIndex := 0;
+    profilesComboBoxSelect(self);
+  end;
 end;
 
 
-function TProfilesFrame.Apply: boolean;
+function TProfilesFrame.Validate: boolean;
 begin
-
+  result := false;
+  for var p in FProfiles do
+    if (p as TProfile).Description = '' then
+    begin
+      MessageDlg(Format('неn описания профиля %s', [p.Id]), TMsgDlgType.mtError, [mbOK], nil);
+      exit;
+    end;
   result := true;
 end;
 
-
-
-procedure TProfilesFrame.LoadList;
-var
-  Pages : integer;
+procedure TProfilesFrame.GetData(dst: TProfileList);
 begin
-  try
-    var profilesList := FBroker.List(Pages);
-    if profilesList = nil then
-      exit;
-    FProfiles := profilesList as TProfileList;
-  except on e: exception do begin
-    Log('TProfilesFrame.LoadList ' + e.Message, lrtError);
-    Clear;
-  end; end;
+  dst.Assign(FProfiles);
 end;
 
 
-procedure TProfilesFrame.profilesComboBoxSelect(Sender: TObject);
+
+procedure TProfilesFrame.OnFrameChange(sender: TObject);
 begin
-  if profilesComboBox.ItemIndex = -1 then
-    exit;
-  var prid := profilesComboBox.Items[profilesComboBox.ItemIndex];
-  LoadProfile(prid);
+  var p := TProfile(profilesComboBox.Items.Objects[profilesComboBox.ItemIndex]);
+  if (FProfileFrame <> nil) and (p <> nil) then
+    FProfileFrame.GetData(p);
 end;
-
-
 
 
 procedure TProfilesFrame.btnAddProfileClick(Sender: TObject);
 begin
-  profilesComboBox.ItemIndex := -1;
   CreateProfile;
 end;
+
+
 
 procedure TProfilesFrame.btnRemoveProfileClick(Sender: TObject);
 begin
   if profilesComboBox.ItemIndex = -1 then
     exit;
-  var prid := profilesComboBox.Items[profilesComboBox.ItemIndex];
-  var q := Format('Удалить профиль "%s"?', [prid]);
+  var p := TProfile(profilesComboBox.Items.Objects[profilesComboBox.ItemIndex]);
+  var q := Format('Удалить профиль "%s"?', [p.id]);
   if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
     exit;
-  if not DeleteProfile(prid) then
-    exit;
+  FProfiles.Remove(p);
   Clear;
-  LoadList;
-  DrawProfiles;
+  FillProfilesCombobox;
+  if profilesComboBox.items.Count > 0 then
+  begin
+    profilesComboBox.ItemIndex := 0;
+    profilesComboBoxSelect(self);
+  end;
 end;
 
-procedure TProfilesFrame.BitBtnSaveProfileClick(Sender: TObject);
-begin
-  SaveProfile;
-end;
 
 procedure TProfilesFrame.Clear;
 begin
   profilesComboBox.Clear;
   FreeAndNil(FProfileFrame);
-  BitBtnSaveProfile.Visible := false;
-end;
-
-
-
-function TProfilesFrame.DeleteProfile(prid: string): boolean;
-begin
-  result := false;
-  try
-    if not FBroker.Remove(prid) then
-      exit;
-    result := true;
-  except on e: exception do begin
-    Log('TProfilesFrame.DeleteProfile ' + e.Message, lrtError);
-  end; end;
-end;
-
-
-function TProfilesFrame.LoadProfile(prid: string): boolean;
-begin
-  FreeAndNil(FProfileFrame);
-  try
-    var p := FBroker.Info(prid);
-    if not (p is TProfile) then
-      exit;
-    FProfileFrame := TProfileFrame.Create(Self);
-    FProfileFrame.Parent := profilePanel;
-    FProfileFrame.SetData(p as TProfile);
-    FProfileFrame.SetLink(FLink);
-    BitBtnSaveProfile.Visible := true;
-    BitBtnSaveProfile.Caption := 'Сохранить';
-  except on e: exception do begin
-    Log('TProfileFrame.LoadProfile ' + e.Message, lrtError);
-  end; end;
 end;
 
 
@@ -184,55 +139,41 @@ procedure TProfilesFrame.CreateProfile;
 begin
   var p := TProfile.Create;
   p.IsNew := true;
+  p.Id := GenerateGuid;
+  FProfiles.Add(p);
+  FillProfilesCombobox;
+  profilesComboBox.ItemIndex := profilesComboBox.Items.IndexOf(p.Id);
+  profilesComboBoxSelect(self);
+end;
+
+
+procedure TProfilesFrame.profilesComboBoxSelect(Sender: TObject);
+begin
+  DrawProfile;
+end;
+
+
+procedure TProfilesFrame.DrawProfile;
+begin
   FreeAndNil(FProfileFrame);
+  if profilesComboBox.ItemIndex = -1 then
+    exit;
+  var p := TProfile(profilesComboBox.Items.Objects[profilesComboBox.ItemIndex]);
   FProfileFrame := TProfileFrame.Create(Self);
   FProfileFrame.Parent := profilePanel;
-  FProfileFrame.SetData(p);
-  FProfileFrame.SetLink(FLink);
-  BitBtnSaveProfile.Visible := true;
-  BitBtnSaveProfile.Caption := 'Создать';
+  FProfileFrame.SetData(p, FLink);
+  FProfileFrame.OnChange := OnFrameChange;
 end;
 
 
 
-function TProfilesFrame.SaveProfile(): boolean;
-const
-  updString: array[boolean] of string = ('обновлён','сохранён');
+procedure TProfilesFrame.FillProfilesCombobox;
 begin
-  result := false;
-  if FProfileFrame = nil then
-    exit;
-  var profile := TProfile.Create;
-  FProfileFrame.GetData(profile);
-  try
-    if profile.IsNew then
-      result := FBroker.New(profile)
-    else
-      result := FBroker.Update(profile);
-    if result then
-    begin
-      Log('Профиль %s %s', [profile.id, updString[profile.IsNew]]);
-      Clear;
-      LoadList;
-      DrawProfiles;
-    end;
-  except on e: exception do begin
-    Log('TProfileFrame.SaveProfile ' + e.Message, lrtError);
-  end; end;
-end;
-
-
-
-procedure TProfilesFrame.DrawProfiles;
-begin
-  if FProfiles = nil then
-    exit;
+  profilesComboBox.Clear;
   for var i := 0 to FProfiles.Count-1 do
-    profilesComboBox.Items.Add(FProfiles[i].Id);
-  if profilesComboBox.items.Count > 0 then
-    profilesComboBox.ItemIndex := 0;
-  profilesComboBoxSelect(Self);
+    profilesComboBox.Items.AddObject(FProfiles[i].Id, FProfiles[i]);
 end;
+
 
 
 

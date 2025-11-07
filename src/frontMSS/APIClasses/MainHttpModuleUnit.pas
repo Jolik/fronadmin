@@ -91,7 +91,12 @@ end;
 
 function TMainHttpModule.Get(AURL: string): string;
 begin
-  Result := FIdHTTP.Get(AURL);
+  try
+    Result := FIdHTTP.Get(AURL);
+  except
+    on E:EIdHTTPProtocolException do
+      result := E.ErrorMessage;
+  end;
 end;
 
 initialization

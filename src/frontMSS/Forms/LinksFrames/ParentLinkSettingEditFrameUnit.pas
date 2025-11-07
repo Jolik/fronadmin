@@ -8,9 +8,10 @@ uses
   uniGUIClasses, uniGUIFrame, LinkUnit,   ProfilesFrameUnit,
   LinkSettingsUnit, uniGUIBaseClasses, uniPanel, uniSplitter, uniEdit,
   uniCheckBox, uniGroupBox, uniButton, SharedFrameTextInput,
-  SharedFrameBoolInput;
+  SharedFrameBoolInput, ProfileUnit, ProfilesBrokerUnit;
 
 type
+
   TParentLinkSettingEditFrame = class(TUniFrame)
     SettingsPanel: TUniPanel;
     SettingsGroupBox: TUniGroupBox;
@@ -22,52 +23,78 @@ type
     SettingsParentPanel: TUniPanel;
     ProfilesPanel: TUniPanel;
   private
-    Flink: TLink;
-    FLid: string;
     FDataSettings: TDataSettings;
     FProfilesFrame: TProfilesFrame;
+
   protected
     property DataSettings: TDataSettings read FDataSettings write FDataSettings;
-    property Lid: string read FLid write FLid;
-    procedure SetLink(const Value: TLink); virtual;
-  public
     function Apply: boolean; virtual;
-    ///  класс с настройками которые правит фрейм
-    property Link: TLink read Flink write SetLink;
+    procedure SetLink(const Value: TLink); virtual;
+
+  public
+    procedure SetData(srcLink: TLink; srcProfiles: TProfileList); virtual;
+    procedure GetData(dstLink: TLink; dstProfiles: TProfileList); virtual;
+
+    function Validate(): boolean; virtual;
   end;
+
+ TParentLinkSettingEditFrameClass = class of TParentLinkSettingEditFrame;
 
 implementation
 uses
-  uniGUIForm;
+  uniGUIForm, loggingUnit;
 {$R *.dfm}
 
 { TParentChannelSettingEditFrame }
 
-function TParentLinkSettingEditFrame.Apply: boolean;
+
+
+
+procedure TParentLinkSettingEditFrame.GetData(dstLink: TLink;
+  dstProfiles: TProfileList);
 begin
-  result := false;
-  if FProfilesFrame <> nil then
-    if not  FProfilesFrame.Apply() then
-      exit;
+  Apply;
   FDataSettings.Dump := DumpFrame.GetData;
   FDataSettings.LastActivityTimeout := ActiveTimeoutFrame.GetDataInt();
-  result := true;
+  if FProfilesFrame <> nil then
+    FProfilesFrame.GetData(dstProfiles);
+end;
+
+
+procedure TParentLinkSettingEditFrame.SetData(srcLink: TLink;
+  srcProfiles: TProfileList);
+begin
+  FDataSettings := (srcLink.Data as TLinkData).DataSettings;
+
+  DumpFrame.SetData(FDataSettings.Dump);
+  ActiveTimeoutFrame.SetData(FDataSettings.LastActivityTimeout);
+
+  SetLink(srcLink);
+
+  FProfilesFrame := TProfilesFrame.Create(self);
+  FProfilesFrame.Parent := ProfilesPanel;
+  FProfilesFrame.Align := alClient;
+  FProfilesFrame.SetData(srcProfiles, srcLink);
 end;
 
 
 procedure TParentLinkSettingEditFrame.SetLink(const Value: TLink);
 begin
-  Flink := Value;
-  FDataSettings := (Link.Data as TLinkData).DataSettings;
-  FLid := Flink.Id;
-
-  DumpFrame.SetData(FDataSettings.Dump);
-  ActiveTimeoutFrame.SetData(FDataSettings.LastActivityTimeout);
-
-  FProfilesFrame := TProfilesFrame.Create(self);
-  FProfilesFrame.Parent := ProfilesPanel;
-  FProfilesFrame.Align := alClient;
-  FProfilesFrame.Link := Flink;
 end;
+
+function TParentLinkSettingEditFrame.Validate: boolean;
+begin
+  result := false;
+  if not FProfilesFrame.Validate then
+    exit;
+  result := true;
+end;
+
+function TParentLinkSettingEditFrame.Apply: boolean;
+begin
+  result := true;
+end;
+
+
 
 end.
