@@ -66,10 +66,10 @@ type
   // Response wrapper for single credential
   TContextCredInfoResponse = class(TFieldSetResponse)
   private
-    function GetCredential: TSourceCreds;
+    function GetCredential: TSourceCred;
   public
     constructor Create;
-    property Credential: TSourceCreds read GetCredential;
+    property Credential: TSourceCred read GetCredential;
   end;
 
   TContextReqList = class(TReqList)
@@ -271,12 +271,12 @@ end;
 
 constructor TContextCredInfoResponse.Create;
 begin
-  inherited Create(TSourceCreds, 'response', 'credential');
+  inherited Create(TSourceCred, 'response', 'credential');
 end;
 
-function TContextCredInfoResponse.GetCredential: TSourceCreds;
+function TContextCredInfoResponse.GetCredential: TSourceCred;
 begin
-  Result := FieldSet as TSourceCreds;
+  Result := FieldSet as TSourceCred;
 end;
 
 { TContextReqList }
@@ -459,7 +459,7 @@ end;
 
 class function TContextCredReqNew.BodyClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 constructor TContextCredReqNew.Create;
@@ -472,7 +472,7 @@ end;
 
 class function TContextCredReqUpdate.BodyClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 constructor TContextCredReqUpdate.Create;

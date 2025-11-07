@@ -16,8 +16,6 @@ object SourceEditForm: TSourceEditForm
     Align = alClient
     TabOrder = 0
     Caption = ''
-    ExplicitWidth = 1298
-    ExplicitHeight = 811
     object pnlLeft: TUniScrollBox
       Left = 1
       Top = 1
@@ -26,7 +24,6 @@ object SourceEditForm: TSourceEditForm
       Hint = ''
       Align = alLeft
       TabOrder = 1
-      ExplicitHeight = 809
       ScrollHeight = 769
       object gbIdentification: TUniGroupBox
         Left = 0
@@ -70,6 +67,7 @@ object SourceEditForm: TSourceEditForm
           Hint = ''
           Text = ''
           TabOrder = 4
+          ReadOnly = True
         end
         object lblPid: TUniLabel
           Left = 16
@@ -113,6 +111,7 @@ object SourceEditForm: TSourceEditForm
           Hint = ''
           Text = ''
           TabOrder = 9
+          OnChange = edtIndexChange
         end
         object lblNumber: TUniLabel
           Left = 16
@@ -130,6 +129,7 @@ object SourceEditForm: TSourceEditForm
           Hint = ''
           Text = ''
           TabOrder = 11
+          OnChange = edtNumberChange
         end
         object lblOrgType: TUniLabel
           Left = 16
@@ -437,7 +437,6 @@ object SourceEditForm: TSourceEditForm
       Align = alLeft
       ParentColor = False
       Color = clBtnFace
-      ExplicitHeight = 809
     end
     object pnlRight: TUniPanel
       Left = 507
@@ -448,8 +447,6 @@ object SourceEditForm: TSourceEditForm
       Align = alClient
       TabOrder = 3
       Caption = ''
-      ExplicitWidth = 790
-      ExplicitHeight = 809
       object gbContexts: TUniGroupBox
         Left = 1
         Top = 1
@@ -459,7 +456,6 @@ object SourceEditForm: TSourceEditForm
         Caption = #1050#1086#1085#1090#1077#1082#1089#1090#1099
         Align = alTop
         TabOrder = 1
-        ExplicitWidth = 788
         object grdContexts: TUniDBGrid
           Left = 2
           Top = 50
@@ -503,13 +499,12 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
-          ExplicitWidth = 784
           object unbtnAddContext: TUniButton
             Left = 6
             Top = 4
             Width = 34
             Height = 25
-            Hint = ''
+            Hint = #1057#1086#1079#1076#1072#1090#1100' '#1082#1086#1085#1090#1077#1082#1089#1090
             Caption = '+'
             TabOrder = 1
             OnClick = unbtnAddContextClick
@@ -519,7 +514,8 @@ object SourceEditForm: TSourceEditForm
             Top = 4
             Width = 34
             Height = 25
-            Hint = ''
+            Hint = #1059#1076#1072#1083#1080#1090#1100' '#1082#1086#1085#1090#1077#1082#1089#1090
+            Enabled = False
             Caption = '-'
             TabOrder = 2
             OnClick = unbtnDelContextClick
@@ -529,7 +525,7 @@ object SourceEditForm: TSourceEditForm
             Top = 4
             Width = 34
             Height = 25
-            Hint = ''
+            Hint = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1087#1080#1089#1086#1082' '#1082#1086#1085#1090#1077#1082#1089#1090#1086#1074
             Caption = #8634
             TabOrder = 3
             OnClick = unbtnContextRefreshClick
@@ -545,8 +541,6 @@ object SourceEditForm: TSourceEditForm
         Caption = #1048#1085#1090#1077#1088#1092#1077#1081#1089#1099
         Align = alClient
         TabOrder = 2
-        ExplicitWidth = 788
-        ExplicitHeight = 507
         object grdInterfaces: TUniDBGrid
           Left = 2
           Top = 50
@@ -554,6 +548,7 @@ object SourceEditForm: TSourceEditForm
           Height = 463
           Hint = ''
           DataSource = ContextCredsDS
+          ReadOnly = True
           WebOptions.Paged = False
           WebOptions.FetchAll = True
           LoadMask.Message = 'Loading data...'
@@ -566,21 +561,25 @@ object SourceEditForm: TSourceEditForm
               FieldName = 'name'
               Title.Caption = ' '#1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077
               Width = 175
+              ReadOnly = True
             end
             item
               FieldName = 'interface'
               Title.Caption = ' '#1048#1085#1090#1077#1088#1092#1077#1081#1089
               Width = 167
+              ReadOnly = True
             end
             item
               FieldName = 'login'
               Title.Caption = #1051#1086#1075#1080#1085
               Width = 124
+              ReadOnly = True
             end
             item
               FieldName = 'def'
               Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
               Width = 343
+              ReadOnly = True
             end>
         end
         object unpnlCredsButtons: TUniPanel
@@ -592,13 +591,13 @@ object SourceEditForm: TSourceEditForm
           Align = alTop
           TabOrder = 2
           Caption = ''
-          ExplicitWidth = 784
           object unbtnAddCred: TUniButton
             Left = 6
-            Top = 3
+            Top = 4
             Width = 34
             Height = 25
-            Hint = ''
+            Hint = #1057#1086#1079#1076#1072#1090#1100' '#1088#1077#1082#1074#1080#1079#1080#1090
+            Enabled = False
             Caption = '+'
             TabOrder = 1
             OnClick = unbtnAddCredClick
@@ -608,19 +607,31 @@ object SourceEditForm: TSourceEditForm
             Top = 3
             Width = 34
             Height = 25
-            Hint = ''
+            Hint = #1059#1076#1072#1083#1080#1090#1100' '#1088#1077#1082#1074#1080#1079#1080#1090
+            Enabled = False
             Caption = '-'
             TabOrder = 2
             OnClick = unbtnDeleteCredClick
           end
           object unbtnCredsRefresh: TUniButton
+            Left = 126
+            Top = 4
+            Width = 34
+            Height = 25
+            Hint = #1054#1073#1085#1086#1074#1080#1090#1100' '#1089#1087#1080#1089#1086#1082' '#1088#1077#1082#1074#1080#1079#1080#1090#1086#1074
+            Caption = #8634
+            TabOrder = 3
+            OnClick = unbtnCredsRefreshClick
+          end
+          object unbtnEditCred: TUniButton
             Left = 86
             Top = 4
             Width = 34
             Height = 25
-            Hint = ''
-            Caption = #8634
-            TabOrder = 3
+            Hint = #1056#1077#1076#1072#1082#1090#1080#1088#1086#1074#1072#1090#1100' '#1088#1077#1082#1074#1080#1079#1080#1090#1099
+            Enabled = False
+            Caption = #9998
+            TabOrder = 4
             OnClick = unbtnCredsRefreshClick
           end
         end
@@ -636,8 +647,6 @@ object SourceEditForm: TSourceEditForm
     Align = alBottom
     TabOrder = 1
     Caption = ''
-    ExplicitTop = 811
-    ExplicitWidth = 1298
     object btnClose: TUniButton
       Left = 1218
       Top = 8

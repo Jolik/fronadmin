@@ -9,27 +9,9 @@ uses
   SourceCredsUnit, LinkUnit, FuncUnit, uniMultiItem, Vcl.Controls, Vcl.Forms;
 
 type
-  TInterfaceCreateResult = record
-    CtxId: string;
-    Lid: string;
-    Name: string;
-    Login: string;
-    Password: Nullable<string>;
-    Def: string;
-  end;
 
-  TInterfaceEditResult = record
-    Crid: string;
-    CtxId: string;
-    Lid: string;
-    Name: string;
-    Login: string;
-    Password: Nullable<string>;
-    Def: string;
-  end;
-
-  TOnCreateCredential = reference to procedure(const AResult: TInterfaceCreateResult);
-  TOnUpdateCredential = reference to procedure(const AResult: TInterfaceEditResult);
+  TOnCreateCredential = reference to procedure(const AResult: TSourceCred);
+  TOnUpdateCredential = reference to procedure(const AResult: TSourceCred);
 
   TInterfaceModalForm = class(TUniForm)
     pnlFooter: TUniPanel;
@@ -51,9 +33,9 @@ type
     procedure btnSaveClick(Sender: TObject);
   private
     FIsEditMode: Boolean;
+    FCred: TSourceCred;
     FCtxId: string;
     FLinks: TLinkList;
-    FEditCred: TSourceCreds;
     FOnCreate: TOnCreateCredential;
     FOnUpdate: TOnUpdateCredential;
     procedure AssignLinks(const ALinks: TLinkList);
@@ -61,12 +43,12 @@ type
     function SelectedLink(out ALink: TLink): Boolean;
     procedure UpdatePasswordHint;
     function ValidateForm(out ErrMsg: string): Boolean;
-    procedure ApplyCredentialToFields(const ACred: TSourceCreds);
+    procedure ApplyCredentialToFields(const ACred: TSourceCred);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure LoadForCreate(const ACtxId: string; const ALinks: TLinkList);
-    procedure LoadForEdit(const ACred: TSourceCreds; const ALinks: TLinkList);
+    procedure LoadForCreate(const ACred: TSourceCred; const ALinks: TLinkList);
+    procedure LoadForEdit(const ACred: TSourceCred; const ALinks: TLinkList);
 
     property OnCreate: TOnCreateCredential read FOnCreate write FOnCreate;
     property OnUpdate: TOnUpdateCredential read FOnUpdate write FOnUpdate;
@@ -81,7 +63,7 @@ constructor TInterfaceModalForm.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FLinks := nil;
-  FEditCred := nil;
+  FCred := nil;
 end;
 
 destructor TInterfaceModalForm.Destroy;
@@ -126,11 +108,11 @@ begin
     edPass.Hint := 'Введите пароль для новой учетной записи';
 end;
 
-procedure TInterfaceModalForm.ApplyCredentialToFields(const ACred: TSourceCreds);
+procedure TInterfaceModalForm.ApplyCredentialToFields(const ACred: TSourceCred);
 begin
   edName.Text := ACred.Name;
   edLogin.Text := ACred.Login;
-  mmDef.Lines.Text := ACred.SourceData.Def;
+  mmDef.Lines.Text := ACred.Data.Def;
   edPass.Text := '';
 end;
 
@@ -139,11 +121,13 @@ begin
   FreeOnClose := True;
 end;
 
-procedure TInterfaceModalForm.LoadForCreate(const ACtxId: string; const ALinks: TLinkList);
+procedure TInterfaceModalForm.LoadForCreate(const ACred: TSourceCred; const ALinks: TLinkList);
 begin
+  if not Assigned(ACred) then raise Exception.Create('Cred is not assigned');
+
   FIsEditMode := False;
-  FCtxId := ACtxId;
-  FEditCred := nil;
+  FCred := ACred;
+  FCtxId := FCred.CtxId;
   AssignLinks(ALinks);
   PopulateLinks;
   cbLink.Enabled := True;
@@ -155,14 +139,15 @@ begin
   UpdatePasswordHint;
 end;
 
-procedure TInterfaceModalForm.LoadForEdit(const ACred: TSourceCreds; const ALinks: TLinkList);
+procedure TInterfaceModalForm.LoadForEdit(const ACred: TSourceCred; const ALinks: TLinkList);
 var
   I: Integer;
   Link: TLink;
 begin
   FIsEditMode := True;
+  FCred := ACred;
   FCtxId := ACred.CtxId;
-  FEditCred := ACred;
+  FCred := ACred;
   AssignLinks(ALinks);
   PopulateLinks;
   cbLink.Enabled := False;
@@ -177,9 +162,9 @@ begin
         Break;
       end;
     end;
-  if (cbLink.ItemIndex = -1) and Assigned(FEditCred) then
+  if (cbLink.ItemIndex = -1) and Assigned(FCred) then
   begin
-    cbLink.Items.Add(Format('%s (%s)', [FEditCred.Lid, FEditCred.Lid]));
+    cbLink.Items.Add(Format('%s (%s)', [FCred.Lid, FCred.Lid]));
     cbLink.ItemIndex := cbLink.Items.Count - 1;
   end;
 
@@ -244,8 +229,6 @@ procedure TInterfaceModalForm.btnSaveClick(Sender: TObject);
 var
   ErrMsg: string;
   Link: TLink;
-  CreateResult: TInterfaceCreateResult;
-  UpdateResult: TInterfaceEditResult;
 begin
   if not ValidateForm(ErrMsg) then
   begin
@@ -255,25 +238,22 @@ begin
 
   if FIsEditMode then
   begin
-    if not Assigned(FEditCred) then
+    if not Assigned(FCred) then
     begin
       MessageDlg('Нет выбранной учетной записи для редактирования.', TMsgDlgType.mtWarning, [mbOK], nil);
       Exit;
     end;
 
-    UpdateResult.Crid := FEditCred.Crid;
-    UpdateResult.CtxId := FEditCred.CtxId;
-    UpdateResult.Lid := FEditCred.Lid;
-    UpdateResult.Name := trim(edName.Text);
-    UpdateResult.Login := trim(edLogin.Text);
+    FCred.Name := trim(edName.Text);
+    FCred.Login := trim(edLogin.Text);
     if trim(edPass.Text).IsEmpty then
-      UpdateResult.Password.Clear
+      FCred.Pass.Clear
     else
-      UpdateResult.Password := Nullable<string>.Create(trim(edPass.Text));
-    UpdateResult.Def := mmDef.Lines.Text.Trim;
+      FCred.Pass := Nullable<string>.Create(trim(edPass.Text));
+    FCred.Data.Def := mmDef.Lines.Text.Trim;
 
     if Assigned(FOnUpdate) then
-      FOnUpdate(UpdateResult);
+      FOnUpdate(FCred);
   end
   else
   begin
@@ -283,15 +263,18 @@ begin
       Exit;
     end;
 
-    CreateResult.CtxId := FCtxId;
-    CreateResult.Lid := Link.Id;
-    CreateResult.Name := trim(edName.Text);
-    CreateResult.Login := trim(edLogin.Text);
-    CreateResult.Password := Nullable<string>.Create(trim(edPass.Text));
-    CreateResult.Def := mmDef.Lines.Text.Trim;
+    FCred.CtxId := FCtxId;
+    FCred.Lid := Link.Id;
+    FCred.Name := trim(edName.Text);
+    FCred.Login := trim(edLogin.Text);
+    if trim(edPass.Text).IsEmpty then
+      FCred.Pass.Clear
+    else
+      FCred.Pass := Nullable<string>.Create(trim(edPass.Text));
+    FCred.Data.Def := mmDef.Lines.Text.Trim;
 
     if Assigned(FOnCreate) then
-      FOnCreate(CreateResult);
+      FOnCreate(FCred);
   end;
 
   Close;

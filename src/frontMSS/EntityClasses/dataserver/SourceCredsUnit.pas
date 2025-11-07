@@ -4,7 +4,7 @@ interface
 
 uses
   System.Classes, System.JSON, System.Generics.Collections, System.DateUtils,
-  EntityUnit;
+  EntityUnit, FuncUnit;
 
 type
   ///  data   creds
@@ -24,19 +24,19 @@ type
   end;
 
 type
-  // TSourceCreds .
-  TSourceCreds = class(TFieldSet)
+  // TSourceCred .
+  TSourceCred = class(TFieldSet)
   private
     FId: string;
     FName: string;
     FCompId: string;
     FCreated: TDateTime;
     FUpdated: TDateTime;
-    FArchived: TDateTime;
+    FArchived: Nullable<TDateTime>;
     FCtxId: string;
     FLid: string;
     FLogin: string;
-    FPass: string;
+    FPass: Nullable<string>;
     FBody: TBody;
     FSourceData: TSourceCredData;
     function GetCrid: string;
@@ -58,14 +58,14 @@ type
     property CompId: string read FCompId write FCompId;
     property Created: TDateTime read FCreated write FCreated;
     property Updated: TDateTime read FUpdated write FUpdated;
-    property Archived: TDateTime read FArchived write FArchived;
+    property Archived: Nullable<TDateTime> read FArchived write FArchived;
     property CtxId: string read FCtxId write FCtxId;
     property Lid: string read FLid write FLid;
     property Login: string read FLogin write FLogin;
-    property Pass: string read FPass write FPass;
+    property Pass: Nullable<string> read FPass write FPass;
     property Body: TBody read FBody;
     ///    Data.Def
-    property SourceData: TSourceCredData read FSourceData;
+    property Data: TSourceCredData read FSourceData;
   end;
 
 type
@@ -77,8 +77,7 @@ type
 implementation
 
 uses
-  System.SysUtils,
-  FuncUnit;
+  System.SysUtils;
 
 const
   CridKey = 'crid';
@@ -166,21 +165,21 @@ begin
   inherited;
 end;
 
-{ TSourceCreds }
+{ TSourceCred }
 
-function TSourceCreds.Assign(ASource: TFieldSet): boolean;
+function TSourceCred.Assign(ASource: TFieldSet): boolean;
 var
-  Src: TSourceCreds;
+  Src: TSourceCred;
 begin
   Result := False;
 
   if not Assigned(ASource) then
     Exit;
 
-  if not (ASource is TSourceCreds) then
+  if not (ASource is TSourceCred) then
     Exit;
 
-  Src := TSourceCreds(ASource);
+  Src := TSourceCred(ASource);
 
   FId := Src.Id;
   FName := Src.Name;
@@ -195,45 +194,46 @@ begin
   FPass := Src.Pass;
 
   FBody.Assign(Src.Body);
-  FSourceData.Assign(Src.SourceData);
+  FSourceData.Assign(Src.Data);
 
   Result := True;
 end;
 
-constructor TSourceCreds.Create;
+constructor TSourceCred.Create;
 begin
   inherited Create;
   FBody := TBody.Create;
   FSourceData := TSourceCredData.Create;
 end;
 
-constructor TSourceCreds.Create(src: TJSONObject; const APropertyNames: TArray<string>);
+constructor TSourceCred.Create(src: TJSONObject; const APropertyNames: TArray<string>);
 begin
   Create;
   Parse(src, APropertyNames);
 end;
 
-destructor TSourceCreds.Destroy;
+destructor TSourceCred.Destroy;
 begin
   FSourceData.Free;
   FBody.Free;
   inherited;
 end;
 
-function TSourceCreds.GetCrid: string;
+function TSourceCred.GetCrid: string;
 begin
   Result := FId;
 end;
 
-procedure TSourceCreds.SetCrid(const Value: string);
+procedure TSourceCred.SetCrid(const Value: string);
 begin
   FId := Value;
 end;
 
-procedure TSourceCreds.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
+procedure TSourceCred.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
 var
   BodyObj, DataObj: TJSONObject;
-  CreatedValue, UpdatedValue, ArchivedValue: Integer;
+  CreatedValue, UpdatedValue: Int64;
+  ArchivedValue: Nullable<Int64>;
 begin
   if not Assigned(src) then
     Exit;
@@ -242,9 +242,9 @@ begin
   FName := GetValueStrDef(src, NameKey, '');
   FCompId := GetValueStrDef(src, CompIdKey, '');
 
-  CreatedValue := GetValueIntDef(src, CreatedKey, 0);
-  UpdatedValue := GetValueIntDef(src, UpdatedKey, 0);
-  ArchivedValue := GetValueIntDef(src, ArchivedKey, 0);
+  CreatedValue := GetValueInt64Def(src, CreatedKey, 0);
+  UpdatedValue := GetValueInt64Def(src, UpdatedKey, 0);
+  ArchivedValue := GetNullableInt64(src, ArchivedKey);
 
   if CreatedValue <> 0 then
     FCreated := UnixToDateTime(CreatedValue)
@@ -256,15 +256,14 @@ begin
   else
     FUpdated := 0;
 
-  if ArchivedValue <> 0 then
-    FArchived := UnixToDateTime(ArchivedValue)
-  else
-    FArchived := 0;
+  FArchived.Clear;
+  if ArchivedValue.HasValue then
+    FArchived := Nullable<TDateTime>.Create(UnixToDateTime(ArchivedValue.Value));
 
   FCtxId := GetValueStrDef(src, CtxIdKey, '');
   FLid := GetValueStrDef(src, LidKey, '');
   FLogin := GetValueStrDef(src, LoginKey, '');
-  FPass := GetValueStrDef(src, PassKey, '');
+  FPass := GetNullableStr(src, PassKey);
 
   BodyObj := src.GetValue(BodyKey) as TJSONObject;
   if Assigned(BodyObj) then
@@ -275,7 +274,7 @@ begin
     FSourceData.Parse(DataObj);
 end;
 
-procedure TSourceCreds.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
+procedure TSourceCred.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
 var
   BodyObj, DataObj: TJSONObject;
 begin
@@ -287,7 +286,10 @@ begin
   dst.AddPair(CompIdKey, FCompId);
   dst.AddPair(CreatedKey, TJSONNumber.Create(DateTimeToUnix(FCreated)));
   dst.AddPair(UpdatedKey, TJSONNumber.Create(DateTimeToUnix(FUpdated)));
-  dst.AddPair(ArchivedKey, TJSONNumber.Create(DateTimeToUnix(FArchived)));
+  if FArchived.HasValue then
+    dst.AddPair(ArchivedKey, TJSONNumber.Create(DateTimeToUnix(FArchived.Value)))
+  else
+    dst.AddPair(ArchivedKey, TJSONNull.Create);
 
   DataObj := FSourceData.Serialize;
   if Assigned(DataObj) then
@@ -300,14 +302,17 @@ begin
   dst.AddPair(CtxIdKey, FCtxId);
   dst.AddPair(LidKey, FLid);
   dst.AddPair(LoginKey, FLogin);
-  dst.AddPair(PassKey, FPass);
+  if FPass.HasValue then
+    dst.AddPair(PassKey, FPass.Value)
+  else
+    dst.AddPair(PassKey, TJSONNull.Create);
 end;
 
 { TSourceCredsList }
 
 class function TSourceCredsList.ItemClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 end.

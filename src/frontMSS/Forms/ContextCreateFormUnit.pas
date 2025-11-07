@@ -6,15 +6,12 @@ uses
   System.SysUtils, System.Classes, System.Generics.Collections,
   uniGUIBaseClasses, uniGUIClasses,uniGUITypes, uniGUIForm, uniPanel, uniButton,
   uniLabel, uniComboBox, uniEdit, System.UITypes,
-  ContextTypeUnit, uniMultiItem, Vcl.Controls, Vcl.Forms;
+  ContextTypeUnit,ContextUnit, uniMultiItem, Vcl.Controls, Vcl.Forms;
 
 type
-  TContextCreateResult = record
-    CtxtId: string;
-    Index: string;
-  end;
 
-  TOnSaveContext = reference to procedure(const AResult: TContextCreateResult);
+
+  TOnSaveContext = reference to procedure(const AResult: TContext);
 
   TContextCreateForm = class(TUniForm)
     pnlBody: TUniPanel;
@@ -54,20 +51,23 @@ var
   Err: string;
   CtxtId: string;
   IndexValue: string;
-  ResultData: TContextCreateResult;
+  ResCtx: TContext;
 begin
   if not ValidateForm(Err, CtxtId, IndexValue) then
   begin
     MessageDlg(Err, mtWarning, [mbOK], nil);
     Exit;
   end;
+    ResCtx.Create;
+  try
+    ResCtx.CtxtId := CtxtId;
+    ResCtx.Index := IndexValue;
 
-  ResultData.CtxtId := CtxtId;
-  ResultData.Index := IndexValue;
-
-  if Assigned(FOnSave) then
-    FOnSave(ResultData);
-
+    if Assigned(FOnSave) then
+      FOnSave(ResCtx);
+  finally
+    ResCtx.Free
+  end;
   Close;
 end;
 

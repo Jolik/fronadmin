@@ -4,14 +4,14 @@ interface
 
 uses
   System.Classes, System.JSON, System.Generics.Collections,
-  EntityUnit, DataserieUnit;
+  EntityUnit, DataserieUnit, FuncUnit;
 
 type
   ///  dataserver group entity
   TDsGroup = class(TEntity)
   private
-    FPdsgid: string;
-    FCtxid: string;
+    FPdsgid: Nullable<string>;
+    FCtxid: Nullable<string>;
     FSid: string;
     FMetadata: TJSONObject;
     FDataseries: TDataseriesList;
@@ -30,8 +30,8 @@ type
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
 
     property Dsgid: string read GetDsgid write SetDsgid;
-    property Pdsgid: string read FPdsgid write FPdsgid;
-    property Ctxid: string read FCtxid write FCtxid;
+    property Pdsgid: Nullable<string> read FPdsgid write FPdsgid;
+    property Ctxid: Nullable<string> read FCtxid write FCtxid;
     property Sid: string read FSid write FSid;
     property Metadata: TJSONObject read FMetadata;
     property Dataseries: TDataseriesList read FDataseries;
@@ -48,8 +48,7 @@ type
 implementation
 
 uses
-  System.SysUtils,
-  FuncUnit;
+  System.SysUtils;
 
 const
   DsgidKey = 'dsgid';
@@ -132,8 +131,8 @@ var
 begin
   inherited Parse(src, APropertyNames);
 
-  FPdsgid := GetValueStrDef(src, PdsgidKey, '');
-  FCtxid := GetValueStrDef(src, CtxidKey, '');
+  FPdsgid := GetNullableStr(src, PdsgidKey);
+  FCtxid := GetNullableStr(src, CtxidKey);
   FSid := GetValueStrDef(src, SidKey, '');
 
   FreeAndNil(FMetadata);
@@ -166,8 +165,14 @@ var
 begin
   inherited Serialize(dst, APropertyNames);
 
-  dst.AddPair(PdsgidKey, FPdsgid);
-  dst.AddPair(CtxidKey, FCtxid);
+  if FPdsgid.HasValue then
+    dst.AddPair(PdsgidKey, FPdsgid.Value)
+  else
+    dst.AddPair(PdsgidKey, TJSONNull.Create);
+  if FCtxid.HasValue then
+    dst.AddPair(CtxidKey, FCtxid.Value)
+  else
+    dst.AddPair(CtxidKey, TJSONNull.Create);
   dst.AddPair(SidKey, FSid);
 
   if Assigned(FMetadata) then

@@ -31,6 +31,7 @@ type
     function Update(AReq: TReqUpdate): TJSONResponse; overload;
     function Remove(AReq: TSourceReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
+    function Archive(AReq: TSourceReqArchive): TJSONResponse; overload;
 
     // Request factories
     function CreateReqList: TReqList; override;
@@ -38,6 +39,7 @@ type
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
+    function CreateReqArchive: TSourceReqArchive;
   end;
 
 implementation
@@ -50,7 +52,6 @@ uses
 constructor TSourcesRestBroker.Create(const ATicket: string = '');
 begin
  inherited Create(ATicket);
-  // Задаём фиксированный базовый путь для маршрутизатора
   BasePath := constURLDataserverBasePath;
 end;
 
@@ -82,6 +83,12 @@ end;
 function TSourcesRestBroker.CreateReqRemove: TReqRemove;
 begin
   Result := TSourceReqRemove.Create;
+  Result.BasePath := BasePath;
+end;
+
+function TSourcesRestBroker.CreateReqArchive: TSourceReqArchive;
+begin
+  Result := TSourceReqArchive.Create;
   Result.BasePath := BasePath;
 end;
 
@@ -122,7 +129,7 @@ end;
 function TSourcesRestBroker.New(AReq: TSourceReqNew): TIdNewResponse;
 begin
   Result := TIdNewResponse.Create;
-  HttpClient.Request(AReq, Result);
+  inherited New(AReq, Result);
 end;
 
 function TSourcesRestBroker.Update(AReq: TSourceReqUpdate): TJSONResponse;
@@ -141,6 +148,11 @@ begin
 end;
 
 function TSourcesRestBroker.Remove(AReq: TReqRemove): TJSONResponse;
+begin
+  Result := inherited Remove(AReq);
+end;
+
+function TSourcesRestBroker.Archive(AReq: TSourceReqArchive): TJSONResponse;
 begin
   Result := inherited Remove(AReq);
 end;

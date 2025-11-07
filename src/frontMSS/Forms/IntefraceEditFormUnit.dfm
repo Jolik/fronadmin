@@ -35,7 +35,7 @@ object InterfaceModalForm: TInterfaceModalForm
       TabOrder = 1
     end
     object btnSave: TUniButton
-      Left = 360
+      Left = 358
       Top = 12
       Width = 120
       Height = 32
@@ -46,7 +46,7 @@ object InterfaceModalForm: TInterfaceModalForm
       Anchors = [akRight, akBottom]
       TabOrder = 2
       OnClick = btnSaveClick
-      ExplicitLeft = 358
+      ExplicitLeft = 356
     end
   end
   object pnlBody: TUniPanel
@@ -58,8 +58,6 @@ object InterfaceModalForm: TInterfaceModalForm
     Align = alClient
     TabOrder = 0
     Caption = ''
-    ExplicitWidth = 498
-    ExplicitHeight = 296
     DesignSize = (
       500
       304)
@@ -75,7 +73,7 @@ object InterfaceModalForm: TInterfaceModalForm
     object cbLink: TUniComboBox
       Left = 160
       Top = 16
-      Width = 324
+      Width = 322
       Height = 24
       Hint = #1048#1085#1090#1077#1088#1092#1077#1081#1089' '#1087#1088#1080#1085#1072#1076#1083#1077#1078#1080#1090#1089#1103' '#1074' '#1086#1090#1074#1077#1090#1077'links/list'
       ShowHint = True
@@ -84,7 +82,7 @@ object InterfaceModalForm: TInterfaceModalForm
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
       IconItems = <>
-      ExplicitWidth = 322
+      ExplicitWidth = 320
     end
     object lblName: TUniLabel
       Left = 16
@@ -98,13 +96,13 @@ object InterfaceModalForm: TInterfaceModalForm
     object edName: TUniEdit
       Left = 160
       Top = 56
-      Width = 324
+      Width = 322
       Height = 24
       Hint = ''
       Text = ''
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 2
-      ExplicitWidth = 322
+      ExplicitWidth = 320
     end
     object lblLogin: TUniLabel
       Left = 16
@@ -118,13 +116,13 @@ object InterfaceModalForm: TInterfaceModalForm
     object edLogin: TUniEdit
       Left = 160
       Top = 96
-      Width = 324
+      Width = 322
       Height = 24
       Hint = ''
       Text = ''
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 3
-      ExplicitWidth = 322
+      ExplicitWidth = 320
     end
     object lblPass: TUniLabel
       Left = 16
@@ -138,14 +136,14 @@ object InterfaceModalForm: TInterfaceModalForm
     object edPass: TUniEdit
       Left = 160
       Top = 136
-      Width = 324
+      Width = 322
       Height = 24
       Hint = ''
       PasswordChar = '*'
       Text = ''
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 4
-      ExplicitWidth = 322
+      ExplicitWidth = 320
     end
     object lblDef: TUniLabel
       Left = 16
@@ -159,14 +157,12 @@ object InterfaceModalForm: TInterfaceModalForm
     object mmDef: TUniMemo
       Left = 160
       Top = 176
-      Width = 324
+      Width = 322
       Height = 120
       Hint = ''
       ScrollBars = ssVertical
       Anchors = [akLeft, akTop, akRight, akBottom]
       TabOrder = 5
-      ExplicitWidth = 322
-      ExplicitHeight = 112
     end
   end
 end

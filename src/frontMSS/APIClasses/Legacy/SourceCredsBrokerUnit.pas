@@ -44,7 +44,7 @@ type
     function Info(AId: String): TFieldSet;
     ///
     ///      false
-    function Update(AFieldSet: TSourceCreds): Boolean;
+    function Update(AFieldSet: TSourceCred): Boolean;
     ///
     ///      false
     function Remove(AId: String): Boolean; overload;
@@ -74,7 +74,7 @@ end;
 
 class function TSourceCredsBroker.ClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 class function TSourceCredsBroker.ListClassType: TFieldSetListClass;
@@ -237,7 +237,7 @@ end;
 
 ///
 ///      false
-function TSourceCredsBroker.Update(AFieldSet: TSourceCreds): Boolean;
+function TSourceCredsBroker.Update(AFieldSet: TSourceCred): Boolean;
 var
   URL: String;
   JSONCreds: TJSONObject;

@@ -18,10 +18,10 @@ type
 
   TSourceCredsInfoResponse = class(TFieldSetResponse)
   private
-    function GetSourceCreds: TSourceCreds;
+    function GetSourceCreds: TSourceCred;
   public
     constructor Create;
-    property SourceCreds: TSourceCreds read GetSourceCreds;
+    property SourceCreds: TSourceCred read GetSourceCreds;
   end;
 
   TSourceCredsReqList = class(TReqList)
@@ -74,12 +74,12 @@ end;
 
 constructor TSourceCredsInfoResponse.Create;
 begin
-  inherited Create(TSourceCreds, 'response', 'credential');
+  inherited Create(TSourceCred, 'response', 'credential');
 end;
 
-function TSourceCredsInfoResponse.GetSourceCreds: TSourceCreds;
+function TSourceCredsInfoResponse.GetSourceCreds: TSourceCred;
 begin
-  Result := FieldSet as TSourceCreds;
+  Result := FieldSet as TSourceCred;
 end;
 
 { Requests }
@@ -109,7 +109,7 @@ end;
 
 class function TSourceCredsReqNew.BodyClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 constructor TSourceCredsReqNew.Create;
@@ -120,7 +120,7 @@ end;
 
 class function TSourceCredsReqUpdate.BodyClassType: TFieldSetClass;
 begin
-  Result := TSourceCreds;
+  Result := TSourceCred;
 end;
 
 constructor TSourceCredsReqUpdate.Create;

@@ -94,6 +94,7 @@ type
     unbtnContextRefresh: TUniButton;
     unbtnCredsRefresh: TUniButton;
     CredsMemCrID: TStringField;
+    unbtnEditCred: TUniButton;
 
     procedure btnCloseClick(Sender: TObject);
     procedure btnSaveClick(Sender: TObject);
@@ -102,6 +103,8 @@ type
     procedure cbCountryChange(Sender: TObject);
     procedure cbRegionChange(Sender: TObject);
     procedure cbOrgTypeChange(Sender: TObject);
+    procedure edtIndexChange(Sender: TObject);
+    procedure edtNumberChange(Sender: TObject);
     procedure grdContextsSelectionChange(Sender: TObject);
     procedure unbtnDelContextClick(Sender: TObject);
     procedure unbtnContextRefreshClick(Sender: TObject);
@@ -129,9 +132,9 @@ type
     procedure SetContextDS(contexts: TContextList);
     procedure DelContext;
     procedure DelCred;
-    procedure CreateContext(const ACtxtId: string; AIndex: string);
-    procedure CreateCredential(const AParams: TInterfaceCreateResult);
-    procedure UpdateCredential(const AParams: TInterfaceEditResult; ACred: TSourceCreds);
+    procedure CreateContext(ACtx: TContext);
+    procedure CreateCredential(ACred: TSourceCred);
+    procedure UpdateCredential(ACred: TSourceCred);
     procedure EditCredential(const ACredId: string);
     function BuildLinkList: TLinkList;
     procedure UpdateUI;
@@ -139,7 +142,7 @@ type
     procedure ApplyToSource;
     procedure RefreshContexts;
     procedure RefreshCreds;
-    procedure SaveSource;
+    procedure CreateSource;
     procedure UpdateSource;
     procedure PopulateOrganizationCombos;
     procedure PopulateOrganizationTypeCombos;
@@ -149,6 +152,18 @@ type
     procedure ApplyOrganizationSelection;
     procedure ApplyLocationSelection;
     procedure ApplyOrgTypeSelection;
+    procedure UpdateSourceCountry(const ACountryId: string);
+    procedure UpdateSourceRegion(const ARegionId: string);
+    procedure UpdateSourceOwnerOrg(const AOwnerOrgId: Integer);
+    procedure UpdateSourcePid(const APid: string);
+    procedure UpdateSourceName(const AName: string);
+    procedure UpdateSourceIndex(const AIndex: string);
+    procedure UpdateSourceSrcType(const ATypeId: Integer);
+    procedure UpdateSourceContactOrg(const AOrg: string);
+    procedure UpdateSourceContactDirector(const ADirector: string);
+    procedure UpdateSourceContactPhone(const APhone: string);
+    procedure UpdateSourceContactEmail(const AEmail: string);
+    procedure UpdateSourceContactMail(const AMail: string);
     function GetSelectedOrganization(ACombo: TUniComboBox): TOrganization;
     function GetSelectedOrgType: TOrgType;
     function FindOrganizationById(AOrgId: Integer): TOrganization;
@@ -158,6 +173,12 @@ type
     procedure SelectOrganizationInCombo(ACombo: TUniComboBox; AOrgId: Integer);
     procedure SelectLocationInCombo(ACombo: TUniComboBox; const ALocId: string);
     function GetSelectedCountry: TLocation;
+    function GetParentOrgId(const Org: TOrganization): Integer;
+    function FindLocationById(const ALocId: string): TLocation;
+    function PadSidSegment(const AValue: string; ALength: Integer): string;
+    function BuildSidPrefix: string;
+    function BuildAutoSid: string;
+    procedure UpdateSidFromInputs;
   public
     procedure AfterConstruction; override;
     destructor Destroy; override;
@@ -174,13 +195,15 @@ uses
   OrganizationHttpRequests, LocationsRestBrokerUnit, LocationHttpRequests,
   ContextsHttpRequests, LinksRestBrokerUnit, APIConst,
   HttpClientUnit, LoggingUnit, BaseResponses,
-  LinksHttpRequests, ContextCreateFormUnit;
+  LinksHttpRequests, ContextCreateFormUnit, SourceHttpRequests;
 
 function SourceEditForm(isEdit:boolean;source:TSource): TSourceEditForm;
 begin
   Result := TSourceEditForm(UniMainModule.GetFormInstance(TSourceEditForm));
   with Result do begin
     FIsEditMode:= isEdit;
+    pnlRight.Enabled:= isEdit;
+
     FSource:= source;
     UpdateUI;
     LoadData;
@@ -266,13 +289,11 @@ begin
   end;
 end;
 
-procedure TSourceEditForm.CreateContext(const ACtxtId: string; AIndex: string);
+procedure TSourceEditForm.CreateContext(ACtx:TContext);
 var
   Req: TContextReqNew;
   Resp: TIdNewResponse;
-  ContextEntity: TContext;
 begin
-
   if not FIsEditMode then
   begin
     MessageDlg('Сохраните источник перед добавлением контекста.', mtWarning, [mbOK], nil);
@@ -281,14 +302,8 @@ begin
 
   Req := FContextBroker.CreateReqNew() as TContextReqNew;
   Resp := nil;
-  ContextEntity := TContext.Create;
   try
-    ContextEntity.Sid := FSource.Sid;
-    ContextEntity.CtxtId := ACtxtId;
-    ContextEntity.Index := AIndex;
-
-    Req.ApplyBody(ContextEntity);
-
+    Req.ApplyBody(ACtx);
     try
       Resp := FContextBroker.New(Req);
       if Assigned(Resp) and (Resp.StatusCode in [200, 201]) then
@@ -308,7 +323,6 @@ begin
           [E.Message]), mtWarning, [mbOK], nil);
     end;
   finally
-    ContextEntity.Free;
     Resp.Free;
     Req.Free;
   end;
@@ -327,11 +341,11 @@ begin
   ContextForm := TContextCreateForm.Create(UniApplication);
   try
     ContextForm.SetContextTypes(FContextTypes);
-    ContextForm.OpenWithIndex(FSource.Index);
+    ContextForm.OpenWithIndex(FSource.Index.ValueOrDefault(''));
     ContextForm.OnSave :=
-      procedure(const AResult: TContextCreateResult)
+      procedure(const AResult: TContext)
       begin
-        CreateContext(AResult.CtxtId, AResult.Index);
+        CreateContext(AResult);
       end;
     ContextForm.ShowModal;
   except
@@ -349,27 +363,16 @@ begin
       Result.Add(Pair.Value);
 end;
 
-procedure TSourceEditForm.CreateCredential(const AParams: TInterfaceCreateResult);
+procedure TSourceEditForm.CreateCredential(ACred: TSourceCred);
 var
   Req: TContextCredReqNew;
   Resp: TJSONResponse;
-  Cred: TSourceCreds;
 begin
-  Req := FContextBroker.CreateReqCredNew() as TContextCredReqNew;
-  Resp := nil;
-  Cred := TSourceCreds.Create;
+  if not Assigned(ACred) then Exit;
+  Req:= nil; Resp:=nil;
   try
-    Cred.CtxId := AParams.CtxId;
-    Cred.Lid := AParams.Lid;
-    Cred.Name := AParams.Name;
-    Cred.Login := AParams.Login;
-    if AParams.Password.HasValue then
-      Cred.Pass := AParams.Password.Value
-    else
-      Cred.Pass := '';
-    Cred.SourceData.Def := AParams.Def;
-
-    Req.ApplyBody(Cred);
+    Req := FContextBroker.CreateReqCredNew() as TContextCredReqNew;
+    Req.ApplyBody(ACred);
     try
       Resp := FContextBroker.NewCredential(Req);
       if Assigned(Resp) and (Resp.StatusCode in [200, 201]) then
@@ -388,33 +391,21 @@ begin
         MessageDlg('Ошибка создания интерфейса: ' + E.Message, mtWarning, [mbOK], nil);
     end;
   finally
-    Cred.Free;
+    ACred.Free;
     Resp.Free;
     Req.Free;
   end;
 end;
 
-procedure TSourceEditForm.UpdateCredential(const AParams: TInterfaceEditResult; ACred: TSourceCreds);
+procedure TSourceEditForm.UpdateCredential(ACred: TSourceCred);
 var
   Req: TContextCredReqUpdate;
   Resp: TJSONResponse;
 begin
-  if not Assigned(ACred) then
-    Exit;
-
-  Req := FContextBroker.CreateReqCredUpdate(AParams.Crid) as TContextCredReqUpdate;
-  Resp := nil;
+  if not Assigned(ACred) then Exit;
+  Req:= nil; Resp:=nil;
   try
-    ACred.Crid := AParams.Crid;
-    ACred.CtxId := AParams.CtxId;
-    ACred.Lid := AParams.Lid;
-    ACred.Name := AParams.Name;
-    ACred.Login := AParams.Login;
-    if AParams.Password.HasValue then
-      ACred.Pass := AParams.Password.Value;
-    ACred.SourceData.Def := AParams.Def;
-
-    Req.Id := AParams.Crid;
+    Req := FContextBroker.CreateReqCredUpdate(ACred.Crid) as TContextCredReqUpdate;
     Req.ReqBody.Assign(ACred);
     try
       Resp := FContextBroker.UpdateCredential(Req);
@@ -443,7 +434,7 @@ procedure TSourceEditForm.EditCredential(const ACredId: string);
 var
   Req: TContextCredReqInfo;
   Resp: TContextCredInfoResponse;
-  CredCopy: TSourceCreds;
+  CredCopy: TSourceCred;
   LinkList: TLinkList;
   Form: TInterfaceModalForm;
 begin
@@ -476,7 +467,7 @@ begin
       Exit;
     end;
 
-    CredCopy := TSourceCreds.Create;
+    CredCopy := TSourceCred.Create;
     CredCopy.Assign(Resp.Credential);
   finally
     Resp.Free;
@@ -489,9 +480,9 @@ begin
     try
       Form.LoadForEdit(CredCopy, LinkList);
       Form.OnUpdate :=
-        procedure(const AResult: TInterfaceEditResult)
+        procedure(const AResult: TSourceCred)
         begin
-          UpdateCredential(AResult, CredCopy);
+          UpdateCredential(CredCopy);
           CredCopy.Free;
           CredCopy := nil;
         end;
@@ -502,14 +493,13 @@ begin
     end;
   finally
     LinkList.Free;
-    if Assigned(CredCopy) then
-      CredCopy.Free;
   end;
 end;
 
 procedure TSourceEditForm.unbtnAddCredClick(Sender: TObject);
 var
   ContextId: string;
+  NewCred: TSourceCred;
   LinkList: TLinkList;
   Form: TInterfaceModalForm;
 begin
@@ -533,12 +523,14 @@ begin
   end;
 
   LinkList := BuildLinkList;
+  NewCred:= TSourceCred.Create;
+  NewCred.CtxId := ContextId;
   try
     Form := TInterfaceModalForm.Create(UniApplication);
     try
-      Form.LoadForCreate(ContextId, LinkList);
+      Form.LoadForCreate(NewCred, LinkList);
       Form.OnCreate :=
-        procedure(const AResult: TInterfaceCreateResult)
+        procedure(const AResult: TSourceCred)
         begin
           CreateCredential(AResult);
         end;
@@ -581,16 +573,17 @@ procedure TSourceEditForm.UpdateUI;
 begin
   Caption := IfThen(FIsEditMode, 'Редактирование источника', 'Создать источник');
   btnSave.Caption := IfThen(FIsEditMode, 'Сохранить', 'Создать');
-  edtSid.Enabled := not FIsEditMode;
+  edtSid.Enabled := True;
+  edtSid.ReadOnly := True;
   edtIndex.Enabled := not FIsEditMode;
   edtNumber.Enabled := not FIsEditMode;
 
   if Assigned(FSource) then
   begin
     edtSid.Text := FSource.Sid;
-    edtName.Text := FSource.Name;
-    edtPid.Text := FSource.Pid;
-    edtIndex.Text := FSource.Index;
+    edtName.Text := FSource.Name.ValueOrDefault('');
+    edtPid.Text := FSource.Pid.ValueOrDefault('');
+    edtIndex.Text := FSource.Index.ValueOrDefault('');
     edtNumber.Text := IntToStr(FSource.Number);
     if FSource.Lat.HasValue then
       edtLat.Text := FloatToStr(FSource.Lat.Value)
@@ -606,6 +599,11 @@ begin
       edtElev.Text := '';
     edtTimeShift.Text := IntToStr(FSource.TimeShift);
     edtMeteoRange.Text := IntToStr(FSource.MeteoRange);
+    edtOrg.Text := FSource.ContactOrg.ValueOrDefault('');
+    edtDirector.Text := FSource.ContactDirector.ValueOrDefault('');
+    edtPhone.Text := FSource.ContactPhone.ValueOrDefault('');
+    edtEmail.Text := FSource.ContactEmail.ValueOrDefault('');
+    memMail.Lines.Text := FSource.ContactMailAddr.ValueOrDefault('');
   end
   else
   begin
@@ -619,14 +617,19 @@ begin
     edtElev.Text := '';
     edtTimeShift.Text := '';
     edtMeteoRange.Text := '';
+    edtOrg.Text := '';
+    edtDirector.Text := '';
+    edtPhone.Text := '';
+    edtEmail.Text := '';
+    memMail.Lines.Text := '';
   end;
 
   if FIsEditMode and Assigned(FSource) then
   begin
-    FSelectedCountryId := FSource.Country;
-    FSelectedRegionId := FSource.Region;
-    FSelectedOwnerOrgId := FSource.OwnerOrg;
-    FSelectedOrgTypeId := FSource.SrcTypeID;
+    FSelectedCountryId := FSource.Country.ValueOrDefault('');
+    FSelectedRegionId := FSource.Region.ValueOrDefault('');
+    FSelectedOwnerOrgId := FSource.OwnerOrg.ValueOrDefault(0);
+    FSelectedOrgTypeId := FSource.SrcTypeID.ValueOrDefault(-1);
     ApplyOrgTypeSelection;
   end
   else
@@ -636,12 +639,13 @@ begin
     FSelectedOwnerOrgId := 0;
     if Assigned(FSource) then
     begin
-      FSource.Country := FSelectedCountryId;
-      FSource.Region := FSelectedRegionId;
-      FSource.OwnerOrg := FSelectedOwnerOrgId;
+      UpdateSourceCountry(FSelectedCountryId);
+      UpdateSourceRegion(FSelectedRegionId);
+      UpdateSourceOwnerOrg(FSelectedOwnerOrgId);
     end;
   end;
 
+  UpdateSidFromInputs;
 end;
 
 procedure TSourceEditForm.LoadData;
@@ -850,7 +854,7 @@ begin
   try
     cbUgms.Items.Clear;
     for Org in FOrganizations do
-      if Org.ParentOrgId = 0 then
+      if GetParentOrgId(Org) = 0 then
       begin
         if Org.ShortName.Trim <> '' then
           DisplayName := Org.ShortName.Trim
@@ -917,7 +921,7 @@ begin
 
     if AParentOrgId > 0 then
       for Org in FOrganizations do
-        if Org.ParentOrgId = AParentOrgId then
+        if GetParentOrgId(Org) = AParentOrgId then
         begin
           if Org.ShortName.Trim <> '' then
             DisplayName := Org.ShortName.Trim
@@ -970,18 +974,75 @@ begin
     FSelectedRegionId := '';
 
   if Assigned(FSource) then
-    FSource.Region := FSelectedRegionId;
+    UpdateSourceRegion(FSelectedRegionId);
+
+  UpdateSidFromInputs;
 end;
 
 procedure TSourceEditForm.UpdateSource;
+var
+  Broker: TSourcesRestBroker;
+  Req: TSourceReqUpdate;
+  Resp: TJSONResponse;
+  SourceId: string;
 begin
+  if not Assigned(FSource) then
+    Exit;
 
+  SourceId := Trim(FSource.Sid);
+  if SourceId.IsEmpty then
+  begin
+    MessageDlg('SID источника не задан.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  Broker := nil;
+  Req := nil;
+  Resp := nil;
+  try
+    try
+      Broker := TSourcesRestBroker.Create(UniMainModule.XTicket);
+      Req := Broker.CreateReqUpdate as TSourceReqUpdate;
+      if not Assigned(Req) then
+      begin
+        MessageDlg('Не удалось подготовить запрос на обновление источника.', mtWarning, [mbOK], nil);
+        Exit;
+      end;
+
+      Req.SetSourceId(SourceId);
+      if Assigned(Req.ReqBody) then
+        TSource(Req.ReqBody).Assign(FSource);
+
+      Resp := Broker.Update(Req);
+      if Assigned(Resp) and (Resp.StatusCode in [200, 204]) then
+      begin
+        MessageDlg('Источник обновлен: ' + edtName.Text, mtInformation, [mbOK], nil);
+        Close;
+      end
+      else if Assigned(Resp) then
+        MessageDlg(Format('Не удалось обновить источник. HTTP %d'#13#10'%s',
+          [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil)
+      else
+        MessageDlg('Не удалось обновить источник: пустой ответ сервера.', mtWarning, [mbOK], nil);
+    except
+      on E: EIdHTTPProtocolException do
+        MessageDlg(Format('Ошибка обновления источника. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+      on E: Exception do
+        MessageDlg('Ошибка обновления источника: ' + E.Message, mtWarning, [mbOK], nil);
+    end;
+  finally
+    Resp.Free;
+    Req.Free;
+    Broker.Free;
+  end;
 end;
 
 procedure TSourceEditForm.ApplyOrganizationSelection;
 var
   Owner: TOrganization;
   Parent: TOrganization;
+  ParentOrgId: Integer;
 begin
   if cbUgms.Items.Count = 0 then
   begin
@@ -989,7 +1050,7 @@ begin
     UpdateCgmsCombo(0, 0);
     FSelectedOwnerOrgId := 0;
     if Assigned(FSource) then
-      FSource.OwnerOrg := 0;
+      UpdateSourceOwnerOrg(0);
     Exit;
   end;
 
@@ -1000,13 +1061,14 @@ begin
     UpdateCgmsCombo(0, 0);
     FSelectedOwnerOrgId := 0;
     if Assigned(FSource) then
-      FSource.OwnerOrg := 0;
+      UpdateSourceOwnerOrg(0);
     Exit;
   end;
 
-  if Owner.ParentOrgId > 0 then
+  ParentOrgId := GetParentOrgId(Owner);
+  if ParentOrgId > 0 then
   begin
-    Parent := FindOrganizationById(Owner.ParentOrgId);
+    Parent := FindOrganizationById(ParentOrgId);
     if Assigned(Parent) then
     begin
       SelectOrganizationInCombo(cbUgms, Parent.OrgId);
@@ -1031,7 +1093,7 @@ begin
   end;
 
   if Assigned(FSource) then
-    FSource.OwnerOrg := FSelectedOwnerOrgId;
+    UpdateSourceOwnerOrg(FSelectedOwnerOrgId);
 end;
 
 procedure TSourceEditForm.ApplyOrgTypeSelection;
@@ -1040,6 +1102,165 @@ begin
     SelectOrgTypeInCombo(FSelectedOrgTypeId)
   else
     cbOrgType.ItemIndex := -1;
+
+  if Assigned(FSource) then
+    UpdateSourceSrcType(FSelectedOrgTypeId);
+end;
+
+procedure TSourceEditForm.UpdateSourceCountry(const ACountryId: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not ACountryId.IsEmpty then
+    NullableValue := Nullable<string>.Create(ACountryId);
+  FSource.Country := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceRegion(const ARegionId: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not ARegionId.IsEmpty then
+    NullableValue := Nullable<string>.Create(ARegionId);
+  FSource.Region := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceOwnerOrg(const AOwnerOrgId: Integer);
+var
+  NullableValue: Nullable<Integer>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if AOwnerOrgId > 0 then
+    NullableValue := Nullable<Integer>.Create(AOwnerOrgId);
+  FSource.OwnerOrg := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourcePid(const APid: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not APid.IsEmpty then
+    NullableValue := Nullable<string>.Create(APid);
+  FSource.Pid := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceName(const AName: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not AName.IsEmpty then
+    NullableValue := Nullable<string>.Create(AName);
+  FSource.Name := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceIndex(const AIndex: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not AIndex.IsEmpty then
+    NullableValue := Nullable<string>.Create(AIndex);
+  FSource.Index := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceSrcType(const ATypeId: Integer);
+var
+  NullableValue: Nullable<Integer>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if ATypeId >= 0 then
+    NullableValue := Nullable<Integer>.Create(ATypeId);
+  FSource.SrcTypeID := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceContactOrg(const AOrg: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not AOrg.IsEmpty then
+    NullableValue := Nullable<string>.Create(AOrg);
+  FSource.ContactOrg := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceContactDirector(const ADirector: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not ADirector.IsEmpty then
+    NullableValue := Nullable<string>.Create(ADirector);
+  FSource.ContactDirector := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceContactPhone(const APhone: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not APhone.IsEmpty then
+    NullableValue := Nullable<string>.Create(APhone);
+  FSource.ContactPhone := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceContactEmail(const AEmail: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not AEmail.IsEmpty then
+    NullableValue := Nullable<string>.Create(AEmail);
+  FSource.ContactEmail := NullableValue;
+end;
+
+procedure TSourceEditForm.UpdateSourceContactMail(const AMail: string);
+var
+  NullableValue: Nullable<string>;
+begin
+  if not Assigned(FSource) then
+    Exit;
+
+  NullableValue.Clear;
+  if not AMail.IsEmpty then
+    NullableValue := Nullable<string>.Create(AMail);
+  FSource.ContactMailAddr := NullableValue;
 end;
 
 procedure TSourceEditForm.ApplyToSource;
@@ -1052,9 +1273,9 @@ begin
   if Assigned(FSource) then
   begin
     FSource.Sid := edtSid.Text;
-    FSource.Name := edtName.Text;
-    FSource.Pid := edtPid.Text;
-    FSource.Index := edtIndex.Text;
+    UpdateSourceName(Trim(edtName.Text));
+    UpdateSourcePid(Trim(edtPid.Text));
+    UpdateSourceIndex(Trim(edtIndex.Text));
     FSource.Number := StrToIntDef(edtNumber.Text, 0);
     NullableLat.Clear;
     if TryStrToFloat(Trim(edtLat.Text), LatValue) then
@@ -1072,6 +1293,11 @@ begin
     FSource.Elev := NullableElev;
     FSource.TimeShift := StrToIntDef(edtTimeShift.Text, 0);
     FSource.MeteoRange := StrToIntDef(edtMeteoRange.Text, 0);
+    UpdateSourceContactOrg(Trim(edtOrg.Text));
+    UpdateSourceContactDirector(Trim(edtDirector.Text));
+    UpdateSourceContactPhone(Trim(edtPhone.Text));
+    UpdateSourceContactEmail(Trim(edtEmail.Text));
+    UpdateSourceContactMail(Trim(memMail.Lines.Text));
   end
 end;
 
@@ -1096,9 +1322,11 @@ begin
 
   if Assigned(FSource) then
   begin
-    FSource.Country := FSelectedCountryId;
-    FSource.Region := FSelectedRegionId;
+    UpdateSourceCountry(FSelectedCountryId);
+    UpdateSourceRegion(FSelectedRegionId);
   end;
+
+  UpdateSidFromInputs;
 end;
 
 function TSourceEditForm.GetSelectedOrganization(ACombo: TUniComboBox): TOrganization;
@@ -1152,6 +1380,78 @@ begin
       Exit(orgType);
 end;
 
+function TSourceEditForm.PadSidSegment(const AValue: string; ALength: Integer): string;
+var
+  Segment: string;
+begin
+  Segment := Trim(AValue);
+  while Length(Segment) < ALength do
+    Segment := '0' + Segment;
+  Result := Copy(Segment, 1, ALength);
+  if Result = '' then
+    Result := StringOfChar('0', ALength);
+end;
+
+function TSourceEditForm.BuildSidPrefix: string;
+var
+  Region: TLocation;
+  RegionCode: string;
+  RegionSuffix: string;
+begin
+  Result := '';
+  if not FSelectedRegionId.Trim.IsEmpty then
+  begin
+    if SameText(FSelectedCountryId, 'RU') then
+    begin
+      Region := FindLocationById(FSelectedRegionId);
+      if Assigned(Region) and not Region.LocGroup.Trim.IsEmpty then
+        RegionCode := Region.LocGroup
+      else
+        RegionCode := FSelectedRegionId;
+
+      if Length(RegionCode) > 2 then
+        RegionSuffix := Copy(RegionCode, 3, Length(RegionCode))
+      else
+        RegionSuffix := RegionCode;
+
+      Result := 'RU' + RegionSuffix;
+    end
+    else
+      Result := StringReplace(FSelectedRegionId, '-', '', [rfReplaceAll]);
+    Exit;
+  end;
+
+  if not FSelectedCountryId.Trim.IsEmpty then
+    Result := FSelectedCountryId + 'XX';
+end;
+
+function TSourceEditForm.BuildAutoSid: string;
+var
+  Prefix: string;
+begin
+  Prefix := BuildSidPrefix;
+  if Prefix.IsEmpty then
+    Exit('');
+
+  Result := Format('%s-%s-%s', [
+    Prefix,
+    PadSidSegment(edtIndex.Text, 6),
+    PadSidSegment(edtNumber.Text, 4)
+  ]);
+end;
+
+procedure TSourceEditForm.UpdateSidFromInputs;
+var
+  DisplaySid: string;
+begin
+  if Assigned(FSource) and not FSource.Sid.Trim.IsEmpty then
+    DisplaySid := FSource.Sid
+  else
+    DisplaySid := BuildAutoSid;
+
+  edtSid.Text := DisplaySid;
+end;
+
 procedure TSourceEditForm.SelectOrganizationInCombo(ACombo: TUniComboBox; AOrgId: Integer);
 var
   I: Integer;
@@ -1193,6 +1493,8 @@ end;
 
 procedure TSourceEditForm.SetContextDS(contexts:TContextList);
 begin
+  unbtnDelContext.Enabled := contexts.Count > 0;
+  unbtnAddCred.Enabled := unbtnDelContext.Enabled;
   if not assigned(contexts) or (contexts.Count = 0) then exit;
   ContextMem.EmptyDataSet;
   ContextMem.DisableControls;
@@ -1218,7 +1520,7 @@ begin
   MessageDlg('Удалить контекст?', mtConfirmation, [mbYes, mbNo],
      procedure(Sender: TComponent; Res: Integer)
      begin
-       DelContext;
+       if Res = mrYes then DelContext;
      end);
 end;
 
@@ -1227,7 +1529,7 @@ begin
   MessageDlg('Удалить интерфейс источника?', mtConfirmation, [mbYes, mbNo],
      procedure(Sender: TComponent; Res: Integer)
      begin
-       DelCred;
+       if Res = mrYes then DelCred;
      end);
 
 end;
@@ -1242,9 +1544,65 @@ begin
   RefreshCreds;
 end;
 
-procedure TSourceEditForm.SaveSource;
+procedure TSourceEditForm.CreateSource;
+var
+  Broker: TSourcesRestBroker;
+  Req: TSourceReqNew;
+  Resp: TIdNewResponse;
+  NewId: string;
 begin
+  if not Assigned(FSource) then
+    Exit;
 
+  Broker := nil;
+  Req := nil;
+  Resp := nil;
+
+  try
+    Broker := TSourcesRestBroker.Create(UniMainModule.XTicket);
+    Req := Broker.CreateReqNew as TSourceReqNew;
+    if not Assigned(Req) then
+    begin
+      MessageDlg('Не удалось подготовить запрос на создание источника.', mtWarning, [mbOK], nil);
+      Exit;
+    end;
+
+    if Assigned(Req.ReqBody) then
+      TSource(Req.ReqBody).Assign(FSource);
+    try
+      Resp := Broker.New(Req);
+      if Assigned(Resp) and (Resp.StatusCode in [200, 201]) then
+      begin
+        NewId := '';
+        if Assigned(Resp.ResBody) then
+          NewId := Resp.ResBody.ID;
+
+        if not NewId.IsEmpty then
+        begin
+          FSource.Sid := NewId;
+          UpdateSidFromInputs;
+        end;
+
+        MessageDlg('Создан источник ' + FSource.Sid, mtInformation, [mbOK], nil);
+        Close;
+      end
+      else if Assigned(Resp) then
+        MessageDlg(Format('Не удалось создать источник. HTTP %d'#13#10'%s',
+          [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil)
+      else
+        MessageDlg('Не удалось создать источник: пустой ответ сервера.', mtWarning, [mbOK], nil);
+    except
+      on E: EIdHTTPProtocolException do
+        MessageDlg(Format('Ошибка создания источника. HTTP %d'#13#10'%s',
+          [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+      on E: Exception do
+        MessageDlg('Ошибка создания источника: ' + E.Message, mtWarning, [mbOK], nil);
+    end;
+  finally
+    Resp.Free;
+    Req.Free;
+    Broker.Free;
+  end;
 end;
 
 procedure TSourceEditForm.SelectLocationInCombo(ACombo: TUniComboBox; const ALocId: string);
@@ -1275,6 +1633,29 @@ begin
     Result := TLocation(cbCountry.Items.Objects[cbCountry.ItemIndex]);
 end;
 
+function TSourceEditForm.GetParentOrgId(const Org: TOrganization): Integer;
+begin
+  Result := 0;
+  if not Assigned(Org) then
+    Exit;
+
+  if Org.ParentOrgId.HasValue then
+    Result := Org.ParentOrgId.Value;
+end;
+
+function TSourceEditForm.FindLocationById(const ALocId: string): TLocation;
+var
+  Loc: TLocation;
+begin
+  Result := nil;
+  if ALocId.Trim.IsEmpty then
+    Exit;
+
+  for Loc in FLocations do
+    if SameText(Loc.LocId, ALocId) then
+      Exit(Loc);
+end;
+
 procedure TSourceEditForm.cbUgmsChange(Sender: TObject);
 var
   SelectedUgm: TOrganization;
@@ -1285,7 +1666,7 @@ begin
   if Assigned(SelectedUgm) then
   begin
     CurrentOwner := FindOrganizationById(FSelectedOwnerOrgId);
-    if Assigned(CurrentOwner) and (CurrentOwner.ParentOrgId = SelectedUgm.OrgId) then
+    if Assigned(CurrentOwner) and (GetParentOrgId(CurrentOwner) = SelectedUgm.OrgId) then
       ChildId := CurrentOwner.OrgId
     else
       ChildId := 0;
@@ -1304,7 +1685,7 @@ begin
   end;
 
   if Assigned(FSource) then
-    FSource.OwnerOrg := FSelectedOwnerOrgId;
+    UpdateSourceOwnerOrg(FSelectedOwnerOrgId);
 end;
 
 procedure TSourceEditForm.cbCgmsChange(Sender: TObject);
@@ -1325,7 +1706,7 @@ begin
   end;
 
   if Assigned(FSource) then
-    FSource.OwnerOrg := FSelectedOwnerOrgId;
+    UpdateSourceOwnerOrg(FSelectedOwnerOrgId);
 end;
 
 procedure TSourceEditForm.cbCountryChange(Sender: TObject);
@@ -1342,7 +1723,9 @@ begin
   UpdateRegionCombo('');
 
   if Assigned(FSource) then
-    FSource.Country := FSelectedCountryId;
+    UpdateSourceCountry(FSelectedCountryId);
+
+  UpdateSidFromInputs;
 end;
 
 procedure TSourceEditForm.cbOrgTypeChange(Sender: TObject);
@@ -1355,7 +1738,20 @@ begin
   else
     FSelectedOrgTypeId := -1;
   if Assigned(FSource) then
+  begin
     FSource.Srctid := FSelectedCountryId;
+    UpdateSourceSrcType(FSelectedOrgTypeId);
+  end;
+end;
+
+procedure TSourceEditForm.edtIndexChange(Sender: TObject);
+begin
+  UpdateSidFromInputs;
+end;
+
+procedure TSourceEditForm.edtNumberChange(Sender: TObject);
+begin
+  UpdateSidFromInputs;
 end;
 
 procedure TSourceEditForm.cbRegionChange(Sender: TObject);
@@ -1371,7 +1767,9 @@ begin
     FSelectedRegionId := '';
 
   if Assigned(FSource) then
-    FSource.Region := FSelectedRegionId;
+    UpdateSourceRegion(FSelectedRegionId);
+
+  UpdateSidFromInputs;
 end;
 
 procedure TSourceEditForm.btnCloseClick(Sender: TObject);
@@ -1380,11 +1778,38 @@ begin
 end;
 
 procedure TSourceEditForm.btnSaveClick(Sender: TObject);
+var
+  SidValue, NameValue: string;
 begin
-  if not FIsEditMode then
-    ShowMessage('Источник обновлен: ' + edtName.Text)
+  if not Assigned(FSource) then
+  begin
+    MessageDlg('Источник не инициализирован.', mtWarning, [mbOK], nil);
+    Exit;
+  end;
+
+  SidValue := Trim(edtSid.Text);
+  NameValue := Trim(edtName.Text);
+
+  if SidValue.IsEmpty then
+  begin
+    MessageDlg('Укажите SID источника.', mtWarning, [mbOK], nil);
+    edtSid.SetFocus;
+    Exit;
+  end;
+
+  if NameValue.IsEmpty then
+  begin
+    MessageDlg('Укажите наименование источника.', mtWarning, [mbOK], nil);
+    edtName.SetFocus;
+    Exit;
+  end;
+
+  ApplyToSource;
+
+  if FIsEditMode then
+    UpdateSource
   else
-    ShowMessage('Создан источник ' + edtSid.Text);
+    CreateSource;
 end;
 
 procedure TSourceEditForm.RefreshContexts;
@@ -1409,8 +1834,8 @@ var
   resp: TContextCredsListResponse;
   link: TLink;
 begin
-  ContextCredsMem.EmptyDataSet;
   ContextCredsMem.DisableControls;
+  ContextCredsMem.EmptyDataSet;
   var id := ContextMem.FieldByName('ctxid').AsString;
   if id = '' then
   begin
@@ -1418,13 +1843,12 @@ begin
     Exit;
   end;
   try
-
     req := FContextBroker.CreateReqCredList();
     req.Body.CtxIds.Add(id);
     resp := FContextBroker.ListCredentialsAll(req);
 
     for var credp in resp.CredentialList do
-    with credp as TSourceCreds do begin
+    with credp as TSourceCred do begin
       ContextCredsMem.Append;
       ContextCredsMem.FieldByName('lid').AsString:= Lid;
       ContextCredsMem.FieldByName('name').AsString:= Name;
@@ -1436,8 +1860,8 @@ begin
         ContextCredsMem.FieldByName('interface').AsString:= link.Name
       else
         ContextCredsMem.FieldByName('interface').AsString := Lid;
-      if assigned(SourceData) then
-        ContextCredsMem.FieldByName('def').AsString:= SourceData.Def
+      if assigned(Data) then
+        ContextCredsMem.FieldByName('def').AsString:= Data.Def
       else
         ContextCredsMem.FieldByName('def').Clear;
       ContextCredsMem.Post;
@@ -1446,6 +1870,10 @@ begin
     req.Free;
     resp.Free;
     ContextCredsMem.EnableControls;
+    var hasCreds:=  ContextCredsMem.RecordCount > 0;
+    unbtnDeleteCred.Enabled := hasCreds;
+    unbtnEditCred.Enabled := hasCreds;
+    grdInterfaces.Refresh;
   end;
 end;
 
@@ -1453,3 +1881,4 @@ end.
 
 finalization
   FLinks.Free;
+

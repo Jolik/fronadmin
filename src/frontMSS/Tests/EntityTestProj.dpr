@@ -1962,14 +1962,14 @@ begin
 
         if Assigned(SourceCredsList) then
         begin
-          var FirstCreds: TSourceCreds := nil;
+          var FirstCreds: TSourceCred := nil;
 
           if SourceCredsList.Count > 0 then
-            FirstCreds := SourceCredsList.Items[0] as TSourceCreds;
+            FirstCreds := SourceCredsList.Items[0] as TSourceCred;
 
           for SourceCredsEntity in SourceCredsList do
           begin
-            var Creds := SourceCredsEntity as TSourceCreds;
+            var Creds := SourceCredsEntity as TSourceCred;
             Writeln(Format('Class: %s | Address: %p', [Creds.ClassName, Pointer(Creds)]));
             Writeln('Crid: ' + Creds.Crid);
             Writeln('Name: ' + Creds.Name);
@@ -2002,7 +2002,7 @@ begin
 
               if Assigned(InfoEntity) then
               begin
-                var InfoCreds := InfoEntity as TSourceCreds;
+                var InfoCreds := InfoEntity as TSourceCred;
                 Writeln('Info result as JSON:');
                 Writeln('Info Data.Def: ' + InfoCreds.SourceData.Def);
                 var InfoJson := InfoCreds.Serialize();

@@ -12,7 +12,7 @@ uses
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uniBasicGrid, uniDBGrid,
   TaskSourceUnit, SourceUnit, SourcesRestBrokerUnit, TaskSourceHttpRequests,
   uniEdit, uniTimer, uniGroupBox, uniHTMLFrame, uniMap, uniSpeedButton,
-  SourceEditFormUnit;
+  SourceEditFormUnit, uniCheckBox, uniMainMenu;
 
 type
   TSourcesForm = class(TUniForm)
@@ -68,6 +68,12 @@ type
     uncntnrpnBtns1: TUniContainerPanel;
     unspdbtnCreate1: TUniSpeedButton;
     unspdbtnEdit: TUniSpeedButton;
+    unchckbxShowArchived: TUniCheckBox;
+    unspdbtnRefresh: TUniSpeedButton;
+    pmGridSources: TUniPopupMenu;
+    miCreateSource: TUniMenuItem;
+    miEditSource: TUniMenuItem;
+    miArchiveSource: TUniMenuItem;
     procedure UniFormCreate(Sender: TObject);
     procedure UniFormDestroy(Sender: TObject);
     procedure lbAllSourcesClick(Sender: TObject);
@@ -83,6 +89,12 @@ type
     procedure unmpSource1MapReady(Sender: TObject);
     procedure unspdbtnEditClick(Sender: TObject);
     procedure unspdbtnCreate1Click(Sender: TObject);
+    procedure unchckbxShowArchivedChange(Sender: TObject);
+    procedure unspdbtnRefreshClick(Sender: TObject);
+    procedure miCreateSourceClick(Sender: TObject);
+    procedure miEditSourceClick(Sender: TObject);
+    procedure miArchiveSourceClick(Sender: TObject);
+    procedure pmGridSourcesPopup(Sender: TObject);
   protected
     SourceList: TSourceList;
     FCurrentSourceSid: string;
@@ -96,6 +108,7 @@ type
     procedure UpdateSourceInfoDisplay(ASource: TSource);
     procedure ApplySourceFilter;
     function CreateSourcesBroker(): TSourcesRestBroker; virtual;
+    procedure ArchiveSelectedSource;
   public
     property SelectedSource:TSource read FSelectedSource write FSelectedSource;
   end;
@@ -106,7 +119,8 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, LoggingUnit, EntityUnit, SourceHttpRequests, IdHTTP, System.DateUtils;
+  MainModule, uniGUIApplication, System.DateUtils, IdHTTP, LoggingUnit,
+  EntityUnit, SourceHttpRequests, HttpClientUnit, BaseResponses;
 
 function ShowSourcesForm: TSourcesForm;
 begin
@@ -122,15 +136,15 @@ end;
 
 procedure TSourcesForm.ClearSourceInfo;
 begin
-    lSourceInfoIDValue.Caption := '';
-    unlblSourceInfoNameValue.Caption := '';
-    lSourceInfoModuleValue.Caption := '';
-    lSourceInfoCreatedValue.Caption := '';
-    unlblUpdatedVal.Caption := '';
-    unlbllat.Caption:='';
-    unlbllon.Caption:='';
-    unlblregion.Caption:='';
-    tsSourceInfo.TabVisible := False;
+  lSourceInfoIDValue.Caption := '';
+  unlblSourceInfoNameValue.Caption := '';
+  lSourceInfoModuleValue.Caption := '';
+  lSourceInfoCreatedValue.Caption := '';
+  unlblUpdatedVal.Caption := '';
+  unlbllat.Caption:='';
+  unlbllon.Caption:='';
+  unlblregion.Caption:='';
+  tsSourceInfo.TabVisible := False;
 
   FCurrentSourceSid := '';
 end;
@@ -160,7 +174,9 @@ begin
     tasksList := nil;
 
     try
-      var Req := FSourcesBroker.CreateReqList();
+      var Req := FSourcesBroker.CreateReqList() as TSourceReqList;
+      if unchckbxShowArchived.Checked then
+        Req.SetFlags(['archiveonly']);
       var Resp := FSourcesBroker.ListAll(Req as TSourceReqList);
       try
         if Assigned(Resp) then
@@ -171,7 +187,7 @@ begin
             Copy.Assign(src);
             SourceList.Add(Copy);
             SourcesMem.Append;
-            SourcesMem.FieldByName('name').AsString := src.Name;
+            SourcesMem.FieldByName('name').AsString := src.Name.ValueOrDefault('');
             SourcesMem.FieldByName('sid').AsString := src.Sid;
 //            if (src.Lat <> 0) and (src.Lon <> 0) then
 //            with unmpSource1.Markers.Add do begin
@@ -180,8 +196,8 @@ begin
 //              Title:= Format('%s(%s)', [src.Name,src.Sid]);
 //            end;
 
-            if src.LastInsert <> 0 then
-              SourcesMem.FieldByName('last_insert').AsDateTime := UnixToDateTime(src.LastInsert, true)
+            if src.LastInsert.HasValue then
+              SourcesMem.FieldByName('last_insert').AsDateTime := UnixToDateTime(src.LastInsert.Value, True)
             else
               SourcesMem.FieldByName('last_insert').Clear;
             SourcesMem.Post;
@@ -236,6 +252,11 @@ begin
       Exit(TSource(Item));
 end;
 
+procedure TSourcesForm.unchckbxShowArchivedChange(Sender: TObject);
+begin
+ LoadSources;
+end;
+
 procedure TSourcesForm.undtSourceFilterChange(Sender: TObject);
 begin
   FilterDebounceTimer.Enabled := False;
@@ -253,6 +274,7 @@ begin
   begin
     CurrentSid := SourcesMem.FieldByName('sid').AsString;
     var req := FSourcesBroker.CreateReqInfo(CurrentSid) as TSourceReqInfo;
+    req.SetFlags(['contacts']);
     try
       resp := FSourcesBroker.Info(req);
       SelectedSource := TSource.Create;
@@ -305,14 +327,14 @@ begin
         mapName,
         FloatToStr(ASource.Lat.Value, fs),
         FloatToStr(ASource.Lon.Value, fs),
-        StringReplace(ASource.Name, '"', '\"', [rfReplaceAll])
+        StringReplace(ASource.Name.ValueOrDefault(''), '"', '\"', [rfReplaceAll])
       ]
     ));
 
   lSourceInfoIDValue.Caption := ASource.Sid;
-  unlblSourceInfoNameValue.Caption := ASource.Name;
-  lSourceInfoModuleValue.Caption := ASource.Index;
-  unlblregion.Caption := ASource.Region;
+  unlblSourceInfoNameValue.Caption := ASource.Name.ValueOrDefault('');
+  lSourceInfoModuleValue.Caption := ASource.Index.ValueOrDefault('');
+  unlblregion.Caption := ASource.Region.ValueOrDefault('');
   if HasCoords then
   begin
     unlbllat.Caption := FloatToStr(ASource.Lat.Value);
@@ -325,17 +347,17 @@ begin
   end;
 
 
-  if ASource.Created > 0 then
+  if ASource.Created.HasValue then
   begin
-    DateTimeToString(DateText, DateFormat, ASource.Created);
+    DateTimeToString(DateText, DateFormat, UnixToDateTime(ASource.Created.Value, True));
     lSourceInfoCreatedValue.Caption := DateText;
   end
   else
     lSourceInfoCreatedValue.Caption := '';
 
-  if ASource.Updated > 0 then
+  if ASource.Updated.HasValue then
   begin
-    DateTimeToString(DateText, DateFormat, ASource.Updated);
+    DateTimeToString(DateText, DateFormat, UnixToDateTime(ASource.Updated.Value, True));
     unlblUpdatedVal.Caption := DateText;
   end
   else
@@ -348,13 +370,22 @@ end;
 
 procedure TSourcesForm.UniFormAjaxEvent(Sender: TComponent; EventName: string;
   Params: TUniStrings);
+var
+  ScreenX, ScreenY: Integer;
 begin
   if EventName = 'marker_click' then
   begin
-    ShowMessage('Клик по маркеру: ' + Params.Values['id']);
-    // Тут можно сделать всё, что угодно
+    ShowMessage('Marker clicked: ' + Params.Values['id']);
+    // Placeholder for handling map marker clicks
+  end
+  else if EventName = 'ShowGridPopup' then
+  begin
+    ScreenX := StrToIntDef(Params.Values['x'], 0);
+    ScreenY := StrToIntDef(Params.Values['y'], 0);
+    pmGridSources.Popup(ScreenX, ScreenY);
   end;
 end;
+
 
 procedure TSourcesForm.UniFormCreate(Sender: TObject);
 begin
@@ -370,7 +401,7 @@ end;
 
 procedure TSourcesForm.unmpSource1MapReady(Sender: TObject);
 begin
-  var fs := TFormatSettings.Create; fs.DecimalSeparator := '.'; // �ᯮ��㥬 ��� ��� JS
+  var fs := TFormatSettings.Create; fs.DecimalSeparator := '.';
   var mapName := unmpSource1.JSName + '.uniMap';
 
     // invalidateSize
@@ -378,19 +409,17 @@ begin
     'if(%s) {%s.invalidateSize();}', [mapName, mapName]
   ));
 
-  // ��થ�� ������塞 ������� � JS
   for var srcP in SourceList do
   begin
     var Source := TSource(srcP);
     if Source.Lat.HasValue and Source.Lon.HasValue then
       UniSession.AddJS(Format(
         'L.marker([%.6f,%.6f]).addTo(%s).bindPopup("%s");',
-        [Source.Lat.Value, Source.Lon.Value, mapName, StringReplace(Source.Name, '"', '\"', [rfReplaceAll])],
+        [Source.Lat.Value, Source.Lon.Value, mapName, StringReplace(Source.Name.ValueOrDefault(''), '"', '\"', [rfReplaceAll])],
         fs
       ));
   end;
 
-  // 業���㥬 �����
   if SourceList.Count = 0 then Exit;
 
   for var srcP in SourceList do
@@ -422,6 +451,87 @@ begin
   FsourceEditForm:=SourceEditForm(true, FSelectedSource);
 end;
 
+procedure TSourcesForm.unspdbtnRefreshClick(Sender: TObject);
+begin
+ LoadSources;
+end;
+
+procedure TSourcesForm.miCreateSourceClick(Sender: TObject);
+begin
+  unspdbtnCreate1Click(Sender);
+end;
+
+procedure TSourcesForm.miEditSourceClick(Sender: TObject);
+begin
+  unspdbtnEditClick(Sender);
+end;
+
+procedure TSourcesForm.miArchiveSourceClick(Sender: TObject);
+begin
+  ArchiveSelectedSource;
+end;
+
+procedure TSourcesForm.pmGridSourcesPopup(Sender: TObject);
+var
+  HasSelection: Boolean;
+begin
+  HasSelection := Assigned(FSelectedSource);
+  miEditSource.Enabled := HasSelection;
+  miArchiveSource.Enabled := HasSelection;
+end;
+
+procedure TSourcesForm.ArchiveSelectedSource;
+var
+  ConfirmText: string;
+
+begin
+  if not Assigned(FSelectedSource) then
+    Exit;
+  if not Assigned(FSourcesBroker) then
+    Exit;
+
+  ConfirmText := Format('Archive source %s (%s)?', [
+    FSelectedSource.Name.ValueOrDefault(''),
+    FSelectedSource.Sid
+  ]);
+
+  MessageDlg(ConfirmText, mtConfirmation, [mbYes, mbNo],
+    procedure(Sender: TComponent; Res: Integer)
+    var
+    Req: TSourceReqArchive;
+    Resp: TJSONResponse;
+    begin
+      if Res <> mrYes then exit;
+      Req := nil;
+      Resp := nil;
+      try
+        try
+          Req := FSourcesBroker.CreateReqArchive as TSourceReqArchive;
+          if not Assigned(Req) then
+            Exit;
+          Req.SetSourceId(FSelectedSource.Sid);
+          Resp := FSourcesBroker.Archive(Req);
+          if Assigned(Resp) and (Resp.StatusCode in [200, 204]) then
+          begin
+            MessageDlg('Source archived successfully.', mtInformation, [mbOK], nil);
+            LoadSources;
+          end
+          else
+            MessageDlg(Format('Unable to archive the source. HTTP %d'#13#10'%s',
+              [Resp.StatusCode, Resp.Response]), mtWarning, [mbOK], nil);
+        except
+          on E: EIdHTTPProtocolException do
+            MessageDlg(Format('Unable to archive the source. HTTP %d'#13#10'%s',
+              [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
+          on E: Exception do
+            MessageDlg('Unable to archive the source: ' + E.Message, mtWarning, [mbOK], nil);
+        end
+      finally
+        Resp.Free;
+        Req.Free;
+      end;
+    end);
+end;
 procedure TSourcesForm.ApplySourceFilter;
 var
   FilterText: string;
@@ -474,5 +584,6 @@ begin
 end;
 
 end.
+
 
 

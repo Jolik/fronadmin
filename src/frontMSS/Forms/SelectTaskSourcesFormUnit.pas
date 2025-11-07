@@ -96,7 +96,8 @@ implementation
 {$R *.dfm}
 
 uses
-  MainModule, uniGUIApplication, LoggingUnit, EntityUnit, SourceHttpRequests, IdHTTP;
+  MainModule, uniGUIApplication, LoggingUnit, EntityUnit, SourceHttpRequests, IdHTTP,
+  System.DateUtils;
 
 function ShowSelectSourcesForm(tasksourceList: TTaskSourceList = nil): TSelectTaskSourcesForm;
 begin
@@ -209,7 +210,7 @@ begin
             SourcesMem.Append;
             var tsrc := FindTaskSource(src.Sid);
             SourcesMem.FieldByName('selected').AsBoolean := tsrc <> nil;
-            SourcesMem.FieldByName('name').AsString := src.Name;
+            SourcesMem.FieldByName('name').AsString := src.Name.ValueOrDefault('');
             SourcesMem.FieldByName('sid').AsString := src.Sid;
             SourcesMem.FieldByName('enabled').AsBoolean := (tsrc <> nil) and tsrc.Enabled;
 
@@ -361,9 +362,9 @@ begin
 
 
   lSourceInfoIDValue.Caption := InfoSource.Sid;
-  unlblSourceInfoNameValue.Caption := InfoSource.Name;
-  lSourceInfoModuleValue.Caption := InfoSource.Index;
-  unlblregion.Caption := InfoSource.Region;
+  unlblSourceInfoNameValue.Caption := InfoSource.Name.ValueOrDefault('');
+  lSourceInfoModuleValue.Caption := InfoSource.Index.ValueOrDefault('');
+  unlblregion.Caption := InfoSource.Region.ValueOrDefault('');
   if InfoSource.Lat.HasValue then
     unlbllat.Caption := FloatToStr(InfoSource.Lat.Value)
   else
@@ -374,17 +375,17 @@ begin
     unlbllon.Caption := '';
 
 
-  if InfoSource.Created > 0 then
+  if InfoSource.Created.HasValue then
   begin
-    DateTimeToString(DateText, DateFormat, InfoSource.Created);
+    DateTimeToString(DateText, DateFormat, UnixToDateTime(InfoSource.Created.Value, True));
     lSourceInfoCreatedValue.Caption := DateText;
   end
   else
     lSourceInfoCreatedValue.Caption := '';
 
-  if InfoSource.Updated > 0 then
+  if InfoSource.Updated.HasValue then
   begin
-    DateTimeToString(DateText, DateFormat, InfoSource.Updated);
+    DateTimeToString(DateText, DateFormat, UnixToDateTime(InfoSource.Updated.Value, True));
     unlblUpdatedVal.Caption := DateText;
   end
   else

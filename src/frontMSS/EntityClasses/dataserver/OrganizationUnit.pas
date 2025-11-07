@@ -5,7 +5,8 @@ interface
 uses
   System.SysUtils,
   System.JSON,
-  EntityUnit;
+  EntityUnit,
+  FuncUnit;
 
 type
   // Entity describing organizations returned by /organizations endpoints
@@ -21,8 +22,8 @@ type
     FCountryId: string;
     FCountryName: string;
     FStatus: Boolean;
-    FParentOrgId: Integer;
-    FParentOrgStr: string;
+    FParentOrgId: Nullable<Integer>;
+    FParentOrgStr: Nullable<string>;
   public
     procedure Parse(src: TJSONObject; const APropertyNames: TArray<string> = nil); override;
     procedure Serialize(dst: TJSONObject; const APropertyNames: TArray<string> = nil); override;
@@ -37,8 +38,8 @@ type
     property CountryId: string read FCountryId write FCountryId;
     property CountryName: string read FCountryName write FCountryName;
     property Status: Boolean read FStatus write FStatus;
-    property ParentOrgId: Integer read FParentOrgId write FParentOrgId;
-    property ParentOrgStr: string read FParentOrgStr write FParentOrgStr;
+    property ParentOrgId: Nullable<Integer> read FParentOrgId write FParentOrgId;
+    property ParentOrgStr: Nullable<string> read FParentOrgStr write FParentOrgStr;
   end;
 
   TOrganizationList = class(TFieldSetList)
@@ -70,9 +71,6 @@ type
 
 implementation
 
-uses
-  FuncUnit;
-
 { TOrganization }
 
 procedure TOrganization.Parse(src: TJSONObject; const APropertyNames: TArray<string>);
@@ -87,8 +85,8 @@ begin
   FCountryId := GetValueStrDef(src, 'countryId', '');
   FCountryName := GetValueStrDef(src, 'countryName', '');
   FStatus := GetValueBool(src, 'status');
-  FParentOrgId := GetValueIntDef(src, 'ParentOrgID', 0);
-  FParentOrgStr := GetValueStrDef(src, 'ParentOrgStr', '');
+  FParentOrgId := GetNullableInt(src, 'ParentOrgID');
+  FParentOrgStr := GetNullableStr(src, 'ParentOrgStr');
 end;
 
 procedure TOrganization.Serialize(dst: TJSONObject; const APropertyNames: TArray<string>);
@@ -103,8 +101,14 @@ begin
   dst.AddPair('countryId', FCountryId);
   dst.AddPair('countryName', FCountryName);
   dst.AddPair('status', TJSONBool.Create(FStatus));
-  dst.AddPair('ParentOrgID', TJSONNumber.Create(FParentOrgId));
-  dst.AddPair('ParentOrgStr', FParentOrgStr);
+  if FParentOrgId.HasValue then
+    dst.AddPair('ParentOrgID', TJSONNumber.Create(FParentOrgId.Value))
+  else
+    dst.AddPair('ParentOrgID', TJSONNull.Create);
+  if FParentOrgStr.HasValue then
+    dst.AddPair('ParentOrgStr', FParentOrgStr.Value)
+  else
+    dst.AddPair('ParentOrgStr', TJSONNull.Create);
 end;
 
 { TOrganizationList }
@@ -140,4 +144,3 @@ begin
 end;
 
 end.
-

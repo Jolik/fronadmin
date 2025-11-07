@@ -13,6 +13,7 @@ type
   public
     class function Create(const AValue: T): Nullable<T>; static;
     procedure Clear;
+    function ValueOrDefault(const AValue: T): T;
     property HasValue: Boolean read FHasValue;
     property Value: T read FValue;
   end;
@@ -28,7 +29,9 @@ function GetValueFloatDef(json: TJSONValue; path: string; default: Float64): Flo
 function GetNullableFloat(json: TJSONValue; path: string): Nullable<Double>;
 function GetValueIntDef(json: TJSONValue; path: string; default: integer): integer;
 function GetNullableInt(json: TJSONValue; path: string): Nullable<Integer>;
+function GetNullableInt64(json: TJSONValue; path: string): Nullable<Int64>;
 function GetValueStrDef(json: TJSONValue; path: string; default: string): string;
+function GetNullableStr(json: TJSONValue; path: string): Nullable<string>;
 function GetValueBool(json: TJSONValue; path: string): boolean;
 function ClassNameSafe(o: TObject): string;
 
@@ -46,6 +49,14 @@ procedure Nullable<T>.Clear;
 begin
   FHasValue := False;
   FValue := Default(T);
+end;
+
+function Nullable<T>.ValueOrDefault(const AValue: T): T;
+begin
+  if FHasValue then
+    Result := FValue
+  else
+    Result := AValue;
 end;
 
 function ExtractJSONProperties(
@@ -187,6 +198,23 @@ begin
     Result := Nullable<Integer>.Create(Value);
 end;
 
+function GetNullableInt64(json: TJSONValue; path: string): Nullable<Int64>;
+var
+  Value: Int64;
+  Node: TJSONValue;
+begin
+  Result.Clear;
+  if not Assigned(json) then
+    Exit;
+
+  Node := json.FindValue(path);
+  if not Assigned(Node) or (Node is TJSONNull) then
+    Exit;
+
+  if Node.TryGetValue<Int64>(Value) then
+    Result := Nullable<Int64>.Create(Value);
+end;
+
 
 
 function GetValueStrDef(json: TJSONValue; path: string; default: string): string;
@@ -196,6 +224,24 @@ begin
     json.TryGetValue<string>(path, result);
   except
   end;
+end;
+
+
+function GetNullableStr(json: TJSONValue; path: string): Nullable<string>;
+var
+  Value: string;
+  Node: TJSONValue;
+begin
+  Result.Clear;
+  if not Assigned(json) then
+    Exit;
+
+  Node := json.FindValue(path);
+  if not Assigned(Node) or (Node is TJSONNull) then
+    Exit;
+
+  if Node.TryGetValue<string>(Value) then
+    Result := Nullable<string>.Create(Value);
 end;
 
 
