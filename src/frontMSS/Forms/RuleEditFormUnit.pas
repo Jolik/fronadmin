@@ -4,34 +4,46 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics,
-  Controls, Forms, uniGUITypes, uniGUIAbstractClasses,
+  Controls, Forms, uniGUITypes, uniGUIAbstractClasses, Math,
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo, uniScrollBox, uniCheckBox,
   System.Generics.Collections,
   LoggingUnit,
-  EntityUnit, FilterUnit, RuleUnit;
+  EntityUnit, FilterUnit, RuleUnit, uniSplitter;
 
 type
   TFilterListKind = (fkInclude, fkExclude);
 
   TRuleEditForm = class(TParentEditForm)
+    cpTop: TUniContainerPanel;
     lRuid: TUniLabel;
-    teRuid: TUniEdit;
     lPosition: TUniLabel;
-    tePosition: TUniEdit;
     lPriority: TUniLabel;
+    teRuid: TUniEdit;
+    tePosition: TUniEdit;
     tePriority: TUniEdit;
     chkDoubles: TUniCheckBox;
     chkBreakRule: TUniCheckBox;
+    cpMiddle: TUniContainerPanel;
+    cpMiddleLeft: TUniContainerPanel;
     lHandlers: TUniLabel;
     meHandlers: TUniMemo;
-    lChannels: TUniLabel;
+    cpMiddleRight: TUniContainerPanel;
     meChannels: TUniMemo;
-    lIncFilters: TUniLabel;
-    lExcFilters: TUniLabel;
+    lChannels: TUniLabel;
+    UniSplitter1: TUniSplitter;
+    UniSplitter2: TUniSplitter;
+    cpBottom: TUniContainerPanel;
+    cpBottomLeft: TUniContainerPanel;
     sbIncFilters: TUniScrollBox;
+    UniSplitter3: TUniSplitter;
+    cpBottomRight: TUniContainerPanel;
     sbExcFilters: TUniScrollBox;
+    cpBottomLeftTop: TUniContainerPanel;
     btnAddIncFilter: TUniButton;
+    lIncFilters: TUniLabel;
+    cpBottomRightTop: TUniContainerPanel;
+    lExcFilters: TUniLabel;
     btnAddExcFilter: TUniButton;
     procedure btnAddIncFilterClick(Sender: TObject);
     procedure btnAddExcFilterClick(Sender: TObject);
@@ -111,9 +123,13 @@ begin
   FPanel := TUniContainerPanel.Create(AOwnerForm);
   FPanel.Parent := AParent;
   FPanel.AlignWithMargins := True;
-  FPanel.Margins.Bottom := 6;
+  FPanel.Margins.Bottom := 10;
+  FPanel.Margins.Right := 15;
+  FPanel.Top := 9999999;
   FPanel.Align := alTop;
   FPanel.Height := 180;
+
+  AParent.ScrollTo(0, FPanel.Top + IfThen(FPanel.Height > AParent.ClientHeight, AParent.ClientHeight, FPanel.Height));
 
   FHeaderPanel := TUniContainerPanel.Create(AOwnerForm);
   FHeaderPanel.Parent := FPanel;
@@ -123,38 +139,40 @@ begin
   FTitleLabel := TUniLabel.Create(AOwnerForm);
   FTitleLabel.Parent := FHeaderPanel;
   FTitleLabel.AlignWithMargins := True;
-  FTitleLabel.Margins.Left := 8;
-  FTitleLabel.Margins.Top := 8;
-  FTitleLabel.Margins.Right := 8;
+  FTitleLabel.Margins.Left  := 0;//8;
+  FTitleLabel.Margins.Top   := 8;
+  FTitleLabel.Margins.Right := 0;//8;
   FTitleLabel.Align := alClient;
   FTitleLabel.Caption := ACaption;
 
   FRemoveButton := TUniButton.Create(AOwnerForm);
   FRemoveButton.Parent := FHeaderPanel;
   FRemoveButton.AlignWithMargins := True;
-  FRemoveButton.Margins.Top := 4;
-  FRemoveButton.Margins.Right := 4;
+  FRemoveButton.Margins.Top := 2;
+  FRemoveButton.Margins.Right := 0;//4;
   FRemoveButton.Align := alRight;
   FRemoveButton.Width := 90;
   FRemoveButton.Caption := #1059#1076#1072#1083#1080#1090#1100;
+  FRemoveButton.IconCls := 'trash';
   FRemoveButton.Tag := NativeInt(Self);
   FRemoveButton.OnClick := AOwnerForm.FilterRemoveButtonClick;
 
   FDisableCheck := TUniCheckBox.Create(AOwnerForm);
   FDisableCheck.Parent := FPanel;
   FDisableCheck.AlignWithMargins := True;
-  FDisableCheck.Margins.Left := 8;
-  FDisableCheck.Margins.Top := 4;
-  FDisableCheck.Margins.Right := 8;
+  FDisableCheck.Margins.Left := 0;//8;
+  FDisableCheck.Margins.Top := 2;
+  FDisableCheck.Margins.Right := 0;//8;
+  FDisableCheck.Top := 9999999;
   FDisableCheck.Align := alTop;
   FDisableCheck.Caption := #1054#1090#1082#1083#1102#1095#1080#1090#1100' '#1092#1080#1083#1100#1090#1088;
 
   FMemo := TUniMemo.Create(AOwnerForm);
   FMemo.Parent := FPanel;
   FMemo.AlignWithMargins := True;
-  FMemo.Margins.Left := 8;
-  FMemo.Margins.Top := 4;
-  FMemo.Margins.Right := 8;
+  FMemo.Margins.Left := 0;//8;
+  FMemo.Margins.Top := 2;
+  FMemo.Margins.Right := 0;//8;
   FMemo.Margins.Bottom := 8;
   FMemo.Align := alClient;
 //!!!  FMemo.ScrollBars := ssVertical;
