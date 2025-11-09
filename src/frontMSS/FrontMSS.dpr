@@ -118,7 +118,8 @@ uses
   MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
   SourcesBrokerUnit in 'APIClasses\SourcesBrokerUnit.pas',
   SharedFrameRuleConditionUnit in '\\ksandr-pc\МетеоКонтекст\Jolik\src\frontMSS\Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame},
-  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas';
+  MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas',
+  ProfileRuleUnit in 'EntityClasses\acl\ProfileRuleUnit.pas';
 
 {$R *.res}
 
