@@ -1,4 +1,4 @@
-﻿object FrameCombobox: TFrameCombobox
+object FrameCombobox: TFrameCombobox
   Left = 0
   Top = 0
   Width = 216

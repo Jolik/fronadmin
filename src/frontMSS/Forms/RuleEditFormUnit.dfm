@@ -1,24 +1,18 @@
-﻿inherited RuleEditForm: TRuleEditForm
+inherited RuleEditForm: TRuleEditForm
   Caption = #1055#1088#1072#1074#1080#1083#1086' '#1084#1072#1088#1096#1088#1091#1090#1080#1079#1072#1094#1080#1080
   TextHeight = 15
   inherited pnCaption: TUniContainerPanel
     inherited teCaption: TUniEdit
-      Left = 84
-      Width = 732
-      ExplicitLeft = 84
       ExplicitWidth = 724
     end
   end
   inherited pnName: TUniContainerPanel
     inherited teName: TUniEdit
-      Left = 84
-      Width = 732
-      ExplicitLeft = 84
       ExplicitWidth = 724
     end
   end
   inherited pnClient: TUniContainerPanel
-    ExplicitWidth = 821
+    ExplicitWidth = 819
     ExplicitHeight = 414
     ScrollHeight = 504
     ScrollWidth = 819

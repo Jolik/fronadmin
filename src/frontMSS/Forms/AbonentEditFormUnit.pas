@@ -8,7 +8,7 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo,
   LoggingUnit,
-  EntityUnit, AbonentUnit, StringUnit;
+  EntityUnit, AbonentUnit, StringUnit, uniTimer;
 
 type
   TAbonentEditForm = class(TParentEditForm)

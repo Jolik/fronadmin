@@ -1,4 +1,4 @@
-﻿inherited FTPServerDownLinkSettingEditFrame: TFTPServerDownLinkSettingEditFrame
+inherited FTPServerDownLinkSettingEditFrame: TFTPServerDownLinkSettingEditFrame
   Height = 522
   ExplicitHeight = 522
   inherited SettingsPanel: TUniPanel

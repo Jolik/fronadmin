@@ -1,4 +1,4 @@
-﻿unit SMTPClieUpLinkSettingEditFrameUnit;
+unit SMTPClieUpLinkSettingEditFrameUnit;
 
 interface
 

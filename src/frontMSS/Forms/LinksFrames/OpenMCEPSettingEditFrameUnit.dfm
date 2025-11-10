@@ -1,4 +1,4 @@
-﻿inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
+inherited OpenMCEPSettingEditFrame: TOpenMCEPSettingEditFrame
   Height = 574
   ExplicitHeight = 574
   inherited SettingsPanel: TUniPanel

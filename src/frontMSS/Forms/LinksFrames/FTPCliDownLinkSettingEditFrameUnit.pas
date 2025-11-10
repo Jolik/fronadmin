@@ -1,4 +1,4 @@
-п»їunit FTPCliDownLinkSettingEditFrameUnit;
+unit FTPCliDownLinkSettingEditFrameUnit;
 
 interface
 
@@ -51,7 +51,7 @@ begin
     FrameTracking.SetDataIndex(1)
   else
     FrameTracking.SetDataIndex(0);
-  FrameReplaceIP2.SetData(FSettings.ReplaceIp); // TODO: РїРµСЂРµРЅРµСЃС‚Рё РІ connections
+  FrameReplaceIP2.SetData(FSettings.ReplaceIp); // TODO: перенести в connections
 end;
 
 

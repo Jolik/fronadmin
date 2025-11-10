@@ -76,7 +76,7 @@ end;
 
 constructor TLinkInfoResponse.Create;
 begin
-  inherited Create(TLink, 'response', 'link');
+  inherited Create(TLink, 'response', '');
 end;
 
 function TLinkInfoResponse.GetLink: TLink;

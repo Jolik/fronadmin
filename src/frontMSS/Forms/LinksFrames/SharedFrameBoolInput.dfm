@@ -1,4 +1,4 @@
-﻿object FrameBoolInput: TFrameBoolInput
+object FrameBoolInput: TFrameBoolInput
   Left = 0
   Top = 0
   Width = 236

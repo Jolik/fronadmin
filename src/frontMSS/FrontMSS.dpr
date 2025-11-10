@@ -1,12 +1,6 @@
 ﻿program FrontMSS;
 
 
-
-
-
-
-
-
 uses
   Forms,
   APIConst in 'APIClasses\APIConst.pas',
@@ -184,7 +178,9 @@ uses
   LocationsRestBrokerUnit in 'APIClasses\LocationsRestBrokerUnit.pas',
   OrganizationsRestBrokerUnit in 'APIClasses\OrganizationsRestBrokerUnit.pas',
   IntefraceEditFormUnit in 'Forms\IntefraceEditFormUnit.pas',
-  ContextCreateFormUnit in 'Forms\ContextCreateFormUnit.pas';
+  ContextCreateFormUnit in 'Forms\ContextCreateFormUnit.pas',
+  ProfileRuleUnit in 'EntityClasses\acl\ProfileRuleUnit.pas',
+  LinkFrameUtils in 'Forms\LinksFrames\LinkFrameUtils.pas';
 
 {$R *.res}
 

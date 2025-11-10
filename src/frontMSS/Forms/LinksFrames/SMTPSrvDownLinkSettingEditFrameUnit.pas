@@ -1,4 +1,4 @@
-﻿unit SMTPSrvDownLinkSettingEditFrameUnit;
+unit SMTPSrvDownLinkSettingEditFrameUnit;
 
 interface
 

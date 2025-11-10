@@ -1,4 +1,4 @@
-﻿inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
+inherited SocketSpecialSettingEditFrame: TSocketSpecialSettingEditFrame
   Width = 683
   Height = 657
   ExplicitWidth = 683

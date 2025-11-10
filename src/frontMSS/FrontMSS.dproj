@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{18FFAEE5-6EE2-44B7-9A1E-E6033B20E382}</ProjectGuid>
+        <ProjectGuid>{0F197CF1-F49F-45A6-A4DE-CE551596B1A0}</ProjectGuid>
         <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>FrontMSS.dpr</MainSource>
@@ -427,6 +427,8 @@
         <DCCReference Include="APIClasses\OrganizationsRestBrokerUnit.pas"/>
         <DCCReference Include="Forms\IntefraceEditFormUnit.pas"/>
         <DCCReference Include="Forms\ContextCreateFormUnit.pas"/>
+        <DCCReference Include="EntityClasses\acl\ProfileRuleUnit.pas"/>
+        <DCCReference Include="Forms\LinksFrames\LinkFrameUtils.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -1,4 +1,4 @@
-п»їunit SharedFrameConnections;
+unit SharedFrameConnections;
 
 interface
 
@@ -32,7 +32,7 @@ type
     { Public declarations }
     procedure SetData(src: TConnectionSettingsList); virtual;
     procedure GetData(dst: TConnectionSettingsList); virtual;
-    // HasConnectionKey РїРѕРєР°Р·С‹РІР°С‚СЊ РЅР°СЃС‚СЂРѕР№РєСѓ "РєР»СЋС‡ СЃРѕРµРґРёРЅРµРЅРёСЏ"
+    // HasConnectionKey показывать настройку "ключ соединения"
     property HasConnectionKey: boolean read GetHasConnectionKey write SetHasConnectionKey;
   end;
 

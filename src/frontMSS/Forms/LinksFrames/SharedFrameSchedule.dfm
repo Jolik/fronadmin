@@ -1,4 +1,4 @@
-﻿object FrameSchedule: TFrameSchedule
+object FrameSchedule: TFrameSchedule
   Left = 0
   Top = 0
   Width = 345

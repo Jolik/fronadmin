@@ -22,7 +22,8 @@ type
     function Remove(AReq: TProfileReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;
     function CreateReqList: TReqList; override;
-    function CreateReqInfo(id:string=''): TReqInfo; override;
+    function CreateReqInfo(id:string=''): TReqInfo;overload; override;
+    function CreateReqInfo(lid:string='';id:string=''): TReqInfo;overload;
     function CreateReqNew: TReqNew; override;
     function CreateReqUpdate: TReqUpdate; override;
     function CreateReqRemove: TReqRemove; override;
@@ -79,6 +80,13 @@ function TProfilesRestBroker.CreateReqInfo(id:string=''): TReqInfo;
 begin
   Result := TProfileReqInfo.CreateID(id);
   Result.BasePath := BasePath;
+end;
+
+function TProfilesRestBroker.CreateReqInfo(lid, id: string): TReqInfo;
+begin
+  Result := TProfileReqInfo.CreateID(id);
+  Result.BasePath := BasePath;
+  (Result as TProfileReqInfo).Lid := lid;
 end;
 
 function TProfilesRestBroker.CreateReqList: TReqList;

@@ -1,4 +1,4 @@
-﻿unit SocketSpecialSettingEditFrameUnit;
+unit SocketSpecialSettingEditFrameUnit;
 
 interface
 

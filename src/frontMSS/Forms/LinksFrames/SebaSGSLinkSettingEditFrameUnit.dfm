@@ -1,4 +1,4 @@
-﻿inherited SebaSGSLinkSettingEditFrame: TSebaSGSLinkSettingEditFrame
+inherited SebaSGSLinkSettingEditFrame: TSebaSGSLinkSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

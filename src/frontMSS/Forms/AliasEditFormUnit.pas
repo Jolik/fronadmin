@@ -8,7 +8,7 @@ uses
   uniGUIClasses, uniGUIForm, ParentEditFormUnit, uniEdit, uniLabel, uniButton,
   uniGUIBaseClasses, uniPanel, uniMemo,
   LoggingUnit,
-  EntityUnit, AliasUnit;
+  EntityUnit, AliasUnit, uniTimer;
 
 type
   TAliasEditForm = class(TParentEditForm)

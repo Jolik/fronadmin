@@ -1,4 +1,4 @@
-﻿inherited SMTPClieUpLinkSettingEditFrame: TSMTPClieUpLinkSettingEditFrame
+inherited SMTPClieUpLinkSettingEditFrame: TSMTPClieUpLinkSettingEditFrame
   Height = 687
   ExplicitHeight = 687
   inherited SettingsPanel: TUniPanel

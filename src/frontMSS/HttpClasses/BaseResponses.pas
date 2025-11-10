@@ -327,8 +327,9 @@ begin
       RootObject := JSONResult;
 
     if not Assigned(RootObject) then Exit;
-
-    ItemObject := RootObject.GetValue(FItemKey) as TJSONObject;
+    ItemObject := RootObject;
+    if FItemKey <> '' then
+      ItemObject := RootObject.GetValue(FItemKey) as TJSONObject;
     if Assigned(ItemObject) then
       FEntity := FEntityClass.Create(ItemObject)
     else

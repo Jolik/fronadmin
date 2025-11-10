@@ -495,13 +495,22 @@ end;
 
 function TEntityList.Assign(ASource: TEntityList): boolean;
 begin
+  Result := False;
+
+  if not Assigned(ASource) then
+    Exit;
+
+  Clear;
+
   ///  Instantiate objects, copy fields, and add them to the list
   for var i := 0 to ASource.Count-1 do
   begin
-    var es := TEntity.Create();
+    var es := ItemClassType.Create();
     es.Assign(ASource.Items[i]);
     inherited Add(es);
   end;
+
+  Result := True;
 end;
 
 constructor TEntityList.Create(src: TJSONObject;

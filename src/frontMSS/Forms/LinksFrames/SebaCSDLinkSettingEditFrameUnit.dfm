@@ -1,4 +1,4 @@
-﻿inherited SebaCSDLinkSettingEditFrame: TSebaCSDLinkSettingEditFrame
+inherited SebaCSDLinkSettingEditFrame: TSebaCSDLinkSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

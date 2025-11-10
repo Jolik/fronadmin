@@ -1,4 +1,4 @@
-﻿unit HTTPCliDownLinkSettingEditFrameUnit;
+unit HTTPCliDownLinkSettingEditFrameUnit;
 
 interface
 

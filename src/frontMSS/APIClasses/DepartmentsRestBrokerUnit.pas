@@ -17,7 +17,7 @@ type
     function Info(AReq: TReqInfo): TEntityResponse; overload; override;
     function New(AReq: TDepartmentReqNew): TJSONResponse; overload;
     function New(AReq: TReqNew; AResp: TEntityResponse): TEntityResponse; overload;
-   function Update(AReq: TDepartmentReqUpdate): TJSONResponse; overload;
+    function Update(AReq: TDepartmentReqUpdate): TJSONResponse; overload;
     function Update(AReq: TReqUpdate): TJSONResponse; overload; override;
     function Remove(AReq: TDepartmentReqRemove): TJSONResponse; overload;
     function Remove(AReq: TReqRemove): TJSONResponse; overload; override;

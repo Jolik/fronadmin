@@ -1,4 +1,4 @@
-п»їunit SharedFrameSchedule;
+unit SharedFrameSchedule;
 
 interface
 
@@ -33,7 +33,7 @@ type
     procedure JobsComboBoxSelect(Sender: TObject);
   private
     FSettings: TWorkSettings;
-    FCurrentJob: TSheduleSettings; // СЃСЃС‹Р»РєР° РЅР° РѕРґРёРЅ РёР· FSettings.List.Shedules
+    FCurrentJob: TSheduleSettings; // ссылка на один из FSettings.List.Shedules
     procedure DrawSchedule(srs: TSheduleSettings);
     procedure ReadSchedule(dst: TSheduleSettings);
     procedure DrawJobs();
@@ -134,7 +134,7 @@ procedure TFrameSchedule.btnRemoveJobClick(Sender: TObject);
 begin
   if FCurrentJob = nil then
     exit;
-  var q := Format('РЈРґР°Р»РёС‚СЊ СЂР°СЃРїРёСЃР°РЅРёРµ "%s"?', [FCurrentJob.CronString]);
+  var q := Format('Удалить расписание "%s"?', [FCurrentJob.CronString]);
   if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
     exit;
   FSettings.List.Remove(FCurrentJob);
@@ -162,7 +162,7 @@ begin
 end;
 
 
-// РѕС‡РµСЂРµРґРЅРѕР№ Р±Р°Рі. РѕРґРёРЅ РѕР±СЂР°Р±РѕС‚С‡РёРє РІСЃРµРј СЃС‚Р°РІРёС‚СЊ РЅРµР»СЊР·СЏ.
+// очередной баг. один обработчик всем ставить нельзя.
 procedure TFrameSchedule.FrameScheduleCronEditChange(Sender: TObject);
 begin
   if FCurrentJob = nil then

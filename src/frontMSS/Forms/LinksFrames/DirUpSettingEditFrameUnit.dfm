@@ -1,4 +1,4 @@
-﻿inherited DirUpSettingEditFrame: TDirUpSettingEditFrame
+inherited DirUpSettingEditFrame: TDirUpSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

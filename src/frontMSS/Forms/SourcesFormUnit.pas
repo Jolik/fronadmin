@@ -12,7 +12,7 @@ uses
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, uniBasicGrid, uniDBGrid,
   TaskSourceUnit, SourceUnit, SourcesRestBrokerUnit, TaskSourceHttpRequests,
   uniEdit, uniTimer, uniGroupBox, uniHTMLFrame, uniMap, uniSpeedButton,
-  SourceEditFormUnit, uniCheckBox, uniMainMenu;
+  SourceEditFormUnit, uniCheckBox, uniMainMenu, Vcl.Menus;
 
 type
   TSourcesForm = class(TUniForm)

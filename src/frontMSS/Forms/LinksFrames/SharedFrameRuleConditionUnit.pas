@@ -1,4 +1,4 @@
-п»їunit SharedFrameRuleConditionUnit;
+unit SharedFrameRuleConditionUnit;
 
 interface
 
@@ -35,7 +35,7 @@ type
 
     procedure SetData(src: TCondition); virtual;
     procedure GetData(dst: TCondition); virtual;
-    // SetLinkFields РґРѕРїСѓСЃС‚РёРјС‹Рµ РїРѕР»СЏ Рє РєРѕС‚РѕСЂС‹Рј РїСЂРёРјРµРЅСЏС‚СЊ РїСЂР°РІРёР»Р° (РєРѕРЅСЃС‚Р°РЅС‚С‹ РґР»СЏ Р»РёРЅРѕРІ)
+    // SetLinkFields допустимые поля к которым применять правила (константы для линов)
     procedure SetLinkType(lt: TLinkType); virtual;
     property OnOk: TNotifyEvent read FOnOk write FOnOk;
   end;

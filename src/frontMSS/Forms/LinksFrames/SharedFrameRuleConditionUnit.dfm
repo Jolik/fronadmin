@@ -1,4 +1,4 @@
-﻿object FrameRuleCondition: TFrameRuleCondition
+object FrameRuleCondition: TFrameRuleCondition
   Left = 0
   Top = 0
   Width = 178
@@ -13,10 +13,6 @@
     Caption = ' '#1059#1089#1083#1086#1074#1080#1077' '
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = 168
-    ExplicitTop = 24
-    ExplicitWidth = 185
-    ExplicitHeight = 105
     object UniPanel5: TUniPanel
       Left = 2
       Top = 15
@@ -30,8 +26,6 @@
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel3'
-      ExplicitTop = 0
-      ExplicitWidth = 226
       object UniPanel6: TUniPanel
         Left = 0
         Top = 0
@@ -55,8 +49,6 @@
         Align = alClient
         TabOrder = 2
         IconItems = <>
-        ExplicitLeft = 52
-        ExplicitWidth = 312
       end
     end
     object UniPanel3: TUniPanel
@@ -72,8 +64,6 @@
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel3'
-      ExplicitTop = 45
-      ExplicitWidth = 367
       object UniPanel4: TUniPanel
         Left = 0
         Top = 0
@@ -95,8 +85,6 @@
         Text = ''
         Align = alClient
         TabOrder = 2
-        ExplicitLeft = 52
-        ExplicitWidth = 312
       end
     end
     object UniPanel7: TUniPanel
@@ -112,9 +100,6 @@
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel3'
-      ExplicitLeft = 4
-      ExplicitTop = 23
-      ExplicitWidth = 367
       object UniPanel8: TUniPanel
         Left = 0
         Top = 0
@@ -144,9 +129,6 @@
         Align = alClient
         TabOrder = 2
         IconItems = <>
-        ExplicitLeft = 52
-        ExplicitTop = 0
-        ExplicitWidth = 208
       end
     end
     object UniPanel1: TUniPanel
@@ -162,7 +144,6 @@
       BorderStyle = ubsNone
       ShowCaption = False
       Caption = 'UniPanel3'
-      ExplicitTop = 3243
       object btnOK: TUniBitBtn
         AlignWithMargins = True
         Left = 104
