@@ -4,6 +4,38 @@ program FrontMSS;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 uses
   Forms,
   ServerModule in 'ServerModule.pas' {UniServerModule: TUniGUIServerModule},
@@ -117,9 +149,26 @@ uses
   MonitoringTaskEditFormUnit in 'Forms\MonitoringTaskEditFormUnit.pas',
   MonitoringTasksFormUnit in 'Forms\MonitoringTasksFormUnit.pas',
   SourcesBrokerUnit in 'APIClasses\SourcesBrokerUnit.pas',
-  SharedFrameRuleConditionUnit in '\\ksandr-pc\МетеоКонтекст\Jolik\src\frontMSS\Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame},
+  SharedFrameRuleConditionUnit in 'Forms\LinksFrames\SharedFrameRuleConditionUnit.pas' {FrameRuleCondition: TUniFrame},
   MonitoringTaskSourceBrokerUnit in 'APIClasses\MonitoringTaskSourceBrokerUnit.pas',
-  ProfileRuleUnit in 'EntityClasses\acl\ProfileRuleUnit.pas';
+  ProfileRuleUnit in 'EntityClasses\acl\ProfileRuleUnit.pas',
+  QueueFrameUnit in 'Forms\QueueFrameUnit.pas',
+  SharedFrameQueueFilterUnit in 'Forms\SharedFrameQueueFilterUnit.pas',
+  DirDownSettingEditFrameUnit in 'Forms\LinksFrames\DirDownSettingEditFrameUnit.pas',
+  DirUpSettingEditFrameUnit in 'Forms\LinksFrames\DirUpSettingEditFrameUnit.pas',
+  FTPCliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPCliDownLinkSettingEditFrameUnit.pas',
+  FTPCliUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPCliUpLinkSettingEditFrameUnit.pas',
+  FTPServerDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPServerDownLinkSettingEditFrameUnit.pas',
+  FTPSrvUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\FTPSrvUpLinkSettingEditFrameUnit.pas',
+  HTTPCliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\HTTPCliDownLinkSettingEditFrameUnit.pas',
+  LinkFrameUtils in 'Forms\LinksFrames\LinkFrameUtils.pas',
+  Pop3CliDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\Pop3CliDownLinkSettingEditFrameUnit.pas',
+  SebaCSDLinkSettingEditFrameUnit in 'Forms\LinksFrames\SebaCSDLinkSettingEditFrameUnit.pas',
+  SebaSGSLinkSettingEditFrameUnit in 'Forms\LinksFrames\SebaSGSLinkSettingEditFrameUnit.pas',
+  SharedFrameS3 in 'Forms\LinksFrames\SharedFrameS3.pas',
+  SharedFrameSchedule in 'Forms\LinksFrames\SharedFrameSchedule.pas',
+  SMTPClieUpLinkSettingEditFrameUnit in 'Forms\LinksFrames\SMTPClieUpLinkSettingEditFrameUnit.pas',
+  SMTPSrvDownLinkSettingEditFrameUnit in 'Forms\LinksFrames\SMTPSrvDownLinkSettingEditFrameUnit.pas';
 
 {$R *.res}
 
