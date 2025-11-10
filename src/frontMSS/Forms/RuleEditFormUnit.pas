@@ -1,4 +1,4 @@
-unit RuleEditFormUnit;
+﻿unit RuleEditFormUnit;
 
 interface
 

@@ -1,4 +1,4 @@
-unit OpenMCEPSettingEditFrameUnit;
+﻿unit OpenMCEPSettingEditFrameUnit;
 
 interface
 

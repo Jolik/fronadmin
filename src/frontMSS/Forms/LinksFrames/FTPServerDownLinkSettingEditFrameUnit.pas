@@ -1,4 +1,4 @@
-unit FTPServerDownLinkSettingEditFrameUnit;
+﻿unit FTPServerDownLinkSettingEditFrameUnit;
 
 interface
 

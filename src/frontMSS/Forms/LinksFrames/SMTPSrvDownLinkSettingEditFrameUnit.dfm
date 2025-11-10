@@ -1,4 +1,4 @@
-inherited SMTPSrvDownLinkSettingEditFrame: TSMTPSrvDownLinkSettingEditFrame
+﻿inherited SMTPSrvDownLinkSettingEditFrame: TSMTPSrvDownLinkSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

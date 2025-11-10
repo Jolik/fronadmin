@@ -1,4 +1,4 @@
-inherited FTPCliUpLinkSettingEditFrame: TFTPCliUpLinkSettingEditFrame
+﻿inherited FTPCliUpLinkSettingEditFrame: TFTPCliUpLinkSettingEditFrame
   Height = 487
   ExplicitHeight = 487
   inherited SettingsPanel: TUniPanel

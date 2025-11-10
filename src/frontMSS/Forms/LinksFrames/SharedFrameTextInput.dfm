@@ -1,4 +1,4 @@
-object FrameTextInput: TFrameTextInput
+﻿object FrameTextInput: TFrameTextInput
   Left = 0
   Top = 0
   Width = 269

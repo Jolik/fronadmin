@@ -1,4 +1,4 @@
-unit SebaSGSLinkSettingEditFrameUnit;
+﻿unit SebaSGSLinkSettingEditFrameUnit;
 
 interface
 

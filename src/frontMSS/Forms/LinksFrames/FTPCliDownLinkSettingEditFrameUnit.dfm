@@ -1,4 +1,4 @@
-inherited FtpCliDownLinkSettingEditFrame: TFtpCliDownLinkSettingEditFrame
+﻿inherited FtpCliDownLinkSettingEditFrame: TFtpCliDownLinkSettingEditFrame
   Height = 662
   ExplicitHeight = 662
   inherited SettingsPanel: TUniPanel

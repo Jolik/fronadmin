@@ -1,4 +1,4 @@
-unit ProfilesFrameUnit;
+п»їunit ProfilesFrameUnit;
 
 interface
 
@@ -83,7 +83,7 @@ begin
   for var p in FProfiles do
     if (p as TProfile).Description = '' then
     begin
-      MessageDlg(Format('неn описания профиля %s', [p.Id]), TMsgDlgType.mtError, [mbOK], nil);
+      MessageDlg(Format('РЅРµn РѕРїРёСЃР°РЅРёСЏ РїСЂРѕС„РёР»СЏ %s', [p.Id]), TMsgDlgType.mtError, [mbOK], nil);
       exit;
     end;
   result := true;
@@ -116,7 +116,7 @@ begin
   if profilesComboBox.ItemIndex = -1 then
     exit;
   var p := TProfile(profilesComboBox.Items.Objects[profilesComboBox.ItemIndex]);
-  var q := Format('Удалить профиль "%s"?', [p.id]);
+  var q := Format('РЈРґР°Р»РёС‚СЊ РїСЂРѕС„РёР»СЊ "%s"?', [p.id]);
   if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
     exit;
   FProfiles.Remove(p);

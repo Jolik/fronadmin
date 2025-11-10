@@ -1,4 +1,4 @@
-unit LinkFrameUtils;
+﻿unit LinkFrameUtils;
 
 interface
 uses LinkUnit, ParentLinkSettingEditFrameUnit;

@@ -1,4 +1,4 @@
-object FrameRuleCondition: TFrameRuleCondition
+﻿object FrameRuleCondition: TFrameRuleCondition
   Left = 0
   Top = 0
   Width = 178

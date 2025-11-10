@@ -1,4 +1,4 @@
-inherited HTTPCliDownLinkSettingEditFrame: THTTPCliDownLinkSettingEditFrame
+﻿inherited HTTPCliDownLinkSettingEditFrame: THTTPCliDownLinkSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

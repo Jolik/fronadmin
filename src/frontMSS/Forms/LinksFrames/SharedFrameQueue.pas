@@ -1,4 +1,4 @@
-unit SharedFrameQueue;
+﻿unit SharedFrameQueue;
 
 interface
 

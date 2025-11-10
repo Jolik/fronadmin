@@ -1,4 +1,4 @@
-unit SharedFrameS3;
+﻿unit SharedFrameS3;
 
 interface
 

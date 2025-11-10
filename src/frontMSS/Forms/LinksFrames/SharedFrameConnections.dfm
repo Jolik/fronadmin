@@ -1,4 +1,4 @@
-object FrameConnections: TFrameConnections
+﻿object FrameConnections: TFrameConnections
   Left = 0
   Top = 0
   Width = 365

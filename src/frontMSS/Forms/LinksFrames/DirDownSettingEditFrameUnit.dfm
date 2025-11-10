@@ -1,4 +1,4 @@
-inherited DirDownSettingEditFrame: TDirDownSettingEditFrame
+﻿inherited DirDownSettingEditFrame: TDirDownSettingEditFrame
   Height = 515
   ExplicitHeight = 515
   inherited SettingsPanel: TUniPanel

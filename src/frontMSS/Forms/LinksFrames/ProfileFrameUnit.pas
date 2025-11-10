@@ -1,4 +1,4 @@
-unit ProfileFrameUnit;
+п»їunit ProfileFrameUnit;
 
 interface
 
@@ -174,9 +174,9 @@ begin
   FrameRuleEnabled.SetData(rule.Enabled);
   FrameRulePosition.SetData(rule.Position);
   RuleTreeView.Items.Clear;
-  var root := RuleTreeView.Items.AddChildObject(nil, 'фильтры', nil);
-  var incFiltersNode := RuleTreeView.Items.AddChildObject(root, 'включающие', rule.IncFilters);
-  var excFiltersNode := RuleTreeView.Items.AddChildObject(root, 'исключающие', rule.ExcFilters);
+  var root := RuleTreeView.Items.AddChildObject(nil, 'С„РёР»СЊС‚СЂС‹', nil);
+  var incFiltersNode := RuleTreeView.Items.AddChildObject(root, 'РІРєР»СЋС‡Р°СЋС‰РёРµ', rule.IncFilters);
+  var excFiltersNode := RuleTreeView.Items.AddChildObject(root, 'РёСЃРєР»СЋС‡Р°СЋС‰РёРµ', rule.ExcFilters);
   root.CheckboxVisible := false;
   incFiltersNode.CheckboxVisible := false;
   excFiltersNode.CheckboxVisible := false;
@@ -191,7 +191,7 @@ begin
   for var i := 0 to filters.Count-1 do
   begin
     var filter := (filters[i] as TProfileFilter);
-    var filterNode := RuleTreeView.Items.AddChildObject(node, 'фильтр-' + IntToStr(i), filter);
+    var filterNode := RuleTreeView.Items.AddChildObject(node, 'С„РёР»СЊС‚СЂ-' + IntToStr(i), filter);
     filterNode.CheckboxVisible := true;
     filterNode.Checked := not filter.Disable;
     for var j := 0 to filter.Conditions.Count-1 do
@@ -294,22 +294,22 @@ begin
   begin
     btnAddRules.Visible := false;
     btnRemoveRules.Visible := true;
-    btnRemoveRules.Hint := 'удалить условие';
+    btnRemoveRules.Hint := 'СѓРґР°Р»РёС‚СЊ СѓСЃР»РѕРІРёРµ';
     exit;
   end;
   if FSelectedRuleItem is TProfileFilter then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := true;
-    btnAddRules.Hint := 'добавить условие';
-    btnRemoveRules.Hint := 'удалить фильтр';
+    btnAddRules.Hint := 'РґРѕР±Р°РІРёС‚СЊ СѓСЃР»РѕРІРёРµ';
+    btnRemoveRules.Hint := 'СѓРґР°Р»РёС‚СЊ С„РёР»СЊС‚СЂ';
     exit;
   end;
   if FSelectedRuleItem is TProfileFilterList then
   begin
     btnAddRules.Visible := true;
     btnRemoveRules.Visible := false;
-    btnAddRules.Hint := 'добавить фильтр';
+    btnAddRules.Hint := 'РґРѕР±Р°РІРёС‚СЊ С„РёР»СЊС‚СЂ';
     exit;
   end;
   btnAddRules.Visible := false;
@@ -344,7 +344,7 @@ begin
 
   if FSelectedRuleItem is TCondition then
   begin
-    var q := Format('Удалить условие %s?', [(FSelectedRuleItem as TCondition).Caption]);
+    var q := Format('РЈРґР°Р»РёС‚СЊ СѓСЃР»РѕРІРёРµ %s?', [(FSelectedRuleItem as TCondition).Caption]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
     if not (TObject(FSelecteNode.Parent.Data) is TProfileFilter) then
@@ -356,7 +356,7 @@ begin
 
   if FSelectedRuleItem is TProfileFilter then
   begin
-    var q := Format('Удалить фильтр (%d условий)?', [(FSelectedRuleItem as TProfileFilter).Conditions.Count]);
+    var q := Format('РЈРґР°Р»РёС‚СЊ С„РёР»СЊС‚СЂ (%d СѓСЃР»РѕРІРёР№)?', [(FSelectedRuleItem as TProfileFilter).Conditions.Count]);
     if MessageDlg(q, mtConfirmation, mbYesNo) <> mrYes then
       exit;
     if not (TObject(FSelecteNode.Parent.Data) is TProfileFilterList) then

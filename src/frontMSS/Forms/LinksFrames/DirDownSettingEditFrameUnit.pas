@@ -1,4 +1,4 @@
-unit DirDownSettingEditFrameUnit;
+﻿unit DirDownSettingEditFrameUnit;
 
 interface
 

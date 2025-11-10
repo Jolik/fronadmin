@@ -1,4 +1,4 @@
-unit DirUpSettingEditFrameUnit;
+﻿unit DirUpSettingEditFrameUnit;
 
 interface
 

@@ -1,4 +1,4 @@
-unit SebaCSDLinkSettingEditFrameUnit;
+﻿unit SebaCSDLinkSettingEditFrameUnit;
 
 interface
 

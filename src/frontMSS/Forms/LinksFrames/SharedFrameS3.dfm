@@ -1,4 +1,4 @@
-object FrameS3: TFrameS3
+﻿object FrameS3: TFrameS3
   Left = 0
   Top = 0
   Width = 298

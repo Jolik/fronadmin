@@ -1,4 +1,4 @@
-unit LinkEditFormUnit;
+п»їunit LinkEditFormUnit;
 
 interface
 
@@ -101,20 +101,20 @@ end;
 procedure TLinkEditForm.btnCancelClick(Sender: TObject);
 begin
   inherited;
-  // не стрирать!
+  // РЅРµ СЃС‚СЂРёСЂР°С‚СЊ!
 end;
 
 procedure TLinkEditForm.btnOkClick(Sender: TObject);
 begin
   inherited;
-  // не стрирать!
+  // РЅРµ СЃС‚СЂРёСЂР°С‚СЊ!
 end;
 
 
 procedure TLinkEditForm.comboLinkTypeChange(Sender: TObject);
 begin
   inherited;
-  // редактироваие типа только при создании нового линка
+  // СЂРµРґР°РєС‚РёСЂРѕРІР°РёРµ С‚РёРїР° С‚РѕР»СЊРєРѕ РїСЂРё СЃРѕР·РґР°РЅРёРё РЅРѕРІРѕРіРѕ Р»РёРЅРєР°
   if IsEdit then
     exit;
   if not (Entity is TLink) then
@@ -231,13 +231,13 @@ begin
       result := true;
     except
       on E: EIdHTTPProtocolException do begin
-        MessageDlg(Format('Ошибка получения спика профилей лика. HTTP %d'#13#10'%s',
+        MessageDlg(Format('РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёРєР° РїСЂРѕС„РёР»РµР№ Р»РёРєР°. HTTP %d'#13#10'%s',
           [E.ErrorCode, E.ErrorMessage]), mtWarning, [mbOK], nil);
         Log('TLinkEditForm.LoadProfiles ' + e.Message+' '+E.ErrorMessage, lrtError);
         result := false;
       end;
       on E: Exception do begin
-        MessageDlg('Ошибка получения спика профилей лика: ' + E.Message, mtWarning, [mbOK], nil);
+        MessageDlg('РћС€РёР±РєР° РїРѕР»СѓС‡РµРЅРёСЏ СЃРїРёРєР° РїСЂРѕС„РёР»РµР№ Р»РёРєР°: ' + E.Message, mtWarning, [mbOK], nil);
         Log('TLinkEditForm.LoadProfiles ' + e.Message, lrtError);
         result := false;
       end;

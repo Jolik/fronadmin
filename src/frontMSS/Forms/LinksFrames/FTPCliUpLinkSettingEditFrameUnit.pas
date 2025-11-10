@@ -1,4 +1,4 @@
-unit FTPCliUpLinkSettingEditFrameUnit;
+﻿unit FTPCliUpLinkSettingEditFrameUnit;
 
 interface
 

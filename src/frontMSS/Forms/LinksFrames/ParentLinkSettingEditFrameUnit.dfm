@@ -1,4 +1,4 @@
-object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
+﻿object ParentLinkSettingEditFrame: TParentLinkSettingEditFrame
   Left = 0
   Top = 0
   Width = 853

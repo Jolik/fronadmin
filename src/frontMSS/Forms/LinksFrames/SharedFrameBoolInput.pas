@@ -1,4 +1,4 @@
-unit SharedFrameBoolInput;
+﻿unit SharedFrameBoolInput;
 
 interface
 

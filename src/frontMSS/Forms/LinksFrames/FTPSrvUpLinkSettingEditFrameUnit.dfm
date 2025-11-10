@@ -1,4 +1,4 @@
-inherited FTPSrvUpLinkSettingEditFrame: TFTPSrvUpLinkSettingEditFrame
+﻿inherited FTPSrvUpLinkSettingEditFrame: TFTPSrvUpLinkSettingEditFrame
   inherited SettingsPanel: TUniPanel
     inherited SettingsGroupBox: TUniGroupBox
       inherited SettingsParentPanel: TUniPanel

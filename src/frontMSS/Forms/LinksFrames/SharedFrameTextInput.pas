@@ -1,4 +1,4 @@
-unit SharedFrameTextInput;
+﻿unit SharedFrameTextInput;
 
 interface
 

@@ -1,4 +1,4 @@
-inherited Pop3CliDownLinkSettingEditFrame: TPop3CliDownLinkSettingEditFrame
+﻿inherited Pop3CliDownLinkSettingEditFrame: TPop3CliDownLinkSettingEditFrame
   Height = 798
   ExplicitHeight = 798
   inherited SettingsPanel: TUniPanel

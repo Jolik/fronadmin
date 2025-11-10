@@ -1,4 +1,4 @@
-object SourcesForm: TSourcesForm
+﻿object SourcesForm: TSourcesForm
   Left = 0
   Top = 0
   ClientHeight = 520
